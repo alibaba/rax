@@ -1,11 +1,14 @@
-/* global getCurrentPages, PROPS */
+/* global PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
 import { setComponentInstance, getComponentProps, executeCallbacks } from './updater';
 import { getComponentLifecycle } from '@@ADAPTER@@';
+import { createMiniAppHistory } from './history';
+import { __updateRouterMap } from './router';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
+const history = createMiniAppHistory();
 let _appConfig;
 
 /**
@@ -24,10 +27,8 @@ function getPageCycles(Klass) {
       // Reverse sync from state to data.
       this.instance._setInternal(this);
       // Add route information for page.
-      this.instance.props.route = {
-        path: getCurrentPageUrl(),
-        query: options,
-      };
+      history.location.__updatePageOption(options);
+      this.instance.props.history = history;
       this.data = this.instance.state;
 
       if (this.instance.__ready) return;
@@ -166,36 +167,20 @@ function createConfig(component, options) {
 
 function noop() {}
 
+
 /**
  * Bridge App definition.
- * @param definedApp
- * @param routerMap
- * @return instance
+ * @param appConfig
  */
-export function createApp(definedApp, routerMap) {
-  const appProps = { routerConfig: routerMap };
-  const appConfig = {
-    _updateData: noop,
-    _updateMethods: noop,
-    onLaunch(options) {
-      if (Array.isArray(appCycles.launch)) {
-        let fn;
-        while (fn = appCycles.launch.pop()) { // eslint-disable-line
-          fn.call(appConfig, options);
-        }
-      }
-    },
-  };
-  definedApp.call(appConfig, appProps);
-  return appConfig;
-}
-
 export function runApp(appConfig) {
   if (_appConfig) {
     throw new Error('runApp can only be called once.');
   }
 
   _appConfig = appConfig; // Store raw app config to parse router.
+
+  __updateRouterMap(appConfig);
+
   const appOptions = {
     // Bridge app launch.
     onLaunch(launchOptions) {
@@ -236,14 +221,4 @@ const DATASET_ARG_REG = /arg-?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
-}
-
-function addLeadingSlash(str) {
-  return str[0] === '/' ? str : '/' + str;
-}
-
-function getCurrentPageUrl() {
-  const pages = getCurrentPages();
-  const currentPage = pages[pages.length - 1];
-  return addLeadingSlash(currentPage.route);
 }

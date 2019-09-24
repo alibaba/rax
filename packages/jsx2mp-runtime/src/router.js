@@ -1,11 +1,12 @@
-import { navigateTo, redirectTo, navigateBack} from '@@ADAPTER@@';
+import { navigateTo, redirectTo, navigateBack } from '@@ADAPTER@@';
 
 let router;
+let __routerMap = {};
 
-export function useRouter(routerConfig) {
-  const history = routerConfig && routerConfig.history;
-  router = { config: routerConfig, history };
-  return { Router: null, history }; // just noop
+export function __updateRouterMap(appConfig) {
+  appConfig.routes.map(route => {
+    __routerMap[route.path] = route.source;
+  });
 }
 
 /**
@@ -28,14 +29,14 @@ export function withRouter(Klass) {
  * Navigate to given path.
  */
 export function push(path) {
-  return navigateTo({ url: `/${router.config[path]}` });
+  return navigateTo({ url: `/${__routerMap[path]}` });
 }
 
 /**
  * Navigate replace.
  */
 export function replace(path) {
-  return redirectTo({ url: `/${router.config[path]}` });
+  return redirectTo({ url: `/${__routerMap[path]}` });
 }
 
 /**

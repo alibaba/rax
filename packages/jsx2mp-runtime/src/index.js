@@ -1,13 +1,12 @@
-import { runApp, createApp, createPage, createComponent } from './bridge';
+import { runApp, createPage, createComponent } from './bridge';
 import { useAppEffect, useAppLaunch } from './app';
 import { usePageEffect, usePageShow, usePageHide } from './page';
-import { useRouter, withRouter, push, replace, go, goBack, goForward, canGo } from './router';
+import { withRouter } from './router';
 import Component from './component';
 import createStyle from './createStyle';
 
 export {
   runApp,
-  createApp,
   createPage,
   createComponent,
   createStyle,
@@ -24,14 +23,7 @@ export {
   usePageEffect,
 
   // Router
-  useRouter,
   withRouter,
-  push,
-  replace,
-  go,
-  goBack,
-  goForward,
-  canGo,
 };
 
 /* hooks */
