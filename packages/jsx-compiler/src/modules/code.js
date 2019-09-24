@@ -27,10 +27,9 @@ const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
 /**
- * match universal-app package
+ * match rax-app package
  */
-const isCoreModule = (mod) => /^@core\//.test(mod);
-const isUniversalAppRuntime = (mod) => /^universal\-app\-runtime/.test(mod);
+const isRaxApp = (mod) => /^rax\-app/.test(mod);
 
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
@@ -186,7 +185,7 @@ function renameCoreModule(ast, outputPath, targetFileDir) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
-      if (source.isStringLiteral() && (isCoreModule(source.node.value) || isUniversalAppRuntime(source.node.value))) {
+      if (source.isStringLiteral() && isRaxApp(source.node.value)) {
         let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
         runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
         source.replaceWith(t.stringLiteral(runtimeRelativePath));

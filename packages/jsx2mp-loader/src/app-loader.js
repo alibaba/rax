@@ -80,7 +80,7 @@ function transformAppConfig(entryPath, originalConfig) {
   for (let key in originalConfig) {
     const value = originalConfig[key];
     switch (key) {
-      case 'routes':
+      case 'source':
         const pages = [];
         if (Array.isArray(value)) {
           // only resolve first level of routes.
