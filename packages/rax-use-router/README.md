@@ -262,34 +262,22 @@ function Foo(props) {
 export default withRouter(Foo);
 ```
 
-#### history.push()
-```jsx
-<button onClick={ () => props.history.push('/foo?the=query') }>Go foo</button>
-```
+#### history
 
-```jsx
-<button onClick={ () => push({
-  pathname: '/foo',
-  search: '?the=query',
-}) }>Go foo</button>
-```
+Each `history` object has the following properties:
 
-#### history.replace()
-```jsx
-<button onClick={ () => props.history.replace('/foo?the=query') }>Go foo</button>
-```
+- `history.length` - The number of entries in the history stack.
+- `history.location` - The current location (see below).
+- `history.action` - The current navigation action, such as push, replace, go and so on.
 
-```jsx
-<button onClick={ () => props.history.replace({
-  pathname: '/foo',
-  search: '?the=query',
-}) }>Go foo</button>
-```
+For more information, see [history](https://www.npmjs.com/package/history)
 
-#### history.go()
-```jsx
-<button onClick={ () => props.history.go(-1) }>Go back</button>
-<button onClick={ () => props.history.go(1) }>Go forward</button>
-```
+#### location 
 
-More API see [history](https://github.com/ReactTraining/history/tree/master/docs)
+The `location` object implements a subset of [the `window.location` interface](https://developer.mozilla.org/en-US/docs/Web/API/Location), including:
+
+- `location.pathname` - The path of the URL
+- `location.search` - The URL query string
+- `location.hash` - The URL hash fragment
+
+For more information, see [history](https://www.npmjs.com/package/history)
