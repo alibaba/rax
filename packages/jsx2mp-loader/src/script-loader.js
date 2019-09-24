@@ -61,7 +61,17 @@ module.exports = function scriptLoader(content) {
         if (componentConfig.usingComponents) {
           for (let key in componentConfig.usingComponents) {
             if (componentConfig.usingComponents.hasOwnProperty(key)) {
-              componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
+              const componentPath = componentConfig.usingComponents[key];
+              if (componentPath[0] !== '.' && componentPath !== '/') {
+                // component from node module
+                const realComponentPath = require.resolve(componentPath, {
+                  paths: [this.resourcePath]
+                });
+                const originalComponentConfigPath = join(sourcePackagePath, pkg.miniappConfig.main);
+                const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
+
+                componentConfig.usingComponents[key] = removeSuffix(relativeComponentPath);
+              }
             }
           }
         }
@@ -186,4 +196,9 @@ function getNearestNodeModulesPath(root, current) {
     index = join(index, relativePathArray.shift());
   }
   return result;
+}
+
+function removeSuffix(filePath) {
+  const lastDot = filePath.lastIndexOf('.');
+  return filePath.slice(0, lastDot);
 }
