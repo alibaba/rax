@@ -1,14 +1,10 @@
 const {
   existsSync
 } = require('fs-extra');
-const platformConfig = require('./platformConfig');
 
-const partSuffix = ['.js', '.json'];
+const suffix = ['.js', '.json', '.axml'];
 
 // e.g file:   /root/lib/miniapp/index
-module.exports = function(filename, platform = 'ali') {
-  const xmlSuffix = platformConfig[platform].extension.xml;
-  const suffix = partSuffix.slice();
-  suffix.push(xmlSuffix);
+module.exports = function(filename) {
   return suffix.every(s => existsSync(filename + s));
 };
