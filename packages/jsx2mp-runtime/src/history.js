@@ -2,21 +2,17 @@
 import { push, replace, go, goBack, canGo, goForward } from './router';
 
 export function createMiniAppHistory() {
-  const defaultActions = {
-    push,
-    replace,
-    goBack,
-    go,
-    canGo,
-    goForward,
-  };
-  return Object.assign(new MiniAppHistory(), defaultActions);
+  return new MiniAppHistory();
 }
 
 class MiniAppHistory {
   constructor() {
     this.location = new Location();
+
+    // Apply actions for history.
+    Object.assign(this, { push, replace, goBack, go, canGo, goForward });
   }
+
   get length() {
     return getCurrentPages().length;
   }
@@ -24,36 +20,29 @@ class MiniAppHistory {
 
 class Location {
   constructor() {
-    this._options = {};
+    this._currentPageOptions = {};
     this.hash = '';
   }
 
-  __updatePageOption(options) {
-    this._options = options;
+  __updatePageOption(pageOptions) {
+    this._currentPageOptions = pageOptions;
   }
 
   get search() {
     let search = '';
-    Object.keys(this._options).map((key, index) => {
-      const query = `${key}=${this._options[key]}`;
-      if (index === 0) {
-        search += `?${query}`;
-      } else {
-        search += `&${query}`;
-      }
+    Object.keys(this._currentPageOptions).forEach((key, index) => {
+      const query = `${key}=${this._currentPageOptions[key]}`;
+      search += index === 0 ? '?' : '&';
+      search += query;
     });
     return search;
   }
 
   get pathname() {
-    return getCurrentPageUrl();
+    const pages = getCurrentPages();
+    const currentPage = pages[pages.length - 1];
+    return addLeadingSlash(currentPage.route);
   }
-}
-
-function getCurrentPageUrl() {
-  const pages = getCurrentPages();
-  const currentPage = pages[pages.length - 1];
-  return addLeadingSlash(currentPage.route);
 }
 
 function addLeadingSlash(str) {
