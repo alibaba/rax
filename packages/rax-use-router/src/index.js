@@ -119,6 +119,7 @@ function matchRoute(route, baseUrl, pathname, parentParams) {
   };
 }
 
+let _initialized = false;
 let _routerConfig = null;
 const router = {
   history: null,
@@ -195,10 +196,10 @@ function getInitialComponent(routerConfig) {
 
     if (process.env.NODE_ENV !== 'production') {
       if (!routerConfig) {
-        throw new Error('useRouter should have routerConfig see: https://www.npmjs.com/package/rax-use-router.');
+        throw new Error('Error: useRouter should have routerConfig, see: https://www.npmjs.com/package/rax-use-router.');
       }
       if (!routerConfig.history || !routerConfig.routes) {
-        throw new Error('routerConfig should contain history and routes see: https://www.npmjs.com/package/rax-use-router.');
+        throw new Error('Error: routerConfig should contain history and routes, see: https://www.npmjs.com/package/rax-use-router.');
       }
     }
     _routerConfig = routerConfig;
@@ -215,6 +216,8 @@ export function useRouter(routerConfig) {
   const [component, setComponent] = useState(getInitialComponent(routerConfig));
 
   useLayoutEffect(() => {
+    if (_initialized) throw new Error('Error: useRouter can only be called once.');
+    _initialized = true;
     const history = _routerConfig.history;
     const routes = _routerConfig.routes;
 
