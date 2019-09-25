@@ -3,6 +3,7 @@ const { copySync, lstatSync, existsSync, mkdirpSync, writeJSONSync, writeFileSyn
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
+const isMiniappComponent = require('./utils/isMiniappComponent');
 
 const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
@@ -44,7 +45,8 @@ module.exports = function scriptLoader(content) {
     const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
 
     // Is miniapp compatible component.
-    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main) {
+    // except those old universal api with pkg.miniappConfig
+    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main && isMiniappComponent(join(sourcePackagePath, pkg.miniappConfig.main))) {
       // Only copy first level directory for miniapp component
       const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
       const source = join(sourcePackagePath, firstLevelFolder);
