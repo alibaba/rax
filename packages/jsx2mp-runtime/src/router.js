@@ -75,5 +75,5 @@ export function canGo() {
 function generateUrl(path) {
   const [pathname, query] = path.split('?');
   const miniappPath = __routerMap[pathname];
-  return query ? `/${miniappPath}?${query}` : `/${miniappPath}`
+  return query ? `/${miniappPath}?${query}` : `/${miniappPath}`;
 }
