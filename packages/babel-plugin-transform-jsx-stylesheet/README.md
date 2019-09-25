@@ -152,3 +152,76 @@ class App extends Component {
 
 const styleSheet = Object.assign({}, app1StyleSheet, app2StyleSheet);
 ```
+
+## Theme support (since 0.7.0)
+
+### Global Theme
+
+#### install
+
+```shell
+npm install rax-theme-helper
+```
+
+And enable option `{ theme: true }`
+
+#### Usage
+
+You can write `var()` in CSS
+
+```css
+.text {
+  color: var(--color-error-1);
+}
+```
+
+Then change this variable at runtime
+
+```js
+import themeHelper from 'rax-theme-helper';
+const origin = themeHelper.get();
+themeHelper.set({
+  ...origin,
+  theme: {
+    ...origin.theme,
+    '--color-error-1': 'red'
+  }
+})
+```
+
+There is a default list for default theme variable: https://cdn.jsdelivr.net/npm/@rax-ui/core@1.0.0-beta.3/lib/index.d.ts
+
+### Runtime Style Overwrite
+
+With theme support, we can also overwrite existed style in global, for example:
+
+```less
+.LogoComponent {
+  .text {
+    color: bule;
+  }
+}
+```
+
+```js
+<View>
+  <Text className="other">other</Text>
+  <Text className="LogoComponent_text">Logo</Text>
+</View>
+```
+
+We can overwrite style for `LogoComponent_text` in global with
+
+```js
+import themeHelper from 'rax-theme-helper';
+const origin = themeHelper.get();
+themeHelper.set({
+  ...origin,
+  styles: {
+    ...origin.styles,
+    LogoComponent_text: {
+      color: 'red',
+    }
+  }
+})
+```

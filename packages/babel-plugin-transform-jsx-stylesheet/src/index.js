@@ -50,34 +50,62 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
   return className.join(' ').trim();
 }
   `);
-  const getStyleFunctionTemplete = template(`
-function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
-  var cache = ${STYLE_SHEET_NAME}.__cache || (${STYLE_SHEET_NAME}.__cache = {});
-  var className = ${GET_CLS_NAME_FUNC_NAME}(classNameExpression);
-  var classNameArr = className.split(/\\s+/);
-  var style = cache[className];
-
-  if (!style) {
-    style = {};
-    if (classNameArr.length === 1) {
-      style = ${STYLE_SHEET_NAME}[classNameArr[0].trim()];
-    } else {
-      classNameArr.forEach(function(cls) {
-        style = Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()]);
-      });
+  const getStyleFunctionTemplete = (opt) => template(`
+  function ${GET_STYLE_FUNC_NAME}(classNameExpression, themr) {
+    var cache = ${STYLE_SHEET_NAME}.__cache || (${STYLE_SHEET_NAME}.__cache = {});
+    var className = ${GET_CLS_NAME_FUNC_NAME}(classNameExpression);
+    
+    var style = cache[className];
+  
+    ${opt.theme ? `
+    var cacheKey = ${STYLE_SHEET_NAME}.__cacheKey || (${STYLE_SHEET_NAME}.__cacheKey = 0);
+    var helper = require('rax-theme-helper');
+    var theme = helper.get() || {};
+    var cacheKeyTheme = helper.getCacheKey();
+  
+    if (cacheKey !== cacheKeyTheme) {
+      ${STYLE_SHEET_NAME}.__cache = {};
+      cache = {};
+      ${STYLE_SHEET_NAME}.__cacheKey = cacheKeyTheme;
     }
-    cache[className] = style;
-  }
+  
+    var themeStyles = theme.styles || {};
+    var themeVars = theme.theme;
 
-  return style;
-}
-  `);
+    function getStyle(name) {
+      var styleObj = Object.assign({}, ${STYLE_SHEET_NAME}[name], themeStyles[name]);
+      for (var key in styleObj) {
+        styleObj[key] = typeof styleObj[key] === "function" ? styleObj[key](themeVars): styleObj[key];
+      }
+      return styleObj;
+    }
+    `: ''}
+    
+    if (!style) {
+      var classNameArr = className.split(/\\s+/);
+      style = {};
+      if (classNameArr.length === 1) {
+        var name = classNameArr[0].trim();
+        style = ${opt.theme ? `getStyle(name)`: `${STYLE_SHEET_NAME}[classNameArr[0].trim()]`};
+      } else {
+        classNameArr.forEach(function(cls) {
+          var name = cls.trim();
+          style = ${opt.theme ? `Object.assign(style, getStyle(name))`: `Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()])`};
+        });
+      }
+      cache[className] = style;
+    }
+  
+    return style;
+  }
+    `);
 
   const getClassNameFunctionAst = getClassNameFunctionTemplate();
   const mergeStylesFunctionAst = mergeStylesFunctionTemplate();
-  const getStyleFunctionAst = getStyleFunctionTemplete();
+  let getStyleFunctionAst;
 
-  function getArrayExpression(value) {
+
+  function getArrayExpression(value, opts) {
     let expression;
     let str;
 
@@ -95,9 +123,18 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
       str = (value.expression ? value.expression.value : value.value).trim();
     }
 
-    return str === '' ? [] : str.split(/\s+/).map((className) => {
-      return template(`${STYLE_SHEET_NAME}["${className}"]`)().expression;
-    });
+    if (opts.theme) {
+      return [t.callExpression(t.identifier(GET_STYLE_FUNC_NAME), 
+        [
+          template(`"${str}"`)().expression,
+        ]
+      )];
+    } else {
+      return str === '' ? [] : str.split(/\s+/).map((className) => {
+        return template(`${STYLE_SHEET_NAME}["${className}"]`)().expression;
+      });
+    }
+   
   }
 
   function findLastImportIndex(body) {
@@ -150,6 +187,8 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
       JSXOpeningElement({ container }, { file, opts }) {
         const { retainClassName = false } = opts;
 
+        getStyleFunctionAst = getStyleFunctionTemplete(opts)();
+
         const cssFileCount = file.get('cssFileCount') || 0;
         if (cssFileCount < 1) {
           return;
@@ -190,6 +229,13 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
           }
 
           if (
+            opts.theme &&
+            classNameAttribute.value
+          ) {
+            file.set('injectGetStyle', true);
+          }
+
+          if (
             classNameAttribute.value &&
             classNameAttribute.value.type === 'JSXExpressionContainer' &&
             typeof classNameAttribute.value.expression.value !== 'string' // not like className={'container'}
@@ -197,7 +243,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
             file.set('injectGetStyle', true);
           }
 
-          const arrayExpression = getArrayExpression(classNameAttribute.value);
+          const arrayExpression = getArrayExpression(classNameAttribute.value, opts);
 
           if (arrayExpression.length === 0) {
             return;

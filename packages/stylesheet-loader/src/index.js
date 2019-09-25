@@ -10,6 +10,8 @@ const FONT_FACE_RULE = 'font-face';
 const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
 
+const VAR_STR_REGEX = /"var\(\-\-(.*)\)"/g;
+
 module.exports = function(source) {
   this.cacheable && this.cacheable();
 
@@ -101,6 +103,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
+
   module.exports = _styles;
   `;
 };
@@ -170,5 +173,5 @@ const getFontFaceContent = (rules) => {
 };
 
 const stringifyData = (data) => {
-  return JSON.stringify(data, undefined, '  ');
+  return JSON.stringify(data, undefined, '  ').replace(VAR_STR_REGEX, '(function (theme) { return (theme || {})["$1"]})');
 };
