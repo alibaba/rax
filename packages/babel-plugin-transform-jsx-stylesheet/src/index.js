@@ -51,11 +51,10 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
 }
   `);
   const getStyleFunctionTemplete = (opt) => template(`
-  function ${GET_STYLE_FUNC_NAME}(classNameExpression, themr) {
+  function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
     var cache = ${STYLE_SHEET_NAME}.__cache || (${STYLE_SHEET_NAME}.__cache = {});
     var className = ${GET_CLS_NAME_FUNC_NAME}(classNameExpression);
     
-    var style = cache[className];
   
     ${opt.theme ? `
     var cacheKey = ${STYLE_SHEET_NAME}.__cacheKey || (${STYLE_SHEET_NAME}.__cacheKey = 0);
@@ -80,17 +79,17 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
       return styleObj;
     }
     `: ''}
+
+    var classNameArr = className.split(/\\s+/);
+    var style = cache[className];
     
     if (!style) {
-      var classNameArr = className.split(/\\s+/);
       style = {};
       if (classNameArr.length === 1) {
-        var name = classNameArr[0].trim();
-        style = ${opt.theme ? `getStyle(name)`: `${STYLE_SHEET_NAME}[classNameArr[0].trim()]`};
+        style = ${opt.theme ? `getStyle(classNameArr[0].trim())`: `${STYLE_SHEET_NAME}[classNameArr[0].trim()]`};
       } else {
         classNameArr.forEach(function(cls) {
-          var name = cls.trim();
-          style = ${opt.theme ? `Object.assign(style, getStyle(name))`: `Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()])`};
+          style = ${opt.theme ? `Object.assign(style, getStyle(cls.trim()))`: `Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()])`};
         });
       }
       cache[className] = style;
