@@ -54,13 +54,13 @@ export default {
     var result = value,
       resultNumber;
 
-    
+
     if (VAR_REGEX.test(value)) {
       // var(--test-var)
       result = value;
       return result;
     }
-  
+
 
     if (!Number.isNaN(Number(result))) {
       result = Number(result);
@@ -104,8 +104,6 @@ export default {
           Object.assign(style, particularResult);
         }
       }
-
-     
     });
 
     return style;

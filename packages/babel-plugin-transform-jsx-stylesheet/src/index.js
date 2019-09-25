@@ -78,7 +78,7 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
       }
       return styleObj;
     }
-    `: ''}
+    ` : ''}
 
     var classNameArr = className.split(/\\s+/);
     var style = cache[className];
@@ -86,10 +86,10 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
     if (!style) {
       style = {};
       if (classNameArr.length === 1) {
-        style = ${opt.theme ? `getStyle(classNameArr[0].trim())`: `${STYLE_SHEET_NAME}[classNameArr[0].trim()]`};
+        style = ${opt.theme ? 'getStyle(classNameArr[0].trim())' : `${STYLE_SHEET_NAME}[classNameArr[0].trim()]`};
       } else {
         classNameArr.forEach(function(cls) {
-          style = ${opt.theme ? `Object.assign(style, getStyle(cls.trim()))`: `Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()])`};
+          style = ${opt.theme ? 'Object.assign(style, getStyle(cls.trim()))' : `Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()])`};
         });
       }
       cache[className] = style;
@@ -123,7 +123,7 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
     }
 
     if (opts.theme) {
-      return [t.callExpression(t.identifier(GET_STYLE_FUNC_NAME), 
+      return [t.callExpression(t.identifier(GET_STYLE_FUNC_NAME),
         [
           template(`"${str}"`)().expression,
         ]
@@ -133,7 +133,6 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
         return template(`${STYLE_SHEET_NAME}["${className}"]`)().expression;
       });
     }
-   
   }
 
   function findLastImportIndex(body) {
