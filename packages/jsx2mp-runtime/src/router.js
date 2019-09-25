@@ -75,5 +75,8 @@ export function canGo() {
 function generateUrl(path) {
   const [pathname, query] = path.split('?');
   const miniappPath = __routerMap[pathname];
+  if (!miniappPath) {
+    throw new Error(`Path ${path} is not found`);
+  }
   return query ? `/${miniappPath}?${query}` : `/${miniappPath}`;
 }
