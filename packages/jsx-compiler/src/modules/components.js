@@ -111,13 +111,13 @@ module.exports = {
         } else if (t.isJSXMemberExpression(node.name)) { // <RecyclerView.Cell /> or <context.Provider>
           const { object, property } = node.name;
           if (t.isJSXIdentifier(object) && t.isJSXIdentifier(property)) {
-            if(property.name === 'Provider') { // context.Provider>
-              const valueAttribute = node.attributes.find(a => t.isJSXIdentifier(a.name) && a.name.name === 'value')
+            if (property.name === 'Provider') { // context.Provider>
+              const valueAttribute = node.attributes.find(a => t.isJSXIdentifier(a.name) && a.name.name === 'value');
               const contextInitValue = valueAttribute.value.expression;
               const contextItem = {
                 contextInitValue,
                 contextName: object.name
-              }
+              };
               if (!parsed.contextList) {
                 parsed.contextList = [contextItem];
               } else {

@@ -26,7 +26,7 @@ export default class Component {
     this.state = {};
     this.props = {};
 
-    this.__dependencies = {} // for context
+    this.__dependencies = {}; // for context
 
     this.__shouldUpdate = false;
     this._methods = {};
@@ -116,7 +116,6 @@ export default class Component {
     const contextProp = Provider.contextProp;
     let contextItem = this.__dependencies[contextProp];
     if (!contextItem) {
-
       const readEmitter = Provider.readEmitter;
       const contextEmitter = readEmitter();
       contextItem = {

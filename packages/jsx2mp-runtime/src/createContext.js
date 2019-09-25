@@ -17,15 +17,6 @@ export default function createContext(defaultValue) {
       emitter.value = passedVal;
       emitter.emit();
     }
-
-    // if (passedVal !== value) setValue(passedVal);
-
-    // useEffect(() => {
-    //   console.log('yes!', value);
-    //   emitter.emit();
-    // }, [value]);
-
-    // globalEmitter = emitter;
   }
 
   function readEmitter() {

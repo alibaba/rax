@@ -459,7 +459,7 @@ function addProviderIniter(contextList, renderFunctionPath) {
       const ProviderIniter = t.memberExpression(
         t.identifier(ctx.contextName),
         t.identifier('Provider')
-      )
+      );
       const fnBody = renderFunctionPath.node.body.body;
 
       fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
