@@ -2,19 +2,7 @@ const { join, relative, dirname } = require('path');
 const { existsSync, statSync } = require('fs-extra');
 const chalk = require('chalk');
 
-const WEEX_MODULE_REG = /^@weex(-module)?\//;
-
-function isNpmModule(value) {
-  return !(value[0] === '.' || value[0] === '/');
-}
-
-function isWeexModule(value) {
-  return WEEX_MODULE_REG.test(value);
-}
-
-function isRaxModule(value) {
-  return value === 'rax';
-}
+const { isNpmModule, isWeexModule, isRaxModule } = require('./utils/');
 
 const defaultOptions = {
   normalizeNpmFileName: (s) => s,

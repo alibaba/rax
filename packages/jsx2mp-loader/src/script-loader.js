@@ -4,6 +4,8 @@ const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const isMiniappComponent = require('./utils/isMiniappComponent');
+const { isNpmModule, removeExt } = require('./utils');
+
 
 const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
@@ -26,7 +28,7 @@ module.exports = function scriptLoader(content) {
   const outputPath = this._compiler.outputPath;
   const relativeResourcePath = relative(rootContext, this.resourcePath);
 
-  const isNodeModule = cached(function isNodeModule(path) {
+  const isFromNodeModule = cached(function isFromNodeModule(path) {
     return path.indexOf(rootNodeModulePath) === 0;
   });
 
@@ -35,7 +37,7 @@ module.exports = function scriptLoader(content) {
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
-  if (isNodeModule(this.resourcePath)) {
+  if (isFromNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmFolderName = getNpmFolderName(relativeNpmPath);
     const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
@@ -64,7 +66,7 @@ module.exports = function scriptLoader(content) {
           for (let key in componentConfig.usingComponents) {
             if (componentConfig.usingComponents.hasOwnProperty(key)) {
               const componentPath = componentConfig.usingComponents[key];
-              if (componentPath[0] !== '.' && componentPath !== '/') {
+              if (isNpmModule(componentPath)) {
                 // component from node module
                 const realComponentPath = require.resolve(componentPath, {
                   paths: [this.resourcePath]
@@ -72,7 +74,7 @@ module.exports = function scriptLoader(content) {
                 const originalComponentConfigPath = join(sourcePackagePath, pkg.miniappConfig.main);
                 const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
 
-                componentConfig.usingComponents[key] = removeSuffix(relativeComponentPath);
+                componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
               }
             }
           }
@@ -198,9 +200,4 @@ function getNearestNodeModulesPath(root, current) {
     index = join(index, relativePathArray.shift());
   }
   return result;
-}
-
-function removeSuffix(filePath) {
-  const lastDot = filePath.lastIndexOf('.');
-  return filePath.slice(0, lastDot);
 }
