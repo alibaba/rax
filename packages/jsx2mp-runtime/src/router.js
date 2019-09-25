@@ -29,14 +29,14 @@ export function withRouter(Klass) {
  * Navigate to given path.
  */
 export function push(path) {
-  return navigateTo({ url: `/${__routerMap[path]}` });
+  return navigateTo({ url: generateUrl(path) });
 }
 
 /**
  * Navigate replace.
  */
 export function replace(path) {
-  return redirectTo({ url: `/${__routerMap[path]}` });
+  return redirectTo({ url: generateUrl(path) });
 }
 
 /**
@@ -66,4 +66,14 @@ export function goForward() {
  */
 export function canGo() {
   return true;
+}
+
+/**
+ * Generate MiniApp url
+ * @param {String} path
+ */
+function generateUrl(path) {
+  const [pathname, query] = path.split('?');
+  const miniappPath = __routerMap[pathname];
+  return query ? `/${miniappPath}?${query}` : `/${miniappPath}`
 }
