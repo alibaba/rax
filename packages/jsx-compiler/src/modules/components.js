@@ -10,6 +10,7 @@ const Expression = require('../utils/Expression');
 const baseComponents = require('../baseComponents');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
+const PKG_NAME_REG = /^.*\/node_modules\/([^\/]*).*$/;
 let tagCount = 0;
 
 /**
@@ -170,6 +171,12 @@ function getComponentConfig(pkgName, resourcePath) {
   return readJSONSync(pkgPath);
 }
 
+// for tnpm, the package name will be like _rax-image@1.1.2@rax-image
+function getRealNpmPkgName(filePath) {
+  const result = PKG_NAME_REG.exec(filePath);
+  return result && result[1].replace(/@/g, '_');
+}
+
 function getComponentPath(alias, options) {
   if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
     // alias.local
@@ -181,13 +188,15 @@ function getComponentPath(alias, options) {
       || moduleResolve(options.resourcePath, alias.from, '.js');
     return filename;
   } else {
+    const realNpmFile = require.resolve(alias.from, { paths: [options.resourcePath] });
+    const pkgName = getRealNpmPkgName(realNpmFile);
     // npm module
     const pkg = getComponentConfig(alias.from, options.resourcePath);
     if (pkg.miniappConfig && pkg.miniappConfig.main) {
       const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
       let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
       npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
-      return './' + join(npmRelativePath, alias.from, pkg.miniappConfig.main);
+      return './' + join(npmRelativePath, pkgName, pkg.miniappConfig.main);
     } else {
       console.warn('Can not found compatible rax miniapp component "' + pkg.name + '".');
     }

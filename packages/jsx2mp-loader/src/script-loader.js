@@ -4,6 +4,9 @@ const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const isMiniappComponent = require('./utils/isMiniappComponent');
+const { removeExt } = require('./utils/pathHelper');
+const { isNpmModule } = require('./utils/judgeModule');
+
 
 const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
@@ -26,7 +29,7 @@ module.exports = function scriptLoader(content) {
   const outputPath = this._compiler.outputPath;
   const relativeResourcePath = relative(rootContext, this.resourcePath);
 
-  const isNodeModule = cached(function isNodeModule(path) {
+  const isFromNodeModule = cached(function isFromNodeModule(path) {
     return path.indexOf(rootNodeModulePath) === 0;
   });
 
@@ -35,7 +38,7 @@ module.exports = function scriptLoader(content) {
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
-  if (isNodeModule(this.resourcePath)) {
+  if (isFromNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmFolderName = getNpmFolderName(relativeNpmPath);
     const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
@@ -63,7 +66,17 @@ module.exports = function scriptLoader(content) {
         if (componentConfig.usingComponents) {
           for (let key in componentConfig.usingComponents) {
             if (componentConfig.usingComponents.hasOwnProperty(key)) {
-              componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
+              const componentPath = componentConfig.usingComponents[key];
+              if (isNpmModule(componentPath)) {
+                // component from node module
+                const realComponentPath = require.resolve(componentPath, {
+                  paths: [this.resourcePath]
+                });
+                const originalComponentConfigPath = join(sourcePackagePath, pkg.miniappConfig.main);
+                const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
+
+                componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
+              }
             }
           }
         }
