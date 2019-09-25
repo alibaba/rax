@@ -4,7 +4,8 @@ const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const isMiniappComponent = require('./utils/isMiniappComponent');
-const { isNpmModule, removeExt } = require('./utils');
+const { removeExt } = require('./utils/pathHelper');
+const { isNpmModule } = require('./utils/judgeModule');
 
 
 const AppLoader = require.resolve('./app-loader');

@@ -3,7 +3,7 @@ const { relative, join, dirname, resolve } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const moduleResolve = require('./utils/moduleResolve');
-const { removeExt } = require('./utils');
+const { removeExt } = require('./utils/pathHelper');
 const defaultStyle = require('./defaultStyle');
 
 

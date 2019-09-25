@@ -1,11 +1,4 @@
-const { extname } = require('path');
-
 const WEEX_MODULE_REG = /^@weex(-module)?\//;
-
-function removeExt(path) {
-  const ext = extname(path);
-  return path.slice(0, path.length - ext.length);
-}
 
 function isNpmModule(value) {
   return !(value[0] === '.' || value[0] === '/');
@@ -20,7 +13,6 @@ function isRaxModule(value) {
 }
 
 module.exports = {
-  removeExt,
   isNpmModule,
   isWeexModule,
   isRaxModule

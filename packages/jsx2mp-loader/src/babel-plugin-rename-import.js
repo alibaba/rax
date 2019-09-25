@@ -2,7 +2,7 @@ const { join, relative, dirname } = require('path');
 const { existsSync, statSync } = require('fs-extra');
 const chalk = require('chalk');
 
-const { isNpmModule, isWeexModule, isRaxModule } = require('./utils/');
+const { isNpmModule, isWeexModule, isRaxModule } = require('./utils/judgeModule');
 
 const defaultOptions = {
   normalizeNpmFileName: (s) => s,

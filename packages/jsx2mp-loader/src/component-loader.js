@@ -3,6 +3,9 @@ const { relative, join, dirname, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
+const { removeExt } = require('./utils/pathHelper');
+
+
 const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
@@ -116,7 +119,3 @@ function createImportStatement(req) {
   return `import '${req}';`;
 }
 
-function removeExt(path) {
-  const ext = extname(path);
-  return path.slice(0, path.length - ext.length);
-}
