@@ -91,6 +91,27 @@ const parse = (parsedQuery, stylesheet) => {
   };
 };
 
+const processThemeVarContent = `
+  function walk(obj) {
+    if (typeof obj === 'object' && typeof obj !== 'null') {
+      for (var key in obj) {
+        var origin = obj[key];
+        if (typeof origin === 'function') {
+          Object.defineProperty(obj, key, {
+            get: function() {
+              return origin(((require('rax-theme-helper').get() || {}).theme || {}));
+            },
+            configurable: true,
+            enumerable: true,
+          });
+        } else {
+          walk(origin);
+        }
+      }
+    }
+  }
+  walk(_styles)`;
+
 const genStyleContent = (parsedData, parsedQuery) => {
   const {styles, fontFaceRules, mediaRules} = parsedData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
@@ -103,7 +124,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
-
+  ${parsedQuery.theme ? processThemeVarContent : ''}
   module.exports = _styles;
   `;
 };

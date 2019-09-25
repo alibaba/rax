@@ -68,16 +68,6 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
       ${STYLE_SHEET_NAME}.__cacheKey = cacheKeyTheme;
     }
   
-    var themeStyles = theme.styles || {};
-    var themeVars = theme.theme;
-
-    function getStyle(name) {
-      var styleObj = Object.assign({}, ${STYLE_SHEET_NAME}[name], themeStyles[name]);
-      for (var key in styleObj) {
-        styleObj[key] = typeof styleObj[key] === "function" ? styleObj[key](themeVars): styleObj[key];
-      }
-      return styleObj;
-    }
     ` : ''}
 
     var classNameArr = className.split(/\\s+/);
@@ -86,10 +76,10 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
     if (!style) {
       style = {};
       if (classNameArr.length === 1) {
-        style = ${opt.theme ? 'getStyle(classNameArr[0].trim())' : `${STYLE_SHEET_NAME}[classNameArr[0].trim()]`};
+        style = ${STYLE_SHEET_NAME}[classNameArr[0].trim()];
       } else {
         classNameArr.forEach(function(cls) {
-          style = ${opt.theme ? 'Object.assign(style, getStyle(cls.trim()))' : `Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()])`};
+          style = Object.assign(style, ${STYLE_SHEET_NAME}[cls.trim()]);
         });
       }
       cache[className] = style;
@@ -122,17 +112,10 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
       str = (value.expression ? value.expression.value : value.value).trim();
     }
 
-    if (opts.theme) {
-      return [t.callExpression(t.identifier(GET_STYLE_FUNC_NAME),
-        [
-          template(`"${str}"`)().expression,
-        ]
-      )];
-    } else {
-      return str === '' ? [] : str.split(/\s+/).map((className) => {
-        return template(`${STYLE_SHEET_NAME}["${className}"]`)().expression;
-      });
-    }
+
+    return str === '' ? [] : str.split(/\s+/).map((className) => {
+      return template(`${STYLE_SHEET_NAME}["${className}"]`)().expression;
+    });
   }
 
   function findLastImportIndex(body) {
@@ -224,13 +207,6 @@ function ${GET_CLS_NAME_FUNC_NAME}() {
               // Remove origin className
               attributes.splice(attributes.indexOf(classNameAttribute), 1);
             }
-          }
-
-          if (
-            opts.theme &&
-            classNameAttribute.value
-          ) {
-            file.set('injectGetStyle', true);
           }
 
           if (

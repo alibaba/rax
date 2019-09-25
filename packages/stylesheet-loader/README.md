@@ -171,3 +171,42 @@ We followed the [css-layout](https://github.com/facebook/yoga) style standard. T
   <img alt="stylesheet validation" src="https://gw.alicdn.com/tfs/TB1EHgXPXXXXXc3XVXXXXXXXXXX-1324-208.png" width="400">
 </p>
 
+
+## Theme support
+
+### Global Theme
+
+#### install
+
+```shell
+npm install rax-theme-helper
+```
+
+And enable option `{ theme: true }` for `babel-plugin-transform-jsx-stylesheet` and `stylesheet-loader`
+
+#### Usage
+
+You can write `var()` in CSS
+
+```css
+.text {
+  color: var(--color-error-1);
+}
+```
+
+Then change this variable at runtime
+
+```js
+import themeHelper from 'rax-theme-helper';
+const origin = themeHelper.get();
+themeHelper.set({
+  ...origin,
+  theme: {
+    ...origin.theme,
+    '--color-error-1': 'red'
+  }
+})
+```
+
+There is a default list for default theme variable: https://cdn.jsdelivr.net/npm/@rax-ui/core@1.0.0-beta.3/lib/index.d.ts
+
