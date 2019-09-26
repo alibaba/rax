@@ -51,7 +51,7 @@ describe('renderToString', () => {
       }
 
       let str = renderToString(<MyComponent />);
-      expect(str).toBe(42);
+      expect(str).toBe('42');
     });
 
     it('an array with one child', () => {
@@ -60,7 +60,7 @@ describe('renderToString', () => {
       }
 
       let str = renderToString(<MyComponent />);
-      expect(str).toBe(42);
+      expect(str).toBe('<div>text1</div>');
     });
 
     it('an array with several children', () => {
@@ -81,7 +81,7 @@ describe('renderToString', () => {
       }
 
       let str = renderToString(<MyComponent />);
-      expect(str).toBe(42);
+      expect(str).toBe('<div>text1</div><span>text2</span><p>header</p><h2>footer</h2><h3>about</h3>');
     });
 
     it('a nested array', () => {
@@ -94,7 +94,7 @@ describe('renderToString', () => {
       }
 
       let str = renderToString(<MyComponent />);
-      expect(str).toBe(42);
+      expect(str).toBe('<div>text1</div><span>text2</span><!-- _ --><p></p><!-- _ -->');
     });
 
     it('an iterable', () => {
@@ -102,13 +102,13 @@ describe('renderToString', () => {
     });
 
     it('emptyish value', () => {
-      expect(renderToString(0)).toBe(0);
+      expect(renderToString(0)).toBe('0');
       expect(renderToString(<div>{''}</div>)).toBe('<div></div>');
-      expect(renderToString([])).toBe(null);
-      expect(renderToString(false)).toBe(null);
-      expect(renderToString(true)).toBe(null);
-      expect(renderToString(undefined)).toBe(null);
-      expect(renderToString([[[false]], undefined])).toBe(null);
+      expect(renderToString([])).toBe('');
+      expect(renderToString(false)).toBe('<!-- _ -->');
+      expect(renderToString(true)).toBe('<!-- _ -->');
+      expect(renderToString(undefined)).toBe('<!-- _ -->');
+      expect(renderToString([[[false]], undefined])).toBe('<!-- _ --><!-- _ -->');
     });
   });
 });
