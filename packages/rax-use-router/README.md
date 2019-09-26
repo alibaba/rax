@@ -9,10 +9,11 @@ npm i rax-use-router --save
 ## Example
 
 Use `useRouter` to config routing rules, each route map to a component.
+All route props (location and history) are available to User.
 
 ```jsx
 import { createElement, Fragment } from 'rax';
-import { useRouter, push } from 'rax-use-router';
+import { useRouter } from 'rax-use-router';
 import { createHashHistory } from 'history';
 import Foo from './Foo';
 import NotFound from './NotFound';
@@ -25,8 +26,7 @@ const config = () => {
       {
         path: '',
         component: <>
-          <button onClick={() => push('/home')}>go home</button>
-          <button onClick={() => push('/404')}>go 404</button>
+          <h1>Hello</h1>
         </>,
       },
       {
@@ -35,19 +35,27 @@ const config = () => {
           // Dynamic Component 
           {
             path: '',                  // www.example.com/home
-            component: () => <>
-              <button onClick={() => push('/foo')}>go foo</button>
-              <button onClick={() => push('/bar')}>go bar</button>
-              <button onClick={() => push('/home/jack')}>go jack</button>
-            </>,
+            component: (props) => {
+              return (
+                <>
+                  <button onClick={() => props.history.push('/foo')}>go foo</button>
+                  <button onClick={() => props.history.push('/bar')}>go bar</button>
+                  <button onClick={() => props.history.push('/home/jack')}>go jack</button>
+                </>
+              )
+            },
           },
           // URL Parameters
-          {
+           {
             path: '/:username',        // www.example.com/home/xxx
-            component: (params) => <>
-              <p>{params.username}</p>
-              <button onClick={ () => push('/home') }>Go home</button>
-            </>
+            component: (props) => {
+              return (
+                <>
+                  <p>{props.username}</p>
+                  <button onClick={() => props.history.push('/home')}>Go home</button>
+                </>
+              )
+            }
           }
         ]
       },
@@ -87,64 +95,37 @@ export default function Example() {
 ```jsx
 // Foo.jsx
 import { createElement } from 'rax';
-import { push } from 'rax-use-router';
+import { withRouter } from 'rax-use-router';
 
-export default function Foo() {
-  return <button onClick={ () => push('/home') }>Go home</button>
+function Foo(props) {
+  return <button onClick={ () => props.history.push('/home') }>Go home</button>
 }
+export default withRouter(Foo);
 ```
 
 ```jsx
 // Bar.jsx
 import { createElement } from 'rax';
-import { push } from 'rax-use-router';
+import { withRouter } from 'rax-use-router';
 
-export default function Bar() {
-  return <button onClick={ () => push('/home') }>Go home</button>
+function Bar(props) {
+  return <button onClick={ () => props.history.push('/home') }>Go home</button>
 }
+export default withRouter(Bar);
 ```
 
 ```jsx
 // NotFound.jsx
 import { createElement } from 'rax';
-import { replace } from 'rax-use-router';
+import { withRouter } from 'rax-use-router';
 
-export default function NotFound() {
-  return <button onClick={ () => replace('/home') }>Go home</button>
+function NotFound(props) {
+  return <button onClick={ () => props.history.replace('/home') }>Go home</button>
 }
+export default withRouter(NotFound);
 ```
 
 ## API Reference
-
-### push()
-```jsx
-<button onClick={ () => push('/foo?the=query') }>Go foo</button>
-```
-
-```jsx
-<button onClick={ () => push({
-  pathname: '/foo',
-  search: '?the=query',
-}) }>Go foo</button>
-```
-
-### replace()
-```jsx
-<button onClick={ () => replace('/foo?the=query') }>Go foo</button>
-```
-
-```jsx
-<button onClick={ () => replace({
-  pathname: '/foo',
-  search: '?the=query',
-}) }>Go foo</button>
-```
-
-### go()
-```jsx
-<button onClick={ () => go(-1) }>Go back</button>
-<button onClick={ () => go(1) }>Go forward</button>
-```
 
 ### useRouter({ history, routes })
 
@@ -184,11 +165,15 @@ A component to render when the location matches.
 
 ```jsx
 {
-  path: '/:username',
-  component: (params) => <>
-    <p>{params.username}</p>
-    <button onClick={ () => push('/home') }>Go home</button>
-  </>
+  path: '/:username',        // www.example.com/home/xxx
+  component: (props) => {
+    return (
+      <>
+        <p>{props.username}</p>
+        <button onClick={() => props.history.push('/home')}>Go home</button>
+      </>
+    )
+  }
 }
 ```
 
@@ -262,3 +247,37 @@ Default `false`, when `true`, will match if the path is **case sensitive**.
 | `/foo` | `/Foo`            | `false`   | yes      |
 | `/Foo` | `/foo`            | `true`    | no       |
 | `/foo` | `/Foo`            | `true`    | no       |
+
+### withRouter(Componet)
+withRouter will pass updated location, and history props to the wrapped component whenever it renders.
+```jsx
+// Foo.jsx
+import { createElement } from 'rax';
+import { withRouter } from 'rax-use-router';
+
+function Foo(props) {
+  const {history, location} = props;
+  return <button onClick={ () => history.push('/home') }>{location.pathname}</button>
+}
+export default withRouter(Foo);
+```
+
+#### history
+
+Each `history` object has the following properties:
+
+- `history.length` - The number of entries in the history stack.
+- `history.location` - The current location (see below).
+- `history.action` - The current navigation action, such as push, replace, go and so on.
+
+For more information, see [history](https://www.npmjs.com/package/history)
+
+#### location 
+
+The `location` object implements a subset of [the `window.location` interface](https://developer.mozilla.org/en-US/docs/Web/API/Location), including:
+
+- `location.pathname` - The path of the URL
+- `location.search` - The URL query string
+- `location.hash` - The URL hash fragment
+
+For more information, see [history](https://www.npmjs.com/package/history)

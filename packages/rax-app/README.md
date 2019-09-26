@@ -10,6 +10,7 @@ runApp(appConfig);
 
 ## API
 * runApp(appConfig)
+* withRouter(Component)
 * useAppLaunch(callback)
 * usePageShow(callback)
 * usePageHide(callback)
