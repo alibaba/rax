@@ -10,7 +10,7 @@ const FONT_FACE_RULE = 'font-face';
 const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
 
-const VAR_STR_REGEX = /"var\(\-\-(.*)\)"/g;
+const VAR_REG = /^var\(\-\-(.*)\)$/;
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
@@ -91,26 +91,45 @@ const parse = (parsedQuery, stylesheet) => {
   };
 };
 
-const processThemeVarContent = `
-  function walk(obj) {
+const genProcessThemeVar = (styles) => {
+  const classNameKeyVarname = [];
+  function walk(obj, classname) {
+    // {title : {color: var(--name)}}
+    // title => classname
+    // ['title', 'color', 'name'] push => classNameKeyVarname
     if (typeof obj === 'object' && typeof obj !== 'null') {
       for (var key in obj) {
         var origin = obj[key];
-        if (typeof origin === 'function') {
-          Object.defineProperty(obj, key, {
-            get: function() {
-              return origin(((require('rax-theme-helper').get() || {}).theme || {}));
-            },
-            configurable: true,
-            enumerable: true,
-          });
+        if (VAR_REG.test(origin)) {
+          var varname = VAR_REG.exec(origin)[1];
+          classNameKeyVarname.push([classname, key, varname]);
         } else {
-          walk(origin);
+          walk(origin, key);
         }
       }
     }
   }
-  walk(_styles)`;
+  walk(styles)
+  return `
+  var _ckv = ${JSON.stringify(classNameKeyVarname, undefined, '  ')};
+  function defineCKV(classname, key, varname) {
+    
+    Object.defineProperty(_styles[classname], key, {
+      get: function() {
+        var r = ((require('rax-theme-helper').get() || {}).theme || {})[varname];
+        return r;
+      },
+      configurable: true,
+      enumerable: true,
+    });
+  }
+  for (var i in _ckv) {
+    var item = _ckv[i];
+    defineCKV(item[0], item[1], item[2]);
+  }
+  `;
+}
+
 
 const genStyleContent = (parsedData, parsedQuery) => {
   const {styles, fontFaceRules, mediaRules} = parsedData;
@@ -124,7 +143,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
-  ${parsedQuery.theme ? processThemeVarContent : ''}
+  ${parsedQuery.theme ? genProcessThemeVar(styles) : ''}
   module.exports = _styles;
   `;
 };
@@ -194,5 +213,5 @@ const getFontFaceContent = (rules) => {
 };
 
 const stringifyData = (data) => {
-  return JSON.stringify(data, undefined, '  ').replace(VAR_STR_REGEX, '(function (theme) { return (theme || {})["$1"]})');
+  return JSON.stringify(data, undefined, '  ');
 };
