@@ -1,6 +1,7 @@
+let count = 0;
 export default class ValueEmitter {
   constructor(defaultValue) {
-    this.id = Math.random();
+    this.id = count++;
     this.handlers = [];
     this.value = defaultValue;
   }
