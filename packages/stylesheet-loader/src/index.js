@@ -109,7 +109,7 @@ const genProcessThemeVar = (styles) => {
       }
     }
   }
-  walk(styles)
+  walk(styles);
   return `
   var _ckv = ${JSON.stringify(classNameKeyVarname, undefined, '  ')};
   function defineCKV(classname, key, varname) {
@@ -128,7 +128,7 @@ const genProcessThemeVar = (styles) => {
     defineCKV(item[0], item[1], item[2]);
   }
   `;
-}
+};
 
 
 const genStyleContent = (parsedData, parsedQuery) => {
