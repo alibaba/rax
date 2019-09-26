@@ -10,7 +10,7 @@ const FONT_FACE_RULE = 'font-face';
 const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
 
-const VAR_REG = /^var\(\-\-(.*)\)$/;
+const VAR_KEY_VAL_REG = /"(.*?)"\s*:\s*"var\(\-\-(.*)\)"/g;
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
@@ -91,46 +91,6 @@ const parse = (parsedQuery, stylesheet) => {
   };
 };
 
-const genProcessThemeVar = (styles) => {
-  const classNameKeyVarname = [];
-  function walk(obj, classname) {
-    // {title : {color: var(--name)}}
-    // title => classname
-    // ['title', 'color', 'name'] push => classNameKeyVarname
-    if (typeof obj === 'object' && typeof obj !== 'null') {
-      for (var key in obj) {
-        var origin = obj[key];
-        if (VAR_REG.test(origin)) {
-          var varname = VAR_REG.exec(origin)[1];
-          classNameKeyVarname.push([classname, key, varname]);
-        } else {
-          walk(origin, key);
-        }
-      }
-    }
-  }
-  walk(styles);
-  return `
-  var _ckv = ${JSON.stringify(classNameKeyVarname, undefined, '  ')};
-  function defineCKV(classname, key, varname) {
-    
-    Object.defineProperty(_styles[classname], key, {
-      get: function() {
-        var r = ((require('rax-theme-helper').get() || {}).theme || {})[varname];
-        return r;
-      },
-      configurable: true,
-      enumerable: true,
-    });
-  }
-  for (var i in _ckv) {
-    var item = _ckv[i];
-    defineCKV(item[0], item[1], item[2]);
-  }
-  `;
-};
-
-
 const genStyleContent = (parsedData, parsedQuery) => {
   const {styles, fontFaceRules, mediaRules} = parsedData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
@@ -139,11 +99,11 @@ const genStyleContent = (parsedData, parsedQuery) => {
 
   resetMessage();
 
-  return `var _styles = ${stringifyData(styles)};
+  return `var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
-  ${parsedQuery.theme ? genProcessThemeVar(styles) : ''}
+
   module.exports = _styles;
   `;
 };
@@ -212,6 +172,7 @@ const getFontFaceContent = (rules) => {
   return content;
 };
 
-const stringifyData = (data) => {
-  return JSON.stringify(data, undefined, '  ');
+const stringifyData = (data, theme) => {
+  const str = JSON.stringify(data, undefined, '  ')
+  return !theme ? str: str.replace(VAR_KEY_VAL_REG, 'get $1(){return ((require("rax-theme-helper").get() || {}).theme || {})["$2"]}');
 };
