@@ -3,6 +3,10 @@ const { copySync, lstatSync, existsSync, mkdirpSync, writeJSONSync, writeFileSyn
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
+const isMiniappComponent = require('./utils/isMiniappComponent');
+const { removeExt } = require('./utils/pathHelper');
+const { isNpmModule } = require('./utils/judgeModule');
+
 
 const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
@@ -25,7 +29,7 @@ module.exports = function scriptLoader(content) {
   const outputPath = this._compiler.outputPath;
   const relativeResourcePath = relative(rootContext, this.resourcePath);
 
-  const isNodeModule = cached(function isNodeModule(path) {
+  const isFromNodeModule = cached(function isFromNodeModule(path) {
     return path.indexOf(rootNodeModulePath) === 0;
   });
 
@@ -34,7 +38,7 @@ module.exports = function scriptLoader(content) {
     return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
   });
 
-  if (isNodeModule(this.resourcePath)) {
+  if (isFromNodeModule(this.resourcePath)) {
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmFolderName = getNpmFolderName(relativeNpmPath);
     const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
@@ -44,7 +48,8 @@ module.exports = function scriptLoader(content) {
     const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
 
     // Is miniapp compatible component.
-    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main) {
+    // except those old universal api with pkg.miniappConfig
+    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main && isMiniappComponent(join(sourcePackagePath, pkg.miniappConfig.main))) {
       // Only copy first level directory for miniapp component
       const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
       const source = join(sourcePackagePath, firstLevelFolder);
@@ -61,7 +66,17 @@ module.exports = function scriptLoader(content) {
         if (componentConfig.usingComponents) {
           for (let key in componentConfig.usingComponents) {
             if (componentConfig.usingComponents.hasOwnProperty(key)) {
-              componentConfig.usingComponents[key] = join('/npm', componentConfig.usingComponents[key]);
+              const componentPath = componentConfig.usingComponents[key];
+              if (isNpmModule(componentPath)) {
+                // component from node module
+                const realComponentPath = require.resolve(componentPath, {
+                  paths: [this.resourcePath]
+                });
+                const originalComponentConfigPath = join(sourcePackagePath, pkg.miniappConfig.main);
+                const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
+
+                componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
+              }
             }
           }
         }

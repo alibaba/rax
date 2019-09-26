@@ -7,20 +7,17 @@ const {
 const {
   existsSync,
   statSync,
-  readFileSync
 } = require('fs-extra');
+
+const { removeExt } = require('./pathHelper');
 
 function startsWith(prevString, nextString) {
   return prevString.indexOf(nextString) === 0;
 }
-function removeExtension(filePath) {
-  const index = filePath.lastIndexOf('.');
-  return filePath.substr(0, index);
-}
 
 function loadAsFile(module, extensions) {
   if (existsSync(module) && statSync(module).isFile()) {
-    return removeExtension(module);
+    return removeExt(module);
   }
   for (let e of extensions) {
     if (existsSync(module + e) && statSync(module + e).isFile()) {
