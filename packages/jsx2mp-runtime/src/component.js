@@ -6,6 +6,7 @@ import Host from './host';
 import {updateChildProps, removeComponentProps} from './updater';
 import {enqueueRender} from './enqueueRender';
 import isFunction from './isFunction';
+import sameValue from './sameValue';
 import {
   RENDER,
   ON_SHOW,
@@ -124,7 +125,7 @@ export default class Component {
       };
 
       const contextUpdater = (newContext) => {
-        if (!Object.is(newContext, contextItem.renderedContext)) {
+        if (!sameValue(newContext, contextItem.renderedContext)) {
           this.__shouldUpdate = true;
           this._updateComponent();
         }
