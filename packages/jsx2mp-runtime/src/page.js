@@ -1,20 +1,30 @@
 import isFunction from './isFunction';
 
+const SHOW = 'show';
+const HIDE = 'hide';
+
 export const cycles = {
-  show: [],
-  hide: [],
+  [SHOW]: [],
+  [HIDE]: [],
 };
 
-// TODO: get current rendering page.
 export function usePageEffect(cycle, callback) {
   switch (cycle) {
-    case 'show':
-    case 'hide':
+    case SHOW:
+    case HIDE:
       if (isFunction(callback)) {
         cycles[cycle].push(callback);
       }
       break;
     default:
-      throw new Error('Unsupported cycle name ' + cycle);
+      throw new Error('Unsupported page cycle ' + cycle);
   }
+}
+
+export function usePageShow(callback) {
+  return usePageEffect(SHOW, callback);
+}
+
+export function usePageHide(callback) {
+  return usePageEffect(HIDE, callback);
 }

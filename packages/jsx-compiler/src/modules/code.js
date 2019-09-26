@@ -8,17 +8,14 @@ const traverse = require('../utils/traverseNodePath');
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
 
-const CREATE_APP = 'createApp';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
 const CREATE_STYLE = 'createStyle';
 
 const SAFE_SUPER_COMPONENT = '__component__';
-const SAFE_CREATE_APP = '__create_app__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
-const SAFE_ROUTER_MAP = '__router_map__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
@@ -26,12 +23,7 @@ const USE_STATE = 'useState';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
-/**
- * match universal-app package
- */
-const isCoreModule = (mod) => /^@core\//.test(mod);
-const isUniversalAppRuntime = (mod) => /^universal\-app\-runtime/.test(mod);
-
+const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
 function getConstructor(type) {
@@ -52,23 +44,14 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
-    if (!defaultExportedPath || !defaultExportedPath.node) return; // Can not found default export.
+    if (options.type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
+      // Can not found default export, otherwise app.js is excluded.
+      return;
+    }
     let userDefineType;
 
     if (options.type === 'app') {
       userDefineType = 'function';
-      const { id, generator, async, params, body } = defaultExportedPath.node;
-      const replacer = getReplacer(defaultExportedPath);
-      if (replacer) {
-        replacer.replaceWith(
-          t.variableDeclaration('const', [
-            t.variableDeclarator(
-              t.identifier(EXPORTED_DEF),
-              t.functionExpression(id, params, body, generator, async)
-            )
-          ])
-        );
-      }
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
       const { id, generator, async, body, params } = defaultExportedPath.node;
@@ -108,12 +91,16 @@ module.exports = {
     removeRaxImports(parsed.ast);
     renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
     renameFileModule(parsed.ast);
+    renameAppConfig(parsed.ast, options.sourcePath, options.resourcePath);
 
     const currentNodeModulePath = join(options.sourcePath, 'npm');
     const npmRelativePath = relative(dirname(options.resourcePath), currentNodeModulePath);
     renameNpmModules(parsed.ast, npmRelativePath, options.resourcePath, options.cwd);
 
-    addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    if (options.type !== 'app') {
+      addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    }
+
     removeDefaultImports(parsed.ast);
 
     /**
@@ -186,7 +173,7 @@ function renameCoreModule(ast, outputPath, targetFileDir) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
-      if (source.isStringLiteral() && (isCoreModule(source.node.value) || isUniversalAppRuntime(source.node.value))) {
+      if (source.isStringLiteral() && isAppRuntime(source.node.value)) {
         let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
         runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
         source.replaceWith(t.stringLiteral(runtimeRelativePath));
@@ -207,6 +194,29 @@ function renameFileModule(ast) {
             t.stringLiteral(source.node.value)
           )
         ]));
+      }
+    }
+  });
+}
+
+/**
+ * Rename app.json to app.raw.json, for prev is compiled to adapte miniapp.
+ * eg:
+ *   import appConfig from './app.json' => import appConfig from './app.raw.json'
+ * @param ast Babel AST.
+ * @param sourcePath Folder path to source.
+ * @param resourcePath Current handling file source path.
+ */
+function renameAppConfig(ast, sourcePath, resourcePath) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral()) {
+        const appConfigSourcePath = join(resourcePath, '..', source.node.value);
+        if (appConfigSourcePath === join(sourcePath, 'app.json')) {
+          const replacement = source.node.value.replace(/app\.json/, 'app.raw.json');
+          source.replaceWith(t.stringLiteral(replacement));
+        }
       }
     }
   });
@@ -269,10 +279,6 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
-    case 'app':
-      safeCreateInstanceId = SAFE_CREATE_APP;
-      importedIdentifier = CREATE_APP;
-      break;
     case 'page':
       safeCreateInstanceId = SAFE_CREATE_PAGE;
       importedIdentifier = CREATE_PAGE;
@@ -288,18 +294,6 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
       const localIdentifier = t.identifier(safeCreateInstanceId);
       // Component(__create_component__(__class_def__));
       const args = [t.identifier(EXPORTED_DEF)];
-
-      // Insert routerMap import declaration
-      if (type === 'app') {
-        path.node.body.unshift(
-          t.importDeclaration(
-            [t.importDefaultSpecifier(t.identifier(SAFE_ROUTER_MAP))],
-            t.stringLiteral('./routerMap')
-          )
-        );
-        // App(__create_app__(__class_def__, __router_map__));
-        args.push(t.identifier(SAFE_ROUTER_MAP));
-      }
 
       // import { createComponent as __create_component__ } from "/__helpers/component";
       const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];

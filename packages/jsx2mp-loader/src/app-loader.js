@@ -1,5 +1,5 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
-const { relative, join, dirname, resolve } = require('path');
+const { join } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const moduleResolve = require('./utils/moduleResolve');
@@ -41,10 +41,6 @@ module.exports = function appLoader(content) {
   if (!existsSync(outputPath)) mkdirSync(outputPath);
 
   const sourcePath = join(this.rootContext, entryPath);
-  const relativeSourcePath = relative(sourcePath, this.resourcePath);
-  const targetFilePath = join(outputPath, relativeSourcePath);
-
-  const targetFileDir = dirname(join(outputPath, relative(sourcePath, this.resourcePath)));
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
@@ -59,11 +55,8 @@ module.exports = function appLoader(content) {
   const transformedAppConfig = transformAppConfig(entryPath, config);
   writeFileSync(join(outputPath, 'app.js'), transformed.code);
   writeJSONSync(join(outputPath, 'app.json'), transformedAppConfig, { spaces: 2 });
-  const routerMap = {};
-  config.routes.map(route => {
-    routerMap[route.path] = route.component;
-  });
-  writeFileSync(join(outputPath, 'routerMap.js'), `export default ${JSON.stringify(routerMap, null, 2)};`);
+  // Write app.raw.json for route information.
+  writeJSONSync(join(outputPath, 'app.raw.json'), config, { spaces: 2 });
 
   const appCssPath = join(outputPath, 'app.acss');
   const appCss = transformed.style ? defaultStyle + transformed.style : defaultStyle;
@@ -79,20 +72,23 @@ function transformAppConfig(entryPath, originalConfig) {
   const config = {};
   for (let key in originalConfig) {
     const value = originalConfig[key];
+
     switch (key) {
       case 'routes':
         const pages = [];
         if (Array.isArray(value)) {
-          // only resolve first level of routes.
-          value.forEach(({ path, component }) => {
-            pages.push(moduleResolve(entryPath, getRelativePath(component)));
+          // Only resolve first level of routes.
+          value.forEach(({ component, source }) => {
+            // Compatible with old version definition of `component`.
+            pages.push(moduleResolve(entryPath, getRelativePath(source || component)));
           });
         }
         config.pages = pages;
         break;
 
       default:
-        config[key] = value; break;
+        config[key] = value;
+        break;
     }
   }
 
