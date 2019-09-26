@@ -16,7 +16,7 @@ script:
   - npm run lint:nofix
   - npm run test
 
-jobs: 
+jobs:
   include:
     - stage: bench
       addons:
@@ -28,6 +28,21 @@ jobs:
       services:
         - xvfb
       script: npm run bench
+    - stage: npm release
+      if: tag IS present
+      node_js: "8"
+      script: npm run build
+      before_deploy:
+        - NPM_DEPLOY_TARGET=`node -e 'console.log((/deploy:\ ([a-z_-\d]+)/.exec(process.env.TRAVIS_COMMIT_MESSAGE)||[,""])[1])'`
+        - cd "packages/$NPM_DEPLOY_TARGET"
+      deploy:
+        provider: npm
+        email: "$NPM_EMAIL"
+        api_key: "$NPM_TOKEN"
+        skip_cleanup: true
+        on:
+          branch: chore-ci-test
+        tag: latest
 
 stages:
   - test # default stage
