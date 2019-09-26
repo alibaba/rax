@@ -1,17 +1,17 @@
 import DriverServer from 'driver-server';
 
-describe('router', () => {
-  function createNodeElement(tagName) {
-    return {
-      nodeType: 1,
-      tagName: tagName.toUpperCase(),
-      attributes: {},
-      style: {},
-      childNodes: [],
-      parentNode: null
-    };
-  }
+function createNodeElement(tagName) {
+  return {
+    nodeType: 1,
+    tagName: tagName.toUpperCase(),
+    attributes: {},
+    style: {},
+    childNodes: [],
+    parentNode: null
+  };
+}
 
+describe('router', () => {
   beforeEach(function() {
     jest.useFakeTimers();
   });
@@ -25,22 +25,24 @@ describe('router', () => {
     const { createElement, render, Fragment } = require('rax');
     const createMemoryHistory = require('history').createMemoryHistory;
 
-    const { useRouter, push } = require('../');
+    const { useRouter } = require('../');
     const container = createNodeElement('div');
+    const history = createMemoryHistory();
+
     const config = () => {
       return {
-        history: createMemoryHistory(),
+        history,
         routes: [
           {
             path: '/home',
             routes: [
               {
                 path: '',
-                component: () => <p>home</p>,
+                component: () => <p>home</p>
               },
               {
                 path: '/:username',
-                component: (params) => <p>{params.username}</p>
+                component: (props) => <p>{props.username}</p>
               }
             ]
           },
@@ -58,28 +60,30 @@ describe('router', () => {
     }
 
     render(<Example />, container, { driver: DriverServer });
-    push('/home');
+
+    history.push('/home');
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('home');
 
-    push('/foo');
+    history.push('/foo');
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('foo');
 
-    push('/home/jack');
+    history.push('/home/jack');
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('jack');
 
-    push('/foo');
+    history.push('/foo');
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('foo');
 
-    push('/home');
+    history.push('/home');
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('home');
 
-    push('/home/rose');
+    history.push('/home/rose');
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('rose');
   });
 });
+
