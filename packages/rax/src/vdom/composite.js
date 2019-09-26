@@ -59,7 +59,7 @@ if (process.env.NODE_ENV !== 'production') {
  * Composite Component
  */
 class CompositeComponent extends BaseComponent {
-  __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+  __mountComponent(parent, parentInstance, context, nativeNodeMounter, didMountWorks) {
     this.__initComponent(parent, parentInstance, context);
 
     if (process.env.NODE_ENV !== 'production') {
@@ -156,7 +156,8 @@ class CompositeComponent extends BaseComponent {
       this._parent,
       instance,
       this.__processChildContext(context),
-      nativeNodeMounter
+      nativeNodeMounter,
+      didMountWorks
     );
 
     if (error) {
@@ -168,15 +169,18 @@ class CompositeComponent extends BaseComponent {
     }
 
     if (instance.componentDidMount) {
-      performInSandbox(() => {
-        if (process.env.NODE_ENV !== 'production') {
-          measureLifeCycle(() => {
+      const didMount = () => {
+        performInSandbox(() => {
+          if (process.env.NODE_ENV !== 'production') {
+            measureLifeCycle(() => {
+              instance.componentDidMount();
+            }, this._mountID, 'componentDidMount');
+          } else {
             instance.componentDidMount();
-          }, this._mountID, 'componentDidMount');
-        } else {
-          instance.componentDidMount();
-        }
-      }, instance);
+          }
+        }, instance);
+      };
+      didMountWorks ? didMountWorks.push(didMount) : didMount();
     }
 
     // Trigger setState callback in componentWillMount or boundary callback after rendered
