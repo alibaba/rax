@@ -1,86 +1,158 @@
+import Host from './host';
+import { flushEffect, schedule } from './scheduler';
+import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
+import { INTERNAL, RENDERED_COMPONENT } from '../constant';
+
+// Dirty components store
+let dirtyComponents = [];
+
+function getPendingCallbacks(internal) {
+  return internal.__pendingCallbacks;
+}
+
+function setPendingCallbacks(internal, callbacks) {
+  return internal.__pendingCallbacks = callbacks;
+}
+
+function getPendingStateQueue(internal) {
+  return internal.__pendingStateQueue;
+}
+
+function setPendingStateQueue(internal, partialState) {
+  return internal.__pendingStateQueue = partialState;
+}
+
 function enqueueCallback(internal, callback) {
-  if (callback) {
-    let callbackQueue =
-      internal._pendingCallbacks ||
-      (internal._pendingCallbacks = []);
-    callbackQueue.push(callback);
-  }
+  let callbackQueue = getPendingCallbacks(internal) || setPendingCallbacks(internal, []);
+  callbackQueue.push(callback);
 }
 
 function enqueueState(internal, partialState) {
+  let stateQueue = getPendingStateQueue(internal) || setPendingStateQueue(internal, []);
+  stateQueue.push(partialState);
+}
+
+function runUpdate(component) {
+  let internal = component[INTERNAL];
+  if (!internal) {
+    return;
+  }
+
+  Host.__isUpdating = true;
+
+  // If updateComponent happens to enqueue any new updates, we
+  // shouldn't execute the callbacks until the next render happens, so
+  // stash the callbacks first
+  let callbacks = getPendingCallbacks(internal);
+  setPendingCallbacks(internal, null);
+
+  let prevElement = internal.__currentElement;
+  let prevUnmaskedContext = internal._context;
+  let nextUnmaskedContext = internal.__penddingContext || prevUnmaskedContext;
+  internal.__penddingContext = undefined;
+
+  if (getPendingStateQueue(internal) || internal.__isPendingForceUpdate) {
+    internal.__updateComponent(
+      prevElement,
+      prevElement,
+      prevUnmaskedContext,
+      nextUnmaskedContext
+    );
+  }
+
+  invokeFunctionsWithContext(callbacks, component);
+
+  Host.__isUpdating = false;
+}
+
+function mountOrderComparator(c1, c2) {
+  return c2[INTERNAL]._mountID - c1[INTERNAL]._mountID;
+}
+
+function performUpdate() {
+  if (Host.__isUpdating) {
+    return schedule(performUpdate);
+  }
+
+  let component;
+  let dirties = dirtyComponents;
+  if (dirties.length > 0) {
+    // Before next render, we will flush all the effects
+    flushEffect();
+    dirtyComponents = [];
+    // Since reconciling a component higher in the owner hierarchy usually (not
+    // always -- see shouldComponentUpdate()) will reconcile children, reconcile
+    // them before their children by sorting the array.
+    if (dirties.length > 1) {
+      dirties = dirties.sort(mountOrderComparator);
+    }
+
+    while (component = dirties.pop()) {
+      runUpdate(component);
+    }
+  }
+}
+
+function scheduleUpdate(component, shouldAsyncUpdate) {
+  if (dirtyComponents.indexOf(component) < 0) {
+    dirtyComponents.push(component);
+  }
+
+  if (shouldAsyncUpdate) {
+    // If have been scheduled before, don't not need schedule again
+    if (dirtyComponents.length > 1) {
+      return;
+    }
+    schedule(performUpdate);
+  } else {
+    performUpdate();
+  }
+}
+
+function requestUpdate(component, partialState, callback) {
+  let internal = component[INTERNAL];
+
+  if (!internal) {
+    return;
+  }
+
+  if (callback) {
+    enqueueCallback(internal, callback);
+  }
+
+  const hasComponentRendered = internal[RENDERED_COMPONENT];
+
+  // setState
   if (partialState) {
-    let stateQueue =
-      internal._pendingStateQueue ||
-      (internal._pendingStateQueue = []);
-    stateQueue.push(partialState);
+    enqueueState(internal, partialState);
+    // State pending when request update in componentWillMount and componentWillReceiveProps,
+    // isPendingState default is false value (false or null) and set to true after componentWillReceiveProps,
+    // _renderedComponent is null when componentWillMount exec.
+    if (!internal.__isPendingState && hasComponentRendered) {
+      scheduleUpdate(component, true);
+    }
+  } else {
+    // forceUpdate
+    internal.__isPendingForceUpdate = true;
+
+    if (hasComponentRendered) {
+      scheduleUpdate(component);
+    }
   }
 }
 
 const Updater = {
-  setState: function(component, partialState, callback) {
-    let internal = component._internal;
-
-    if (!internal) {
-      return;
+  setState(component, partialState, callback) {
+    // Flush all effects first before update state
+    if (!Host.__isUpdating) {
+      flushEffect();
     }
-
-    enqueueState(internal, partialState);
-    enqueueCallback(internal, callback);
-
-    // pending in componentWillReceiveProps and componentWillMount
-    if (!internal._pendingState && internal._renderedComponent) {
-      this.runUpdate(component);
-    }
+    requestUpdate(component, partialState, callback);
   },
-
-  forceUpdate: function(component, callback) {
-    let internal = component._internal;
-
-    if (!internal) {
-      return;
-    }
-
-    internal._pendingForceUpdate = true;
-
-    enqueueCallback(internal, callback);
-    // pending in componentWillMount
-    if (internal._renderedComponent) {
-      this.runUpdate(component);
-    }
+  forceUpdate(component, callback) {
+    requestUpdate(component, null, callback);
   },
-
-  runUpdate: function(component) {
-    let internal = component._internal;
-
-    // If updateComponent happens to enqueue any new updates, we
-    // shouldn't execute the callbacks until the next render happens, so
-    // stash the callbacks first
-    let callbacks = internal._pendingCallbacks;
-    internal._pendingCallbacks = null;
-
-    let prevElement = internal._currentElement;
-    let prevUnmaskedContext = internal._context;
-
-    if (internal._pendingStateQueue || internal._pendingForceUpdate) {
-      internal.updateComponent(
-        prevElement,
-        prevElement,
-        prevUnmaskedContext,
-        prevUnmaskedContext
-      );
-    }
-
-    this.runCallbacks(callbacks, component);
-  },
-
-  runCallbacks(callbacks, context) {
-    if (callbacks) {
-      for (let i = 0; i < callbacks.length; i++) {
-        callbacks[i].call(context);
-      }
-    }
-  }
-
+  runCallbacks: invokeFunctionsWithContext,
 };
 
 export default Updater;

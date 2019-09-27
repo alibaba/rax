@@ -1,10 +1,16 @@
+---
+title: Rax 淘宝 双11 双12 实战
+date: 20170427
+author: 亚城
+---
+
 # Rax 淘宝 双11 双12 实战
 
 <img src="https://gw.alicdn.com/tfs/TB1XDuDPXXXXXbRapXXXXXXXXXX-900-500.jpg" style="text-align: center;"/>
 
 Rax is a universal JavaScript library with a largely React-compatible API. If you use React, you already know how to use Rax.
 
-Rax 介绍参考：[http://react-china.org/t/rax-rax/11552](http://react-china.org/t/rax-rax/11552)
+Rax 介绍参考：[//react-china.org/t/rax-rax/11552](//react-china.org/t/rax-rax/11552)
 
 ## 上层体系
 
@@ -76,7 +82,7 @@ class Module extends Component {
 
 这是一个简单的长列表模块示例，包含了部分约定的内容。对于这些约定规则表现出的不同渲染策略，下文中会详细列出。
 
-###双促页面的通用渲染逻辑
+### 双促页面的通用渲染逻辑
 
 ![](https://gw.alicdn.com/tps/TB1Z1tqPXXXXXb.XXXXXXXXXXXX-730-448.jpg_500x500.jpg)
 
@@ -107,7 +113,7 @@ H5 页面的渲染策略与 Weex 完全不同。吸收了 Weex 页面渲染的�
 
 这里引入一个站位容器的概念。非首屏的模块默认只渲染出一个和模块真实高度相同的容器。当容器出现在可视区域时（也就是容器的 appear 时机）用真实模块替换掉占位容器。这样做的好处是有效的减少了页面的节点数。当页面电梯跳转到指定楼层时，非可视区域内的模块也不会渲染。
 
-##双促中的长列表渲染
+## 双促中的长列表渲染
 
 上文中简单介绍了页面整体渲染的思路，这部分主要讲一下会场中应用最多的长列表的渲染策略。
 
@@ -129,11 +135,11 @@ Weex 下占位容器是一个高度撑开的 cell，在 repeat 类型模块渲�
 
 ![](https://gw.alicdn.com/tps/TB1VFM7OVXXXXavXVXXXXXXXXXX-424-387.jpg_500x500.jpg)
 
-##小结
+## 小结
 
 Rax 第一次接受淘宝双促的考验，在 native 化、性能、稳定性等多个方面表现优异，达成了预定的目标。在双促中沉淀下的经验也将陆续反哺给其他业务和活动中，在未来会有更多的场景使用 Rax，Rax 体系也将不断完善。
 
 了解更多 [Rax](https://github.com/alibaba/rax) 相关内容，欢迎访问 [alibaba.github.io/rax](https://alibaba.github.io/rax)
 Rax 团队敬上。
 
-参考文章：[http://taobaofed.org/blog/2017/01/13/rax-in-act/](http://taobaofed.org/blog/2017/01/13/rax-in-act/)
+参考文章：[//taobaofed.org/blog/2017/01/13/rax-in-act/](//taobaofed.org/blog/2017/01/13/rax-in-act/)

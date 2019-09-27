@@ -120,8 +120,8 @@ THREE.TrackballControls = function( object, domElement ) {
 
     return function getMouseOnCircle( pageX, pageY ) {
       vector.set(
-         ( pageX - _this.screen.width * 0.5 - _this.screen.left ) / ( _this.screen.width * 0.5 ),
-         ( _this.screen.height + 2 * ( _this.screen.top - pageY ) ) / _this.screen.width  // screen.width intentional
+        ( pageX - _this.screen.width * 0.5 - _this.screen.left ) / ( _this.screen.width * 0.5 ),
+        ( _this.screen.height + 2 * ( _this.screen.top - pageY ) ) / _this.screen.width // screen.width intentional
       );
 
       return vector;
@@ -374,14 +374,13 @@ THREE.TrackballControls = function( object, domElement ) {
     event.stopPropagation();
 
     switch ( event.deltaMode ) {
-
       case 2:
-                                // Zoom in pages
+        // Zoom in pages
         _zoomStart.y -= event.deltaY * 0.025;
         break;
 
       case 1:
-                                // Zoom in lines
+        // Zoom in lines
         _zoomStart.y -= event.deltaY * 0.01;
         break;
 
@@ -389,7 +388,6 @@ THREE.TrackballControls = function( object, domElement ) {
         // undefined, 0, assume pixels
         _zoomStart.y -= event.deltaY * 0.00025;
         break;
-
     }
 
     _this.dispatchEvent( startEvent );
@@ -400,7 +398,6 @@ THREE.TrackballControls = function( object, domElement ) {
     if ( _this.enabled === false ) return;
 
     switch ( event.touches.length ) {
-
       case 1:
         _state = STATE.TOUCH_ROTATE;
         _moveCurr.copy( getMouseOnCircle( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
@@ -418,7 +415,6 @@ THREE.TrackballControls = function( object, domElement ) {
         _panStart.copy( getMouseOnScreen( x, y ) );
         _panEnd.copy( _panStart );
         break;
-
     }
 
     _this.dispatchEvent( startEvent );
@@ -431,7 +427,6 @@ THREE.TrackballControls = function( object, domElement ) {
     event.stopPropagation();
 
     switch ( event.touches.length ) {
-
       case 1:
         _movePrev.copy( _moveCurr );
         _moveCurr.copy( getMouseOnCircle( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
@@ -446,7 +441,6 @@ THREE.TrackballControls = function( object, domElement ) {
         var y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
         _panEnd.copy( getMouseOnScreen( x, y ) );
         break;
-
     }
   }
 
@@ -454,7 +448,6 @@ THREE.TrackballControls = function( object, domElement ) {
     if ( _this.enabled === false ) return;
 
     switch ( event.touches.length ) {
-
       case 0:
         _state = STATE.NONE;
         break;
@@ -464,7 +457,6 @@ THREE.TrackballControls = function( object, domElement ) {
         _moveCurr.copy( getMouseOnCircle( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
         _movePrev.copy( _moveCurr );
         break;
-
     }
 
     _this.dispatchEvent( endEvent );

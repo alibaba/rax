@@ -1,6 +1,8 @@
 # TimePicker 时间选择
 
-TimePicker 调用系统原生选择框实现
+TimePicker 时间选择组件，调用系统原生选择框实现
+
+![](https://gw.alicdn.com/tfs/TB1p1zYRVXXXXc6XVXXXXXXXXXX-240-390.jpg)
 
 ## 安装
 
@@ -37,7 +39,7 @@ class App extends Component {
         <Text>选择时间</Text>
         <TimePicker 
           selectedValue={'10:10'}
-          style={styles.picker} />
+        />
       </View>
     );
   }

@@ -1,10 +1,10 @@
 /* @jsx createElement */
 
-import {createElement} from '../element';
+import createElement from '../createElement';
 import Host from '../vdom/host';
 import render from '../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../findDOMNode';
+import Component from '../vdom/component';
 
 describe('render', () => {
   function createNodeElement(tagName) {
@@ -18,12 +18,14 @@ describe('render', () => {
     };
   }
 
-  beforeEach(() => {
+  beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
-  afterEach(() => {
+  afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('render to default container', () => {
@@ -77,5 +79,48 @@ describe('render', () => {
     render(<div />, container, function() {
       done();
     });
+  });
+
+  it('should not re-render when element is same in same root', function() {
+    let container = createNodeElement('container');
+    let updatedCount = 0;
+    let App = function() {
+      updatedCount++;
+      return <div />;
+    };
+    let CacheApp = <App />;
+
+    render(CacheApp, container);
+    expect(container.childNodes[0].tagName).toBe('DIV');
+    expect(updatedCount).toBe(1);
+    render(CacheApp, container);
+    expect(container.childNodes[0].tagName).toBe('DIV');
+    expect(updatedCount).toBe(1);
+  });
+
+  it('render in the life cycle should in a batch', function() {
+    let container = createNodeElement('div');
+    let container2 = createNodeElement('div');
+
+    const Child = jest.fn(function(props) {
+      return <span>{props.number}</span>;
+    });
+
+    class App extends Component {
+      componentDidMount() {
+        render(<Child number="1" />, container2);
+        render(<Child number="2" />, container2);
+        render(<Child number="3" />, container2);
+        render(<Child number="4" />, container2);
+        expect(container2.childNodes).toEqual([]);
+      }
+      render() {
+        return <span />;
+      }
+    }
+    render(<App />, container);
+    jest.runAllTimers();
+    expect(Child).toHaveBeenCalledTimes(1);
+    expect(container2.childNodes[0].childNodes[0].data).toBe('4');
   });
 });

@@ -6,6 +6,17 @@ Hi! I’m really excited that you are interested in contributing to Rax. Before 
 - [Pull Request Guidelines](#pull-request-guidelines)
 - [Git Commit Specific](./GIT_COMMIT_SPECIFIC.md)
 
+## Development Workflow
+
+After cloning rax, run `npm install` to fetch its dependencies.  
+Run `npm run setup` link and bootstrap project before development.
+Then, you can run several commands:
+
+* `npm run lint` checks the code style.
+* `npm test` runs the complete test suite.
+* `npm test -- --watch` runs an interactive test watcher.
+* `npm test <pattern>` runs tests with matching filenames.
+* `npm run build` creates `lib` and `dist` folder with all the packages.
 
 ## Issue Reporting Guidelines
 

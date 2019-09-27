@@ -1,0 +1,9 @@
+{
+  "name": "postcss-plugin-rpx2vw",
+  "version": "0.0.1",
+  "description": "Postcss plugin transform rpx to vw or rem.",
+  "main": "src/index.js",
+  "dependencies": {
+    "postcss": "^7.0.17"
+  }
+}

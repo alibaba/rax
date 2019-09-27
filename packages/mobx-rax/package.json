@@ -1,0 +1,32 @@
+{
+  "name": "mobx-rax",
+  "version": "1.0.0",
+  "description": "Official Rax bindings for mobx.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "hoist-non-react-statics": "^2.5.0",
+    "rax": "^1.0.0",
+    "rax-children": "^1.0.0",
+    "rax-find-dom-node": "^1.0.0",
+    "react-lifecycles-compat": "^3.0.4"
+  },
+  "peerDependencies": {
+    "mobx": "^4.0.0 || ^5.0.0",
+    "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^1.0.0"
+  }
+}

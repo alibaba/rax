@@ -60,7 +60,7 @@ THREE.OrbitControls = function( object, domElement ) {
 
   // Set to false to disable panning
   this.enablePan = true;
-  this.keyPanSpeed = 7.0;  // pixels moved per arrow key push
+  this.keyPanSpeed = 7.0; // pixels moved per arrow key push
 
   // Set to true to automatically rotate around the target
   // If auto-rotate is enabled, you must call controls.update() in your animation loop
@@ -440,7 +440,6 @@ THREE.OrbitControls = function( object, domElement ) {
     // console.log( 'handleKeyDown' );
 
     switch ( event.keyCode ) {
-
       case scope.keys.UP:
         pan( 0, scope.keyPanSpeed );
         scope.update();
@@ -460,7 +459,6 @@ THREE.OrbitControls = function( object, domElement ) {
         pan( - scope.keyPanSpeed, 0 );
         scope.update();
         break;
-
     }
   }
 
@@ -559,7 +557,6 @@ THREE.OrbitControls = function( object, domElement ) {
     event.preventDefault();
 
     switch ( event.button ) {
-
       case scope.mouseButtons.ORBIT:
 
         if ( scope.enableRotate === false ) return;
@@ -589,7 +586,6 @@ THREE.OrbitControls = function( object, domElement ) {
         state = STATE.PAN;
 
         break;
-
     }
 
     if ( state !== STATE.NONE ) {
@@ -606,7 +602,6 @@ THREE.OrbitControls = function( object, domElement ) {
     event.preventDefault();
 
     switch ( state ) {
-
       case STATE.ROTATE:
 
         if ( scope.enableRotate === false ) return;
@@ -630,7 +625,6 @@ THREE.OrbitControls = function( object, domElement ) {
         handleMouseMovePan( event );
 
         break;
-
     }
   }
 
@@ -669,8 +663,7 @@ THREE.OrbitControls = function( object, domElement ) {
     if ( scope.enabled === false ) return;
 
     switch ( event.touches.length ) {
-
-      case 1:  // one-fingered touch: rotate
+      case 1: // one-fingered touch: rotate
 
         if ( scope.enableRotate === false ) return;
 
@@ -680,7 +673,7 @@ THREE.OrbitControls = function( object, domElement ) {
 
         break;
 
-      case 2:  // two-fingered touch: dolly
+      case 2: // two-fingered touch: dolly
 
         if ( scope.enableZoom === false ) return;
 
@@ -703,7 +696,6 @@ THREE.OrbitControls = function( object, domElement ) {
       default:
 
         state = STATE.NONE;
-
     }
 
     if ( state !== STATE.NONE ) {
@@ -718,7 +710,6 @@ THREE.OrbitControls = function( object, domElement ) {
     event.stopPropagation();
 
     switch ( event.touches.length ) {
-
       case 1: // one-fingered touch: rotate
 
         if ( scope.enableRotate === false ) return;
@@ -749,7 +740,6 @@ THREE.OrbitControls = function( object, domElement ) {
       default:
 
         state = STATE.NONE;
-
     }
   }
 

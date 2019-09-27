@@ -1,1 +1,1 @@
-console.log('it work!');
+console.log('factory-factoryGlobals-target');

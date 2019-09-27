@@ -1,19 +1,24 @@
+import {isArray, isString, isNumber, isObject, isNull} from '../types';
+
 function shouldUpdateComponent(prevElement, nextElement) {
-  // TODO: prevElement and nextElement could be array
-  let prevEmpty = prevElement === null;
-  let nextEmpty = nextElement === null;
+  let prevEmpty = isNull(prevElement);
+  let nextEmpty = isNull(nextElement);
   if (prevEmpty || nextEmpty) {
     return prevEmpty === nextEmpty;
   }
 
-  let prevType = typeof prevElement;
-  let nextType = typeof nextElement;
-  if (prevType === 'string' || prevType === 'number') {
-    return nextType === 'string' || nextType === 'number';
+  if (isArray(prevElement) && isArray(nextElement)) {
+    return true;
+  }
+
+  const isPrevStringOrNumber = isString(prevElement) || isNumber(prevElement);
+  if (isPrevStringOrNumber) {
+    return isString(nextElement) || isNumber(nextElement);
   } else {
+    // prevElement and nextElement could be array, typeof [] is "object"
     return (
-      prevType === 'object' &&
-      nextType === 'object' &&
+      isObject(prevElement) &&
+      isObject(nextElement) &&
       prevElement.type === nextElement.type &&
       prevElement.key === nextElement.key
     );

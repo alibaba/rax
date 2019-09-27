@@ -2,13 +2,15 @@
 
 复杂的视频播放器组件
 
+![](https://gw.alicdn.com/tfs/TB1.NTYRVXXXXcNXVXXXXXXXXXX-255-201.gif)
+
 ## 安装
 
 ```bash
 $ npm install rax-player --save
 ```
 
-## 引入
+## 引用
 
 ```jsx
 import Player from 'rax-player'
@@ -25,10 +27,10 @@ import Player from 'rax-player'
 | originFullscreen | Boolean  | false    | 是否强制使用原生全屏方法(该属性只对iOS-h5生效，Android-h5、iOS-weex使用默认全屏，Android-weex没有全屏功能) |
 | startBtn         | String   | startBtn | 如果出现该属性，则显示开始暂停button                    |
 | autoPlay         | Boolean  | false    | 如果出现该属性，则视频在就绪后马上播放                      |
-| onVideoFinish    | function | null     | video播放结束时间处理方法                          |
-| onVideoPlay      | function | null     | video播放时的处理方法                            |
-| onVideoPause     | function | null     | video暂停时的处理方法                            |
-| onVideoFail      | function | null     | video播放失败时的处理方法                          |
+| onVideoFinish    | Function | null     | video播放结束时间处理方法                          |
+| onVideoPlay      | Function | null     | video播放时的处理方法                            |
+| onVideoPause     | Function | null     | video暂停时的处理方法                            |
+| onVideoFail      | Function | null     | video播放失败时的处理方法                          |
 
 备注:
 

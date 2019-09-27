@@ -6,7 +6,6 @@
 'use strict';
 
 class BasicEvaluatedExpression {
-
   constructor() {
     this.range = null;
   }
@@ -175,7 +174,6 @@ class BasicEvaluatedExpression {
     this.range = range;
     return this;
   }
-
 }
 
 module.exports = BasicEvaluatedExpression;

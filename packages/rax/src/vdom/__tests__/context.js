@@ -1,14 +1,12 @@
 'use strict';
-/* @jsx createElement */
 
-import Component from '../../component';
-import PropTypes from '../../proptypes';
-import {createElement} from '../../element';
+import Component from '../component';
+import PropTypes from 'rax-proptypes';
+import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
+import { flush } from '../scheduler';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
-import renderToString from '../../server/renderToString';
 
 describe('Context', function() {
   function createNodeElement(tagName) {
@@ -24,13 +22,17 @@ describe('Context', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should pass context when rendering subtree elsewhere', function() {
+    let container = createNodeElement('div');
+
     class MyComponent extends Component {
       static contextTypes = {
         foo: PropTypes.string.isRequired,
@@ -57,10 +59,9 @@ describe('Context', function() {
       }
     }
 
-    let html = renderToString(<Parent />);
-    expect(html).toBe('<div data-rendered="server">bar</div>');
+    render(<Parent />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('bar');
   });
-
 
   it('should filter out context not in contextTypes', function() {
     class MyComponent extends Component {
@@ -133,7 +134,10 @@ describe('Context', function() {
 
     var instance = render(<Parent />, container);
     expect(container.childNodes[0].childNodes[0].data).toBe('initial-initial');
+
     instance.setState({bar: 'changed'});
+    jest.runAllTimers();
+
     expect(container.childNodes[0].childNodes[0].data).toBe('changed-changed');
   });
 });

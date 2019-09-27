@@ -1,10 +1,18 @@
 /* eslint-disable react/no-did-mount-set-state */
 
-import {createElement} from '../../element';
-import Component from '../../component';
+import createElement from '../../createElement';
+import Component from '../../vdom/component';
 import renderer from '../renderer';
 
 describe('renderer', () => {
+  beforeEach(function() {
+    jest.useFakeTimers();
+  });
+
+  afterEach(function() {
+    jest.useRealTimers();
+  });
+
   it('renders a simple component', () => {
     function Link() {
       return <a role="link" />;
@@ -86,6 +94,7 @@ describe('renderer', () => {
     };
 
     var component = renderer.create(<MyComponent />);
+    jest.runAllTimers();
     expect(component.toJSON()).toEqual({
       tagName: 'DIV',
       attributes: { class: 'purple' },
@@ -121,6 +130,8 @@ describe('renderer', () => {
 
     var mouse = component.getInstance();
     mouse.handleMoose();
+    jest.runAllTimers();
+
     expect(component.toJSON()).toEqual({
       tagName: 'DIV',
       children: ['moose'],

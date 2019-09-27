@@ -2,6 +2,8 @@
 
 Rax 中的视频播放组件。更丰富的视频功能参见 [Player](/component/player) 组件
 
+![](https://gw.alicdn.com/tfs/TB11grWRVXXXXcNXVXXXXXXXXXX-255-334.gif)
+
 ## 安装
 
 ```bash

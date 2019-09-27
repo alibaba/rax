@@ -2,12 +2,11 @@
 
 'use strict';
 
-import Component from '../../component';
-import {createElement} from '../../element';
+import Component from '../component';
+import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 
 describe('Key', function() {
   function createNodeElement(tagName) {
@@ -23,10 +22,12 @@ describe('Key', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should unmount and remount if the key changes', function() {
@@ -80,24 +81,27 @@ describe('Key', function() {
       }
     }
 
-    render(<Foo value="foo" />, container);
-    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
-    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
-    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
-    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    expect(() => {
+      render(<Foo value="foo" />, container);
+      expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
+      expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
+      expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
+      expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    }).toWarnDev('Warning: Encountered two children with the same key "0".', {withoutStack: true});
 
-    render(<Foo value="bar" />, container);
-    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
-    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
-    expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
-    expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    expect(() => {
+      render(<Foo value="bar" />, container);
+      expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('0');
+      expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('1');
+      expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('2');
+      expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('0');
+    }).toWarnDev('Warning: Encountered two children with the same key "0".', {withoutStack: true});
   });
 
   it('should render right if unshift new element', function() {
     let container = createNodeElement('container');
 
     class Foo extends Component {
-
       constructor(props) {
         super(props);
         this.state = {
@@ -126,5 +130,31 @@ describe('Key', function() {
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('0');
     expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('1');
     expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('2');
+  });
+
+  it('should move to correct position for same key in different element', () => {
+    let container = createNodeElement('container');
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count % 2 === 0 ? [<div key="a">1</div>, <span key="b">2</span>] :
+                [<span key="b">2</span>, <span key="a">3</span>]
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, container);
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('1');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('2');
+
+    instance.setState({count: 1});
+    jest.runAllTimers();
+
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('2');
+    expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('3');
   });
 });

@@ -2,12 +2,11 @@
 
 'use strict';
 
-import Component from '../../component';
-import {createElement} from '../../element';
+import Component from '../component';
+import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
 
 describe('FragmentComponent', function() {
   function createNodeElement(tagName) {
@@ -23,10 +22,12 @@ describe('FragmentComponent', function() {
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('should updates a mounted text component in place', function() {
@@ -44,7 +45,7 @@ describe('FragmentComponent', function() {
     class Hello extends Component {
       render() {
         return [
-          <div>
+          <div key={'root'}>
             <span>hello</span>
             <span>{this.props.message}</span>
           </div>
@@ -53,12 +54,12 @@ describe('FragmentComponent', function() {
     }
 
     let beforeInst = render(<Hello message="world" />, el);
-    let beforeContainer = findDOMNode(beforeInst)[0];
+    let beforeContainer = el.childNodes[0];
     let beforeDiv = beforeContainer.childNodes[0];
     let beforeSpan = beforeDiv.childNodes[0];
 
     let inst = render(<Hello message="rax" />, el);
-    let container = findDOMNode(inst)[0];
+    let container = el.childNodes[0];
     let div = container.childNodes[0];
     let span = div.childNodes[0];
 
@@ -104,7 +105,7 @@ describe('FragmentComponent', function() {
 
     let inst = render(<MyComponent />, el);
 
-    let container = findDOMNode(inst);
+    let container = el.childNodes[0];
     let childNodes = container.childNodes;
 
     expect(childNodes.length).toBe(5);
@@ -117,6 +118,8 @@ describe('FragmentComponent', function() {
     inst.setState({
       show: true
     });
+
+    jest.runAllTimers();
 
     childNodes = container.childNodes;
 
@@ -134,8 +137,8 @@ describe('FragmentComponent', function() {
     class Hello extends Component {
       render() {
         return [
-          <span>1</span>,
-          <span>2</span>
+          <span key={'1'}>1</span>,
+          <span key={'2'}>2</span>
         ];
       }
     }
@@ -143,18 +146,18 @@ describe('FragmentComponent', function() {
     class World extends Component {
       render() {
         return [
-          <span>3</span>,
-          <span>4</span>
+          <span key={'3'}>3</span>,
+          <span key={'4'}>4</span>
         ];
       }
     }
 
     class MyComponent extends Component {
       state = {
-        list: [<Hello />]
+        list: [<Hello key={'hello'} />]
       }
       componentDidMount() {
-        this.state.list.push(<World />);
+        this.state.list.push(<World key={'world'} />);
         /* eslint-disable */
         this.setState(this.state);
         /* eslint-enable */
@@ -170,8 +173,9 @@ describe('FragmentComponent', function() {
 
     let inst = render(<MyComponent />, el);
 
-    let container = findDOMNode(inst);
+    let container = el.childNodes[0];
     let childNodes = container.childNodes;
+    jest.runAllTimers();
 
     expect(childNodes.length).toBe(4);
     expect(childNodes[0].childNodes[0].data).toBe('1');
@@ -198,15 +202,15 @@ describe('FragmentComponent', function() {
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
     expect(childNodes[1].childNodes[0].data).toBe('World');
 
     inst = render(<MyComponent condition={true} />, el);
-    let container = findDOMNode(inst);
-    expect(container.tagName).toBe('DIV');
+    expect(childNodes.length).toBe(1);
+    expect(childNodes[0].childNodes[0].data).toBe('Hello');
   });
 
   it('should render correct when switching to a nested array', function() {
@@ -222,12 +226,12 @@ describe('FragmentComponent', function() {
       render() {
         let {condition} = this.props;
         return condition ? <Hello key="a" /> :
-          [[<Hello key="a" />, <div key="b">World</div>], <div />];
+          [[<Hello key="a" />, <div key="b">World</div>], <div key={'c'} />];
       }
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -235,8 +239,8 @@ describe('FragmentComponent', function() {
     expect(childNodes[2].tagName).toBe('DIV');
 
     inst = render(<MyComponent condition={true} />, el);
-    let container = findDOMNode(inst);
-    expect(container.tagName).toBe('DIV');
+    expect(childNodes.length).toBe(1);
+    expect(childNodes[0].childNodes[0].data).toBe('Hello');
   });
 
   it('should render correct if an implicit key slot switches from/to null', function() {
@@ -253,13 +257,13 @@ describe('FragmentComponent', function() {
     class MyComponent extends Component {
       render() {
         let {condition} = this.props;
-        return condition ? [null, <Hello />] :
-          [<div>Hello</div>, <Hello />];
+        return condition ? [null, <Hello key={'a'} />] :
+          [<div key={'b'}>Hello</div>, <Hello key={'c'} />];
       }
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -269,7 +273,6 @@ describe('FragmentComponent', function() {
     expect(instanceA).not.toBe(null);
 
     inst = render(<MyComponent condition={true} />, el);
-    childNodes = findDOMNode(inst);
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].data).toBe(' empty ');
@@ -279,7 +282,6 @@ describe('FragmentComponent', function() {
     // expect(instanceB).toBe(instanceA);
 
     inst = render(<MyComponent condition={false} />, el);
-    childNodes = findDOMNode(inst);
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -302,12 +304,12 @@ describe('FragmentComponent', function() {
       render() {
         let {condition} = this.props;
         return condition ? [[<div key="b">World</div>, <Hello key="a" />]] :
-          [[<Hello key="a" />, <div key="b">World</div>], <div />];
+          [[<Hello key="a" />, <div key="b">World</div>], <div key={'c'} />];
       }
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('Hello');
@@ -315,7 +317,6 @@ describe('FragmentComponent', function() {
     expect(childNodes[2].tagName).toBe('DIV');
 
     inst = render(<MyComponent condition={true} />, el);
-    childNodes = findDOMNode(inst);
 
     expect(childNodes.length).toBe(2);
     expect(childNodes[0].childNodes[0].data).toBe('World');
@@ -344,7 +345,7 @@ describe('FragmentComponent', function() {
     }
 
     let inst = render(<MyComponent />, el);
-    let childNodes = findDOMNode(inst);
+    let childNodes = el.childNodes;
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('1');
@@ -354,6 +355,8 @@ describe('FragmentComponent', function() {
     inst.setState({
       list: [1, 2, 3, 7, 8, 9]
     });
+
+    jest.runAllTimers();
 
     expect(childNodes.length).toBe(6);
     expect(childNodes[0].childNodes[0].data).toBe('1');
@@ -366,10 +369,142 @@ describe('FragmentComponent', function() {
     inst.setState({
       list: [4, 5, 6]
     });
+    jest.runAllTimers();
 
     expect(childNodes.length).toBe(3);
     expect(childNodes[0].childNodes[0].data).toBe('4');
     expect(childNodes[1].childNodes[0].data).toBe('5');
     expect(childNodes[2].childNodes[0].data).toBe('6');
+  });
+
+  it('should render correct when updated for null to fragment', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, 3];
+      }
+    }
+
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count % 2 === 0 ? null :
+                <Frag key="a" />
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, el);
+    expect(el.childNodes[0].childNodes).toEqual([]);
+
+    instance.setState({
+      count: 1
+    });
+    jest.runAllTimers();
+
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+  });
+
+  it('should render correct when updated with first old child existing', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, 3];
+      }
+    }
+
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count % 2 === 0 ? <div>1</div> :
+                <Frag key="a" />
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].childNodes[0].data).toBe('1');
+    instance.setState({
+      count: 1
+    });
+
+    jest.runAllTimers();
+
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+  });
+
+  it('Fragment and its child Fragment should have the same parent node', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, [4, 5, [7, 8]], 6];
+      }
+    }
+
+    const instance = render(<Frag />, el);
+    const frgmentInstance = instance._internal._renderedComponent;
+    expect(frgmentInstance._parent).toBe(el);
+    expect(frgmentInstance.__renderedChildren['.2']._parent).toBe(el);
+    expect(frgmentInstance.__renderedChildren['.2'].__renderedChildren['.2']._parent).toBe(el);
+  });
+
+  it('should unmount correct after updated', function() {
+    let el = createNodeElement('div');
+
+    class Frag extends Component {
+      render() {
+        return [1, 2, [3, 4, 5, 6], 7];
+      }
+    }
+
+    class App extends Component {
+      state = {count: 0};
+      render() {
+        return (
+          <div>
+            {
+              this.state.count === 2 ? null :
+                <Frag />
+            }
+          </div>
+        );
+      }
+    }
+    let instance = render(<App />, el);
+
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+
+    instance.setState({
+      count: 1
+    });
+
+    jest.runAllTimers();
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[0].childNodes[1].data).toBe('2');
+    expect(el.childNodes[0].childNodes[2].data).toBe('3');
+
+    instance.setState({
+      count: 2
+    });
+
+    jest.runAllTimers();
+    expect(el.childNodes[0].childNodes).toEqual([]);
   });
 });

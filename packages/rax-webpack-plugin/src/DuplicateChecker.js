@@ -1,9 +1,6 @@
 import path from 'path';
 import findRoot from 'find-root';
-import WebpackSource from 'webpack-sources';
-
-const ConcatSource = WebpackSource.ConcatSource;
-const isProducation = process.env.NODE_ENV === 'production';
+import {ConcatSource} from 'webpack-sources';
 
 function cleanPath(path) {
   return path.split('/node_modules/').join('/~/');
@@ -128,32 +125,67 @@ export default class DuplicateChecker {
   }
 
   apply(compiler) {
-    var modulesToCheck = this.options.modulesToCheck;
+    const modulesToCheck = this.options.modulesToCheck;
     if (!modulesToCheck || !modulesToCheck.length) {
       return;
     }
 
-    compiler.plugin('compilation', (compilation) => {
-      compilation.plugin('optimize-chunk-assets', function(chunks, callback) {
-        chunks.forEach((chunk) => {
-          // In webpack2 chunk.initial was removed. Use isInitial()
-          try {
-            if (!chunk.initial) return;
-          } catch (e) {
-            if (!chunk.isInitial()) return;
-          }
+    // Webpack 4
+    if (compiler.hooks && compiler.hooks.compilation && compiler.hooks.compilation.tap) {
+      compiler.hooks.compilation.tap('RaxDuplicateCheckerPlugin', compilation => {
+        const duplicates = check(compilation, modulesToCheck);
+        if (!Object.keys(duplicates).length) {
+          return;
+        }
 
-          var duplicates = check(compilation, modulesToCheck);
+        const errorMessages = `console.error('${formatMsg(duplicates)}');`;
 
-          if (Object.keys(duplicates).length && !isProducation) {
-            var errorMessages = formatMsg(duplicates);
+        compilation.hooks.optimizeChunkAssets.tap('RaxDuplicateCheckerPlugin', chunks => {
+          for (const chunk of chunks) {
+            // Entry only
+            if (!chunk.canBeInitial()) {
+              continue;
+            }
+
             chunk.files.forEach(function(file) {
-              compilation.assets[file] = new ConcatSource(compilation.assets[file], `\n console.error('${errorMessages}');`);
+              compilation.assets[file] = new ConcatSource(
+                compilation.assets[file],
+                '\n',
+                errorMessages
+              );
             });
           }
         });
-        callback();
       });
-    });
+    } else {
+      compiler.plugin('compilation', (compilation) => {
+        const duplicates = check(compilation, modulesToCheck);
+        if (!Object.keys(duplicates).length) {
+          return;
+        }
+
+        const errorMessages = `console.error('${formatMsg(duplicates)}');`;
+
+        compilation.plugin('optimize-chunk-assets', function(chunks) {
+          chunks.forEach((chunk) => {
+            // Entry only
+            try {
+              // In webpack2 chunk.initial was removed. Use isInitial()
+              if (!chunk.initial) return;
+            } catch (e) {
+              if (!chunk.isInitial()) return;
+            }
+
+            chunk.files.forEach(function(file) {
+              compilation.assets[file] = new ConcatSource(
+                compilation.assets[file],
+                '\n',
+                errorMessages
+              );
+            });
+          });
+        });
+      });
+    }
   }
 }

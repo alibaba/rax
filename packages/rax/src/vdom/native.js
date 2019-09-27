@@ -1,216 +1,237 @@
 import Host from './host';
-import Ref from './ref';
+import { detachRef, attachRef, updateRef } from './ref';
 import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import getElementKeyName from './getElementKeyName';
-import instance from './instance';
+import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
+import Instance from './instance';
+import BaseComponent from './base';
+import toArray from '../toArray';
+import { isFunction, isArray, isNull } from '../types';
+import assign from '../assign';
+import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 const STYLE = 'style';
 const CHILDREN = 'children';
 const TREE = 'tree';
-const EVENT_PREFIX_REGEXP = /on[A-Z]/;
+const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
 /**
  * Native Component
  */
-class NativeComponent {
-  constructor(element) {
-    this._currentElement = element;
-  }
+export default class NativeComponent extends BaseComponent {
+  __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.__initComponent(parent, parentInstance, context);
 
-  mountComponent(parent, parentInstance, context, childMounter) {
-    // Parent native element
-    this._parent = parent;
-    this._parentInstance = parentInstance;
-    this._context = context;
-    this._mountID = Host.mountID++;
+    const currentElement = this.__currentElement;
+    const props = currentElement.props;
+    const type = currentElement.type;
+    const children = props[CHILDREN];
+    const appendType = props.append || TREE; // Default is tree
 
-    let props = this._currentElement.props;
-    let type = this._currentElement.type;
+    // Clone a copy for style diff
+    this.__prevStyleCopy = assign({}, props[STYLE]);
+
     let instance = {
-      _internal: this,
       type,
       props,
     };
-    let appendType = props.append; // Default is node
+    instance[INTERNAL] = this;
 
-    this._instance = instance;
-
-    // Clone a copy for style diff
-    this._prevStyleCopy = Object.assign({}, props.style);
-
-    let nativeNode = this.getNativeNode();
-
-    if (appendType !== TREE) {
-      if (childMounter) {
-        childMounter(nativeNode, parent);
-      } else {
-        Host.driver.appendChild(nativeNode, parent);
-      }
-    }
-
-    if (this._currentElement && this._currentElement.ref) {
-      Ref.attach(this._currentElement._owner, this._currentElement.ref, this);
-    }
-
-    // Process children
-    let children = props.children;
-    if (children != null) {
-      this.mountChildren(children, context);
-    }
+    this[INSTANCE] = instance;
 
     if (appendType === TREE) {
-      if (childMounter) {
-        childMounter(nativeNode, parent);
-      } else {
-        Host.driver.appendChild(nativeNode, parent);
-      }
+      // Should after process children when mount by tree mode
+      this.__mountChildren(children, context);
+      this.__mountNativeNode(nativeNodeMounter);
+    } else {
+      // Should before process children when mount by node mode
+      this.__mountNativeNode(nativeNodeMounter);
+      this.__mountChildren(children, context);
     }
 
-    Host.hook.Reconciler.mountComponent(this);
+    // Ref acttach
+    if (currentElement && currentElement.ref) {
+      attachRef(currentElement._owner, currentElement.ref, this);
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.reconciler.mountComponent(this);
+    }
 
     return instance;
   }
 
-  mountChildren(children, context) {
-    if (!Array.isArray(children)) {
-      children = [children];
-    }
+  __mountChildren(children, context) {
+    if (children == null) return children;
 
-    let renderedChildren = this._renderedChildren = {};
+    const nativeNode = this.__getNativeNode();
+    return this.__mountChildrenImpl(nativeNode, toArray(children), context);
+  }
 
-    let renderedChildrenImage = children.map((element, index) => {
-      let renderedChild = instantiateComponent(element);
-      let name = getElementKeyName(renderedChildren, element, index);
+  __mountChildrenImpl(parent, children, context, nativeNodeMounter) {
+    let renderedChildren = this.__renderedChildren = {};
+
+    const renderedChildrenImage = [];
+    for (let i = 0, l = children.length; i < l; i++) {
+      const element = children[i];
+      const renderedChild = instantiateComponent(element);
+      const name = getElementKeyName(renderedChildren, element, i);
       renderedChildren[name] = renderedChild;
-      renderedChild._mountIndex = index;
-      // Mount
-      let mountImage = renderedChild.mountComponent(this.getNativeNode(),
-        this._instance, context, null);
-      return mountImage;
-    });
+      renderedChild.__mountIndex = i;
+      // Mount children
+      const mountImage = renderedChild.__mountComponent(
+        parent,
+        this[INSTANCE],
+        context,
+        nativeNodeMounter
+      );
+      renderedChildrenImage.push(mountImage);
+    }
 
     return renderedChildrenImage;
   }
 
-  unmountChildren(notRemoveChild) {
-    let renderedChildren = this._renderedChildren;
+  __unmountChildren(shouldNotRemoveChild) {
+    let renderedChildren = this.__renderedChildren;
 
     if (renderedChildren) {
       for (let name in renderedChildren) {
         let renderedChild = renderedChildren[name];
-        renderedChild.unmountComponent(notRemoveChild);
+        renderedChild.unmountComponent(shouldNotRemoveChild);
       }
-      this._renderedChildren = null;
+      this.__renderedChildren = null;
     }
   }
 
-  unmountComponent(notRemoveChild) {
-    if (this._nativeNode) {
-      let ref = this._currentElement.ref;
+  unmountComponent(shouldNotRemoveChild) {
+    if (this[NATIVE_NODE]) {
+      let ref = this.__currentElement.ref;
       if (ref) {
-        Ref.detach(this._currentElement._owner, ref, this);
+        detachRef(this.__currentElement._owner, ref, this);
       }
 
-      instance.remove(this._nativeNode);
-      if (!notRemoveChild) {
-        Host.driver.removeChild(this._nativeNode, this._parent);
+      Instance.remove(this[NATIVE_NODE]);
+
+      if (!shouldNotRemoveChild) {
+        Host.driver.removeChild(this[NATIVE_NODE], this._parent);
+
+        // If the parent node has been removed, child node don't need to be removed
+        shouldNotRemoveChild = true;
       }
-      Host.driver.removeAllEventListeners(this._nativeNode);
     }
 
-    this.unmountChildren(notRemoveChild);
+    this.__unmountChildren(shouldNotRemoveChild);
 
-    Host.hook.Reconciler.unmountComponent(this);
-
-    this._currentElement = null;
-    this._nativeNode = null;
-    this._parent = null;
-    this._parentInstance = null;
-    this._context = null;
-    this._instance = null;
-    this._prevStyleCopy = null;
+    this.__prevStyleCopy = null;
+    this.__destoryComponent();
   }
 
-  updateComponent(prevElement, nextElement, prevContext, nextContext) {
+  __updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
-    this._currentElement = nextElement;
+    this.__currentElement = nextElement;
 
-    Ref.update(prevElement, nextElement, this);
+    updateRef(prevElement, nextElement, this);
 
     let prevProps = prevElement.props;
     let nextProps = nextElement.props;
 
-    this.updateProperties(prevProps, nextProps);
-    this.updateChildren(nextProps.children, nextContext);
+    this.__updateProperties(prevProps, nextProps);
 
-    Host.hook.Reconciler.receiveComponent(this);
+    // If the prevElement has no child, mount children directly
+    if (prevProps[CHILDREN] == null ||
+      isArray(prevProps[CHILDREN]) && prevProps[CHILDREN].length === 0) {
+      this.__mountChildren(nextProps[CHILDREN], nextContext);
+    } else {
+      this.__updateChildren(nextProps[CHILDREN], nextContext);
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      Host.reconciler.receiveComponent(this);
+    }
   }
 
-  updateProperties(prevProps, nextProps) {
+  __updateProperties(prevProps, nextProps) {
     let propKey;
     let styleName;
     let styleUpdates;
+    const driver = Host.driver;
+    const nativeNode = this.__getNativeNode();
+
     for (propKey in prevProps) {
-      if (propKey === CHILDREN ||
-        nextProps.hasOwnProperty(propKey) ||
-        !prevProps.hasOwnProperty(propKey) ||
-        prevProps[propKey] == null) {
+      // Continue children and null value prop or nextProps has some propKey that do noting
+      if (
+        propKey === CHILDREN ||
+        prevProps[propKey] == null ||
+        // Use hasOwnProperty here for avoid propKey name is some with method name in object proptotype
+        nextProps.hasOwnProperty(propKey)
+      ) {
         continue;
       }
+
       if (propKey === STYLE) {
-        let lastStyle = this._prevStyleCopy;
+        // Remove all style
+        let lastStyle = this.__prevStyleCopy;
         for (styleName in lastStyle) {
-          if (lastStyle.hasOwnProperty(styleName)) {
-            styleUpdates = styleUpdates || {};
-            styleUpdates[styleName] = '';
-          }
+          styleUpdates = styleUpdates || {};
+          styleUpdates[styleName] = '';
         }
-        this._prevStyleCopy = null;
+        this.__prevStyleCopy = null;
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
-        if (typeof prevProps[propKey] === 'function') {
-          Host.driver.removeEventListener(this.getNativeNode(), propKey.slice(
-            2).toLowerCase(), prevProps[propKey]);
+        // Remove event
+        const eventListener = prevProps[propKey];
+
+        if (isFunction(eventListener)) {
+          driver.removeEventListener(
+            nativeNode,
+            propKey.slice(2).toLowerCase(),
+            eventListener
+          );
         }
       } else {
-        Host.driver.removeAttribute(this.getNativeNode(), propKey, prevProps[
-          propKey]);
+        // Remove attribute
+        driver.removeAttribute(
+          nativeNode,
+          propKey,
+          prevProps[propKey]
+        );
       }
     }
 
     for (propKey in nextProps) {
       let nextProp = nextProps[propKey];
-      let prevProp =
-        propKey === STYLE ? this._prevStyleCopy :
+      let prevProp = propKey === STYLE ? this.__prevStyleCopy :
         prevProps != null ? prevProps[propKey] : undefined;
-      if (propKey === CHILDREN ||
-        !nextProps.hasOwnProperty(propKey) ||
-        nextProp === prevProp ||
-        nextProp == null && prevProp == null) {
+
+      // Continue children or prevProp equal nextProp
+      if (
+        propKey === CHILDREN ||
+        prevProp === nextProp ||
+        nextProp == null && prevProp == null
+      ) {
         continue;
       }
+
       // Update style
       if (propKey === STYLE) {
         if (nextProp) {
           // Clone property
-          nextProp = this._prevStyleCopy = Object.assign({}, nextProp);
+          nextProp = this.__prevStyleCopy = assign({}, nextProp);
         } else {
-          this._prevStyleCopy = null;
+          this.__prevStyleCopy = null;
         }
 
         if (prevProp != null) {
           // Unset styles on `prevProp` but not on `nextProp`.
           for (styleName in prevProp) {
-            if (prevProp.hasOwnProperty(styleName) &&
-              (!nextProp || !nextProp.hasOwnProperty(styleName))) {
+            if (!nextProp || !nextProp[styleName] && nextProp[styleName] !== 0) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = '';
             }
           }
           // Update styles that changed since `prevProp`.
           for (styleName in nextProp) {
-            if (nextProp.hasOwnProperty(styleName) &&
-              prevProp[styleName] !== nextProp[styleName]) {
+            if (prevProp[styleName] !== nextProp[styleName]) {
               styleUpdates = styleUpdates || {};
               styleUpdates[styleName] = nextProp[styleName];
             }
@@ -219,33 +240,40 @@ class NativeComponent {
           // Assign next prop when prev style is null
           styleUpdates = nextProp;
         }
-
-        // Update event binding
       } else if (EVENT_PREFIX_REGEXP.test(propKey)) {
+        // Update event binding
         let eventName = propKey.slice(2).toLowerCase();
 
-        if (typeof prevProp === 'function') {
-          Host.driver.removeEventListener(this.getNativeNode(), eventName, prevProp, nextProps);
+        if (isFunction(prevProp)) {
+          driver.removeEventListener(nativeNode, eventName, prevProp, nextProps);
         }
 
-        if (typeof nextProp === 'function') {
-          Host.driver.addEventListener(this.getNativeNode(), eventName, nextProp, nextProps);
+        if (isFunction(nextProp)) {
+          driver.addEventListener(nativeNode, eventName, nextProp, nextProps);
         }
-        // Update other property
       } else {
-        let payload = {};
-        payload[propKey] = nextProp;
+        // Update other property
         if (nextProp != null) {
-          Host.driver.setAttribute(this.getNativeNode(), propKey, nextProp);
+          driver.setAttribute(
+            nativeNode,
+            propKey,
+            nextProp
+          );
         } else {
-          Host.driver.removeAttribute(this.getNativeNode(), propKey,
-            prevProps[propKey]);
+          driver.removeAttribute(
+            nativeNode,
+            propKey,
+            prevProps[propKey]
+          );
         }
+
         if (process.env.NODE_ENV !== 'production') {
           Host.measurer && Host.measurer.recordOperation({
             instanceID: this._mountID,
             type: 'update attribute',
-            payload: payload
+            payload: {
+              [propKey]: nextProp
+            }
           });
         }
       }
@@ -259,47 +287,48 @@ class NativeComponent {
           payload: styleUpdates
         });
       }
-      Host.driver.setStyles(this.getNativeNode(), styleUpdates);
+
+      driver.setStyle(nativeNode, styleUpdates);
     }
   }
 
-  updateChildren(nextChildrenElements, context) {
+  __updateChildren(nextChildrenElements, context) {
     // prev rendered children
-    let prevChildren = this._renderedChildren;
+    let prevChildren = this.__renderedChildren;
+    let driver = Host.driver;
 
     if (nextChildrenElements == null && prevChildren == null) {
       return;
     }
 
     let nextChildren = {};
-    let oldNodes = {};
 
     if (nextChildrenElements != null) {
-      if (!Array.isArray(nextChildrenElements)) {
-        nextChildrenElements = [nextChildrenElements];
-      }
+      nextChildrenElements = toArray(nextChildrenElements);
 
       // Update next children elements
-      for (let index = 0, length = nextChildrenElements.length; index <
-        length; index++) {
+      for (let index = 0, length = nextChildrenElements.length; index < length; index++) {
         let nextElement = nextChildrenElements[index];
         let name = getElementKeyName(nextChildren, nextElement, index);
         let prevChild = prevChildren && prevChildren[name];
-        let prevElement = prevChild && prevChild._currentElement;
+        let prevElement = prevChild && prevChild.__currentElement;
+        let prevContext = prevChild && prevChild._context;
 
-        if (prevChild != null && shouldUpdateComponent(prevElement,
-            nextElement)) {
-          // Pass the same context when updating chidren
-          prevChild.updateComponent(prevElement, nextElement, context,
-            context);
+        // Try to update between the two of some name that has some element type,
+        // and move child in next children loop if need
+        if (prevChild != null && shouldUpdateComponent(prevElement, nextElement)) {
+          if (prevElement !== nextElement || prevContext !== context) {
+            // Pass the same context when updating children
+            prevChild.__updateComponent(prevElement, nextElement, context,
+              context);
+          }
+
           nextChildren[name] = prevChild;
         } else {
-          // Unmount the prevChild when nextChild is different element type.
+          // Unmount the prevChild when some name with nextChild but different element type,
+          // and move child node in next children loop
           if (prevChild) {
-            let oldNativeNode = prevChild.getNativeNode();
-            // Delay remove child
-            prevChild.unmountComponent(true);
-            oldNodes[name] = oldNativeNode;
+            prevChild.__unmount = true;
           }
           // The child must be instantiated before it's mounted.
           nextChildren[name] = instantiateComponent(nextElement);
@@ -307,187 +336,144 @@ class NativeComponent {
       }
     }
 
-    let firstPrevChild;
-    let delayRemoveFirstPrevChild;
+    let parent = this.__getNativeNode();
+    let isFragmentParent = isArray(parent);
+    let prevFirstChild = null;
+    let prevFirstNativeNode = null;
+    let isPrevFirstEmptyFragment = false;
+    let shouldUnmountPrevFirstChild = false;
+    let lastPlacedNode = null;
+
+    // Directly remove all children from component, if nextChildren is empty (null, [], '').
+    // `driver.removeChildren` is optional driver protocol.
+    let shouldRemoveAllChildren = Boolean(
+      driver.removeChildren
+      // nextChildElements == null or nextChildElements is empty
+      && (isNull(nextChildrenElements) || nextChildrenElements && !nextChildrenElements.length)
+    );
+
     // Unmount children that are no longer present.
     if (prevChildren != null) {
       for (let name in prevChildren) {
-        if (!prevChildren.hasOwnProperty(name)) {
-          continue;
-        }
-
         let prevChild = prevChildren[name];
-        let shouldRemove = !nextChildren[name];
+        let shouldUnmount = prevChild.__unmount || !nextChildren[name];
 
         // Store old first child ref for append node ahead and maybe delay remove it
-        if (!firstPrevChild) {
-          firstPrevChild = prevChild;
-          delayRemoveFirstPrevChild = shouldRemove;
-        } else if (shouldRemove) {
-          prevChild.unmountComponent();
+        if (!prevFirstChild) {
+          shouldUnmountPrevFirstChild = shouldUnmount;
+          prevFirstChild = prevChild;
+          prevFirstNativeNode = prevFirstChild.__getNativeNode();
+
+          if (isArray(prevFirstNativeNode)) {
+            isPrevFirstEmptyFragment = prevFirstNativeNode.length === 0;
+            prevFirstNativeNode = prevFirstNativeNode[0];
+          }
+        } else if (shouldUnmount) {
+          prevChild.unmountComponent(shouldRemoveAllChildren);
         }
+      }
+
+      // 1. When fragment embed fragment updated but prev fragment is empty
+      // that need to get the prev sibling native node.
+      // like: [ [] ] -> [ [1, 2] ]
+      // 2. When prev fragment is empty and update to other type
+      // like: [ [], 1 ] -> [ 1, 2 ]
+      if (isFragmentParent && parent.length === 0 || isPrevFirstEmptyFragment) {
+        lastPlacedNode = getPrevSiblingNativeNode(this);
       }
     }
 
+
     if (nextChildren != null) {
-      // `nextIndex` will increment for each child in `nextChildren`, but
-      // `lastIndex` will be the last index visited in `prevChildren`.
-      let lastIndex = 0;
+      // `nextIndex` will increment for each child in `nextChildren`
       let nextIndex = 0;
-      let lastPlacedNode = null;
-      let nextNativeNode = [];
+      let nextNativeNodes = [];
+
+      function insertNodes(nativeNodes, parentNode) {
+        // The nativeNodes maybe fragment, so convert to array type
+        nativeNodes = toArray(nativeNodes);
+
+        for (let i = 0, l = nativeNodes.length; i < l; i++) {
+          if (lastPlacedNode) {
+            // Should reverse order when insert new child after lastPlacedNode:
+            // [lastPlacedNode, *newChild1, *newChild2],
+            // And if prev is empty fragment, lastPlacedNode is the prevSiblingNativeNode found.
+            driver.insertAfter(nativeNodes[l - i - 1], lastPlacedNode);
+          } else if (prevFirstNativeNode) {
+            // [*newChild1, *newChild2, prevFirstNativeNode]
+            driver.insertBefore(nativeNodes[i], prevFirstNativeNode);
+          } else if (parentNode) {
+            // [*newChild1, *newChild2]
+            driver.appendChild(nativeNodes[i], parentNode);
+          }
+        }
+      }
 
       for (let name in nextChildren) {
-        if (!nextChildren.hasOwnProperty(name)) {
-          continue;
-        }
-
         let nextChild = nextChildren[name];
         let prevChild = prevChildren && prevChildren[name];
 
+        // Try to move the some key prevChild but current not at the some position
         if (prevChild === nextChild) {
-          let prevChildNativeNode = prevChild.getNativeNode();
-          // Convert to array type
-          if (!Array.isArray(prevChildNativeNode)) {
-            prevChildNativeNode = [prevChildNativeNode];
+          let prevChildNativeNode = prevChild.__getNativeNode();
+
+          if (prevChild.__mountIndex !== nextIndex) {
+            insertNodes(prevChildNativeNode);
           }
-
-          // If the index of `child` is less than `lastIndex`, then it needs to
-          // be moved. Otherwise, we do not need to move it because a child will be
-          // inserted or moved before `child`.
-          if (prevChild._mountIndex < lastIndex) {
-            // Get the last child
-            if (Array.isArray(lastPlacedNode)) {
-              lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
-            }
-
-            for (let i = prevChildNativeNode.length - 1; i >= 0; i--) {
-              Host.driver.insertAfter(prevChildNativeNode[i], lastPlacedNode);
-            }
-          }
-
-          nextNativeNode = nextNativeNode.concat(prevChildNativeNode);
-
-          lastIndex = Math.max(prevChild._mountIndex, lastIndex);
-          prevChild._mountIndex = nextIndex;
         } else {
-          if (prevChild != null) {
-            // Update `lastIndex` before `_mountIndex` gets unset by unmounting.
-            lastIndex = Math.max(prevChild._mountIndex, lastIndex);
-          }
+          // Mount nextChild that in prevChildren there has no some name
 
-          let parent = this.getNativeNode();
           // Fragment extended native component, so if parent is fragment should get this._parent
-          if (Array.isArray(parent)) {
+          if (isFragmentParent) {
             parent = this._parent;
           }
 
-          nextChild.mountComponent(
+          nextChild.__mountComponent(
             parent,
-            this._instance,
-            context, (newChild, parent) => {
-              // TODO: Rework the duplicate code
-              let oldChild = oldNodes[name];
-              if (!Array.isArray(newChild)) {
-                newChild = [newChild];
-              }
-
-              if (oldChild) {
-                // The oldChild or newChild all maybe fragment
-                if (!Array.isArray(oldChild)) {
-                  oldChild = [oldChild];
-                }
-
-                // If newChild count large then oldChild
-                let lastNewChild;
-                for (let i = 0; i < newChild.length; i++) {
-                  let child = newChild[i];
-                  if (oldChild[i]) {
-                    Host.driver.replaceChild(child, oldChild[i]);
-                  } else {
-                    Host.driver.insertAfter(child, lastNewChild);
-                  }
-                  lastNewChild = child;
-                }
-
-                // If newChild count less then oldChild
-                if (newChild.length < oldChild.length) {
-                  for (let i = newChild.length; i < oldChild.length; i++) {
-                    Host.driver.removeChild(oldChild[i]);
-                  }
-                }
-              } else {
-                // Insert child at a specific index
-
-                // Get the last child
-                if (Array.isArray(lastPlacedNode)) {
-                  lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
-                }
-
-                let prevFirstNativeNode;
-
-                if (firstPrevChild && !lastPlacedNode) {
-                  prevFirstNativeNode = firstPrevChild.getNativeNode();
-                  if (Array.isArray(prevFirstNativeNode)) {
-                    prevFirstNativeNode = prevFirstNativeNode[0];
-                  }
-                }
-
-                for (let i = newChild.length - 1; i >= 0; i--) {
-                  let child = newChild[i];
-                  if (lastPlacedNode) {
-                    Host.driver.insertAfter(child, lastPlacedNode);
-                  } else if (prevFirstNativeNode) {
-                    Host.driver.insertBefore(child, prevFirstNativeNode);
-                  } else {
-                    Host.driver.appendChild(child, parent);
-                  }
-                }
-              }
-
-              nextNativeNode = nextNativeNode.concat(newChild);
-            }
+            this[INSTANCE],
+            context,
+            insertNodes // Insert nodes mounter
           );
-          nextChild._mountIndex = nextIndex;
         }
 
-        nextIndex++;
-        lastPlacedNode = nextChild.getNativeNode();
+        // Update to the latest mount order
+        nextChild.__mountIndex = nextIndex++;
+
+        // Get the last child
+        lastPlacedNode = nextChild.__getNativeNode();
+
+        // Push to nextNativeNodes
+        if (isArray(lastPlacedNode)) {
+          nextNativeNodes = nextNativeNodes.concat(lastPlacedNode);
+          lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
+        } else {
+          nextNativeNodes.push(lastPlacedNode);
+        }
       }
 
       // Sync update native refs
-      if (Array.isArray(this._nativeNode)) {
+      if (isArray(this[NATIVE_NODE])) {
         // Clear all and push the new array
-        this._nativeNode.splice(0, this._nativeNode.length);
-        for (let i = 0; i < nextNativeNode.length; i++) {
-          this._nativeNode.push(nextNativeNode[i]);
-        }
+        this[NATIVE_NODE].length = 0;
+        assign(this[NATIVE_NODE], nextNativeNodes);
       }
     }
 
-    if (delayRemoveFirstPrevChild) {
-      firstPrevChild.unmountComponent();
+    if (shouldUnmountPrevFirstChild) {
+      prevFirstChild.unmountComponent(shouldRemoveAllChildren);
     }
 
-    this._renderedChildren = nextChildren;
-  }
-
-  getNativeNode() {
-    if (this._nativeNode == null) {
-      this._nativeNode = Host.driver.createElement(this._instance);
-      instance.set(this._nativeNode, this._instance);
+    if (shouldRemoveAllChildren) {
+      driver.removeChildren(this[NATIVE_NODE]);
     }
 
-    return this._nativeNode;
+    this.__renderedChildren = nextChildren;
   }
 
-  getPublicInstance() {
-    return this.getNativeNode();
-  }
-
-  getName() {
-    return this._currentElement.type;
+  __createNativeNode() {
+    const instance = this[INSTANCE];
+    const nativeNode = Host.driver.createElement(instance.type, instance.props, this);
+    Instance.set(nativeNode, instance);
+    return nativeNode;
   }
 }
-
-export default NativeComponent;

@@ -5,7 +5,7 @@ const ID = 'id';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
-const EVENT_PREFIX_REGEXP = /on[A-Z]/;
+const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
 const ELEMENT_NODE = 1;
 const TEXT_NODE = 3;
@@ -55,11 +55,10 @@ const Driver = {
     node.data = text;
   },
 
-  createElement(component) {
-    let props = component.props;
+  createElement(type, props) {
     let node = {
       nodeType: ELEMENT_NODE,
-      tagName: component.type.toUpperCase(),
+      tagName: type.toUpperCase(),
       attributes: {},
       style: props.style || {},
       eventListeners: {},
@@ -158,10 +157,6 @@ const Driver = {
     delete node.eventListeners[eventName];
   },
 
-  removeAllEventListeners(node) {
-    node.eventListeners = {};
-  },
-
   removeAttribute(node, propKey, propValue) {
     if (propKey === 'className') {
       propKey = 'class';
@@ -202,13 +197,13 @@ const Driver = {
     }
   },
 
-  setStyles(node, styles) {
-    for (let key in styles) {
-      node.style[key] = styles[key];
+  setStyle(node, style) {
+    for (let key in style) {
+      node.style[key] = style[key];
     }
   },
 
-  setNativeProps(node, props, skipSetStyles) {
+  setNativeProps(node, props, shouldIgnoreStyleProp) {
     for (let prop in props) {
       let value = props[prop];
       if (prop === CHILDREN) {
@@ -217,10 +212,10 @@ const Driver = {
 
       if (value != null) {
         if (prop === STYLE) {
-          if (skipSetStyles) {
+          if (shouldIgnoreStyleProp) {
             continue;
           }
-          this.setStyles(node, value);
+          this.setStyle(node, value);
         } else if (EVENT_PREFIX_REGEXP.test(prop)) {
           let eventName = prop.slice(2).toLowerCase();
           this.addEventListener(node, eventName, value);

@@ -1,0 +1,27 @@
+{
+  "name": "rax-pwa",
+  "version": "1.0.3",
+  "description": "Rax pwa templates",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0"
+  },
+  "dependencies": {
+    "history": "^4.9.0",
+    "path-to-regexp": "^3.0.0",
+    "rax-server-renderer": "^1.0.1",
+    "rax-use-router": "^2.0.0"
+  }
+}

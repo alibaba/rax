@@ -1,10 +1,12 @@
-const hasOwnProperty = Object.prototype.hasOwnProperty;
+import {isNull, isObject} from '../types';
+
+const hasOwnProperty = {}.hasOwnProperty;
 
 /**
  * inlined Object.is polyfill to avoid requiring consumers ship their own
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
  */
-function is(x, y) {
+export function is(x, y) {
   // SameValue algorithm
   if (x === y) {
     // Steps 1-5, 7-10
@@ -12,7 +14,7 @@ function is(x, y) {
     return x !== 0 || 1 / x === 1 / y;
   } else {
     // Step 6.a: NaN == NaN
-    return x !== x && y !== y;
+    return x !== x && y !== y; // eslint-disable-line no-self-compare
   }
 }
 
@@ -21,12 +23,12 @@ function is(x, y) {
  * when any key has values which are not strictly equal between the arguments.
  * Returns true when the values of all keys are strictly equal.
  */
-function shallowEqual(objA, objB) {
+export default function shallowEqual(objA, objB) {
   if (is(objA, objB)) {
     return true;
   }
 
-  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
+  if (!isObject(objA) || isNull(objA) || !isObject(objB) || isNull(objB)) {
     return false;
   }
 
@@ -46,5 +48,3 @@ function shallowEqual(objA, objB) {
 
   return true;
 }
-
-export default shallowEqual;

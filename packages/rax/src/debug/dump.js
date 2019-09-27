@@ -67,7 +67,7 @@ function dumpNode(node, identation) {
   return output;
 }
 
-function isNormalProp(name: string): boolean {
+function isNormalProp(name) {
   switch (name) {
     case 'children':
     case 'key':
@@ -78,7 +78,7 @@ function isNormalProp(name: string): boolean {
   }
 }
 
-function convertObject(object: Object, depth: number) {
+function convertObject(object, depth) {
   if (depth >= MAX_DEPTH) {
     return '[...omitted]';
   }
@@ -95,7 +95,7 @@ function convertObject(object: Object, depth: number) {
   return output + '}';
 }
 
-function convertValue(value, depth = 0): ?string {
+function convertValue(value, depth = 0) {
   if (!value) {
     return null;
   }
@@ -115,7 +115,7 @@ function convertValue(value, depth = 0): ?string {
   }
 }
 
-function possiblyEllipsis(value: string) {
+function possiblyEllipsis(value) {
   if (value.length > MAX_STRING_LENGTH) {
     return value.slice(0, MAX_STRING_LENGTH) + '...';
   } else {
@@ -123,7 +123,7 @@ function possiblyEllipsis(value: string) {
   }
 }
 
-function indent(size: number) {
+function indent(size) {
   return ' '.repeat(size * INDENTATION_SIZE);
 }
 

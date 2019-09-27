@@ -1,15 +1,22 @@
-import './debug/devtools';
-import {createElement, cloneElement, isValidElement, createFactory} from './element';
-
-export {createElement, cloneElement, isValidElement, createFactory};
-export Component from './component';
-export PureComponent from './purecomponent';
-export PropTypes from './proptypes';
+export createElement from './createElement';
+export createContext from './createContext';
+export createRef from './createRef';
+export forwardRef from './forwardRef';
+export { useState, useContext, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useReducer, useImperativeHandle } from './hooks';
+export memo from './memo';
+export Fragment from './fragment';
 export render from './render';
-export hydrate from './hydrate';
-export findDOMNode from './findDOMNode';
-export unmountComponentAtNode from './unmountComponentAtNode';
-export findComponentInstance from './findComponentInstance';
-export setNativeProps from './setNativeProps';
+export Component, { PureComponent } from './vdom/component';
 export version from './version';
-export Children from './children';
+
+import Host from './vdom/host';
+import Instance from './vdom/instance';
+import Element from './vdom/element';
+import flattenChildren from './vdom/flattenChildren';
+
+export const shared = {
+  Host,
+  Instance,
+  Element,
+  flattenChildren
+};

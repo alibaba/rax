@@ -89,6 +89,9 @@ document.fonts.add(oxygenFontFace);
     * location.protocol
     * location.origin
     * location.href
+    * location.assign
+    * location.replace
+    * location.reload
 
 ## Rax API
 ```jsx

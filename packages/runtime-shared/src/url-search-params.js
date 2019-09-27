@@ -1,5 +1,5 @@
 // https://github.com/WebReflection/url-search-params
-import Symbol from './symbol';
+const Symbol = require('./symbol');
 
 const find = /[!'\(\)~]|%20|%00/g;
 const plus = /\+/g;

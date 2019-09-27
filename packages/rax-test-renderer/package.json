@@ -1,6 +1,6 @@
 {
   "name": "rax-test-renderer",
-  "version": "0.4.20",
+  "version": "1.0.0",
   "description": "Rax renderer for snapshot testing.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -13,6 +13,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "peerDependencies": {
-    "rax": "0.x"
+    "rax": "^1.0.0"
   }
 }

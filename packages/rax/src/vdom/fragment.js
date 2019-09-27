@@ -1,125 +1,88 @@
 import Host from './host';
 import NativeComponent from './native';
-import instance from './instance';
-import instantiateComponent from './instantiateComponent';
-import getElementKeyName from './getElementKeyName';
+import Instance from './instance';
+import toArray from '../toArray';
+import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
 /**
  * Fragment Component
  */
 class FragmentComponent extends NativeComponent {
-  constructor(element) {
-    super(element);
-  }
+  __mountComponent(parent, parentInstance, context, nativeNodeMounter) {
+    this.__initComponent(parent, parentInstance, context);
 
-  mountComponent(parent, parentInstance, context, childMounter) {
-    // Parent native element
-    this._parent = parent;
-    this._parentInstance = parentInstance;
-    this._context = context;
-    this._mountID = Host.mountID++;
+    let instance = this[INSTANCE] = {};
+    instance[INTERNAL] = this;
 
-    let instance = {
-      _internal: this,
-    };
-    this._instance = instance;
+    // Mount children
+    this.__mountChildren(this.__currentElement, context);
 
-    let fragment = this.getNativeNode();
-    let children = this._currentElement;
+    let fragment = this.__getNativeNode();
 
-    // Process children
-    this.mountChildren(children, context);
-
-    if (childMounter) {
-      childMounter(fragment, parent);
+    if (nativeNodeMounter) {
+      nativeNodeMounter(fragment, parent);
     } else {
-      let isFragmentParent = Array.isArray(parent);
       for (let i = 0; i < fragment.length; i++) {
-        let child = fragment[i];
-        // When the parent is also a fragment
-        if (isFragmentParent) {
-          parent.push(child);
-        } else {
-          Host.driver.appendChild(child, parent);
-        }
+        Host.driver.appendChild(fragment[i], parent);
       }
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      this.__currentElement.type = FragmentComponent;
+      Host.reconciler.mountComponent(this);
     }
 
     return instance;
   }
 
+  __mountChildren(children, context) {
+    let fragment = this.__getNativeNode();
 
-  mountChildren(children, context) {
-    let renderedChildren = this._renderedChildren = {};
-    let fragment = this.getNativeNode();
-
-    let renderedChildrenImage = children.map((element, index) => {
-      let renderedChild = instantiateComponent(element);
-      let name = getElementKeyName(renderedChildren, element, index);
-      renderedChildren[name] = renderedChild;
-      renderedChild._mountIndex = index;
-      // Mount
-      let mountImage = renderedChild.mountComponent(
-        this._parent,
-        this._instance,
-        context, (nativeNode) => {
-          if (Array.isArray(nativeNode)) {
-            for (let i = 0; i < nativeNode.length; i++) {
-              fragment.push(nativeNode[i]);
-            }
-          } else {
-            fragment.push(nativeNode);
-          }
-        }
-      );
-      return mountImage;
+    return this.__mountChildrenImpl(this._parent, children, context, (nativeNode) => {
+      nativeNode = toArray(nativeNode);
+      for (let i = 0; i < nativeNode.length; i++) {
+        fragment.push(nativeNode[i]);
+      }
     });
-
-    return renderedChildrenImage;
   }
 
-  unmountComponent(notRemoveChild) {
-    if (this._nativeNode) {
-      instance.remove(this._nativeNode);
-      if (!notRemoveChild) {
-        for (let i = 0; i < this._nativeNode.length; i++) {
-          Host.driver.removeChild(this._nativeNode[i]);
+  unmountComponent(shouldNotRemoveChild) {
+    let nativeNode = this[NATIVE_NODE];
+
+    if (nativeNode) {
+      Instance.remove(nativeNode);
+
+      if (!shouldNotRemoveChild) {
+        for (let i = 0, l = nativeNode.length; i < l; i++) {
+          Host.driver.removeChild(nativeNode[i]);
         }
       }
     }
 
     // Do not need remove child when their parent is removed
-    this.unmountChildren(true);
+    this.__unmountChildren(true);
 
-    this._currentElement = null;
-    this._nativeNode = null;
-    this._parent = null;
-    this._parentInstance = null;
-    this._context = null;
-    this._instance = null;
+    this.__destoryComponent();
   }
 
-  updateComponent(prevElement, nextElement, prevContext, nextContext) {
+  __updateComponent(prevElement, nextElement, prevContext, nextContext) {
     // Replace current element
-    this._currentElement = nextElement;
-    this.updateChildren(this._currentElement, nextContext);
-  }
+    this.__currentElement = nextElement;
+    this.__updateChildren(this.__currentElement, nextContext);
 
-  getNativeNode() {
-    if (this._nativeNode == null) {
-      this._nativeNode = [];
+    if (process.env.NODE_ENV !== 'production') {
+      this.__currentElement.type = FragmentComponent;
+      Host.reconciler.receiveComponent(this);
     }
-
-    return this._nativeNode;
   }
 
-  getPublicInstance() {
-    return this.getNativeNode();
+  __createNativeNode() {
+    return [];
   }
+}
 
-  getName() {
-    return 'fragment';
-  }
+if (process.env.NODE_ENV !== 'production') {
+  FragmentComponent.displayName = 'Fragment';
 }
 
 export default FragmentComponent;

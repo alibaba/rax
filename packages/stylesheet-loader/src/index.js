@@ -19,27 +19,30 @@ module.exports = function(source) {
     throw new Error('StyleSheet Parsing Error occured.');
   }
 
-  const parseData = parse(this.query, stylesheet);
+  const parsedQuery = loaderUtils.parseQuery(this.query);
 
-  return genStyleContent(parseData);
+  parsedQuery.log = parsedQuery.log === 'true';
+
+  const parsedData = parse(parsedQuery, stylesheet);
+
+  return genStyleContent(parsedData, parsedQuery);
 };
 
-const parse = (query, stylesheet) => {
+const parse = (parsedQuery, stylesheet) => {
   let styles = {};
   let fontFaceRules = [];
   let mediaRules = [];
-  const parseQuery = loaderUtils.parseQuery(query);
-  const transformDescendantCombinator = parseQuery.transformDescendantCombinator;
+  const transformDescendantCombinator = parsedQuery.transformDescendantCombinator;
 
   stylesheet.rules.forEach(function(rule) {
     let style = {};
 
     // normal rule
     if (rule.type === RULE) {
-      style = transformer.convert(rule);
+      style = transformer.convert(rule, parsedQuery.log);
 
       rule.selectors.forEach((selector) => {
-        let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator, rule.position);
+        let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator, rule.position, parsedQuery.log);
 
         if (sanitizedSelector) {
           // handle pseudo class
@@ -74,7 +77,7 @@ const parse = (query, stylesheet) => {
     if (rule.type === MEDIA_RULE) {
       mediaRules.push({
         key: rule.media,
-        data: parse(query, rule).data
+        data: parse(parsedQuery, rule).data
       });
     }
   });
@@ -86,11 +89,11 @@ const parse = (query, stylesheet) => {
   };
 };
 
-const genStyleContent = (parseData) => {
-  const {styles, fontFaceRules, mediaRules} = parseData;
+const genStyleContent = (parsedData, parsedQuery) => {
+  const {styles, fontFaceRules, mediaRules} = parsedData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
-  const warnMessageOutput = getWarnMessageOutput();
+  const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
 
   resetMessage();
 

@@ -1,3 +1,5 @@
+
+
 module.exports = {
   get Promise() {
     return require('./promise');
@@ -28,5 +30,5 @@ module.exports = {
   },
   get matchMedia() {
     return require('./matchMedia');
-  }
+  },
 };

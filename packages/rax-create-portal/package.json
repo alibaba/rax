@@ -1,0 +1,29 @@
+{
+  "name": "rax-create-portal",
+  "version": "1.0.0",
+  "description": "Rax createPortal",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-unmount-component-at-node": "^1.0.0"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0",
+    "driver-server": "^1.0.0",
+    "rax-proptypes": "^1.0.0"
+  }
+}

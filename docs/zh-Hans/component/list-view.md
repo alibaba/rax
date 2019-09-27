@@ -1,6 +1,9 @@
 # ListView 列表容器
 
-较复杂的列表实现，内部实现基于 RecyclerView。
+较复杂的列表实现，通过 dataSource 来定义每行渲染的数据，通过 renderRow 来定义每行渲染的模板，内部实现基于 RecyclerView。  
+如果对性能有更高的要求推荐使用 RecyclerView，更方便进行扩展
+
+![](https://gw.alicdn.com/tfs/TB1VQ3nRVXXXXcTXXXXXXXXXXXX-255-433.gif)
 
 ## 安装
 
@@ -19,7 +22,7 @@ import ListView from 'rax-listview';
 | 名称                    | 类型       | 默认值  | 描述                                    |
 | :-------------------- | :------- | :--- | :------------------------------------ |
 | renderRow             | Function |      | 模板方法（必需）                              |
-| dataSource            | List     | ''   | 需要渲染的数据，与 renderRow 配合使用（必需）          |
+| dataSource            | Array     | ''   | 需要渲染的数据，与 renderRow 配合使用（必需）          |
 | onEndReached          | Function |      | 滚动到底部触发事件，将修改后的数据付给 data              |
 | onEndReachedThreshold | Number   | 500  | 距离多少开始加载下一屏，数字单位默认 rem                |
 | onScroll              | Function |      | 滚动时触发的事件，返回当前滚动的水平垂直距离 |
@@ -48,16 +51,7 @@ import ListView from 'rax-listview';
 import {createElement, Component, render} from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
-import Image from 'rax-image';
-import Link from 'rax-link';
-import TextInput from 'rax-textinput';
-import Button from 'rax-button';
-import Switch from 'rax-switch';
-import Video from 'rax-video';
-import ScrollView from 'rax-scrollview';
 import ListView from 'rax-listview';
-import Touchable from 'rax-touchable';
-
 
 let listData = [
     {name1: 'tom'}, {name1: 'tom'}, {name1: 'tom'},

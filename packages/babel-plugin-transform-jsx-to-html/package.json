@@ -1,0 +1,27 @@
+{
+  "name": "babel-plugin-transform-jsx-to-html",
+  "version": "0.1.0",
+  "description": "Transform JSX to HTML.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0"
+  },
+  "dependencies": {
+    "@babel/types": "^7.5.5",
+    "esutils": "^2.0.3"
+  }
+}

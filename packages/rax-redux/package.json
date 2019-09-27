@@ -1,6 +1,6 @@
 {
   "name": "rax-redux",
-  "version": "0.4.20",
+  "version": "0.6.6",
   "description": "Official Rax bindings for Redux.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,12 +16,14 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "invariant": "^2.0.0",
-    "lodash.isplainobject": "^4.0.6",
-    "redux": "^3.6.0",
-    "shallowequal": "^0.2.2"
+    "hoist-non-react-statics": "^2.5.0",
+    "invariant": "^2.2.4"
   },
   "peerDependencies": {
-    "rax": "0.x"
+    "rax": "^0.6.5",
+    "redux": "^2.0.0 || ^3.0.0 || ^4.0.0-0"
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^0.6.5"
   }
 }

@@ -1,9 +1,20 @@
 {
-  "lerna": "2.0.0-beta.37",
-  "version": "0.4.20",
-  "commands": {
+  "version": "1.0.0",
+  "packages": [
+    "packages/*"
+  ],
+  "command": {
+    "bootstrap": {
+      "npmClientArgs": [
+        "--no-package-lock"
+      ]
+    },
     "publish": {
-      "skipGit": true
+      "skipGit": true,
+      "allowBranch": "master",
+      "ignoreChanges": [
+        "*.md"
+      ]
     }
   }
 }

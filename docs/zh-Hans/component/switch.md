@@ -1,12 +1,18 @@
 # Switch 开关按钮
 
-Switch 是状态切换的开关按钮组件。
+Switch 是状态切换的开关按钮组件，具有默认的展现样式。
+
+![](https://gw.alicdn.com/tfs/TB1Nj.nRVXXXXcMXXXXXXXXXXXX-255-175.gif)
+
+## 安装
+
+```bash
+$ npm install rax-switch --save
+```
 
 ## 引用
 
 ```jsx
-import View from 'rax-view';
-import Text from 'rax-text';
 import Switch from 'rax-switch';
 ```
 

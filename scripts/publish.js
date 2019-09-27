@@ -18,7 +18,7 @@ function getExamplesHtmlEntry() {
 
   fs.readdirSync(EXAMPLES_DIR)
     .forEach(file => {
-      let f = path.resolve(EXAMPLES_DIR, file, 'index.html');
+      let f = path.resolve(EXAMPLES_DIR, file, 'public/index.html');
       if (fs.existsSync(f)) {
         entry.push(f);
       }
@@ -67,6 +67,8 @@ if (version) {
   const ProjectPackageJSON = JSON.parse(fs.readFileSync(PROJECT_DEPENDENCIES_FILE));
   ProjectPackageJSON.devDependencies['babel-preset-rax'] = semver;
   ProjectPackageJSON.devDependencies['rax-webpack-plugin'] = semver;
+  ProjectPackageJSON.devDependencies['stylesheet-loader'] = semver;
+
   fs.writeFileSync(PROJECT_DEPENDENCIES_FILE, JSON.stringify(ProjectPackageJSON, null, '  '));
   console.log('*', PROJECT_DEPENDENCIES_FILE);
 

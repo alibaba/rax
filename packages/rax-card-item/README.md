@@ -1,1 +1,0 @@
-[![npm](https://img.shields.io/npm/v/rax-card-item.svg)](https://www.npmjs.com/package/rax-card-item)

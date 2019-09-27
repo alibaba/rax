@@ -1,6 +1,8 @@
 # ScrollView 滚动容器
 
-ScrollView 是一个包装了滚动操作的组件。一般情况下需要一个确定的高度来保证 ScrollView 的正常展现。  
+ScrollView 是一个包装了滚动操作的组件。一般情况下需要一个确定的高度来保证 ScrollView 的正常展现。
+
+![](https://gw.alicdn.com/tfs/TB1SV3iRVXXXXcAXpXXXXXXXXXX-255-383.gif)  
 
 ## 安装
 
@@ -37,31 +39,146 @@ import ScrollView from 'rax-scrollview';
 ```jsx
 // demo
 import {createElement, Component, render} from 'rax';
-import ScrollView from 'rax-scrollview';
+import View from 'rax-view';
 import Text from 'rax-text';
+import TouchableOpacity from 'rax-touchable';
+import ScrollView from 'rax-scrollview';
 
-render(
-<ScrollView onEndReachedThreshold={300} onEndReached={() => {}}>
-  <Text style={{
-    color:'#ffffff',
-    margin:'5rem',
-    fontSize:'100rem',
-    backgroundColor:"blue"
-  }}>
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-      Shake or press menu button for dev menuShake or press menu button for dev menu
-  </Text>
-</ScrollView>
-);
+class Thumb extends Component {
+  shouldComponentUpdate(nextProps, nextState) {
+    return false;
+  }
+
+  render() {
+    return (
+      <View style={styles.button}>
+        <View style={styles.box} />
+      </View>
+    );
+  }
+}
+
+let THUMBS = [];
+for (let i = 0; i < 20; i++) THUMBS.push(i);
+let createThumbRow = (val, i) => <Thumb key={i} />;
+
+class App extends Component {
+  state = {
+    horizontalScrollViewEventLog: false,
+    scrollViewEventLog: false,
+  };
+
+  render() {
+    return (
+      <View style={styles.root}>
+      <View style={styles.container}>
+        <ScrollView
+          ref={(scrollView) => {
+            this.horizontalScrollView = scrollView;
+          }}
+          style={{
+            height: 100,
+          }}
+          horizontal={true}
+          onEndReached={() => this.setState({horizontalScrollViewEventLog: true})}
+        >
+          {THUMBS.map(createThumbRow)}
+        </ScrollView>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => this.horizontalScrollView.scrollTo({x: 0})}>
+          <Text>Scroll to start</Text>
+        </TouchableOpacity>
+
+        <View style={styles.eventLogBox}>
+          <Text>{this.state.horizontalScrollViewEventLog ? 'onEndReached' : ''}</Text>
+        </View>
+
+      </View>
+
+      <View style={styles.container}>
+        <ScrollView
+          ref={(scrollView) => {
+            this.scrollView = scrollView;
+          }}
+          style={{
+            height: 500,
+          }}
+          onEndReached={() => this.setState({scrollViewEventLog: true})}>
+
+          <View>
+            <View style={styles.sticky}>
+              <Text>Cannot sticky</Text>
+            </View>
+          </View>
+
+          <View style={styles.sticky}>
+            <Text>Sticky view must in ScrollView root</Text>
+          </View>
+
+          {THUMBS.map(createThumbRow)}
+
+        </ScrollView>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => this.scrollView.scrollTo({y: 0})}>
+          <Text>Scroll to top</Text>
+        </TouchableOpacity>
+
+        <View style={styles.eventLogBox}>
+          <Text>{this.state.scrollViewEventLog ? 'onEndReached' : ''}</Text>
+        </View>
+
+      </View>
+
+      </View>
+    );
+  }
+}
+
+let styles = {
+  root: {
+    width: 750,
+    paddingTop: 20
+  },
+  sticky: {
+    position: 'sticky',
+    width: 750,
+    backgroundColor: '#cccccc'
+  },
+  container: {
+    padding: 20,
+    borderStyle: 'solid',
+    borderColor: '#dddddd',
+    borderWidth: 1,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 10,
+  },
+  button: {
+    margin: 7,
+    padding: 5,
+    alignItems: 'center',
+    backgroundColor: '#eaeaea',
+    borderRadius: 3,
+  },
+  box: {
+    width: 64,
+    height: 64,
+  },
+  eventLogBox: {
+    padding: 10,
+    margin: 10,
+    height: 80,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+    backgroundColor: '#f9f9f9',
+  },
+};
+
+
+
+render(<App/ >);
 ```

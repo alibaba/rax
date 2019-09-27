@@ -1,7 +1,7 @@
 {
   "name": "rax-dom",
-  "version": "0.4.20",
-  "description": "Rax package for working with the DOM.",
+  "version": "1.0.2-0",
+  "description": "Rax DOM render",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -16,6 +16,13 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "rax": "^0.4.20"
+    "driver-dom": "2.0.1-0",
+    "rax-hydrate": "^1.0.0",
+    "rax-unmount-component-at-node": "^1.0.0",
+    "rax-find-dom-node": "^1.0.0",
+    "rax-create-portal": "^1.0.0"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0"
   }
 }

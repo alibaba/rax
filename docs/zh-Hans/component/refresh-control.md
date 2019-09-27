@@ -19,7 +19,7 @@ import RefreshControl from 'rax-refreshcontrol';
 | 名称         | 类型     | 默认值  | 描述        |
 | :--------- | :----- | :--- | :-------- |
 | refreshing | String |      | 是否显示      |
-| onRefresh  | Number |      | 监听下拉刷新的行为 |
+| onRefresh  | Function |      | 监听下拉刷新的行为 |
 
 ## 基本示例
 

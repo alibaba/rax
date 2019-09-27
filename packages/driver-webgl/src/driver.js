@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import createElement from './createElement';
+import ThreeComponent from './components';
 
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
@@ -9,6 +9,10 @@ const nodeMaps = {};
 let renderer = null;
 let scene = null;
 let camera = null;
+
+function createElement(type, props) {
+  return ThreeComponent[type].init(props);
+}
 
 const Driver = {
   getElementById(id) {
@@ -33,9 +37,9 @@ const Driver = {
     });
   },
 
-  createElement(component) {
-    let node = createElement(component);
-    this.setNativeProps(node, component.props);
+  createElement(type, props) {
+    let node = createElement(type, props);
+    this.setNativeProps(node, props);
     return node;
   },
 
@@ -89,10 +93,6 @@ const Driver = {
     return node;
   },
 
-  removeAllEventListeners(node) {
-    // Noop
-  },
-
   removeAttribute(node, propKey, propValue) {
     // Noop
   },
@@ -103,10 +103,6 @@ const Driver = {
     }
     node.updateProperty(propKey, propValue);
     return node;
-  },
-
-  beforeRender() {
-    // Noop
   },
 
   afterRender() {

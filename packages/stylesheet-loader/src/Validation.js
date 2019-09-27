@@ -4,12 +4,14 @@ import BoxModelPropTypes from './BoxModelPropTypes';
 import FlexboxPropTypes from './FlexboxPropTypes';
 import TextStylePropTypes from './TextStylePropTypes';
 import ColorPropTypes from './ColorPropTypes';
+import CSSTransitionPropTypes from './CSSTransitionPropTypes';
 import {pushWarnMessage} from './promptMessage';
 import particular from './particular';
 import chalk from 'chalk';
 
 class Validation {
-  static validate(camelCaseProperty, prop, value, selectors = '', position = {}) {
+  static validate(camelCaseProperty, prop, value, selectors = '', position = {}, log) {
+    if (!log) return {};
     if (allStylePropTypes[camelCaseProperty]) {
       let error = allStylePropTypes[camelCaseProperty](value, prop, selectors);
 
@@ -41,5 +43,6 @@ Validation.addValidStylePropTypes(BoxModelPropTypes);
 Validation.addValidStylePropTypes(FlexboxPropTypes);
 Validation.addValidStylePropTypes(TextStylePropTypes);
 Validation.addValidStylePropTypes(ColorPropTypes);
+Validation.addValidStylePropTypes(CSSTransitionPropTypes);
 
 export default Validation;

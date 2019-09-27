@@ -218,17 +218,22 @@ export function getOffset(el, param) {
     param = {x: 0, y: 0};
   }
 
-  if (el != window) {
-    el = el.getBoundingClientRect();
-    l = el.left;
-    t = el.top;
-    r = el.right;
-    b = el.bottom;
-  } else {
+  if (el === window) {
     l = 0;
     t = 0;
     r = l + el.innerWidth;
     b = t + el.innerHeight;
+  } else if (el.parentNode === null) {
+    l = 0;
+    t = 0;
+    r = 0;
+    b = 0;
+  } else {
+    const { top, right, bottom, left } = el.getBoundingClientRect();
+    l = left;
+    t = top;
+    r = right;
+    b = bottom;
   }
 
   return {

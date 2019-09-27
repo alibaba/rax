@@ -1,22 +1,22 @@
 'use strict';
 /* @jsx createElement */
 
-import Component from '../../component';
-import PropTypes from '../../proptypes';
-import {createElement} from '../../element';
+import Component from '../component';
+import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
-import findDOMNode from '../../findDOMNode';
-import renderToString from '../../server/renderToString';
+import createRef from '../../createRef';
 
 describe('Ref', function() {
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('Allow refs to hop around children correctly', function() {
@@ -56,20 +56,24 @@ describe('Ref', function() {
 
     let refHopsAround = render(<RefHopsAround />);
 
-    let firstDiv = findDOMNode('first');
-    let secondDiv = findDOMNode('second');
-    let thirdDiv = findDOMNode('third');
+    let firstDiv = Host.driver.getElementById('first');
+    let secondDiv = Host.driver.getElementById('second');
+    let thirdDiv = Host.driver.getElementById('third');
 
     expect(refHopsAround.refs.hopRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef).toEqual(firstDiv);
     expect(refHopsAround.refs.hopRef).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);
     expect(refHopsAround.refs.hopRef).toEqual(thirdDiv);
@@ -79,6 +83,8 @@ describe('Ref', function() {
      * refs are completely restored.
      */
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.hopRef).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef).toEqual(thirdDiv);
@@ -137,11 +143,15 @@ describe('Ref', function() {
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.hopRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
 
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.divOneRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.hopRef.id).toEqual(thirdDiv);
@@ -151,12 +161,14 @@ describe('Ref', function() {
      * refs are completely restored.
      */
     refHopsAround.moveRef();
+    jest.runAllTimers();
+
     expect(refHopsAround.refs.hopRef.id).toEqual(firstDiv);
     expect(refHopsAround.refs.divTwoRef.id).toEqual(secondDiv);
     expect(refHopsAround.refs.divThreeRef.id).toEqual(thirdDiv);
   });
 
-  it('always has a value for this.refs', function() {
+  it('Always has a value for this.refs', function() {
     class MyComponent extends Component {
       render() {
         return <div />;
@@ -165,5 +177,33 @@ describe('Ref', function() {
 
     let instance = render(<MyComponent />);
     expect(instance.refs).toEqual({});
+  });
+
+  it('Allow ref accept createRef object', function() {
+    class MyComponent extends Component {
+      constructor(props) {
+        super(props);
+        this.myRef = createRef();
+      }
+      render() {
+        return <div ref={this.myRef} />;
+      }
+    }
+
+    let instance = render(<MyComponent />);
+    expect(instance.myRef.current.tagName).toEqual('DIV');
+  });
+
+  it('Allow createRef object in function object', function() {
+    let myRef = createRef();
+
+    function MyComponent(props) {
+      return (
+        <div ref={myRef} />
+      );
+    }
+
+    render(<MyComponent />);
+    expect(myRef.current.tagName).toEqual('DIV');
   });
 });

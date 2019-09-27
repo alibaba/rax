@@ -1,0 +1,20 @@
+{
+  "name": "create-rax",
+  "version": "0.1.2",
+  "description": "Creator alias for rax.",
+  "bin": {
+    "create": "bin/create.js"
+  },
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "rax-cli": "latest"
+  }
+}

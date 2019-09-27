@@ -1,0 +1,27 @@
+{
+  "name": "weex-rax-framework-api",
+  "version": "0.6.5",
+  "description": "Rax framework api for weex.",
+  "license": "BSD-3-Clause",
+  "main": "dist/framework.weex.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "scripts": {
+    "build:jsfm": "./build"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "event-target-shim": "^2.0.0",
+    "rax": "^0.6.5",
+    "runtime-shared": "^0.6.5"
+  },
+  "devDependencies": {
+    "weex-runtime-js": "^0.19.8",
+    "weex-vdom-tester": "^0.2.0"
+  }
+}

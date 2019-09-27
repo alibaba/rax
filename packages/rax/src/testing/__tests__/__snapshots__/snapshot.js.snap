@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Link changes the class when hovered 1`] = `
+exports[`snapshot Link changes the class when hovered 1`] = `
 Object {
   "attributes": Object {
     "class": "normal",
@@ -17,7 +17,7 @@ Object {
 }
 `;
 
-exports[`Link changes the class when hovered 2`] = `
+exports[`snapshot Link changes the class when hovered 2`] = `
 Object {
   "attributes": Object {
     "class": "hovered",
@@ -34,7 +34,7 @@ Object {
 }
 `;
 
-exports[`Link changes the class when hovered 3`] = `
+exports[`snapshot Link changes the class when hovered 3`] = `
 Object {
   "attributes": Object {
     "class": "normal",

@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "jsx2mp-cli-demo",
+  "version": "1.0.0",
+  "main": "component.js",
+  "dependencies": {
+    "rax": "^1.0.8",
+    "rax-image": "^1.1.1",
+    "rax-view": "^1.0.2"
+  }
+}

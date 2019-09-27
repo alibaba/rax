@@ -27,7 +27,7 @@ WeakMap.prototype.set = function(key, value) {
 WeakMap.prototype.get = function(key) {
   var entry;
   return (entry = key[this.name]) && entry[0] === key ?
-      entry[1] : undefined;
+    entry[1] : undefined;
 };
 
 WeakMap.prototype.delete = function(key) {

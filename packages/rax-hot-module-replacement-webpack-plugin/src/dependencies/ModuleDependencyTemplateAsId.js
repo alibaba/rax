@@ -5,7 +5,6 @@
 'use strict';
 
 class ModuleDependencyTemplateAsId {
-
   apply(dep, source, outputOptions, requestShortener) {
     if (!dep.range) return;
     const comment = outputOptions.pathinfo ?
