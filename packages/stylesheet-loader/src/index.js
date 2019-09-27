@@ -99,7 +99,8 @@ const genStyleContent = (parsedData, parsedQuery) => {
 
   resetMessage();
 
-  return `var _styles = ${stringifyData(styles, parsedQuery.theme)};
+  return `${parsedQuery.theme ? 'function _getvar(name){return ((require("rax-theme-helper").get() || {}).theme || {})[name]}' : ''}
+  var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
@@ -174,5 +175,5 @@ const getFontFaceContent = (rules) => {
 
 const stringifyData = (data, theme) => {
   const str = JSON.stringify(data, undefined, '  ');
-  return !theme ? str : str.replace(VAR_KEY_VAL_REG, 'get $1(){return ((require("rax-theme-helper").get() || {}).theme || {})["$2"]}');
+  return !theme ? str : str.replace(VAR_KEY_VAL_REG, 'get $1(){return _getvar("$2")}');
 };
