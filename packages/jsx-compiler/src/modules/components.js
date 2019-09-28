@@ -133,7 +133,7 @@ function transformIdentifierComponentName(parsed, path, options, dynamicValue) {
 }
 
 function transformComponents(parsed, options) {
-  const { templateAST } = parsed;
+  const { templateAST, imported } = parsed;
   const dynamicValue = {};
   const contextList = [];
   traverse(templateAST, {
@@ -143,7 +143,7 @@ function transformComponents(parsed, options) {
         // <View/>
         transformIdentifierComponentName(parsed, path, options, dynamicValue);
       } else if (t.isJSXMemberExpression(node.name)) {
-        // <RecyclerView.Cell /> or <context.Provider>
+        // <RecyclerView.Cell /> or <Context.Provider>
         const { object, property } = node.name;
         if (t.isJSXIdentifier(object) && t.isJSXIdentifier(property)) {
           if (property.name === 'Provider') {
@@ -162,7 +162,7 @@ function transformComponents(parsed, options) {
             node.attributes = [];
           } else {
             // <RecyclerView.Cell />
-            const alias = getComponentAlias(object.name, parsed.imported);
+            const alias = getComponentAlias(object.name, imported);
             removeImport(parsed.ast, alias);
             if (alias) {
               const pkg = getComponentConfig(alias.from, options.resourcePath);
@@ -241,6 +241,8 @@ module.exports = {
   generate(ret, parsed, options) {
     ret.usingComponents = parsed.usingComponents;
   },
+  // For test case.
+  _transformComponents: transformComponents
 };
 
 function getComponentAlias(tagName, imported) {
