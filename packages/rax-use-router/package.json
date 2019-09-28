@@ -1,6 +1,6 @@
 {
   "name": "rax-use-router",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Rax useRouter hook.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",

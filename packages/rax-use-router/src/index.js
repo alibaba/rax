@@ -1,5 +1,5 @@
 // Inspired by react-router and universal-router
-import { useState, useLayoutEffect } from 'rax';
+import { useState, useLayoutEffect, createElement } from 'rax';
 import pathToRegexp from 'path-to-regexp';
 
 const cache = {};
@@ -43,7 +43,7 @@ function matchPath(route, pathname, parentParams) {
   }
 
   const url = result[0];
-  const params = { ...parentParams };
+  const params = { ...parentParams, history: router.history, location: router.history.location };
 
   for (let i = 1; i < result.length; i++) {
     const key = keys[i - 1];
@@ -119,7 +119,8 @@ function matchRoute(route, baseUrl, pathname, parentParams) {
   };
 }
 
-
+let _initialized = false;
+let _routerConfig = null;
 const router = {
   history: null,
   handles: [],
@@ -163,7 +164,7 @@ const router = {
       if (component instanceof Promise) {
         // Lazy loading component by import('./Foo')
         return component.then((component) => {
-          // Check current fullpath avoid router has changed before lazy laoding complete
+          // Check current fullpath avoid router has changed before lazy loading complete
           if (fullpath === router.fullpath) {
             router.triggerHandles(component);
           }
@@ -188,13 +189,25 @@ function matchLocation({ pathname }) {
 function getInitialComponent(routerConfig) {
   let InitialComponent = [];
 
-  if (typeof routerConfig === 'function') {
-    routerConfig = routerConfig();
-  }
+  if (_routerConfig === null) {
+    if (typeof routerConfig === 'function') {
+      routerConfig = routerConfig();
+    }
 
-  if (routerConfig.InitialComponent) {
-    InitialComponent = routerConfig.InitialComponent;
+    if (process.env.NODE_ENV !== 'production') {
+      if (!routerConfig) {
+        throw new Error('Error: useRouter should have routerConfig, see: https://www.npmjs.com/package/rax-use-router.');
+      }
+      if (!routerConfig.history || !routerConfig.routes) {
+        throw new Error('Error: routerConfig should contain history and routes, see: https://www.npmjs.com/package/rax-use-router.');
+      }
+    }
+    _routerConfig = routerConfig;
   }
+  if (_routerConfig.InitialComponent) {
+    InitialComponent = _routerConfig.InitialComponent;
+  }
+  router.history = _routerConfig.history;
 
   return InitialComponent;
 }
@@ -203,14 +216,11 @@ export function useRouter(routerConfig) {
   const [component, setComponent] = useState(getInitialComponent(routerConfig));
 
   useLayoutEffect(() => {
-    if (typeof routerConfig === 'function') {
-      routerConfig = routerConfig();
-    }
+    if (_initialized) throw new Error('Error: useRouter can only be called once.');
+    _initialized = true;
+    const history = _routerConfig.history;
+    const routes = _routerConfig.routes;
 
-    const history = routerConfig.history;
-    const routes = routerConfig.routes;
-
-    router.history = history;
     router.root = Array.isArray(routes) ? { routes } : routes;
 
     const handleId = router.addHandle((component) => {
@@ -218,7 +228,7 @@ export function useRouter(routerConfig) {
     });
 
     // Init path match
-    if (!routerConfig.InitialComponent) {
+    if (!_routerConfig.InitialComponent) {
       matchLocation(history.location);
     }
 
@@ -235,14 +245,13 @@ export function useRouter(routerConfig) {
   return { component };
 }
 
-export function push(fullpath) {
-  router.history.push(fullpath);
-}
+export function withRouter(Component) {
+  function Wrapper(props) {
+    const history = router.history;
+    return createElement(Component, { ...props, history, location: history.location });
+  };
 
-export function replace(fullpath) {
-  router.history.replace(fullpath);
-}
-
-export function go(n) {
-  router.history.go(n);
+  Wrapper.displayName = 'withRouter(' + (Component.displayName || Component.name) + ')';
+  Wrapper.WrappedComponent = Component;
+  return Wrapper;
 }

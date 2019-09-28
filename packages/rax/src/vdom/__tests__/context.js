@@ -63,7 +63,6 @@ describe('Context', function() {
     expect(container.childNodes[0].childNodes[0].data).toBe('bar');
   });
 
-
   it('should filter out context not in contextTypes', function() {
     class MyComponent extends Component {
       static contextTypes = {

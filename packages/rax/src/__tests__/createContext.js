@@ -7,6 +7,7 @@ import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
 import createRef from '../createRef';
+import {useState} from '../hooks';
 
 describe('createContext', () => {
   function createNodeElement(tagName) {
@@ -402,7 +403,7 @@ describe('createContext', () => {
 
     function App() {
       logs.push('App');
-      return [<OtherChild />, <ThemeConsumer />];
+      return [<OtherChild key={'other'} />, <ThemeConsumer key={'theme'} />];
     }
 
     const themeProvider = render(<ThemeProvider><App /></ThemeProvider>, container);
@@ -418,5 +419,194 @@ describe('createContext', () => {
     expect(logs).toEqual(['ThemeProvider', 'ThemeDisplay']);
     expect(container.childNodes[0].childNodes[0].data).toEqual('OtherChild');
     expect(container.childNodes[1].childNodes[0].data).toEqual('theme2');
+  });
+
+  it('render multiple Provider in different branches', () => {
+    const container = createNodeElement('div');
+    const Context = createContext(1);
+
+    function Provider(props) {
+      return (
+        <Context.Consumer>
+          {contextValue => (
+            // Multiply previous context value by 2, unless prop overrides
+            <Context.Provider value={props.value || contextValue * 2}>
+              {props.children}
+            </Context.Provider>
+          )}
+        </Context.Consumer>
+      );
+    }
+
+    function Consumer(props) {
+      return (
+        <Context.Consumer>
+          {value => <span>{value}</span>}
+        </Context.Consumer>
+      );
+    }
+
+    function App(props) {
+      return (
+        <Provider value={props.value}>
+          <Provider>
+            <Consumer />
+          </Provider>
+          <Consumer />
+          <Provider>
+            <Provider>
+              <Consumer />
+            </Provider>
+          </Provider>
+        </Provider>
+      );
+    }
+
+    render(<App value={2} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('4');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('2');
+    expect(container.childNodes[2].childNodes[0].data).toEqual('8');
+
+    // Update
+    render(<App value={3} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('6');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('3');
+    expect(container.childNodes[2].childNodes[0].data).toEqual('12');
+
+    // Another update
+    render(<App value={4} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('8');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('4');
+    expect(container.childNodes[2].childNodes[0].data).toEqual('16');
+  });
+
+  it('render Consumer of dynamic addition', () => {
+    const container = createNodeElement('div');
+    const Context = createContext(1);
+
+    function Provider(props) {
+      return (
+        <Context.Consumer>
+          {contextValue => (
+            // Multiply previous context value by 2, unless prop overrides
+            <Context.Provider value={props.value || contextValue * 2}>
+              {props.children}
+            </Context.Provider>
+          )}
+        </Context.Consumer>
+      );
+    }
+
+    function Consumer(props) {
+      return (
+        <Context.Consumer>
+          {value => <span>{value}</span>}
+        </Context.Consumer>
+      );
+    }
+
+    let setConsumer;
+
+    function DynamicConsumer(props) {
+      const [value, setValue] = useState(false);
+      setConsumer = setValue;
+      if (value === false) return <span>0</span>;
+      return <Consumer />;
+    }
+
+    function App(props) {
+      return (
+        <Provider value={props.value}>
+          <Consumer />
+          <Provider>
+            <DynamicConsumer />
+          </Provider>
+        </Provider>
+      );
+    }
+
+    render(<App value={2} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('2');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('0');
+
+    // Update
+    setConsumer(true);
+    jest.runAllTimers();
+    expect(container.childNodes[0].childNodes[0].data).toEqual('2');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('4');
+  });
+
+  it('render two Consumer and one use default context value', function() {
+    const container = createNodeElement('div');
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+          <MyComponent />
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyComponent() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    };
+
+    function MyContext2() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    }
+
+    function App() {
+      return (
+        [
+          <MyContext key={'1'} />,
+          <MyContext2 key={'2'} />
+        ]
+      );
+    };
+
+    render(<App />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('dark');
+    expect(container.childNodes[1].childNodes[0].data).toEqual('light');
+  });
+
+  it('render one Consumer use default context value', function() {
+    const container = createNodeElement('div');
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyContext2() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    }
+
+    function App() {
+      return (
+        [
+          <MyContext key={'1'} />,
+          <MyContext2 key={'2'} />
+        ]
+      );
+    };
+
+    render(<App />, container);
+    expect(container.childNodes[1].childNodes[0].data).toEqual('light');
   });
 });

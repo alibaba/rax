@@ -4,22 +4,13 @@ import flattenChildren from './vdom/flattenChildren';
 import { invokeMinifiedError } from './error';
 import { isString, isArray } from './types';
 import warning from './warning';
+import validateChildKeys from './validateChildKeys';
+import getRenderErrorInfo from './getRenderErrorInfo';
 
 const RESERVED_PROPS = {
   key: true,
   ref: true,
 };
-
-function getRenderErrorInfo() {
-  const ownerComponent = Host.owner;
-  if (ownerComponent) {
-    const name = ownerComponent.__getName();
-    if (name) {
-      return ' Check the render method of `' + name + '`.';
-    }
-  }
-  return '';
-}
 
 export default function createElement(type, config, children) {
   if (type == null) {
@@ -54,10 +45,10 @@ export default function createElement(type, config, children) {
       key = '' + config.key;
     }
 
-    // if no reserved props, assign config to props for better performance
+    // If no reserved props, assign config to props for better performance
     if (hasReservedProps) {
       for (propName in config) {
-        // extract reserved props
+        // Extract reserved props
         if (!RESERVED_PROPS[propName]) {
           props[propName] = config[propName];
         }
@@ -91,6 +82,12 @@ export default function createElement(type, config, children) {
       if (props[propName] === undefined) {
         props[propName] = defaultProps[propName];
       }
+    }
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    for (let i = 2; i < arguments.length; i ++) {
+      validateChildKeys(arguments[i], type);
     }
   }
 

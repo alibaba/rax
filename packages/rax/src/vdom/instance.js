@@ -69,7 +69,7 @@ export default {
         // Using __penddingContext to pass new context
         prevRootInstance[INTERNAL].__penddingContext = parentContext;
       }
-      prevRootInstance.update(element);
+      prevRootInstance.__update(element);
       return prevRootInstance;
     }
 
@@ -79,7 +79,7 @@ export default {
     let rootInstance = renderedComponent.__mountComponent(container, null, defaultContext);
     this.set(container, rootInstance);
     // Mount new element through update queue avoid when there is in rendering phase
-    rootInstance.update(element);
+    rootInstance.__update(element);
 
     // After render callback
     driver.afterRender && driver.afterRender(renderOptions);

@@ -132,7 +132,7 @@ describe('renderToString', () => {
       return (
         <div>
           {
-            data.map(() => <div style={style}>hello</div>)
+            data.map((_, i) => <div key={i} style={style}>hello</div>)
           }
         </div>
       );
@@ -153,7 +153,7 @@ describe('renderToString', () => {
       return (
         <div>
           {
-            data.map((item, index) => <div style={{...style, fontSize: index + 'px'}}>hello</div>)
+            data.map((item, index) => <div key={index} style={{...style, fontSize: index + 'px'}}>hello</div>)
           }
         </div>
       );
@@ -177,7 +177,7 @@ describe('renderToString', () => {
             data.map((item, index) => {
               // after map, style.fontSize will be 1px
               style.fontSize = index + 'px';
-              return <div style={style}>hello</div>;
+              return <div key={index} style={style}>hello</div>;
             })
           }
         </div>
@@ -317,7 +317,6 @@ describe('renderToString', () => {
     };
 
     function MyComponent() {
-      const value = useContext(ThemeContext);
       return (
         <ThemeContext.Consumer>
           {value => <div>Current theme is {value}.</div>}
@@ -457,5 +456,77 @@ describe('renderToString', () => {
 
     let str = renderToString(<MyContext />);
     expect(str).toBe('<div>Current theme is dark</div>');
+  });
+
+
+  it('render two Consumer and one use default context value', function() {
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+          <MyComponent />
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyComponent() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    };
+
+    function MyContext2() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    }
+
+    function App() {
+      return (
+        [
+          <MyContext />,
+          <MyContext2 />
+        ]
+      );
+    };
+
+    const str = renderToString(<App />);
+    expect(str).toBe('<div>dark</div><div>light</div>');
+  });
+
+  it('render one Consumer use default context value', function() {
+    const ThemeContext = createContext('light');
+
+    function MyContext() {
+      return (
+        <ThemeContext.Provider value={'dark'}>
+        </ThemeContext.Provider>
+      );
+    };
+
+    function MyContext2() {
+      return (
+        <ThemeContext.Consumer>
+          {value => <div>{value}</div>}
+        </ThemeContext.Consumer>
+      );
+    }
+
+    function App() {
+      return (
+        [
+          <MyContext />,
+          <MyContext2 />
+        ]
+      );
+    };
+
+    const str = renderToString(<App />);
+    expect(str).toBe('<!-- _ --><div>light</div>');
   });
 });

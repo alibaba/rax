@@ -13,6 +13,8 @@ import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
+import getNearestParent from './getNearestParent';
+import validateChildKeys from '../validateChildKeys';
 
 function performInSandbox(fn, instance, callback) {
   try {
@@ -27,19 +29,7 @@ function performInSandbox(fn, instance, callback) {
 }
 
 function handleError(instance, error) {
-  let boundary;
-
-  while (instance) {
-    let internal = instance[INTERNAL];
-    if (instance.componentDidCatch) {
-      boundary = instance;
-      break;
-    } else if (internal && internal.__parentInstance) {
-      instance = internal.__parentInstance;
-    } else {
-      break;
-    }
-  }
+  let boundary = getNearestParent(instance, parent => parent.componentDidCatch);
 
   if (boundary) {
     // Should not attempt to recover an unmounting error boundary
@@ -154,6 +144,10 @@ class CompositeComponent extends BaseComponent {
         }
       }, instance, errorCallback);
 
+      if (process.env.NODE_ENV !== 'production') {
+        validateChildKeys(renderedElement, this.__currentElement.type);
+      }
+
       Host.owner = null;
     }
 
@@ -254,7 +248,6 @@ class CompositeComponent extends BaseComponent {
     let instance = this[INSTANCE];
     // The getChildContext method context should be current instance
     let childContext = instance.getChildContext && instance.getChildContext();
-
     if (childContext) {
       return assign({}, currentContext, childContext);
     }
@@ -440,7 +433,8 @@ class CompositeComponent extends BaseComponent {
     if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
       const prevRenderedUnmaskedContext = prevRenderedComponent._context;
       const nextRenderedUnmaskedContext = this.__processChildContext(context);
-
+      // If getChildContext existed and invoked when component updated that will make
+      // prevRenderedUnmaskedContext not equal nextRenderedUnmaskedContext under the tree
       if (prevRenderedElement !== nextRenderedElement || prevRenderedUnmaskedContext !== nextRenderedUnmaskedContext) {
         prevRenderedComponent.__updateComponent(
           prevRenderedElement,

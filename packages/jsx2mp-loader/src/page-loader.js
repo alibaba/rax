@@ -2,7 +2,7 @@ const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mk
 const { relative, join, dirname } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
-const { removeExt } = require('./utils');
+const { removeExt } = require('./utils/pathHelper');
 
 const ComponentLoader = require.resolve('./component-loader');
 
@@ -11,7 +11,6 @@ module.exports = function pageLoader(content) {
   const { platform, entryPath } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
-  const rootContext = this.rootContext;
 
   const outputPath = this._compiler.outputPath;
   const sourcePath = join(this.rootContext, dirname(entryPath));
