@@ -31,6 +31,8 @@ const isCoreModule = (mod) => /^@core\//.test(mod);
 
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
+const isHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT].includes(node.name);
+
 function getConstructor(type) {
   switch (type) {
     case 'app': return 'App';
@@ -402,9 +404,7 @@ function collectHooks(root) {
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee, { name: USE_STATE })
-        || t.isIdentifier(node.callee, { name: USE_EFFECT })
-        || t.isIdentifier(node.callee, { name: USE_CONTEXT })) {
+      if (t.isIdentifier(node.callee) && isHooksAPI(node.callee)) {
         ret[node.callee.name] = true;
       }
     }
