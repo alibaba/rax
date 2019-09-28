@@ -9,7 +9,7 @@ The fastest way to build universal application.
 </p>
 
 <p align="center">
-  <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/rax.svg"></a>
+  <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><a href="https://opencollective.com/rax" alt="Financial Contributors on Open Collective"><img src="https://opencollective.com/rax/all/badge.svg?label=financial+contributors" /></a> <img src="https://img.shields.io/npm/l/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/v/rax.svg"></a>
   <a href="https://www.npmjs.com/package/rax"><img src="https://img.shields.io/npm/dm/rax.svg"></a>
   <a href="https://travis-ci.org/alibaba/rax"><img src="https://travis-ci.org/alibaba/rax.svg?branch=master"></a>
@@ -173,3 +173,33 @@ Thanks goes to these wonderful people:
 
 ---
 **[⬆ back to top](#top)**
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/alibaba/rax/graphs/contributors"><img src="https://opencollective.com/rax/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/rax/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/rax"><img src="https://opencollective.com/rax/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/rax/contribute)]
+
+<a href="https://opencollective.com/rax/organization/0/website"><img src="https://opencollective.com/rax/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/1/website"><img src="https://opencollective.com/rax/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/2/website"><img src="https://opencollective.com/rax/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/3/website"><img src="https://opencollective.com/rax/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/4/website"><img src="https://opencollective.com/rax/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/5/website"><img src="https://opencollective.com/rax/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/6/website"><img src="https://opencollective.com/rax/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/7/website"><img src="https://opencollective.com/rax/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/8/website"><img src="https://opencollective.com/rax/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/rax/organization/9/website"><img src="https://opencollective.com/rax/organization/9/avatar.svg"></a>
