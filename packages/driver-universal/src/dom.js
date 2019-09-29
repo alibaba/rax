@@ -1,7 +1,7 @@
 /* global VIEWPORT_WIDTH, DEVICE_WIDTH */
 import * as DriverDOM from 'driver-dom';
-import { convertUnit, setRem } from 'style-unit';
-import * as Flexbox from './flexbox';
+import { convertUnit, setRpx } from 'style-unit';
+import * as Flexbox from './flexbox'; // Compatible with old version of safari.
 
 const STYLE = 'style';
 const DEFAULT_VIEWPORT = 750;
@@ -32,7 +32,7 @@ const driver = Object.assign({}, DriverDOM, {
   },
   beforeRender(options) {
     // Init rem unit
-    setRem(getDeviceWidth() / getViewportWidth());
+    setRpx(getDeviceWidth() / getViewportWidth());
     return DriverDOM.beforeRender(options);
   },
   setStyle(node, style) {
