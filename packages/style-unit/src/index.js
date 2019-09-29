@@ -65,6 +65,6 @@ export function convertUnit(value, prop) {
     return hit;
   } else {
     value = value + '';
-    return cache[cacheKey] = (isRpx(value) ? calcRpx(value) : value);
+    return cache[cacheKey] = isRpx(value) ? calcRpx(value) : value;
   }
 }

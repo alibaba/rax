@@ -16,6 +16,6 @@ describe('Transform rpx', () => {
       driver: DriverUniversalDOM
     });
 
-    expect(container.childNodes[0].style.margin).toEqual(`55.2px 100vh`);
+    expect(container.childNodes[0].style.margin).toEqual('55.2px 100vh');
   });
 });
