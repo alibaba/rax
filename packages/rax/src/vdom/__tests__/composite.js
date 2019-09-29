@@ -494,13 +494,13 @@ describe('CompositeComponent', function() {
     expect(logs).toEqual([
       'componentWillMount1',
       'render1',
-      'componentDidMount1',
       'componentWillMount2',
       'render2',
-      'componentDidMount2',
       'componentWillMount3',
       'render3',
       'componentDidMount3',
+      'componentDidMount2',
+      'componentDidMount1',
       'componentDidMountErrorBoundary',
       'componentWillUnmount1',
       'componentWillUnmount2',
@@ -529,6 +529,50 @@ describe('CompositeComponent', function() {
     const instance = render(<App />, container);
     expect(container.childNodes.length).toBe(0);
     instance.setState({count: 1});
+    jest.runAllTimers();
+    expect(container.childNodes[0].tagName).toBe('DIV');
+  });
+
+  it('render component that componentDidMount could get mounted DOM', () => {
+    let container = createNodeElement('div');
+    class Child extends Component {
+      componentDidMount() {
+        expect(container.childNodes[0].tagName).toBe('DIV');
+      }
+      render() {
+        return <div />;
+      }
+    }
+    class App extends Component {
+      render() {
+        return <Child />;
+      }
+    }
+
+    const instance = render(<App />, container);
+    jest.runAllTimers();
+    expect(container.childNodes[0].tagName).toBe('DIV');
+  });
+
+  it('render with fragment that componentDidMount could get mounted DOM', () => {
+    let container = createNodeElement('div');
+    class Child extends Component {
+      componentDidMount() {
+        expect(container.childNodes[0].tagName).toBe('DIV');
+      }
+      render() {
+        return <div />;
+      }
+    }
+    class App extends Component {
+      render() {
+        return [
+          <Child key="1" />
+        ];
+      }
+    }
+
+    const instance = render(<App />, container);
     jest.runAllTimers();
     expect(container.childNodes[0].tagName).toBe('DIV');
   });

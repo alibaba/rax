@@ -42,8 +42,13 @@ export default class NativeComponent extends BaseComponent {
 
     if (appendType === TREE) {
       // Should after process children when mount by tree mode
-      this.__mountChildren(children, context);
+      const didMountWorks = [];
+      this.__mountChildren(children, context, didMountWorks);
       this.__mountNativeNode(nativeNodeMounter);
+      let work;
+      while (work = didMountWorks.pop()) {
+        work();
+      }
     } else {
       // Should before process children when mount by node mode
       this.__mountNativeNode(nativeNodeMounter);
@@ -62,14 +67,14 @@ export default class NativeComponent extends BaseComponent {
     return instance;
   }
 
-  __mountChildren(children, context) {
+  __mountChildren(children, context, didMountWorks) {
     if (children == null) return children;
 
     const nativeNode = this.__getNativeNode();
-    return this.__mountChildrenImpl(nativeNode, toArray(children), context);
+    return this.__mountChildrenImpl(nativeNode, toArray(children), context, null, didMountWorks);
   }
 
-  __mountChildrenImpl(parent, children, context, nativeNodeMounter) {
+  __mountChildrenImpl(parent, children, context, nativeNodeMounter, didMountWorks) {
     let renderedChildren = this.__renderedChildren = {};
 
     const renderedChildrenImage = [];
@@ -84,7 +89,8 @@ export default class NativeComponent extends BaseComponent {
         parent,
         this[INSTANCE],
         context,
-        nativeNodeMounter
+        nativeNodeMounter,
+        didMountWorks
       );
       renderedChildrenImage.push(mountImage);
     }

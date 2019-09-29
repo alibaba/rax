@@ -15,7 +15,8 @@ class FragmentComponent extends NativeComponent {
     instance[INTERNAL] = this;
 
     // Mount children
-    this.__mountChildren(this.__currentElement, context);
+    const didMountWorks = [];
+    this.__mountChildren(this.__currentElement, context, didMountWorks);
 
     let fragment = this.__getNativeNode();
 
@@ -27,6 +28,11 @@ class FragmentComponent extends NativeComponent {
       }
     }
 
+    let work;
+    while (work = didMountWorks.pop()) {
+      work();
+    }
+
     if (process.env.NODE_ENV !== 'production') {
       this.__currentElement.type = FragmentComponent;
       Host.reconciler.mountComponent(this);
@@ -35,7 +41,7 @@ class FragmentComponent extends NativeComponent {
     return instance;
   }
 
-  __mountChildren(children, context) {
+  __mountChildren(children, context, didMountWorks) {
     let fragment = this.__getNativeNode();
 
     return this.__mountChildrenImpl(this._parent, children, context, (nativeNode) => {
@@ -43,7 +49,7 @@ class FragmentComponent extends NativeComponent {
       for (let i = 0; i < nativeNode.length; i++) {
         fragment.push(nativeNode[i]);
       }
-    });
+    }, didMountWorks);
   }
 
   unmountComponent(shouldNotRemoveChild) {
