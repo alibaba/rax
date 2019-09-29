@@ -157,7 +157,6 @@ function transformComponents(parsed, options) {
               contextName: object.name,
             };
             contextList.push(contextItem);
-            parsed.contextInitValue = contextInitValue;
             replaceComponentTagName(path, t.jsxIdentifier('block'));
             node.attributes = [];
           } else {
