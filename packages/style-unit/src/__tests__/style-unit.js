@@ -1,4 +1,4 @@
-import { convertUnit, setRpx } from '..';
+import { convertUnit, setDecimalPixelTransformer, getRpx, setRpx } from '..';
 
 describe('style-unit', () => {
   describe('convertUnit', () => {
@@ -38,7 +38,20 @@ describe('style-unit', () => {
     });
 
     it('should recognize transform', () => {
-      expect(convertUnit('500rpx 20px', 'margin')).toEqual('276px 20px');
+      expect(convertUnit('500rpx 20px 500rpx', 'margin')).toEqual('276px 20px 276px');
+      expect(convertUnit('translateX(500rpx) translateY(500rpx)', 'transform')).toEqual('translateX(276px) translateY(276px)');
+    });
+  });
+
+  describe('exported API', () => {
+    it('setDecimalPixelTransformer', () => {
+      setDecimalPixelTransformer((val) => val);
+      expect(convertUnit('1500rpx', 'width')).toEqual('1500rpx');
+    });
+
+    it('get and set rpx', () => {
+      setRpx(500);
+      expect(getRpx()).toEqual(500);
     });
   });
 });

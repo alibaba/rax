@@ -1,5 +1,5 @@
-const RPX_REG = /^[-+]?\d*\.?\d+rpx/g;
-const GLOBAL_RPX_UNIT = '__global_rem_unit__'; // Compatible to old variable.
+const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
+const GLOBAL_RPX_UNIT = '__rpx_coefficient__';
 const global =
   typeof window === 'object'
     ? window
