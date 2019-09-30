@@ -22,6 +22,8 @@ describe('style-unit', () => {
 
     it('should recognize rpx', () => {
       expect(convertUnit('500rpx', 'width')).toEqual('276px');
+      expect(convertUnit('500rpx 500rpx', 'width')).toEqual('276px 276px');
+      expect(convertUnit('translateX(500rpx) rotate(30deg)', 'transform')).toEqual('translateX(276px) rotate(30deg)');
     });
 
     it('should recognize vh', () => {
