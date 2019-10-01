@@ -8,8 +8,8 @@ describe('style-unit', () => {
       expect(convertUnit(500, 'width')).toEqual('276px');
     });
 
-    it('should recognize number string', () => {
-      expect(convertUnit('500', 'width')).toEqual('276px');
+    it('should not recognize number string', () => {
+      expect(convertUnit('500', 'width')).toEqual('500');
     });
 
     it('should recognize px', () => {
@@ -31,12 +31,18 @@ describe('style-unit', () => {
     });
 
     it('should recognize 0', () => {
-      expect(convertUnit('0', 'width')).toEqual('0px');
+      expect(convertUnit('0', 'width')).toEqual('0');
       expect(convertUnit(0, 'width')).toEqual('0px');
     });
 
     it('should ignore unitless prop', () => {
       expect(convertUnit(1, 'flex')).toEqual(1);
+    });
+
+    it('should recognize colors', () => {
+      expect(convertUnit('#FFD548', 'backgroundColor')).toEqual('#FFD548');
+      expect(convertUnit('scale(5)', 'transform')).toEqual('scale(5)');
+      expect(convertUnit('solid #FFD548', 'border')).toEqual('solid #FFD548');
     });
   });
 });

@@ -35,7 +35,9 @@ const UNITLESS_NUMBER_PROPS = {
   // Weex only
   lines: true
 };
-const REM_REG = /[-+]?\d*\.?\d+(rem|rpx|$)/g;
+// @NOTE: Version 1.0 support to number:
+// Only pure number will be transformed, others, should add rpx suffix.
+const REM_REG = /[-+]?\d*\.?\d+(rem|rpx)/g;
 const GLOBAL_REM_UNIT = '__global_rem_unit__';
 const global =
   typeof window === 'object'
