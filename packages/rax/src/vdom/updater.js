@@ -52,12 +52,15 @@ function runUpdate(component) {
   internal.__penddingContext = undefined;
 
   if (getPendingStateQueue(internal) || internal.__isPendingForceUpdate) {
+    Host.__layoutCallbacks = [];
     internal.__updateComponent(
       prevElement,
       prevElement,
       prevUnmaskedContext,
       nextUnmaskedContext
     );
+    invokeFunctionsWithContext(Host.__layoutCallbacks);
+    Host.__layoutCallbacks = [];
   }
 
   invokeFunctionsWithContext(callbacks, component);

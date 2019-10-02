@@ -180,15 +180,17 @@ class CompositeComponent extends BaseComponent {
           }
         }, instance);
       };
-      didMountWorks ? didMountWorks.push(didMount) : didMount();
+      Host.__layoutCallbacks.push(didMount);
     }
 
     // Trigger setState callback in componentWillMount or boundary callback after rendered
-    let callbacks = this.__pendingCallbacks;
-    if (callbacks) {
-      this.__pendingCallbacks = null;
-      invokeFunctionsWithContext(callbacks, instance);
-    }
+    Host.__layoutCallbacks.push(() => {
+      let callbacks = this.__pendingCallbacks;
+      if (callbacks) {
+        this.__pendingCallbacks = null;
+        invokeFunctionsWithContext(callbacks, instance);
+      }
+    });
 
     if (process.env.NODE_ENV !== 'production') {
       Host.reconciler.mountComponent(this);
@@ -378,9 +380,12 @@ class CompositeComponent extends BaseComponent {
       this.__updateRenderedComponent(nextUnmaskedContext);
 
       if (instance.componentDidUpdate) {
-        performInSandbox(() => {
-          instance.componentDidUpdate(prevProps, prevState, prevContext);
-        }, instance);
+        const didUpdate = () => {
+          performInSandbox(() => {
+            instance.componentDidUpdate(prevProps, prevState, prevContext);
+          }, instance);
+        };
+        Host.__layoutCallbacks.push(didUpdate);
       }
 
       if (process.env.NODE_ENV !== 'production') {
@@ -397,12 +402,14 @@ class CompositeComponent extends BaseComponent {
       instance.context = nextContext;
     }
 
+    Host.__layoutCallbacks.push(() => {
     // Flush setState callbacks set in componentWillReceiveProps or boundary callback
-    let callbacks = this.__pendingCallbacks;
-    if (callbacks) {
-      this.__pendingCallbacks = null;
-      invokeFunctionsWithContext(callbacks, instance);
-    }
+      let callbacks = this.__pendingCallbacks;
+      if (callbacks) {
+        this.__pendingCallbacks = null;
+        invokeFunctionsWithContext(callbacks, instance);
+      }
+    });
 
     if (process.env.NODE_ENV !== 'production') {
       Host.measurer && Host.measurer.afterUpdateComponent(this._mountID);
