@@ -7,7 +7,7 @@ import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import toArray from '../toArray';
-import { scheduler } from './scheduler';
+import { scheduler, scheduleLayout } from './scheduler';
 import { isFunction, isArray } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
@@ -179,22 +179,22 @@ class CompositeComponent extends BaseComponent {
           }
         }, instance);
       };
-      Host.__layoutCallbacks.push(didMount);
+      scheduleLayout(didMount);
     }
 
     // Trigger setState callback in componentWillMount or boundary callback after rendered
-    Host.__layoutCallbacks.push(() => {
+    scheduleLayout(() => {
       let callbacks = this.__pendingCallbacks;
       if (callbacks) {
         this.__pendingCallbacks = null;
         invokeFunctionsWithContext(callbacks, instance);
       }
-    });
 
-    if (process.env.NODE_ENV !== 'production') {
-      Host.reconciler.mountComponent(this);
-      Host.measurer && Host.measurer.afterMountComponent(this._mountID);
-    }
+      if (process.env.NODE_ENV !== 'production') {
+        Host.reconciler.mountComponent(this);
+        Host.measurer && Host.measurer.afterMountComponent(this._mountID);
+      }
+    });
 
     return instance;
   }
@@ -384,7 +384,7 @@ class CompositeComponent extends BaseComponent {
             instance.componentDidUpdate(prevProps, prevState, prevContext);
           }, instance);
         };
-        Host.__layoutCallbacks.push(didUpdate);
+        scheduleLayout(didUpdate);
       }
 
       if (process.env.NODE_ENV !== 'production') {
@@ -401,19 +401,19 @@ class CompositeComponent extends BaseComponent {
       instance.context = nextContext;
     }
 
-    Host.__layoutCallbacks.push(() => {
-    // Flush setState callbacks set in componentWillReceiveProps or boundary callback
+    scheduleLayout(() => {
+      // Flush setState callbacks set in componentWillReceiveProps or boundary callback
       let callbacks = this.__pendingCallbacks;
       if (callbacks) {
         this.__pendingCallbacks = null;
         invokeFunctionsWithContext(callbacks, instance);
       }
-    });
 
-    if (process.env.NODE_ENV !== 'production') {
-      Host.measurer && Host.measurer.afterUpdateComponent(this._mountID);
-      Host.reconciler.receiveComponent(this);
-    }
+      if (process.env.NODE_ENV !== 'production') {
+        Host.measurer && Host.measurer.afterUpdateComponent(this._mountID);
+        Host.reconciler.receiveComponent(this);
+      }
+    });
   }
 
   /**

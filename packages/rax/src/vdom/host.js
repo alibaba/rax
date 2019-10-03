@@ -11,5 +11,4 @@ export default {
   rootInstances: {},
   // Current owner component
   owner: null,
-  __layoutCallbacks: []
 };

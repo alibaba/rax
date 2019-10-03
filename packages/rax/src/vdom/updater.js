@@ -1,5 +1,5 @@
 import Host from './host';
-import { flushEffect, schedule } from './scheduler';
+import { flushEffect, schedule, flushLayout } from './scheduler';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import { INTERNAL, RENDERED_COMPONENT } from '../constant';
 
@@ -52,15 +52,13 @@ function runUpdate(component) {
   internal.__penddingContext = undefined;
 
   if (getPendingStateQueue(internal) || internal.__isPendingForceUpdate) {
-    Host.__layoutCallbacks = [];
     internal.__updateComponent(
       prevElement,
       prevElement,
       prevUnmaskedContext,
       nextUnmaskedContext
     );
-    invokeFunctionsWithContext(Host.__layoutCallbacks);
-    Host.__layoutCallbacks = [];
+    flushLayout();
   }
 
   invokeFunctionsWithContext(callbacks, component);
