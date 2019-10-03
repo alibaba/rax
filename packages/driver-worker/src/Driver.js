@@ -1,4 +1,4 @@
-import { convertUnit, setDecimalPixelTransformer, setRem } from 'style-unit';
+import { convertUnit, setDecimalPixelTransformer, setRpx } from 'style-unit';
 
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -181,8 +181,9 @@ export default class Driver {
 
   beforeRender() {
     // Init rem unit
-    setRem(this.getDeviceWidth() / this.getViewportWidth());
-    setDecimalPixelTransformer(Math.floor);
+    const rpxRadio = this.getDeviceWidth() / this.getViewportWidth();
+    setRpx(rpxRadio);
+    setDecimalPixelTransformer((rpx) => Math.floor(parseFloat(rpx) * rpxRadio) + 'px');
   }
 
   setNativeProps(node, props) {
