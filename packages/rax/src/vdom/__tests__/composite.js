@@ -76,7 +76,7 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[0].attributes.class).toBe('foo');
   });
 
-  it('setState callback triggered in componentWillMount', function() {
+  it('setState callback triggered', function() {
     let container = createNodeElement('div');
     let triggered = false;
     class Foo extends Component {
@@ -91,11 +91,25 @@ describe('CompositeComponent', function() {
           triggered = true;
         });
       }
+      componentWillReceiveProps() {
+        this.setState({
+          value: 'foo'
+        }, () => {
+          triggered = true;
+        });
+      }
       render() {
         return <span className={this.state.value} />;
       }
     }
 
+    const instance = render(<Foo />, container);
+    expect(triggered).toBe(true);
+    triggered = false;
+    instance.setState({}, () => triggered = true);
+    jest.runAllTimers();
+    expect(triggered).toBe(true);
+    triggered = false;
     render(<Foo />, container);
     expect(triggered).toBe(true);
   });
