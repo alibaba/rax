@@ -1,5 +1,6 @@
 let updateCallbacks = [];
 let effectCallbacks = [];
+let layoutCallbacks = [];
 export let scheduler = setTimeout;
 
 if (process.env.NODE_ENV !== 'production') {
@@ -7,6 +8,13 @@ if (process.env.NODE_ENV !== 'production') {
   scheduler = (callback) => {
     setTimeout(callback);
   };
+}
+
+function invokeFunctionsWithClear(callbacks) {
+  let callback;
+  while (callback = callbacks.shift()) {
+    callback();
+  }
 }
 
 // Schedule before next render
@@ -19,10 +27,7 @@ export function schedule(callback) {
 
 // Flush before next render
 export function flush() {
-  let callback;
-  while (callback = updateCallbacks.shift()) {
-    callback();
-  }
+  invokeFunctionsWithClear(updateCallbacks);
 }
 
 export function scheduleEffect(callback) {
@@ -33,8 +38,13 @@ export function scheduleEffect(callback) {
 }
 
 export function flushEffect() {
-  let callback;
-  while (callback = effectCallbacks.shift()) {
-    callback();
-  }
+  invokeFunctionsWithClear(effectCallbacks);
+}
+
+export function scheduleLayout(callback) {
+  layoutCallbacks.push(callback);
+}
+
+export function flushLayout() {
+  invokeFunctionsWithClear(layoutCallbacks);
 }

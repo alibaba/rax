@@ -498,9 +498,9 @@ describe('CompositeComponent', function() {
       'render2',
       'componentWillMount3',
       'render3',
-      'componentDidMount3',
-      'componentDidMount2',
       'componentDidMount1',
+      'componentDidMount2',
+      'componentDidMount3',
       'componentDidMountErrorBoundary',
       'componentWillUnmount1',
       'componentWillUnmount2',
@@ -537,7 +537,7 @@ describe('CompositeComponent', function() {
     let container = createNodeElement('div');
     class Child extends Component {
       componentDidMount() {
-        expect(container.childNodes[0].tagName).toBe('DIV');
+        expect(container.childNodes[0].childNodes[0].childNodes[0].tagName).toBe('DIV');
       }
       render() {
         return <div />;
@@ -545,11 +545,11 @@ describe('CompositeComponent', function() {
     }
     class App extends Component {
       render() {
-        return <Child />;
+        return <div><Child /></div>;
       }
     }
 
-    const instance = render(<App />, container);
+    const instance = render(<div><App /></div>, container);
     jest.runAllTimers();
     expect(container.childNodes[0].tagName).toBe('DIV');
   });

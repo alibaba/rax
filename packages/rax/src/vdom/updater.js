@@ -1,5 +1,5 @@
 import Host from './host';
-import { flushEffect, schedule } from './scheduler';
+import { flushEffect, schedule, flushLayout } from './scheduler';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import { INTERNAL, RENDERED_COMPONENT } from '../constant';
 
@@ -58,6 +58,7 @@ function runUpdate(component) {
       prevUnmaskedContext,
       nextUnmaskedContext
     );
+    flushLayout();
   }
 
   invokeFunctionsWithContext(callbacks, component);
