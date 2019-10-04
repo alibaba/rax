@@ -1,6 +1,5 @@
 import Host from './host';
 import { flushEffect, schedule, flushLayout } from './scheduler';
-import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import { INTERNAL, RENDERED_COMPONENT } from '../constant';
 
 // Dirty components store
@@ -40,12 +39,6 @@ function runUpdate(component) {
 
   Host.__isUpdating = true;
 
-  // If updateComponent happens to enqueue any new updates, we
-  // shouldn't execute the callbacks until the next render happens, so
-  // stash the callbacks first
-  let callbacks = getPendingCallbacks(internal);
-  setPendingCallbacks(internal, null);
-
   let prevElement = internal.__currentElement;
   let prevUnmaskedContext = internal._context;
   let nextUnmaskedContext = internal.__penddingContext || prevUnmaskedContext;
@@ -60,8 +53,6 @@ function runUpdate(component) {
     );
     flushLayout();
   }
-
-  invokeFunctionsWithContext(callbacks, component);
 
   Host.__isUpdating = false;
 }
@@ -152,8 +143,7 @@ const Updater = {
   },
   forceUpdate(component, callback) {
     requestUpdate(component, null, callback);
-  },
-  runCallbacks: invokeFunctionsWithContext,
+  }
 };
 
 export default Updater;

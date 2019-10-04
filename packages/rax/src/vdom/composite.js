@@ -182,7 +182,7 @@ class CompositeComponent extends BaseComponent {
       scheduleLayout(didMount);
     }
 
-    // Trigger setState callback in componentWillMount or boundary callback after rendered
+    // Trigger setState callback
     scheduleLayout(() => {
       let callbacks = this.__pendingCallbacks;
       if (callbacks) {
@@ -402,7 +402,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     scheduleLayout(() => {
-      // Flush setState callbacks set in componentWillReceiveProps or boundary callback
+      // Flush setState callbacks
       let callbacks = this.__pendingCallbacks;
       if (callbacks) {
         this.__pendingCallbacks = null;
