@@ -114,6 +114,45 @@ describe('CompositeComponent', function() {
     expect(triggered).toBe(true);
   });
 
+
+  it('setState callback triggered in didMount or didUpdate should receive latest state', function() {
+    let container = createNodeElement('div');
+    const logs = [];
+    class Foo extends Component {
+      constructor() {
+        super();
+        this.state = {
+          count: 1
+        };
+      }
+      componentDidMount() {
+        // eslint-disable-next-line react/no-did-mount-set-state
+        this.setState({
+          count: 2
+        }, () => {
+          logs.push(this.state.count);
+        });
+      }
+      componentDidUpdate() {
+        if (this.state.count === 2) {
+          // eslint-disable-next-line react/no-did-update-set-state
+          this.setState({
+            count: 3
+          }, () => {
+            logs.push(this.state.count);
+          });
+        };
+      }
+      render() {
+        return <span className={this.state.value} />;
+      }
+    }
+
+    render(<Foo />, container);
+    jest.runAllTimers();
+    expect(logs).toEqual([2, 3]);
+  });
+
   it('will call all the normal life cycle methods', function() {
     var lifeCycles = [];
     let container = createNodeElement('div');

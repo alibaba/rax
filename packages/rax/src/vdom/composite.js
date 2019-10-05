@@ -32,12 +32,13 @@ function handleError(instance, error) {
   let boundary = getNearestParent(instance, parent => parent.componentDidCatch);
 
   if (boundary) {
-    // Should not attempt to recover an unmounting error boundary
-    const boundaryInternal = boundary[INTERNAL];
-    if (boundaryInternal) {
-      let callbackQueue = boundaryInternal.__pendingCallbacks || (boundaryInternal.__pendingCallbacks = []);
-      callbackQueue.push(() => boundary.componentDidCatch(error));
-    }
+    scheduleLayout(() => {
+      const boundaryInternal = boundary[INTERNAL];
+      // Should not attempt to recover an unmounting error boundary
+      if (boundaryInternal) {
+        boundary.componentDidCatch(error);
+      }
+    });
   } else {
     // Do not break when error happens
     scheduler(() => {
@@ -167,6 +168,9 @@ class CompositeComponent extends BaseComponent {
       attachRef(currentElement._owner, ref, this);
     }
 
+    let callbacks = this.__pendingCallbacks;
+    this.__pendingCallbacks = null;
+
     if (instance.componentDidMount) {
       const didMount = () => {
         performInSandbox(() => {
@@ -184,9 +188,7 @@ class CompositeComponent extends BaseComponent {
 
     // Trigger setState callback
     scheduleLayout(() => {
-      let callbacks = this.__pendingCallbacks;
       if (callbacks) {
-        this.__pendingCallbacks = null;
         invokeFunctionsWithContext(callbacks, instance);
       }
 
@@ -356,6 +358,8 @@ class CompositeComponent extends BaseComponent {
       }
     }
 
+    let callbacks = this.__pendingCallbacks;
+
     if (shouldUpdate) {
       this.__isPendingForceUpdate = false;
       // Will set `this.props`, `this.state` and `this.context`.
@@ -377,6 +381,7 @@ class CompositeComponent extends BaseComponent {
       instance.context = nextContext;
 
       this.__updateRenderedComponent(nextUnmaskedContext);
+      callbacks = this.__pendingCallbacks;
 
       if (instance.componentDidUpdate) {
         const didUpdate = () => {
@@ -401,11 +406,9 @@ class CompositeComponent extends BaseComponent {
       instance.context = nextContext;
     }
 
+    this.__pendingCallbacks = null;
     scheduleLayout(() => {
-      // Flush setState callbacks
-      let callbacks = this.__pendingCallbacks;
       if (callbacks) {
-        this.__pendingCallbacks = null;
         invokeFunctionsWithContext(callbacks, instance);
       }
 
