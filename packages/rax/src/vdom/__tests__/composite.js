@@ -562,6 +562,51 @@ describe('CompositeComponent', function() {
     ]);
   });
 
+  it('should boundary exec componentDidCatch when child setState throw error', () => {
+    let container = createNodeElement('div');
+    let child;
+
+    class Child extends Component {
+      state = {
+        count: 1
+      }
+      render() {
+        child = this;
+        if (this.state.count === 2) {
+          throw new Error('Hello');
+        }
+        return (
+          <span>Hello</span>
+        );
+      }
+    }
+
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <div>{`Caught an error: ${this.state.error.message}.`}</div>
+          );
+        }
+        return (
+          <div>
+            <Child />
+          </div>
+        );
+      }
+    }
+
+    render(<ErrorBoundary><Child /></ErrorBoundary>, container);
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('Hello');
+    child.setState({count: 2});
+    jest.runAllTimers();
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
   it('should render correct when prevRenderedComponent did not generate nodes', () => {
     let container = createNodeElement('div');
     class Frag extends Component {
