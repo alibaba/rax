@@ -130,27 +130,28 @@ class CompositeComponent extends BaseComponent {
       }, instance, errorCallback);
     }
 
-    if (renderedElement == null) {
-      Host.owner = this;
-      // Process pending state when call setState in componentWillMount
-      instance.state = this.__processPendingState(publicProps, publicContext);
+    Host.owner = this;
+    // Process pending state when call setState in componentWillMount
+    instance.state = this.__processPendingState(publicProps, publicContext);
+    let callbacks = this.__pendingCallbacks;
+    this.__pendingCallbacks = null;
 
-      performInSandbox(() => {
-        if (process.env.NODE_ENV !== 'production') {
-          measureLifeCycle(() => {
-            renderedElement = instance.render();
-          }, this._mountID, 'render');
-        } else {
-          renderedElement = instance.render();
-        }
-      }, instance, errorCallback);
 
+    performInSandbox(() => {
       if (process.env.NODE_ENV !== 'production') {
-        validateChildKeys(renderedElement, this.__currentElement.type);
+        measureLifeCycle(() => {
+          renderedElement = instance.render();
+        }, this._mountID, 'render');
+      } else {
+        renderedElement = instance.render();
       }
+    }, instance, errorCallback);
 
-      Host.owner = null;
+    if (process.env.NODE_ENV !== 'production') {
+      validateChildKeys(renderedElement, this.__currentElement.type);
     }
+
+    Host.owner = null;
 
     this[RENDERED_COMPONENT] = instantiateComponent(renderedElement);
     this[RENDERED_COMPONENT].__mountComponent(
@@ -167,9 +168,6 @@ class CompositeComponent extends BaseComponent {
     if (!currentElement.type.__forwardRef && ref) {
       attachRef(currentElement._owner, ref, this);
     }
-
-    let callbacks = this.__pendingCallbacks;
-    this.__pendingCallbacks = null;
 
     if (instance.componentDidMount) {
       const didMount = () => {
@@ -344,6 +342,8 @@ class CompositeComponent extends BaseComponent {
     let prevState = instance.state;
     // TODO: could delay execution processPendingState
     let nextState = this.__processPendingState(nextProps, nextContext);
+    let callbacks = this.__pendingCallbacks;
+    this.__pendingCallbacks = null;
 
     // ShouldComponentUpdate is not called when forceUpdate is used
     if (!this.__isPendingForceUpdate) {
@@ -357,8 +357,6 @@ class CompositeComponent extends BaseComponent {
           !shallowEqual(prevState, nextState);
       }
     }
-
-    let callbacks = this.__pendingCallbacks;
 
     if (shouldUpdate) {
       this.__isPendingForceUpdate = false;
@@ -381,7 +379,6 @@ class CompositeComponent extends BaseComponent {
       instance.context = nextContext;
 
       this.__updateRenderedComponent(nextUnmaskedContext);
-      callbacks = this.__pendingCallbacks;
 
       if (instance.componentDidUpdate) {
         const didUpdate = () => {
@@ -406,7 +403,6 @@ class CompositeComponent extends BaseComponent {
       instance.context = nextContext;
     }
 
-    this.__pendingCallbacks = null;
     scheduleLayout(() => {
       if (callbacks) {
         invokeFunctionsWithContext(callbacks, instance);
