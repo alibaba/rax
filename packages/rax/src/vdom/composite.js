@@ -133,7 +133,7 @@ class CompositeComponent extends BaseComponent {
     Host.owner = this;
     // Process pending state when call setState in componentWillMount
     instance.state = this.__processPendingState(publicProps, publicContext);
-    let callbacks = this.__pendingCallbacks;
+    const callbacks = this.__pendingCallbacks;
     this.__pendingCallbacks = null;
 
 
@@ -342,7 +342,7 @@ class CompositeComponent extends BaseComponent {
     let prevState = instance.state;
     // TODO: could delay execution processPendingState
     let nextState = this.__processPendingState(nextProps, nextContext);
-    let callbacks = this.__pendingCallbacks;
+    const callbacks = this.__pendingCallbacks;
     this.__pendingCallbacks = null;
 
     // ShouldComponentUpdate is not called when forceUpdate is used
