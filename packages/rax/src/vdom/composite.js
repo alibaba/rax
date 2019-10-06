@@ -32,12 +32,13 @@ function handleError(instance, error) {
   let boundary = getNearestParent(instance, parent => parent.componentDidCatch);
 
   if (boundary) {
-    // Should not attempt to recover an unmounting error boundary
-    const boundaryInternal = boundary[INTERNAL];
-    if (boundaryInternal) {
-      let callbackQueue = boundaryInternal.__pendingCallbacks || (boundaryInternal.__pendingCallbacks = []);
-      callbackQueue.push(() => boundary.componentDidCatch(error));
-    }
+    scheduleLayout(() => {
+      const boundaryInternal = boundary[INTERNAL];
+      // Should not attempt to recover an unmounting error boundary
+      if (boundaryInternal) {
+        boundary.componentDidCatch(error);
+      }
+    });
   } else {
     // Do not break when error happens
     scheduler(() => {
@@ -129,27 +130,28 @@ class CompositeComponent extends BaseComponent {
       }, instance, errorCallback);
     }
 
-    if (renderedElement == null) {
-      Host.owner = this;
-      // Process pending state when call setState in componentWillMount
-      instance.state = this.__processPendingState(publicProps, publicContext);
+    Host.owner = this;
+    // Process pending state when call setState in componentWillMount
+    instance.state = this.__processPendingState(publicProps, publicContext);
+    const callbacks = this.__pendingCallbacks;
+    this.__pendingCallbacks = null;
 
-      performInSandbox(() => {
-        if (process.env.NODE_ENV !== 'production') {
-          measureLifeCycle(() => {
-            renderedElement = instance.render();
-          }, this._mountID, 'render');
-        } else {
-          renderedElement = instance.render();
-        }
-      }, instance, errorCallback);
 
+    performInSandbox(() => {
       if (process.env.NODE_ENV !== 'production') {
-        validateChildKeys(renderedElement, this.__currentElement.type);
+        measureLifeCycle(() => {
+          renderedElement = instance.render();
+        }, this._mountID, 'render');
+      } else {
+        renderedElement = instance.render();
       }
+    }, instance, errorCallback);
 
-      Host.owner = null;
+    if (process.env.NODE_ENV !== 'production') {
+      validateChildKeys(renderedElement, this.__currentElement.type);
     }
+
+    Host.owner = null;
 
     this[RENDERED_COMPONENT] = instantiateComponent(renderedElement);
     this[RENDERED_COMPONENT].__mountComponent(
@@ -182,11 +184,9 @@ class CompositeComponent extends BaseComponent {
       scheduleLayout(didMount);
     }
 
-    // Trigger setState callback in componentWillMount or boundary callback after rendered
+    // Trigger setState callback
     scheduleLayout(() => {
-      let callbacks = this.__pendingCallbacks;
       if (callbacks) {
-        this.__pendingCallbacks = null;
         invokeFunctionsWithContext(callbacks, instance);
       }
 
@@ -342,6 +342,8 @@ class CompositeComponent extends BaseComponent {
     let prevState = instance.state;
     // TODO: could delay execution processPendingState
     let nextState = this.__processPendingState(nextProps, nextContext);
+    const callbacks = this.__pendingCallbacks;
+    this.__pendingCallbacks = null;
 
     // ShouldComponentUpdate is not called when forceUpdate is used
     if (!this.__isPendingForceUpdate) {
@@ -402,10 +404,7 @@ class CompositeComponent extends BaseComponent {
     }
 
     scheduleLayout(() => {
-      // Flush setState callbacks set in componentWillReceiveProps or boundary callback
-      let callbacks = this.__pendingCallbacks;
       if (callbacks) {
-        this.__pendingCallbacks = null;
         invokeFunctionsWithContext(callbacks, instance);
       }
 

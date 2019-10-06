@@ -76,7 +76,7 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[0].attributes.class).toBe('foo');
   });
 
-  it('setState callback triggered in componentWillMount', function() {
+  it('setState callback triggered', function() {
     let container = createNodeElement('div');
     let triggered = false;
     class Foo extends Component {
@@ -91,13 +91,66 @@ describe('CompositeComponent', function() {
           triggered = true;
         });
       }
+      componentWillReceiveProps() {
+        this.setState({
+          value: 'foo'
+        }, () => {
+          triggered = true;
+        });
+      }
+      render() {
+        return <span className={this.state.value} />;
+      }
+    }
+
+    const instance = render(<Foo />, container);
+    expect(triggered).toBe(true);
+    triggered = false;
+    instance.setState({}, () => triggered = true);
+    jest.runAllTimers();
+    expect(triggered).toBe(true);
+    triggered = false;
+    render(<Foo />, container);
+    expect(triggered).toBe(true);
+  });
+
+
+  it('setState callback triggered in didMount or didUpdate should receive latest state', function() {
+    let container = createNodeElement('div');
+    const logs = [];
+    class Foo extends Component {
+      constructor() {
+        super();
+        this.state = {
+          count: 1
+        };
+      }
+      componentDidMount() {
+        // eslint-disable-next-line react/no-did-mount-set-state
+        this.setState({
+          count: 2
+        }, () => {
+          logs.push(this.state.count);
+        });
+      }
+      componentDidUpdate() {
+        if (this.state.count === 2) {
+          // eslint-disable-next-line react/no-did-update-set-state
+          this.setState({
+            count: 3
+          }, () => {
+            logs.push(this.state.count);
+          });
+        };
+      }
       render() {
         return <span className={this.state.value} />;
       }
     }
 
     render(<Foo />, container);
-    expect(triggered).toBe(true);
+    jest.runAllTimers();
+    expect(logs).toEqual([2, 3]);
   });
 
   it('will call all the normal life cycle methods', function() {
@@ -507,6 +560,51 @@ describe('CompositeComponent', function() {
       'componentWillUnmount3',
       'componentDidUpdateErrorBoundary'
     ]);
+  });
+
+  it('should boundary exec componentDidCatch when child setState throw error', () => {
+    let container = createNodeElement('div');
+    let child;
+
+    class Child extends Component {
+      state = {
+        count: 1
+      }
+      render() {
+        child = this;
+        if (this.state.count === 2) {
+          throw new Error('Hello');
+        }
+        return (
+          <span>Hello</span>
+        );
+      }
+    }
+
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <div>{`Caught an error: ${this.state.error.message}.`}</div>
+          );
+        }
+        return (
+          <div>
+            <Child />
+          </div>
+        );
+      }
+    }
+
+    render(<ErrorBoundary><Child /></ErrorBoundary>, container);
+    expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('Hello');
+    child.setState({count: 2});
+    jest.runAllTimers();
+    expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
   it('should render correct when prevRenderedComponent did not generate nodes', () => {
