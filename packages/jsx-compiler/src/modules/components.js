@@ -16,133 +16,135 @@ let tagCount = 0;
 
 /**
  * Transform the component name is identifier
- * @param {Object} parsed
  * @param {Object} path
- * @param {Object} options
+ * @param {Object} alias
  * @param {Object} dynamicValue
+ * @param {Object} parsed
+ * @param {Object} options
  */
-function transformIdentifierComponentName(parsed, path, options, dynamicValue) {
+function transformIdentifierComponentName(path, alias, dynamicValue, parsed, options) {
   const { node, parentPath } = path;
   const {
-    ast,
     renderFunctionPath,
-    imported,
     componentDependentProps,
-    componentsAlias,
   } = parsed;
-  const alias = getComponentAlias(node.name.name, imported);
-  removeImport(ast, alias);
-  if (alias) {
-    // Miniapp template tag name does not support special characters.
-    const componentTag = alias.name.replace(/@|\//g, '_');
-    const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
-    // <tag __tagId="tagId" />
-    let tagId = '' + tagCount++;
-    if (parentJSXListEl) {
-      const { args } = parentJSXListEl.node.__jsxlist;
-      const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
-      parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
-      tagId += '-{{' + indexValue + '}}';
-    }
-    parentPath.node.__tagId = tagId;
-    componentDependentProps[tagId] = componentDependentProps[tagId] || {};
-    if (parentPath.node.__tagIdExpression) {
-      componentDependentProps[tagId].tagIdExpression =
-        parentPath.node.__tagIdExpression;
+  // Miniapp template tag name does not support special characters.
+  const componentTag = alias.name.replace(/@|\//g, '_');
+  const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
+  // <tag __tagId="tagId" />
+  let tagId = '' + tagCount++;
+  if (parentJSXListEl) {
+    const { args } = parentJSXListEl.node.__jsxlist;
+    const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
+    parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+    tagId += '-{{' + indexValue + '}}';
+  }
+  parentPath.node.__tagId = tagId;
+  componentDependentProps[tagId] = componentDependentProps[tagId] || {};
+  if (parentPath.node.__tagIdExpression) {
+    componentDependentProps[tagId].tagIdExpression =
+      parentPath.node.__tagIdExpression;
 
-      if (renderFunctionPath) {
-        const { loopFnBody } = parentJSXListEl.node.__jsxlist;
-        componentDependentProps[tagId].parentNode = loopFnBody.body;
-      }
+    if (renderFunctionPath) {
+      const { loopFnBody } = parentJSXListEl.node.__jsxlist;
+      componentDependentProps[tagId].parentNode = loopFnBody.body;
     }
+  }
 
-    if (alias.isCustomEl) {
-      node.attributes.push(
-        t.jsxAttribute(
-          t.jsxIdentifier('__parentId'),
-          t.stringLiteral('{{__tagId}}'),
-        ),
-      );
-    }
-
+  if (alias.isCustomEl) {
     node.attributes.push(
-      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+      t.jsxAttribute(
+        t.jsxIdentifier('__parentId'),
+        t.stringLiteral('{{__tagId}}'),
+      ),
     );
+  }
 
-    replaceComponentTagName(path, t.jsxIdentifier(componentTag));
-    if (!baseComponents[componentTag]) {
-      // Collect components alias
-      componentsAlias[componentTag] = alias;
-      /**
-       * Handle with special attrs.
-       */
-      if (!RELATIVE_COMPONENTS_REG.test(alias.from)) {
-        const pkg = getComponentConfig(alias.from, options.resourcePath);
-        if (
-          pkg &&
-          pkg.miniappConfig &&
-          Array.isArray(pkg.miniappConfig.renderSlotProps)
-        ) {
-          path.traverse({
-            JSXAttribute(attrPath) {
-              const { node } = attrPath;
-              if (
-                pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
-              ) {
-                if (t.isJSXExpressionContainer(node.value)) {
-                  let fnExp;
-                  if (t.isFunction(node.value.expression)) {
-                    fnExp = node.value.expression;
-                  } else if (t.isIdentifier(node.value.expression)) {
-                    const binding = attrPath.scope.getBinding(
-                      node.value.expression.name,
-                    );
-                    fnExp = binding.path.node;
-                  } else if (t.isMemberExpression(node.value.expression)) {
-                    throw new Error(
-                      `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
-                        node,
-                      )}", please use anonymous function instead.`,
-                    );
-                  }
+  node.attributes.push(
+    t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+  );
 
-                  if (fnExp) {
-                    const { params, body } = fnExp;
-                    let jsxEl = body;
-                    if (t.isBlockStatement(body)) {
-                      const returnEl = body.body.filter(el =>
-                        t.isReturnStatement(el),
-                      )[0];
-                      if (returnEl) jsxEl = returnEl.argument;
-                    }
-                    const {
-                      node: slotComponentNode,
-                      dynamicValue: slotComponentDynamicValue,
-                    } = createSlotComponent(jsxEl, node.name.name, params);
-                    Object.assign(dynamicValue, slotComponentDynamicValue);
-                    path.parentPath.node.children.push(slotComponentNode);
-                  }
-                  attrPath.remove();
+  replaceComponentTagName(path, t.jsxIdentifier(componentTag));
+  if (!baseComponents[componentTag]) {
+    /**
+     * Handle with special attrs.
+     */
+    if (!RELATIVE_COMPONENTS_REG.test(alias.from)) {
+      const pkg = getComponentConfig(alias.from, options.resourcePath);
+      if (
+        pkg &&
+        pkg.miniappConfig &&
+        Array.isArray(pkg.miniappConfig.renderSlotProps)
+      ) {
+        path.traverse({
+          JSXAttribute(attrPath) {
+            const { node } = attrPath;
+            if (
+              pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
+            ) {
+              if (t.isJSXExpressionContainer(node.value)) {
+                let fnExp;
+                if (t.isFunction(node.value.expression)) {
+                  fnExp = node.value.expression;
+                } else if (t.isIdentifier(node.value.expression)) {
+                  const binding = attrPath.scope.getBinding(
+                    node.value.expression.name,
+                  );
+                  fnExp = binding.path.node;
+                } else if (t.isMemberExpression(node.value.expression)) {
+                  throw new Error(
+                    `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
+                      node,
+                    )}", please use anonymous function instead.`,
+                  );
                 }
+
+                if (fnExp) {
+                  const { params, body } = fnExp;
+                  let jsxEl = body;
+                  if (t.isBlockStatement(body)) {
+                    const returnEl = body.body.filter(el =>
+                      t.isReturnStatement(el),
+                    )[0];
+                    if (returnEl) jsxEl = returnEl.argument;
+                  }
+                  const {
+                    node: slotComponentNode,
+                    dynamicValue: slotComponentDynamicValue,
+                  } = createSlotComponent(jsxEl, node.name.name, params);
+                  Object.assign(dynamicValue, slotComponentDynamicValue);
+                  path.parentPath.node.children.push(slotComponentNode);
+                }
+                attrPath.remove();
               }
-            },
-          });
-        }
+            }
+          },
+        });
       }
     }
+    return componentTag;
   }
 }
 
 function transformComponents(parsed, options) {
-  const { templateAST, imported } = parsed;
+  const { ast, templateAST, imported } = parsed;
   const dynamicValue = {};
   const contextList = [];
+  const componentsAlias = {};
   traverse(templateAST, {
     JSXOpeningElement(path) {
       const { node } = path;
       if (t.isJSXIdentifier(node.name)) {
         // <View/>
-        transformIdentifierComponentName(parsed, path, options, dynamicValue);
+        const alias = getComponentAlias(node.name.name, imported);
+        if (alias) {
+          removeImport(ast, alias);
+          const componentTag = transformIdentifierComponentName(path, alias, dynamicValue, parsed, options);
+          if (componentTag) {
+            // Collect renamed component tag & path info
+            componentsAlias[componentTag] = alias;
+          }
+        }
       } else if (t.isJSXMemberExpression(node.name)) {
         // <RecyclerView.Cell /> or <Context.Provider>
         const { object, property } = node.name;
@@ -217,6 +219,7 @@ function transformComponents(parsed, options) {
   return {
     contextList,
     dynamicValue,
+    componentsAlias
   };
 }
 
@@ -228,11 +231,17 @@ module.exports = {
     if (!parsed.componentDependentProps) {
       parsed.componentDependentProps = {};
     }
-    if (!parsed.componentsAlias) {
-      parsed.componentsAlias = {};
-    }
-    const { contextList, dynamicValue } = transformComponents(parsed, options);
+    const { contextList, dynamicValue, componentsAlias } = transformComponents(parsed, options);
+    // Collect used components
+    Object.keys(componentsAlias).forEach(componentTag => {
+      if (!parsed.usingComponents) {
+        parsed.usingComponents = {};
+      }
+      parsed.usingComponents[componentTag] = getComponentPath(componentsAlias[componentTag], options);
+    });
+    // Assign used context
     parsed.contextList = contextList;
+    // Collect dynamicValue
     if (parsed.dynamicValue) {
       Object.assign(parsed.dynamicValue, dynamicValue);
     } else {
@@ -240,10 +249,7 @@ module.exports = {
     }
   },
   generate(ret, parsed, options) {
-    ret.usingComponents = {};
-    Object.keys(parsed.componentsAlias).forEach(componentTag => {
-      ret.usingComponents[componentTag] = getComponentPath(parsed.componentsAlias[componentTag], options);
-    });
+    ret.usingComponents = parsed.usingComponents;
   },
   // For test case.
   _transformComponents: transformComponents
