@@ -28,7 +28,7 @@ function transformIdentifierComponentName(parsed, path, options, dynamicValue) {
     renderFunctionPath,
     imported,
     componentDependentProps,
-    usingComponents,
+    componentsAlias,
   } = parsed;
   const alias = getComponentAlias(node.name.name, imported);
   removeImport(ast, alias);
@@ -71,62 +71,63 @@ function transformIdentifierComponentName(parsed, path, options, dynamicValue) {
 
     replaceComponentTagName(path, t.jsxIdentifier(componentTag));
     if (!baseComponents[componentTag]) {
-      usingComponents[componentTag] = getComponentPath(alias, options);
-    }
-    /**
-     * Handle with special attrs.
-     */
-    if (!RELATIVE_COMPONENTS_REG.test(alias.from)) {
-      const pkg = getComponentConfig(alias.from, options.resourcePath);
-      if (
-        pkg &&
-        pkg.miniappConfig &&
-        Array.isArray(pkg.miniappConfig.renderSlotProps)
-      ) {
-        path.traverse({
-          JSXAttribute(attrPath) {
-            const { node } = attrPath;
-            if (
-              pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
-            ) {
-              if (t.isJSXExpressionContainer(node.value)) {
-                let fnExp;
-                if (t.isFunction(node.value.expression)) {
-                  fnExp = node.value.expression;
-                } else if (t.isIdentifier(node.value.expression)) {
-                  const binding = attrPath.scope.getBinding(
-                    node.value.expression.name,
-                  );
-                  fnExp = binding.path.node;
-                } else if (t.isMemberExpression(node.value.expression)) {
-                  throw new Error(
-                    `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
-                      node,
-                    )}", please use anonymous function instead.`,
-                  );
-                }
-
-                if (fnExp) {
-                  const { params, body } = fnExp;
-                  let jsxEl = body;
-                  if (t.isBlockStatement(body)) {
-                    const returnEl = body.body.filter(el =>
-                      t.isReturnStatement(el),
-                    )[0];
-                    if (returnEl) jsxEl = returnEl.argument;
+      // Collect components alias
+      componentsAlias[componentTag] = alias;
+      /**
+       * Handle with special attrs.
+       */
+      if (!RELATIVE_COMPONENTS_REG.test(alias.from)) {
+        const pkg = getComponentConfig(alias.from, options.resourcePath);
+        if (
+          pkg &&
+          pkg.miniappConfig &&
+          Array.isArray(pkg.miniappConfig.renderSlotProps)
+        ) {
+          path.traverse({
+            JSXAttribute(attrPath) {
+              const { node } = attrPath;
+              if (
+                pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
+              ) {
+                if (t.isJSXExpressionContainer(node.value)) {
+                  let fnExp;
+                  if (t.isFunction(node.value.expression)) {
+                    fnExp = node.value.expression;
+                  } else if (t.isIdentifier(node.value.expression)) {
+                    const binding = attrPath.scope.getBinding(
+                      node.value.expression.name,
+                    );
+                    fnExp = binding.path.node;
+                  } else if (t.isMemberExpression(node.value.expression)) {
+                    throw new Error(
+                      `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
+                        node,
+                      )}", please use anonymous function instead.`,
+                    );
                   }
-                  const {
-                    node: slotComponentNode,
-                    dynamicValue: slotComponentDynamicValue,
-                  } = createSlotComponent(jsxEl, node.name.name, params);
-                  Object.assign(dynamicValue, slotComponentDynamicValue);
-                  path.parentPath.node.children.push(slotComponentNode);
+
+                  if (fnExp) {
+                    const { params, body } = fnExp;
+                    let jsxEl = body;
+                    if (t.isBlockStatement(body)) {
+                      const returnEl = body.body.filter(el =>
+                        t.isReturnStatement(el),
+                      )[0];
+                      if (returnEl) jsxEl = returnEl.argument;
+                    }
+                    const {
+                      node: slotComponentNode,
+                      dynamicValue: slotComponentDynamicValue,
+                    } = createSlotComponent(jsxEl, node.name.name, params);
+                    Object.assign(dynamicValue, slotComponentDynamicValue);
+                    path.parentPath.node.children.push(slotComponentNode);
+                  }
+                  attrPath.remove();
                 }
-                attrPath.remove();
               }
-            }
-          },
-        });
+            },
+          });
+        }
       }
     }
   }
@@ -227,8 +228,8 @@ module.exports = {
     if (!parsed.componentDependentProps) {
       parsed.componentDependentProps = {};
     }
-    if (!parsed.usingComponents) {
-      parsed.usingComponents = {};
+    if (!parsed.componentsAlias) {
+      parsed.componentsAlias = {};
     }
     const { contextList, dynamicValue } = transformComponents(parsed, options);
     parsed.contextList = contextList;
@@ -239,7 +240,10 @@ module.exports = {
     }
   },
   generate(ret, parsed, options) {
-    ret.usingComponents = parsed.usingComponents;
+    ret.usingComponents = {};
+    Object.keys(parsed.componentsAlias).forEach(componentTag => {
+      ret.usingComponents[componentTag] = getComponentPath(parsed.componentsAlias[componentTag], options);
+    });
   },
   // For test case.
   _transformComponents: transformComponents
