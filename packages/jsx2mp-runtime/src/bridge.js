@@ -8,7 +8,6 @@ import { createMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
-const history = createMiniAppHistory();
 let _appConfig;
 
 /**
@@ -23,6 +22,8 @@ let _appConfig;
 function getPageCycles(Klass) {
   let config = {
     onLoad(options) {
+      // Ensure page has loaded
+      const history = createMiniAppHistory();
       this.instance = new Klass(this[PROPS]);
       // Reverse sync from state to data.
       this.instance._setInternal(this);

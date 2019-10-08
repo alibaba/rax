@@ -22,6 +22,7 @@ class Location {
   constructor() {
     this._currentPageOptions = {};
     this.hash = '';
+    this.href = this.pathname + this.search;
   }
 
   __updatePageOption(pageOptions) {

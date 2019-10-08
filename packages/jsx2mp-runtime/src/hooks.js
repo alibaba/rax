@@ -272,3 +272,19 @@ export function useReducer(reducer, initialArg, init) {
   queue.actions.length = 0;
   return hooks[hookID];
 }
+
+export function useHistory() {
+  const pageInstance = getPageInstance();
+  return pageInstance.props.history;
+}
+
+export function useLocation() {
+  const pageInstance = getPageInstance();
+  return pageInstance.props.location;
+}
+
+function getPageInstance() {
+  const currentInstance = getCurrentRenderingInstance();
+  // Check component or Page
+  return currentInstance._internal.$page ? currentInstance._internal.$page.instance : currentInstance;
+}
