@@ -16,63 +16,56 @@ let tagCount = 0;
 
 /**
  * Transform the component name is identifier
- * @param {Object} parsed
  * @param {Object} path
- * @param {Object} options
+ * @param {Object} alias
  * @param {Object} dynamicValue
+ * @param {Object} parsed
+ * @param {Object} options
  */
-function transformIdentifierComponentName(parsed, path, options, dynamicValue) {
+function transformIdentifierComponentName(path, alias, dynamicValue, parsed, options) {
   const { node, parentPath } = path;
   const {
-    ast,
     renderFunctionPath,
-    imported,
     componentDependentProps,
-    usingComponents,
   } = parsed;
-  const alias = getComponentAlias(node.name.name, imported);
-  removeImport(ast, alias);
-  if (alias) {
-    // Miniapp template tag name does not support special characters.
-    const componentTag = alias.name.replace(/@|\//g, '_');
-    const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
-    // <tag __tagId="tagId" />
-    let tagId = '' + tagCount++;
-    if (parentJSXListEl) {
-      const { args } = parentJSXListEl.node.__jsxlist;
-      const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
-      parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
-      tagId += '-{{' + indexValue + '}}';
-    }
-    parentPath.node.__tagId = tagId;
-    componentDependentProps[tagId] = componentDependentProps[tagId] || {};
-    if (parentPath.node.__tagIdExpression) {
-      componentDependentProps[tagId].tagIdExpression =
-        parentPath.node.__tagIdExpression;
+  // Miniapp template tag name does not support special characters.
+  const componentTag = alias.name.replace(/@|\//g, '_');
+  const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
+  // <tag __tagId="tagId" />
+  let tagId = '' + tagCount++;
+  if (parentJSXListEl) {
+    const { args } = parentJSXListEl.node.__jsxlist;
+    const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
+    parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+    tagId += '-{{' + indexValue + '}}';
+  }
+  parentPath.node.__tagId = tagId;
+  componentDependentProps[tagId] = componentDependentProps[tagId] || {};
+  if (parentPath.node.__tagIdExpression) {
+    componentDependentProps[tagId].tagIdExpression =
+      parentPath.node.__tagIdExpression;
 
-      if (renderFunctionPath) {
-        const { loopFnBody } = parentJSXListEl.node.__jsxlist;
-        componentDependentProps[tagId].parentNode = loopFnBody.body;
-      }
+    if (renderFunctionPath) {
+      const { loopFnBody } = parentJSXListEl.node.__jsxlist;
+      componentDependentProps[tagId].parentNode = loopFnBody.body;
     }
+  }
 
-    if (alias.isCustomEl) {
-      node.attributes.push(
-        t.jsxAttribute(
-          t.jsxIdentifier('__parentId'),
-          t.stringLiteral('{{__tagId}}'),
-        ),
-      );
-    }
-
+  if (alias.isCustomEl) {
     node.attributes.push(
-      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+      t.jsxAttribute(
+        t.jsxIdentifier('__parentId'),
+        t.stringLiteral('{{__tagId}}'),
+      ),
     );
+  }
 
-    replaceComponentTagName(path, t.jsxIdentifier(componentTag));
-    if (!baseComponents[componentTag]) {
-      usingComponents[componentTag] = getComponentPath(alias, options);
-    }
+  node.attributes.push(
+    t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+  );
+
+  replaceComponentTagName(path, t.jsxIdentifier(componentTag));
+  if (!baseComponents[componentTag]) {
     /**
      * Handle with special attrs.
      */
@@ -129,19 +122,29 @@ function transformIdentifierComponentName(parsed, path, options, dynamicValue) {
         });
       }
     }
+    return componentTag;
   }
 }
 
 function transformComponents(parsed, options) {
-  const { templateAST, imported } = parsed;
+  const { ast, templateAST, imported } = parsed;
   const dynamicValue = {};
   const contextList = [];
+  const componentsAlias = {};
   traverse(templateAST, {
     JSXOpeningElement(path) {
       const { node } = path;
       if (t.isJSXIdentifier(node.name)) {
         // <View/>
-        transformIdentifierComponentName(parsed, path, options, dynamicValue);
+        const alias = getComponentAlias(node.name.name, imported);
+        if (alias) {
+          removeImport(ast, alias);
+          const componentTag = transformIdentifierComponentName(path, alias, dynamicValue, parsed, options);
+          if (componentTag) {
+            // Collect renamed component tag & path info
+            componentsAlias[componentTag] = alias;
+          }
+        }
       } else if (t.isJSXMemberExpression(node.name)) {
         // <RecyclerView.Cell /> or <Context.Provider>
         const { object, property } = node.name;
@@ -215,6 +218,7 @@ function transformComponents(parsed, options) {
   return {
     contextList,
     dynamicValue,
+    componentsAlias
   };
 }
 
@@ -226,11 +230,17 @@ module.exports = {
     if (!parsed.componentDependentProps) {
       parsed.componentDependentProps = {};
     }
-    if (!parsed.usingComponents) {
-      parsed.usingComponents = {};
-    }
-    const { contextList, dynamicValue } = transformComponents(parsed, options);
+    const { contextList, dynamicValue, componentsAlias } = transformComponents(parsed, options);
+    // Collect used components
+    Object.keys(componentsAlias).forEach(componentTag => {
+      if (!parsed.usingComponents) {
+        parsed.usingComponents = {};
+      }
+      parsed.usingComponents[componentTag] = getComponentPath(componentsAlias[componentTag], options);
+    });
+    // Assign used context
     parsed.contextList = contextList;
+    // Collect dynamicValue
     if (parsed.dynamicValue) {
       Object.assign(parsed.dynamicValue, dynamicValue);
     } else {
