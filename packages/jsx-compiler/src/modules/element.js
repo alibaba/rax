@@ -6,6 +6,7 @@ const createJSXBinding = require('../utils/createJSXBinding');
 const CodeError = require('../utils/CodeError');
 const DynamicBinding = require('../utils/DynamicBinding');
 const baseComponents = require('../baseComponents');
+const replaceComponentTagName = require('../utils/replaceComponentTagName');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -351,10 +352,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           const name = componentTagNode.name;
           const replaceName = baseComponents[name];
           if (replaceName) {
-            componentTagNode.name = replaceName;
-            if (parent.closingElement) {
-              parent.closingElement.name = t.jsxIdentifier(replaceName);
-            }
+            replaceComponentTagName(path, t.jsxIdentifier(replaceName));
             const propsMap = adapter[replaceName];
             let hasClassName = false;
             node.attributes.forEach(attr => {

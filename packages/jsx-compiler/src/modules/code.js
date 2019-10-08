@@ -19,12 +19,15 @@ const SAFE_CREATE_STYLE = '__create_style__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
+const USE_CONTEXT = 'useContext';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
+
+const isHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -152,6 +155,7 @@ module.exports = {
       });
       addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
+      addProviderIniter(parsed.contextList, parsed.renderFunctionPath);
     }
   },
 };
@@ -398,8 +402,7 @@ function collectHooks(root) {
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee, { name: USE_STATE })
-        || t.isIdentifier(node.callee, { name: USE_EFFECT })) {
+      if (t.isIdentifier(node.callee) && isHooksAPI(node.callee)) {
         ret[node.callee.name] = true;
       }
     }
@@ -446,6 +449,20 @@ function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
   fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
     t.objectExpression(methodsProperties)
   ])));
+}
+
+function addProviderIniter(contextList, renderFunctionPath) {
+  if (contextList) {
+    contextList.forEach(ctx => {
+      const ProviderIniter = t.memberExpression(
+        t.identifier(ctx.contextName),
+        t.identifier('Provider')
+      );
+      const fnBody = renderFunctionPath.node.body.body;
+
+      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
+    });
+  }
 }
 
 /**

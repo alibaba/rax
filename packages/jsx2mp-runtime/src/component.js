@@ -6,6 +6,7 @@ import Host from './host';
 import {updateChildProps, removeComponentProps} from './updater';
 import {enqueueRender} from './enqueueRender';
 import isFunction from './isFunction';
+import sameValue from './sameValue';
 import {
   RENDER,
   ON_SHOW,
@@ -25,6 +26,8 @@ export default class Component {
   constructor() {
     this.state = {};
     this.props = {};
+
+    this.__dependencies = {}; // for context
 
     this.__shouldUpdate = false;
     this._methods = {};
@@ -107,6 +110,41 @@ export default class Component {
       }
     }
     return state;
+  }
+
+  _readContext(context) {
+    const Provider = context.Provider;
+    const contextProp = Provider.contextProp;
+    let contextItem = this.__dependencies[contextProp];
+    if (!contextItem) {
+      const readEmitter = Provider.readEmitter;
+      const contextEmitter = readEmitter();
+      contextItem = {
+        emitter: contextEmitter,
+        renderedContext: contextEmitter.value,
+      };
+
+      const contextUpdater = (newContext) => {
+        if (!sameValue(newContext, contextItem.renderedContext)) {
+          this.__shouldUpdate = true;
+          this._updateComponent();
+        }
+      };
+
+      contextItem.emitter.on(contextUpdater);
+      this._registerLifeCycle(COMPONENT_WILL_UNMOUNT, () => {
+        contextItem.emitter.off(contextUpdater);
+      });
+      this.__dependencies[contextProp] = contextItem;
+    }
+    return contextItem.renderedContext = contextItem.emitter.value;
+  }
+
+  _injectContextType() {
+    const contextType = this.constructor.contextType;
+    if (contextType) {
+      this.context = this._readContext(contextType);
+    }
   }
 
   _mountComponent() {
@@ -235,6 +273,8 @@ export default class Component {
         this._hookID = 0;
         const nextProps = args[0] || this.props;
         const nextState = args[1] || this.state;
+
+        this._injectContextType();
 
         this.render(this.props = nextProps, this.state = nextState);
         break;

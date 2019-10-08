@@ -123,7 +123,6 @@ function parse(code, options) {
 
   // Reverse to call parse.
   invokeModules(reverse(options.modules), 'parse', ret, code, options);
-
   return ret;
 }
 
