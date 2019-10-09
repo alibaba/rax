@@ -5,7 +5,7 @@ import {renderToString} from '../index';
 
 describe('renderToString', () => {
   describe('basic rendering', function() {
-    it('render a blank div', () => {
+    it('a blank div', () => {
       function MyComponent() {
         return <div />;
       }
@@ -20,7 +20,7 @@ describe('renderToString', () => {
       }
 
       let str = renderToString(<MyComponent />);
-      expect(str).toBe('<br />');
+      expect(str).toBe('<br>');
     });
 
     it('a self-closing tag as a child', () => {
@@ -33,7 +33,7 @@ describe('renderToString', () => {
       }
 
       let str = renderToString(<MyComponent />);
-      expect(str).toBe('<div><br /></div>');
+      expect(str).toBe('<div><br></div>');
     });
 
     it('a string', () => {
@@ -97,8 +97,8 @@ describe('renderToString', () => {
       expect(str).toBe('<div>text1</div><span>text2</span><!-- _ --><p></p><!-- _ -->');
     });
 
-    it('an iterable', () => {
-      // ....
+    // TODO: render an iterable
+    it('an iterable', async() => {
     });
 
     it('emptyish value', () => {
