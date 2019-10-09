@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, useState, useEffect, createContext, useContext, useReducer} from 'rax';
+import {createElement} from 'rax';
 import {renderToString} from '../index';
 
 describe('renderToString', () => {
