@@ -490,7 +490,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div>foo</div');
+        expect(str).toBe('<div>foo</div>');
       });
 
       it('no key attribute', () => {
