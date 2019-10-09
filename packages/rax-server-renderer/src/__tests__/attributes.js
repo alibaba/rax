@@ -413,7 +413,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<input size="2" />');
+        expect(str).toBe('<input size="2">');
       });
 
       it('numeric property with zero value', () => {
@@ -481,7 +481,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div></div');
+        expect(str).toBe('<div></div>');
       });
 
       it('no children attribute', () => {
@@ -569,7 +569,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<meta httpequiv="refresh"></div>');
+        expect(str).toBe('<meta httpequiv="refresh">');
       });
 
       it('badly cased SVG attribute with a warning', () => {
