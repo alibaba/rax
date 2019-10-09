@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Ask some usage problems with rax.
+about: Ask questions about using with Rax.
 title: "[Question]"
 labels: question
 assignees: ''
