@@ -37,8 +37,23 @@ const writeFile = function(path, content, rootPath) {
   writeFileSync(path, content, 'utf-8');
 };
 
+/**
+ * Get directory path under root
+ * @param {string} dirname e.g. src/constant/test
+ * @param {string} root e.g. src
+ * @returns {string} e.g. constant/test
+ */
+const getCurrentDirectoryPath = function (dirname, root = 'src') {
+  const rootPosition = dirname.indexOf(root);
+  if (rootPosition === -1) {
+    throw new Error(`Current directory ${dirname} is not under ${root}`);
+  }
+  return dirname.slice(rootPosition + root.length);
+}
+
 module.exports = {
   isDirectory,
   getFileContent,
-  writeFile
+  writeFile,
+  getCurrentDirectoryPath
 };

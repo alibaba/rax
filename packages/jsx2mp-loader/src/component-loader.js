@@ -3,6 +3,7 @@ const { relative, join, dirname, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
+const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
 
 
@@ -10,7 +11,7 @@ const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath } = loaderOptions;
+  const { platform, entryPath, constantDir } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
@@ -20,6 +21,14 @@ module.exports = function componentLoader(content) {
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
   const targetFilePath = join(outputPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
+
+  const isFromConstantDir = cached(function isFromConstantDir(path) {
+    return path.indexOf(constantDir) !== -1;
+  });
+
+  if (isFromConstantDir(this.resourcePath)) {
+    return '';
+  }
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
@@ -93,7 +102,7 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
     } else {
       denpendencies.push({ name });
     }

@@ -33,11 +33,12 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
-  const { platform = 'ali' } = options;
+  const { platform = 'ali', constantDir } = options;
 
   let loaderParams = JSON.stringify({
     platform: platformConfig[platform],
-    entryPath: entryFilePath
+    entryPath: entryFilePath,
+    constantDir
   });
 
   if (type === 'project') {
@@ -84,7 +85,7 @@ function getDepPath(path, rootContext) {
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode } = options;
+  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, constantDir } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
   entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js

@@ -6,7 +6,9 @@ const consoleClear = require('console-clear');
 const chalk = require('chalk');
 const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
-const { DEFAULT_TYPE, DEFAULT_PLATFORM, DEFAULT_ENTRY, DEFAULT_DIST } = require('./default');
+const { getCurrentDirectoryPath } = require('./utils/file');
+const { DEFAULT_TYPE, DEFAULT_PLATFORM, DEFAULT_ENTRY, DEFAULT_DIST, DEFAULT_CONSTANT_DIR } = require('./default');
+const { copySync } = require('fs-extra');
 
 const cwd = process.cwd();
 
@@ -22,8 +24,11 @@ function build(options = {}) {
     platform = DEFAULT_PLATFORM,
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
-    skipClearStdout = false
+    skipClearStdout = false,
+    constantDir = DEFAULT_CONSTANT_DIR
   } = options;
+
+  copySync(constantDir, join(distDirectory, getCurrentDirectoryPath(constantDir, 'src')));
 
   let config = getWebpackConfig({
     mode: 'build',
@@ -31,7 +36,8 @@ function build(options = {}) {
     platform,
     type,
     workDirectory,
-    distDirectory
+    distDirectory,
+    constantDir
   });
 
   if (options.webpackConfig) {
@@ -59,8 +65,11 @@ function watch(options = {}) {
     platform = DEFAULT_PLATFORM,
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
-    skipClearStdout = false
+    skipClearStdout = false,
+    constantDir = DEFAULT_CONSTANT_DIR
   } = options;
+
+  copySync(constantDir, join(distDirectory, getCurrentDirectoryPath(constantDir, 'src')));
 
   let config = getWebpackConfig({
     mode: 'watch',
@@ -69,6 +78,7 @@ function watch(options = {}) {
     workDirectory,
     platform,
     distDirectory,
+    constantDir
   });
 
   if (options.webpackConfig) {
