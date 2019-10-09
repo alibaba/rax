@@ -1,17 +1,15 @@
 import isFunction from './isFunction';
-
-const SHOW = 'show';
-const HIDE = 'hide';
+import { ON_SHOW, ON_HIDE } from './cycles';
 
 export const cycles = {
-  [SHOW]: [],
-  [HIDE]: [],
+  [ON_SHOW]: [],
+  [ON_HIDE]: [],
 };
 
 export function usePageEffect(cycle, callback) {
   switch (cycle) {
-    case SHOW:
-    case HIDE:
+    case ON_SHOW:
+    case ON_HIDE:
       if (isFunction(callback)) {
         cycles[cycle].push(callback);
       }
@@ -22,9 +20,9 @@ export function usePageEffect(cycle, callback) {
 }
 
 export function usePageShow(callback) {
-  return usePageEffect(SHOW, callback);
+  return usePageEffect(ON_SHOW, callback);
 }
 
 export function usePageHide(callback) {
-  return usePageEffect(HIDE, callback);
+  return usePageEffect(ON_HIDE, callback);
 }

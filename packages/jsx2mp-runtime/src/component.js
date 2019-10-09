@@ -21,6 +21,7 @@ import {
   COMPONENT_WILL_UNMOUNT,
   COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
+import { cycles as pageCycles } from './page';
 
 export default class Component {
   constructor() {
@@ -264,6 +265,9 @@ export default class Component {
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
+        }
+        if (pageCycles.hasOwnProperty(cycle)) {
+          pageCycles[cycle].forEach(fn => fn(...args));
         }
         break;
 
