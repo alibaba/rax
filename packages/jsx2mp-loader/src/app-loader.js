@@ -55,8 +55,8 @@ module.exports = function appLoader(content) {
   const transformedAppConfig = transformAppConfig(entryPath, config);
   writeFileSync(join(outputPath, 'app.js'), transformed.code);
   writeJSONSync(join(outputPath, 'app.json'), transformedAppConfig, { spaces: 2 });
-  // Write app.raw.json for route information.
-  writeJSONSync(join(outputPath, 'app.raw.json'), config, { spaces: 2 });
+  // Write app.config.js for route information.
+  writeFileSync(join(outputPath, 'app.config.js'), `module.exports = ${JSON.stringify(config, null, 2)}`);
 
   const appCssPath = join(outputPath, 'app.acss');
   const appCss = transformed.style ? defaultStyle + transformed.style : defaultStyle;

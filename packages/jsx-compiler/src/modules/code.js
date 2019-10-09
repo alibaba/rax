@@ -207,9 +207,9 @@ function renameFileModule(ast) {
 }
 
 /**
- * Rename app.json to app.raw.json, for prev is compiled to adapte miniapp.
+ * Rename app.json to app.config.js, for prev is compiled to adapte miniapp.
  * eg:
- *   import appConfig from './app.json' => import appConfig from './app.raw.json'
+ *   import appConfig from './app.json' => import appConfig from './app.config.js'
  * @param ast Babel AST.
  * @param sourcePath Folder path to source.
  * @param resourcePath Current handling file source path.
@@ -221,7 +221,7 @@ function renameAppConfig(ast, sourcePath, resourcePath) {
       if (source.isStringLiteral()) {
         const appConfigSourcePath = join(resourcePath, '..', source.node.value);
         if (appConfigSourcePath === join(sourcePath, 'app.json')) {
-          const replacement = source.node.value.replace(/app\.json/, 'app.raw.json');
+          const replacement = source.node.value.replace(/app\.json/, 'app.config.js');
           source.replaceWith(t.stringLiteral(replacement));
         }
       }
