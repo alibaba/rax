@@ -4,6 +4,9 @@ import sameValue from './sameValue';
 import isFunction from './isFunction';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 import { enqueueRender } from './enqueueRender';
+import { createMiniAppHistory } from './history';
+
+const history = createMiniAppHistory();
 
 function getCurrentInstance() {
   return Host.current;
@@ -274,17 +277,9 @@ export function useReducer(reducer, initialArg, init) {
 }
 
 export function useHistory() {
-  const pageInstance = getPageInstance();
-  return pageInstance.props.history;
+  return history;
 }
 
 export function useLocation() {
-  const pageInstance = getPageInstance();
-  return pageInstance.props.location;
-}
-
-function getPageInstance() {
-  const currentInstance = getCurrentRenderingInstance();
-  // Check component or Page
-  return currentInstance._internal.$page ? currentInstance._internal.$page.instance : currentInstance;
+  return history.location;
 }
