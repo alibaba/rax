@@ -129,7 +129,7 @@ function copyConstantDir(dirs, distDirectory) {
       mkdirSync(dir);
     }
     copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')));
-  })
+  });
 }
 
 exports.build = build;

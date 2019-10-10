@@ -43,13 +43,13 @@ const writeFile = function(path, content, rootPath) {
  * @param {string} root e.g. src
  * @returns {string} e.g. constant/test
  */
-const getCurrentDirectoryPath = function (dirname, root = 'src') {
+const getCurrentDirectoryPath = function(dirname, root = 'src') {
   const rootPosition = dirname.indexOf(root);
   if (rootPosition === -1) {
     throw new Error(`Current directory ${dirname} is not under ${root}`);
   }
   return dirname.slice(rootPosition + root.length);
-}
+};
 
 module.exports = {
   isDirectory,

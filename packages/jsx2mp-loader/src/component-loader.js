@@ -140,7 +140,7 @@ function isChildOf(child, parent) {
   const plen = parentArray.length;
 
   let j = 0;
-  for (let i = 0; i < plen;i++) {
+  for (let i = 0; i < plen; i++) {
     if (parentArray[i] === childArray[j]) {
       j++;
     }
