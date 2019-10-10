@@ -7,8 +7,9 @@ const chalk = require('chalk');
 const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
 const { getCurrentDirectoryPath } = require('./utils/file');
-const { DEFAULT_TYPE, DEFAULT_PLATFORM, DEFAULT_ENTRY, DEFAULT_DIST, DEFAULT_CONSTANT_DIR } = require('./default');
+const { DEFAULT_TYPE, DEFAULT_PLATFORM, DEFAULT_ENTRY, DEFAULT_DIST, DEFAULT_CONSTANT_DIR_ARR } = require('./default');
 const { copySync, existsSync, mkdirSync } = require('fs-extra');
+
 
 const cwd = process.cwd();
 
@@ -25,11 +26,16 @@ function build(options = {}) {
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
-    constantDir = DEFAULT_CONSTANT_DIR
+    constantDir = DEFAULT_CONSTANT_DIR_ARR
   } = options;
 
   if (type === DEFAULT_TYPE) {
     copyConstantDir(constantDir, distDirectory);
+  } else {
+    // Can't use in component type
+    if (constantDir.length !== 0) {
+      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
+    }
   }
 
   let config = getWebpackConfig({
@@ -68,11 +74,16 @@ function watch(options = {}) {
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
-    constantDir = DEFAULT_CONSTANT_DIR
+    constantDir = DEFAULT_CONSTANT_DIR_ARR
   } = options;
 
   if (type === DEFAULT_TYPE) {
     copyConstantDir(constantDir, distDirectory);
+  } else {
+    // Can't use in component type
+    if (constantDir.length !== 0) {
+      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
+    }
   }
 
   let config = getWebpackConfig({
