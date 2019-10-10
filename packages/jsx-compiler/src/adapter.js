@@ -18,6 +18,9 @@ const parserAdapters = {
       onLongPress: 'onLongTap',
       className: '__rax-view'
     },
+
+    className: 'class',
+    style: 'style'
   },
   'wechat': {
     if: 'wx:if',
@@ -35,8 +38,12 @@ const parserAdapters = {
       onTouchStart: 'bindtouchstart',
       onTouchEnd: 'bindtouchend',
       onTouchMove: 'bindtouchmove',
-      onTouchCancel: 'bindtouchcancel'
+      onTouchCancel: 'bindtouchcancel',
+      className: '__rax-view'
     },
+
+    className: 'className',
+    style: 'styleSheet'
   },
 };
 

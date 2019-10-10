@@ -340,7 +340,10 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
         path.remove();
       }
       if (attrName === 'className') {
-        node.name.name = 'class';
+        node.name.name = adapter.className;
+      }
+      if (attrName === 'style') {
+        node.name.name = adapter.style;
       }
     },
     JSXExpressionContainer: handleJSXExpressionContainer,
@@ -357,7 +360,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
             let hasClassName = false;
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
-                if (attr.name.name === 'class') {
+                if (attr.name.name === adapter.className) {
                   attr.value.value = propsMap.className + ' ' + attr.value.value;
                   hasClassName = true;
                 } else if (propsMap[attr.name.name]) {
@@ -366,7 +369,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
               }
             });
             if (!hasClassName) {
-              node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'), t.stringLiteral(propsMap.className)));
+              node.attributes.push(t.jsxAttribute(t.jsxIdentifier(adapter.className), t.stringLiteral(propsMap.className)));
             }
           }
         }
