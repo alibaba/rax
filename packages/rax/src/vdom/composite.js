@@ -477,10 +477,10 @@ class CompositeComponent extends BaseComponent {
         instance,
         this.__processChildContext(context),
         (newNativeNode, parent) => {
+          const driver = Host.driver;
+
           prevNativeNode = toArray(prevNativeNode);
           newNativeNode = toArray(newNativeNode);
-
-          const driver = Host.driver;
 
           // If the new length large then prev
           for (let i = 0; i < newNativeNode.length; i++) {
