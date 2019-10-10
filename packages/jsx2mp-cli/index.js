@@ -28,7 +28,9 @@ function build(options = {}) {
     constantDir = DEFAULT_CONSTANT_DIR
   } = options;
 
-  copyConstantDir(constantDir, distDirectory);
+  if (type === DEFAULT_TYPE) {
+    copyConstantDir(constantDir, distDirectory);
+  }
 
   let config = getWebpackConfig({
     mode: 'build',
@@ -69,7 +71,9 @@ function watch(options = {}) {
     constantDir = DEFAULT_CONSTANT_DIR
   } = options;
 
-  copyConstantDir(constantDir, distDirectory);
+  if (type === DEFAULT_TYPE) {
+    copyConstantDir(constantDir, distDirectory);
+  }
 
   let config = getWebpackConfig({
     mode: 'watch',
