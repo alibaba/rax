@@ -3,7 +3,7 @@ const { _transform } = require('../element');
 const { parseExpression } = require('../../parser');
 const genCode = require('../../codegen/genCode');
 const traverse = require('../../utils/traverseNodePath');
-const adapter = require('../../adapter');
+const adapter = require('../../adapter').ali;
 
 function genInlineCode(ast) {
   return genCode(ast, {
