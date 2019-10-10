@@ -23,7 +23,7 @@ program
       dist: cmd.dist,
       platform: cmd.platform,
       skipClearStdout: cmd.skipClearStdout,
-      constantDir: cmd.constantDir.split(',').map(c => c.trim())
+      constantDir: cmd.constantDir === '' ? [] : cmd.constantDir.split(',').map(c => c.trim())
     };
 
     require('..').build(options);

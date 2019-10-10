@@ -140,6 +140,9 @@ function handleCompiled(err, stats, { skipClearStdout }) {
  */
 function copyConstantDir(dirs, distDirectory) {
   dirs.forEach(dir => {
+    if (!dir) {
+      return
+    }
     if (!existsSync(dir)) {
       mkdirSync(dir);
     }
