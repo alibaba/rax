@@ -35,10 +35,12 @@ function getEntry(type, cwd, entryFilePath, options) {
   const entry = {};
   const { platform = 'ali' } = options;
 
-  let loaderParams = JSON.stringify({
+  const loaderParams = {
     platform: platformConfig[platform],
     entryPath: entryFilePath
-  });
+  };
+
+  const loaderParamsStringify = JSON.stringify(loaderParams);
 
   if (type === 'project') {
     let appConfig = null;
@@ -49,21 +51,21 @@ function getEntry(type, cwd, entryFilePath, options) {
       console.error('Can not found app.json in current work directory, please check.');
       process.exit(1);
     }
-    entry.app = AppLoader + '?' + JSON.stringify({ entryPath }) + '!./' + join(entryPath, 'app.js');
+    entry.app = AppLoader + '?' + JSON.stringify({ ...loaderParams, entryPath }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.forEach(({ source, component }) => {
         component = source || component;
-        entry['page@' + component] = PageLoader + '?' + loaderParams + '!' + getDepPath(component, entryPath);
+        entry['page@' + component] = PageLoader + '?' + loaderParamsStringify + '!' + getDepPath(component, entryPath);
       });
     } else if (Array.isArray(appConfig.pages)) {
       // Compatible with pages.
       appConfig.pages.forEach((pagePath) => {
-        entry['page@' + pagePath] = PageLoader + '?' + loaderParams + '!' + getDepPath(pagePath, entryPath);
+        entry['page@' + pagePath] = PageLoader + '?' + loaderParamsStringify + '!' + getDepPath(pagePath, entryPath);
       });
     }
   }
   if (type === 'component') {
-    entry.component = ComponentLoader + '?' + loaderParams + '!' + entryFilePath;
+    entry.component = ComponentLoader + '?' + loaderParamsStringify + '!' + entryFilePath;
   }
   return entry;
 }

@@ -342,9 +342,9 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       if (attrName === 'className') {
         node.name.name = adapter.className;
       }
-      if (attrName === 'style') {
-        node.name.name = adapter.style;
-      }
+      // if (attrName === 'style') {
+      //   node.name.name = adapter.style;
+      // }
     },
     JSXExpressionContainer: handleJSXExpressionContainer,
     JSXOpeningElement: {
