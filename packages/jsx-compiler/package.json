@@ -1,6 +1,6 @@
 {
   "name": "jsx-compiler",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "license": "BSD-3-Clause",
   "description": "Parser for Rax JSX Statements.",
   "main": "src/index.js",
