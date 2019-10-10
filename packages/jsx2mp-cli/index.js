@@ -8,7 +8,7 @@ const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
 const { getCurrentDirectoryPath } = require('./utils/file');
 const { DEFAULT_TYPE, DEFAULT_PLATFORM, DEFAULT_ENTRY, DEFAULT_DIST, DEFAULT_CONSTANT_DIR } = require('./default');
-const { copySync } = require('fs-extra');
+const { copySync, existsSync, mkdirSync } = require('fs-extra');
 
 const cwd = process.cwd();
 
@@ -28,7 +28,7 @@ function build(options = {}) {
     constantDir = DEFAULT_CONSTANT_DIR
   } = options;
 
-  copySync(constantDir, join(distDirectory, getCurrentDirectoryPath(constantDir, 'src')));
+  copyConstantDir(constantDir, distDirectory);
 
   let config = getWebpackConfig({
     mode: 'build',
@@ -69,7 +69,7 @@ function watch(options = {}) {
     constantDir = DEFAULT_CONSTANT_DIR
   } = options;
 
-  copySync(constantDir, join(distDirectory, getCurrentDirectoryPath(constantDir, 'src')));
+  copyConstantDir(constantDir, distDirectory);
 
   let config = getWebpackConfig({
     mode: 'watch',
@@ -116,6 +116,20 @@ function handleCompiled(err, stats, { skipClearStdout }) {
     }
     console.log(chalk.yellow('Set environment `DEBUG=true` to see detail error stacks.'));
   }
+}
+
+/**
+ * copy constant directories to dist
+ * @param {array} dirs
+ * @param {string} distDirectory
+ */
+function copyConstantDir(dirs, distDirectory) {
+  dirs.forEach(dir => {
+    if (!existsSync(dir)) {
+      mkdirSync(dir);
+    }
+    copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')));
+  })
 }
 
 exports.build = build;

@@ -1,5 +1,5 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, extname } = require('path');
+const { relative, join, dirname, sep } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
@@ -22,8 +22,8 @@ module.exports = function componentLoader(content) {
   const targetFilePath = join(outputPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
 
-  const isFromConstantDir = cached(function isFromConstantDir(path) {
-    return path.indexOf(constantDir) !== -1;
+  const isFromConstantDir = cached(function isFromConstantDir(dir) {
+    return constantDir.some(singleDir => isChildOf(singleDir, dir));
   });
 
   if (isFromConstantDir(this.resourcePath)) {
@@ -128,3 +128,25 @@ function createImportStatement(req) {
   return `import '${req}';`;
 }
 
+/**
+ * judge whether the child dir is part of parent dir
+ * @param {string} child
+ * @param {string} parent
+ */
+function isChildOf(child, parent) {
+  const childArray = child.split(sep).filter(i => i.length);
+  const parentArray = parent.split(sep).filter(i => i.length);
+  const clen = childArray.length;
+  const plen = parentArray.length;
+
+  let j = 0;
+  for (let i = 0; i < plen;i++) {
+    if (parentArray[i] === childArray[j]) {
+      j++;
+    }
+    if (j === clen) {
+      return true;
+    }
+  }
+  return false;
+}
