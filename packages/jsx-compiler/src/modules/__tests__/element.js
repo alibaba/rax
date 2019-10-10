@@ -262,7 +262,7 @@ describe('Transform JSXElement', () => {
     it('should handle text', () => {
       const sourceCode = '<Text style={styles.name}>{data && data.itemTitle ? data.itemTitle : \'\'}</Text>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Text style="{{_d0.name}}">{{ _d1 && _d1.itemTitle ? _d1.itemTitle : \'\' }}</Text>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: styles, _d1: data }');
     });
@@ -270,7 +270,7 @@ describe('Transform JSXElement', () => {
     it('should collect object expression', () => {
       const sourceCode = '<Image style={{...styles.avator, ...styles[\`\${rank}Avator\`]}} source={{ uri: avator }}></Image>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Image style="{{_d0}}" source="{{ uri: _d1 }}"></Image>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: { ...styles.avator, ...styles[`${rank}Avator`] }, _d1: avator }');
     });
