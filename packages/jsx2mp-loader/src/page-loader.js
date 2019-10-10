@@ -88,7 +88,7 @@ module.exports = function pageLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
     } else {
       denpendencies.push({ name });
     }

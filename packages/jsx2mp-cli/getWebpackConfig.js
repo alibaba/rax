@@ -33,11 +33,12 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
-  const { platform = 'ali' } = options;
+  const { platform = 'ali', constantDir } = options;
 
   const loaderParams = JSON.stringify({
     platform: platformConfig[platform],
-    entryPath: entryFilePath
+    entryPath: entryFilePath,
+    constantDir
   });
 
   if (type === 'project') {
