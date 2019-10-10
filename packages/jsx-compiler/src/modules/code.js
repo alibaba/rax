@@ -20,6 +20,8 @@ const SAFE_CREATE_STYLE = '__create_style__';
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 const USE_CONTEXT = 'useContext';
+const USE_HISTORY = 'useHistory';
+const USE_LOCATION = 'useLocation';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
@@ -27,7 +29,8 @@ const RUNTIME = '/npm/jsx2mp-runtime';
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
-const isHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT].includes(node.name);
+const isHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT,
+  USE_HISTORY, USE_LOCATION].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -204,9 +207,9 @@ function renameFileModule(ast) {
 }
 
 /**
- * Rename app.json to app.raw.json, for prev is compiled to adapte miniapp.
+ * Rename app.json to app.config.js, for prev is compiled to adapte miniapp.
  * eg:
- *   import appConfig from './app.json' => import appConfig from './app.raw.json'
+ *   import appConfig from './app.json' => import appConfig from './app.config.js'
  * @param ast Babel AST.
  * @param sourcePath Folder path to source.
  * @param resourcePath Current handling file source path.
@@ -218,7 +221,7 @@ function renameAppConfig(ast, sourcePath, resourcePath) {
       if (source.isStringLiteral()) {
         const appConfigSourcePath = join(resourcePath, '..', source.node.value);
         if (appConfigSourcePath === join(sourcePath, 'app.json')) {
-          const replacement = source.node.value.replace(/app\.json/, 'app.raw.json');
+          const replacement = source.node.value.replace(/app\.json/, 'app.config.js');
           source.replaceWith(t.stringLiteral(replacement));
         }
       }

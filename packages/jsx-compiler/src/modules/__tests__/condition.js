@@ -1,7 +1,7 @@
 const t = require('@babel/types');
 const { _transformTemplate, _transformRenderFunction } = require('../condition');
 const { parseExpression } = require('../../parser');
-const adapter = require('../../adapter');
+const adapter = require('../../adapter').ali;
 const genCode = require('../../codegen/genCode');
 const genExpression = require('../../codegen/genExpression');
 

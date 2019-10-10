@@ -1,8 +1,11 @@
 /* global getCurrentPages, PROPS */
 import { push, replace, go, goBack, canGo, goForward } from './router';
 
+let history;
+
 export function createMiniAppHistory() {
-  return new MiniAppHistory();
+  if (history) return history;
+  return history = new MiniAppHistory();
 }
 
 class MiniAppHistory {
@@ -28,6 +31,10 @@ class Location {
     this._currentPageOptions = pageOptions;
   }
 
+  get href() {
+    return this.pathname + this.search;
+  }
+
   get search() {
     let search = '';
     Object.keys(this._currentPageOptions).forEach((key, index) => {
@@ -40,6 +47,7 @@ class Location {
 
   get pathname() {
     const pages = getCurrentPages();
+    if (pages.length === 0) return '';
     const currentPage = pages[pages.length - 1];
     return addLeadingSlash(currentPage.route);
   }
