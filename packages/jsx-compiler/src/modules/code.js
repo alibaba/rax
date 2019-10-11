@@ -19,12 +19,18 @@ const SAFE_CREATE_STYLE = '__create_style__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
+const USE_CONTEXT = 'useContext';
+const USE_HISTORY = 'useHistory';
+const USE_LOCATION = 'useLocation';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
 
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
+
+const isHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT,
+  USE_HISTORY, USE_LOCATION].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -152,6 +158,7 @@ module.exports = {
       });
       addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
+      addProviderIniter(parsed.contextList, parsed.renderFunctionPath);
     }
   },
 };
@@ -200,9 +207,9 @@ function renameFileModule(ast) {
 }
 
 /**
- * Rename app.json to app.raw.json, for prev is compiled to adapte miniapp.
+ * Rename app.json to app.config.js, for prev is compiled to adapte miniapp.
  * eg:
- *   import appConfig from './app.json' => import appConfig from './app.raw.json'
+ *   import appConfig from './app.json' => import appConfig from './app.config.js'
  * @param ast Babel AST.
  * @param sourcePath Folder path to source.
  * @param resourcePath Current handling file source path.
@@ -214,7 +221,7 @@ function renameAppConfig(ast, sourcePath, resourcePath) {
       if (source.isStringLiteral()) {
         const appConfigSourcePath = join(resourcePath, '..', source.node.value);
         if (appConfigSourcePath === join(sourcePath, 'app.json')) {
-          const replacement = source.node.value.replace(/app\.json/, 'app.raw.json');
+          const replacement = source.node.value.replace(/app\.json/, 'app.config.js');
           source.replaceWith(t.stringLiteral(replacement));
         }
       }
@@ -398,8 +405,7 @@ function collectHooks(root) {
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee, { name: USE_STATE })
-        || t.isIdentifier(node.callee, { name: USE_EFFECT })) {
+      if (t.isIdentifier(node.callee) && isHooksAPI(node.callee)) {
         ret[node.callee.name] = true;
       }
     }
@@ -446,6 +452,20 @@ function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
   fnBody.push(t.expressionStatement(t.callExpression(updateMethods, [
     t.objectExpression(methodsProperties)
   ])));
+}
+
+function addProviderIniter(contextList, renderFunctionPath) {
+  if (contextList) {
+    contextList.forEach(ctx => {
+      const ProviderIniter = t.memberExpression(
+        t.identifier(ctx.contextName),
+        t.identifier('Provider')
+      );
+      const fnBody = renderFunctionPath.node.body.body;
+
+      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
+    });
+  }
 }
 
 /**

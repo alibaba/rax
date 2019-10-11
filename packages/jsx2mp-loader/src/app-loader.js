@@ -32,7 +32,7 @@ function getRelativePath(filePath) {
 
 module.exports = function appLoader(content) {
   const loaderOptions = getOptions(this);
-  const { entryPath } = loaderOptions;
+  const { entryPath, platform } = loaderOptions;
   const appConfigPath = removeExt(this.resourcePath) + '.json';
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const config = readJSONSync(appConfigPath);
@@ -55,10 +55,9 @@ module.exports = function appLoader(content) {
   const transformedAppConfig = transformAppConfig(entryPath, config);
   writeFileSync(join(outputPath, 'app.js'), transformed.code);
   writeJSONSync(join(outputPath, 'app.json'), transformedAppConfig, { spaces: 2 });
-  // Write app.raw.json for route information.
-  writeJSONSync(join(outputPath, 'app.raw.json'), config, { spaces: 2 });
-
-  const appCssPath = join(outputPath, 'app.acss');
+  // Write app.config.js for route information.
+  writeFileSync(join(outputPath, 'app.config.js'), `module.exports = ${JSON.stringify(config, null, 2)}`);
+  const appCssPath = join(outputPath, 'app' + platform.extension.css);
   const appCss = transformed.style ? defaultStyle + transformed.style : defaultStyle;
   writeFileSync(appCssPath, appCss);
 

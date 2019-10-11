@@ -5,7 +5,7 @@ const {
 } = require('../jsx-plus');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
-const adapter = require('../../adapter');
+const adapter = require('../../adapter').ali;
 
 describe('Directives', () => {
   describe('list', () => {

@@ -4,12 +4,14 @@ import { usePageEffect, usePageShow, usePageHide } from './page';
 import { withRouter } from './router';
 import Component from './component';
 import createStyle from './createStyle';
+import createContext from './createContext';
 
 export {
   runApp,
   createPage,
   createComponent,
   createStyle,
+  createContext,
 
   Component,
 

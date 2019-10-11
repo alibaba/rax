@@ -1,8 +1,9 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, extname } = require('path');
+const { relative, join, dirname, sep } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
+const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
 
 
@@ -10,7 +11,7 @@ const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath } = loaderOptions;
+  const { platform, entryPath, constantDir } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
@@ -20,6 +21,14 @@ module.exports = function componentLoader(content) {
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
   const targetFilePath = join(outputPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
+
+  const isFromConstantDir = cached(function isFromConstantDir(dir) {
+    return constantDir.some(singleDir => isChildOf(singleDir, dir));
+  });
+
+  if (isFromConstantDir(this.resourcePath)) {
+    return '';
+  }
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
@@ -93,7 +102,7 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
     } else {
       denpendencies.push({ name });
     }
@@ -119,3 +128,25 @@ function createImportStatement(req) {
   return `import '${req}';`;
 }
 
+/**
+ * judge whether the child dir is part of parent dir
+ * @param {string} child
+ * @param {string} parent
+ */
+function isChildOf(child, parent) {
+  const childArray = child.split(sep).filter(i => i.length);
+  const parentArray = parent.split(sep).filter(i => i.length);
+  const clen = childArray.length;
+  const plen = parentArray.length;
+
+  let j = 0;
+  for (let i = 0; i < plen; i++) {
+    if (parentArray[i] === childArray[j]) {
+      j++;
+    }
+    if (j === clen) {
+      return true;
+    }
+  }
+  return false;
+}

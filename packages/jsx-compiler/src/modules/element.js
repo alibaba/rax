@@ -6,6 +6,7 @@ const createJSXBinding = require('../utils/createJSXBinding');
 const CodeError = require('../utils/CodeError');
 const DynamicBinding = require('../utils/DynamicBinding');
 const baseComponents = require('../baseComponents');
+const replaceComponentTagName = require('../utils/replaceComponentTagName');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -339,8 +340,11 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
         path.remove();
       }
       if (attrName === 'className') {
-        node.name.name = 'class';
+        node.name.name = adapter.className;
       }
+      // if (attrName === 'style') {
+      //   node.name.name = adapter.style;
+      // }
     },
     JSXExpressionContainer: handleJSXExpressionContainer,
     JSXOpeningElement: {
@@ -351,15 +355,12 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           const name = componentTagNode.name;
           const replaceName = baseComponents[name];
           if (replaceName) {
-            componentTagNode.name = replaceName;
-            if (parent.closingElement) {
-              parent.closingElement.name = t.jsxIdentifier(replaceName);
-            }
+            replaceComponentTagName(path, t.jsxIdentifier(replaceName));
             const propsMap = adapter[replaceName];
             let hasClassName = false;
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
-                if (attr.name.name === 'class') {
+                if (attr.name.name === adapter.className) {
                   attr.value.value = propsMap.className + ' ' + attr.value.value;
                   hasClassName = true;
                 } else if (propsMap[attr.name.name]) {
@@ -368,7 +369,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
               }
             });
             if (!hasClassName) {
-              node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'), t.stringLiteral(propsMap.className)));
+              node.attributes.push(t.jsxAttribute(t.jsxIdentifier(adapter.className), t.stringLiteral(propsMap.className)));
             }
           }
         }

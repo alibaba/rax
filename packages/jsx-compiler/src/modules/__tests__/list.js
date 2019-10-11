@@ -1,6 +1,6 @@
 const { _transformList } = require('../list');
 const { parseExpression } = require('../../parser');
-const adapter = require('../../adapter');
+const adapter = require('../../adapter').ali;
 const genCode = require('../../codegen/genCode');
 
 describe('Transform list', () => {

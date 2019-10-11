@@ -6,7 +6,10 @@ const consoleClear = require('console-clear');
 const chalk = require('chalk');
 const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
-const { DEFAULT_TYPE, DEFAULT_PLATFORM, DEFAULT_ENTRY, DEFAULT_DIST } = require('./default');
+const { getCurrentDirectoryPath } = require('./utils/file');
+const { DEFAULT_TYPE, DEFAULT_PLATFORM, DEFAULT_ENTRY, DEFAULT_DIST, DEFAULT_CONSTANT_DIR_ARR } = require('./default');
+const { copySync, existsSync, mkdirSync } = require('fs-extra');
+
 
 const cwd = process.cwd();
 
@@ -22,8 +25,18 @@ function build(options = {}) {
     platform = DEFAULT_PLATFORM,
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
-    skipClearStdout = false
+    skipClearStdout = false,
+    constantDir = DEFAULT_CONSTANT_DIR_ARR
   } = options;
+
+  if (type === DEFAULT_TYPE) {
+    copyConstantDir(constantDir, distDirectory);
+  } else {
+    // Can't use in component type
+    if (constantDir.length !== 0) {
+      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
+    }
+  }
 
   let config = getWebpackConfig({
     mode: 'build',
@@ -31,7 +44,8 @@ function build(options = {}) {
     platform,
     type,
     workDirectory,
-    distDirectory
+    distDirectory,
+    constantDir
   });
 
   if (options.webpackConfig) {
@@ -59,8 +73,18 @@ function watch(options = {}) {
     platform = DEFAULT_PLATFORM,
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
-    skipClearStdout = false
+    skipClearStdout = false,
+    constantDir = DEFAULT_CONSTANT_DIR_ARR
   } = options;
+
+  if (type === DEFAULT_TYPE) {
+    copyConstantDir(constantDir, distDirectory);
+  } else {
+    // Can't use in component type
+    if (constantDir.length !== 0) {
+      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
+    }
+  }
 
   let config = getWebpackConfig({
     mode: 'watch',
@@ -69,6 +93,7 @@ function watch(options = {}) {
     workDirectory,
     platform,
     distDirectory,
+    constantDir
   });
 
   if (options.webpackConfig) {
@@ -106,6 +131,23 @@ function handleCompiled(err, stats, { skipClearStdout }) {
     }
     console.log(chalk.yellow('Set environment `DEBUG=true` to see detail error stacks.'));
   }
+}
+
+/**
+ * copy constant directories to dist
+ * @param {array} dirs
+ * @param {string} distDirectory
+ */
+function copyConstantDir(dirs, distDirectory) {
+  dirs.forEach(dir => {
+    if (!dir) {
+      return;
+    }
+    if (!existsSync(dir)) {
+      mkdirSync(dir);
+    }
+    copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')));
+  });
 }
 
 exports.build = build;

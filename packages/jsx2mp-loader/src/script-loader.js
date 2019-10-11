@@ -177,6 +177,7 @@ function transformCode({rawContent, mode, nodeModulesPathList = [], relativeReso
     plugins,
     filename: relativeResourcePath,
     parserOpts: babelParserOption,
+    sourceMaps: true
   });
 }
 

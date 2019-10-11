@@ -33,11 +33,12 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
-  const { platform = 'ali' } = options;
+  const { platform = 'ali', constantDir } = options;
 
-  let loaderParams = JSON.stringify({
+  const loaderParams = JSON.stringify({
     platform: platformConfig[platform],
-    entryPath: entryFilePath
+    entryPath: entryFilePath,
+    constantDir
   });
 
   if (type === 'project') {
@@ -49,7 +50,7 @@ function getEntry(type, cwd, entryFilePath, options) {
       console.error('Can not found app.json in current work directory, please check.');
       process.exit(1);
     }
-    entry.app = AppLoader + '?' + JSON.stringify({ entryPath }) + '!./' + join(entryPath, 'app.js');
+    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform] }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.forEach(({ source, component }) => {
         component = source || component;
