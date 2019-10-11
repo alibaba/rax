@@ -32,7 +32,7 @@ function getRelativePath(filePath) {
 
 module.exports = function appLoader(content) {
   const loaderOptions = getOptions(this);
-  const { entryPath, platform } = loaderOptions;
+  const { entryPath, platform, mode } = loaderOptions;
   const appConfigPath = removeExt(this.resourcePath) + '.json';
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const config = readJSONSync(appConfigPath);
@@ -47,13 +47,21 @@ module.exports = function appLoader(content) {
     outputPath,
     sourcePath,
     type: 'app',
+    sourceFileName: this.resourcePath
   });
   const transformed = compiler(rawContent, compilerOptions);
 
   this.addDependency(appConfigPath);
 
   const transformedAppConfig = transformAppConfig(entryPath, config);
-  writeFileSync(join(outputPath, 'app.js'), transformed.code);
+
+  let transformedCode = transformed.code;
+  if (mode === 'watch') {
+    writeFileSync(join(outputPath, 'app.js.map'), JSON.stringify(transformed.map));
+    transformedCode = transformedCode + '\n//# sourceMappingURL=app.js.map';
+  }
+  writeFileSync(join(outputPath, 'app.js'), transformedCode);
+
   writeJSONSync(join(outputPath, 'app.json'), transformedAppConfig, { spaces: 2 });
   // Write app.config.js for route information.
   writeFileSync(join(outputPath, 'app.config.js'), `module.exports = ${JSON.stringify(config, null, 2)}`);

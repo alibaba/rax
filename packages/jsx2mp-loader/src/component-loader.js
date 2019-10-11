@@ -11,7 +11,7 @@ const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, constantDir } = loaderOptions;
+  const { platform, entryPath, constantDir, mode } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
@@ -35,7 +35,8 @@ module.exports = function componentLoader(content) {
     outputPath,
     sourcePath,
     type: 'component',
-    platform
+    platform,
+    sourceFileName: this.resourcePath
   });
 
   const transformed = compiler(rawContent, compilerOptions);
@@ -65,8 +66,15 @@ module.exports = function componentLoader(content) {
 
   const distFileDir = dirname(distFileWithoutExt);
   if (!existsSync(distFileDir)) mkdirpSync(distFileDir);
-  // Write code
-  writeFileSync(distFileWithoutExt + '.js', transformed.code);
+
+  let transformedCode = transformed.code;
+  if (mode === 'watch') {
+    // Write source map
+    writeFileSync(distFileWithoutExt + '.js.map', JSON.stringify(transformed.map));
+    transformedCode = transformedCode + `\n//# sourceMappingURL=${distFileWithoutExt.split(sep).pop()}.js.map`;
+  }
+  // Write js content
+  writeFileSync(distFileWithoutExt + '.js', transformedCode);
   // Write template
   writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
   // Write config
@@ -102,7 +110,7 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir, mode: loaderOptions.mode } });
     } else {
       denpendencies.push({ name });
     }

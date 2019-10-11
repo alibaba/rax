@@ -1,5 +1,5 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname } = require('path');
+const { relative, join, dirname, sep } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const { removeExt } = require('./utils/pathHelper');
@@ -8,7 +8,7 @@ const ComponentLoader = require.resolve('./component-loader');
 
 module.exports = function pageLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath } = loaderOptions;
+  const { platform, entryPath, mode } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
 
@@ -22,7 +22,8 @@ module.exports = function pageLoader(content) {
     outputPath,
     sourcePath,
     type: 'page',
-    platform
+    platform,
+    sourceFileName: this.resourcePath
   });
 
 
@@ -54,8 +55,14 @@ module.exports = function pageLoader(content) {
     config.usingComponents = usingComponents;
   }
 
+  let transformedCode = transformed.code;
+  if (mode === 'watch') {
+    // Write source map
+    writeFileSync(distFileWithoutExt + '.js.map', JSON.stringify(transformed.map));
+    transformedCode = transformedCode + `\n//# sourceMappingURL=${distFileWithoutExt.split(sep).pop()}.js.map`;
+  }
   // Write js content
-  writeFileSync(distFileWithoutExt + '.js', transformed.code);
+  writeFileSync(distFileWithoutExt + '.js', transformedCode);
   // Write template
   writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
   // Write config
@@ -88,7 +95,7 @@ module.exports = function pageLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir, mode: loaderOptions.mode } });
     } else {
       denpendencies.push({ name });
     }
