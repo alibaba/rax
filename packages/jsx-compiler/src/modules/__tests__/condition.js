@@ -39,7 +39,7 @@ describe('Transform condition', () => {
     const dynamicValue = _transformTemplate(ast, adapter, {});
 
     expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><block a:if="{{bar}}"><Bar /></block><block a:else><View /></block></block><block a:else><Text /></block></View>');
-    expect(genDynamicValue(dynamicValue)).toEqual('{ foo: foo, bar: bar }');
+    expect(genDynamicValue(dynamicValue)).toEqual('{ bar: bar, foo: foo }');
   });
 
   it("transform condition's alternate is conditional expression", () => {
@@ -49,7 +49,7 @@ describe('Transform condition', () => {
     const dynamicValue = _transformTemplate(ast, adapter, {});
 
     expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>');
-    expect(genDynamicValue(dynamicValue)).toEqual('{ empty: empty, loading: loading }');
+    expect(genDynamicValue(dynamicValue)).toEqual('{ loading: loading, empty: empty }');
   });
 
   it('skip list dynamic value', () => {
@@ -87,6 +87,30 @@ describe('Transform condition', () => {
     })}</block><block a:else>123</block>
       </View>`);
     expect(genDynamicValue(dynamicValue)).toEqual('{ tabList: tabList }');
+  });
+
+  it('transform simple logical expression', () => {
+    const ast = parseExpression(`
+      <View>
+        { a && <View>1</View>}
+      </View>
+    `);
+    _transformTemplate(ast, adapter, {});
+    expect(genCode(ast).code).toEqual(`<View>
+        <block a:if="{{a}}"><View>1</View></block>
+      </View>`);
+  });
+
+  it('transform nested logical expression', () => {
+    const ast = parseExpression(`
+      <View>
+        { a || b && <View>1</View>}
+      </View>
+    `);
+    _transformTemplate(ast, adapter, {});
+    expect(genCode(ast).code).toEqual(`<View>
+        <block a:if={!a}><block a:if="{{b}}"><View>1</View></block></block>
+      </View>`);
   });
 });
 
