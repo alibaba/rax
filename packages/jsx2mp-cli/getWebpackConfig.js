@@ -146,7 +146,7 @@ module.exports = (options = {}) => {
           NODE_ENV: mode === 'build' ? '"production"' : '"development"',
         }
       }),
-      new RuntimeWebpackPlugin({ platform }),
+      new RuntimeWebpackPlugin({ platform, mode }),
       new webpack.ProgressPlugin( (percentage, message) => {
         if (percentage === 0) {
           buildStartTime = Date.now();
