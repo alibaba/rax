@@ -1,5 +1,5 @@
 const { join } = require('path');
-const { copySync,writeFileSync,  readJSONSync, readFileSync } = require('fs-extra');
+const { copySync, writeFileSync, readJSONSync, readFileSync } = require('fs-extra');
 const { minify } = require('uglify-es');
 
 /**
