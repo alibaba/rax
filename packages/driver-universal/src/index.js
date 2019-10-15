@@ -1,12 +1,10 @@
 import { isWeex, isWeb } from 'universal-env';
-import DriverDOM from './dom';
-import DriverWeex from './weex';
 
 let DriverUniversal;
 if (isWeex) {
-  DriverUniversal = DriverWeex;
+  DriverUniversal = require('./weex').default;
 } else if (isWeb) {
-  DriverUniversal = DriverDOM;
+  DriverUniversal = require('./dom').default;
 } else {
   throw new Error('Your environment not supported by driver-universal.');
 }
