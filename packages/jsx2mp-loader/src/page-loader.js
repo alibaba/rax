@@ -1,14 +1,16 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname } = require('path');
+const { relative, join, dirname, extname } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const { removeExt } = require('./utils/pathHelper');
+const { minify, minifyJS, minifyCSS } = require('./utils/minifyCode');
+
 
 const ComponentLoader = require.resolve('./component-loader');
 
 module.exports = function pageLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath } = loaderOptions;
+  const { platform, entryPath, mode } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
 
@@ -54,20 +56,31 @@ module.exports = function pageLoader(content) {
     config.usingComponents = usingComponents;
   }
 
+  let scriptCode = transformed.code;
+  let cssCode = transformed.style || '';
+  if (mode === 'build') {
+    scriptCode = minifyJS(scriptCode);
+    cssCode = minifyCSS(cssCode);
+  }
+
   // Write js content
-  writeFileSync(distFileWithoutExt + '.js', transformed.code);
+  writeFileSync(distFileWithoutExt + '.js', scriptCode);
   // Write template
   writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
   // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   // Write acss style
   if (transformed.style) {
-    writeFileSync(distFileWithoutExt + platform.extension.css, transformed.style);
+    writeFileSync(distFileWithoutExt + platform.extension.css, cssCode);
   }
   // Write extra assets
   if (transformed.assets) {
     Object.keys(transformed.assets).forEach((asset) => {
-      const content = transformed.assets[asset];
+      const ext = extname(asset);
+      let content = transformed.assets[asset];
+      if (mode === 'build') {
+        content = minify(content, ext);
+      }
       const assetDirectory = dirname(join(outputPath, asset));
       if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
       writeFileSync(join(outputPath, asset), content);
@@ -88,7 +101,7 @@ module.exports = function pageLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir, mode: loaderOptions.mode } });
     } else {
       denpendencies.push({ name });
     }

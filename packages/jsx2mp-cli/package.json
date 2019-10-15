@@ -32,7 +32,7 @@
     "kebab-case": "^1.0.0",
     "memory-fs": "^0.4.1",
     "ora": "^3.4.0",
-    "uglify-es": "^3.3.9",
+    "terser": "^4.3.8",
     "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6",
     "webpack-merge": "^4.2.1"

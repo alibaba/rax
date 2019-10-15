@@ -1,6 +1,6 @@
 const { join } = require('path');
 const { copySync, writeFileSync, readJSONSync, readFileSync } = require('fs-extra');
-const { minify } = require('uglify-es');
+const { minify } = require('terser');
 
 /**
  * Runtime packages should be a dependency of jsx2mp-cli,
