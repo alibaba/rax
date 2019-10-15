@@ -6,7 +6,7 @@ const defaults = {
   viewportWidth: 750,
   viewportUnit: 'vw',
   fontViewportUnit: 'vw',
-  unitPrecision: 6,
+  unitPrecision: 8,
 };
 
 module.exports = postcss.plugin('postcss-rpx2vw', function(options) {

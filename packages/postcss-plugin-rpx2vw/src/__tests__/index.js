@@ -29,25 +29,25 @@ describe('postcssRpxToVw', () => {
     `;
     const output = `
 .a {
-  margin: -1.33333vw .5vh;
-  padding: 5vmin 1.26667vw 0.13333vw;
+  margin: -1.33333333vw .5vh;
+  padding: 5vmin 1.26666667vw 0.13333333vw;
   border: 0.4vw solid black;
-  border-bottom-width: 0.13333vw;
-  font-size: 1.86667vw;
-  line-height: 2.66667vw;
+  border-bottom-width: 0.13333333vw;
+  font-size: 1.86666667vw;
+  line-height: 2.66666667vw;
 }
 
 .b {
-  border: 0.13333vw solid black;
-  margin-bottom: 0.13333vw;
-  font-size: 2.66667vw;
+  border: 0.13333333vw solid black;
+  margin-bottom: 0.13333333vw;
+  font-size: 2.66666667vw;
   line-height: 4vw;
 }
 
 @media (min-width: 100vw) {
   .c {
-    font-size: 2.13333vw;
-    line-height: 2.93333vw;
+    font-size: 2.13333333vw;
+    line-height: 2.93333333vw;
   }
 }    
     `;
