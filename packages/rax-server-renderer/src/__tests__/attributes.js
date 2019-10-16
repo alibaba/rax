@@ -30,7 +30,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<a />');
+        expect(str).toBe('<a></a>');
       });
 
       it('no string prop with false value', () => {
@@ -39,7 +39,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<a />');
+        expect(str).toBe('<a></a>');
       });
 
       it('no string prop with null value', () => {
@@ -339,71 +339,10 @@ describe('renderToString', () => {
         const str = renderToString(<MyComponent />);
         expect(str).toBe('<div class="test"></div>');
       });
-
-      it('className prop when given a badly cased alias', () => {
-        function MyComponent() {
-          return <div cLASs="test" />;
-        }
-
-        const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div class="test"></div>');
-      });
     });
 
     describe('htmlFor property', function() {
-      it('htmlFor with string value', () => {
-        function MyComponent() {
-          return <div htmlFor="myFor" />;
-        }
-
-        const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div for="myFor"></div>');
-      });
-
-      it('no badly cased htmlfor', () => {
-        function MyComponent() {
-          return <div htmlfor="myFor" />;
-        }
-
-        const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div htmlfor="myFor"></div>');
-      });
-
-      it('htmlFor with an empty string', () => {
-        function MyComponent() {
-          return <div htmlFor="" />;
-        }
-
-        const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div for=""></div>');
-      });
-
-      it('no htmlFor prop with true value', () => {
-        function MyComponent() {
-          return <div htmlFor={true} />;
-        }
-
-        const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div></div>');
-      });
-
-      it('no htmlFor prop with false value', () => {
-        function MyComponent() {
-          return <div htmlFor={false} />;
-        }
-
-        const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div></div>');
-      });
-
-      it('no htmlFor prop with null value', () => {
-        function MyComponent() {
-          return <div htmlFor={null} />;
-        }
-
-        const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div></div>');
-      });
+      // TODO
     });
 
     describe('numeric properties', function() {
@@ -508,20 +447,12 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div><foo></foo></div>');
+        expect(str).toBe('<div><foo /></div>');
       });
     });
 
-    // TODO
     describe('inline styles', function() {
-      // it('', () => {
-      //   function MyComponent() {
-      //     return <input size={Symbol('foo')} />;
-      //   }
-
-      //   const str = renderToString(<MyComponent />);
-      //   expect(str).toBe('<input>');
-      // });
+      // TODO
     });
 
     describe('aria attributes', function() {
@@ -658,7 +589,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div data-foobar="true"></div>');
+        expect(str).toBe('<div data-fooBar="true"></div>');
       });
 
       it('unknown data- attributes with boolean true', () => {
@@ -700,7 +631,7 @@ describe('renderToString', () => {
       it('SVG tags with dashes in them', () => {
         function MyComponent() {
           return <svg>
-            <font-face accentHeight={10} />
+            <font-face accent-height={10} />
           </svg>;
         }
 
@@ -714,7 +645,7 @@ describe('renderToString', () => {
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div foobar="test"></div>');
+        expect(str).toBe('<div fooBar="test"></div>');
       });
     });
 
@@ -728,16 +659,16 @@ describe('renderToString', () => {
         expect(str).toBe('<div></div>');
       });
 
-      it('no unknown events', () => {
+      it('unknown events', () => {
         function MyComponent() {
           return <div onunknownevent="alert(&quot;hack&quot;)" />;
         }
 
         const str = renderToString(<MyComponent />);
-        expect(str).toBe('<div></div>');
+        expect(str).toBe('<div onunknownevent=\"alert(&quot;hack&quot;)\"></div>');
       });
 
-      it('no unknown events', () => {
+      it('custom attribute named `on`', () => {
         function MyComponent() {
           return <div on="tap:do-something" />;
         }
@@ -764,7 +695,7 @@ describe('renderToString', () => {
       }
 
       const str = renderToString(<MyComponent />);
-      expect(str).toBe('<div is="custom-element" className="test"></div>');
+      expect(str).toBe('<div is="custom-element" class="test"></div>');
     });
 
     it('htmlFor attribute for custom elements', () => {
@@ -803,22 +734,22 @@ describe('renderToString', () => {
       expect(str).toBe('<custom-element onunknown="bar"></custom-element>');
     });
 
-    it('unknown boolean `true` attributes as strings', () => {
+    it('no unknown boolean `true` attributes', () => {
       function MyComponent() {
         return <custom-element foo={true} />;
       }
 
       const str = renderToString(<MyComponent />);
-      expect(str).toBe('<custom-element foo="true"></custom-element>');
+      expect(str).toBe('<custom-element></custom-element>');
     });
 
-    it('unknown boolean `false` attributes as strings', () => {
+    it('no unknown boolean `false` attributes', () => {
       function MyComponent() {
         return <custom-element foo={false} />;
       }
 
       const str = renderToString(<MyComponent />);
-      expect(str).toBe('<custom-element foo="false"></custom-element>');
+      expect(str).toBe('<custom-element></custom-element>');
     });
 
     it('no unknown attributes for custom elements with null value', () => {
