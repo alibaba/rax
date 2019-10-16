@@ -4,6 +4,7 @@
   "description": "DOM driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
