@@ -13,4 +13,4 @@
 const compile = require('./compile');
 
 compile('packages');
-
+compile('packages', true);

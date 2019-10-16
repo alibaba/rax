@@ -8,6 +8,9 @@ const babel = require('rollup-plugin-babel');
 const { uglify } = require('rollup-plugin-uglify');
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
+const babelMerge = require('babel-merge');
+
+const babelOptions = require('./config/getBabelConfig')();
 
 const IIFE = 'iife';
 const UMD = 'umd';
@@ -76,7 +79,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
         // use /pakacges/ would get error and it seemed to be a rollup-plugin-commonjs bug
         include: /(node_modules|style-unit)/,
       }),
-      babel({
+      babel(babelMerge(babelOptions, {
         exclude: 'node_modules/**', // only transpile our source code
         presets: [
           ['@babel/preset-env', {
@@ -87,7 +90,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
             }
           }]
         ],
-      }),
+      })),
       replace({
         'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),
       }),
@@ -118,20 +121,16 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
   }
 }
 
-build({ package: 'rax', name: 'Rax' });
-build({ package: 'rax', name: 'Rax', format: IIFE });
-build({ package: 'rax', name: 'Rax', format: IIFE, shouldMinify: true });
-build({ package: 'rax', name: 'Rax', format: ESM });
+function buildCorePackages(packageName, name) {
+  build({ package: packageName, name: name });
+  build({ package: packageName, name: name, format: IIFE });
+  build({ package: packageName, name: name, format: IIFE, shouldMinify: true });
+  build({ package: packageName, name: name, format: ESM });
+}
 
-build({ package: 'driver-dom', name: 'DriverDOM' });
-build({ package: 'driver-dom', name: 'DriverDOM', format: IIFE });
-build({ package: 'driver-dom', name: 'DriverDOM', format: IIFE, shouldMinify: true });
-build({ package: 'driver-dom', name: 'DriverDOM', format: ESM });
-
-build({ package: 'driver-weex', name: 'DriverWeex' });
-build({ package: 'driver-weex', name: 'DriverWeex', format: IIFE });
-build({ package: 'driver-weex', name: 'DriverWeex', format: IIFE, shouldMinify: true });
-build({ package: 'driver-weex', name: 'DriverWeex', format: ESM });
+buildCorePackages('rax', 'Rax');
+buildCorePackages('driver-dom', 'DriverDOM');
+buildCorePackages('driver-weex', 'DriverWeex');
 
 build({ package: 'driver-worker', name: 'DriverWorker' });
 build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, shouldExportDefault: true });

@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "description": "Rax application framework for univesal app.",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "author": "Rax Team",
   "repository": {
     "type": "git",

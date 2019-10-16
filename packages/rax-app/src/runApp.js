@@ -1,7 +1,10 @@
 import { render, createElement, useState, useEffect } from 'rax';
 import { isWeex, isWeb } from 'universal-env';
 import { useRouter } from 'rax-use-router';
-import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
+// import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
+// import { createMemoryHistory } from 'history';
+import * as hisaaa from 'history';
+const createMemoryHistory = hisaaa.createMemoryHistory;
 import UniversalDriver from 'driver-universal';
 import { emit } from './app';
 
@@ -71,12 +74,15 @@ export default function runApp(appConfig) {
   const { routes, shell, hydrate = false } = appConfig;
 
   if (isWeex) {
+    console.log('9999999999')
     history = createMemoryHistory();
   } else if (initialDataFromSSR) {
+    console.log('8888888888')
     // If that contains `initialDataFromSSR`, which means SSR is enabled,
     // we should use brower history to make it works.
     history = createBrowserHistory();
   } else {
+    console.log('7777777777')
     history = createHashHistory();
   }
 
