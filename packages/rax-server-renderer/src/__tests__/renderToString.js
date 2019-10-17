@@ -249,7 +249,7 @@ describe('renderToString', () => {
     }
 
     let str = renderToString(<MyComponent />);
-    expect(str).toBe('<input type="radio" checked="checked">');
+    expect(str).toBe('<input type="radio" checked>');
   });
 
   it('render with state hook', () => {

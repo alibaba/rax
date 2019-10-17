@@ -1,4 +1,5 @@
 import { shared } from 'rax';
+import { BOOLEAN, BOOLEANISH_STRING, OVERLOADED_BOOLEAN, shouldRemoveAttribute, getPropertyInfo } from './attribute';
 
 const EMPTY_OBJECT = {};
 const TRUE = true;
@@ -121,37 +122,78 @@ function styleToCSS(style, options = {}) {
   return css;
 }
 
+function createMarkupForProperty(prop, value, options) {
+  if (prop === 'children') {
+    // Ignore children prop
+    return '';
+  }
+
+  if (prop === 'style') {
+    return ` style="${styleToCSS(value, options)}"`;
+  }
+
+  if (prop === 'className') {
+    return typeof value === 'string' ? ` class="${escapeText(value)}"` : '';
+  }
+
+  if (prop === 'dangerouslySetInnerHTML') {
+    // Ignore innerHTML
+    return '';
+  }
+
+  if (shouldRemoveAttribute(prop, value)) {
+    return '';
+  }
+
+  const propInfo = getPropertyInfo(prop);
+  const propType = propInfo ? propInfo.type : null;
+  const valueType = typeof value;
+
+  if (propType === BOOLEAN || propType === OVERLOADED_BOOLEAN && value === true) {
+    return ` ${prop}`;
+  }
+
+  if (valueType === 'string') {
+    return ` ${prop}="${escapeText(value)}"`;
+  }
+
+  if (valueType === 'number') {
+    return ` ${prop}="${String(value)}"`;
+  }
+
+  if (valueType === 'boolean') {
+    if (propType === BOOLEANISH_STRING || prop.indexOf('data-') === 0 || prop.indexOf('aria-') === 0) {
+      return ` ${prop}="${value ? 'true' : 'false'}"`;
+    }
+  }
+
+  return '';
+};
+
 function propsToString(props, options) {
   let html = '';
   for (var prop in props) {
     var value = props[prop];
 
-    if (prop === 'children') {
-      // Ignore children prop
-    } else if (prop === 'style') {
-      html = html + ` style="${styleToCSS(value, options)}"`;
-    } else if (prop === 'className') {
-      html = html + ` class="${escapeText(value)}"`;
-    } else if (prop === 'defaultValue') {
-      if (!props.value) {
-        html = html + ` value="${typeof value === 'string' ? escapeText(value) : value}"`;
-      }
-    } else if (prop === 'defaultChecked') {
+    if (prop === 'defaultValue') {
       if (!props.checked) {
-        html = html + ` checked="${value}"`;
-      }
-    } else if (prop === 'dangerouslySetInnerHTML') {
-      // Ignore innerHTML
-    } else {
-      if (typeof value === 'string') {
-        html = html + ` ${prop}="${escapeText(value)}"`;
-      } else if (typeof value === 'number') {
-        html = html + ` ${prop}="${String(value)}"`;
-      } else if (typeof value === 'boolean') {
-        html = html + ` ${prop}`;
+        prop = 'value';
+      } else {
+        continue;
       }
     }
+
+    if (prop === 'defaultChecked') {
+      if (!props.checked) {
+        prop = 'checked';
+      } else {
+        continue;
+      }
+    }
+
+    html = html + createMarkupForProperty(prop, value, options);
   }
+
   return html;
 }
 
