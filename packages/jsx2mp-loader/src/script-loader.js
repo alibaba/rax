@@ -91,12 +91,11 @@ module.exports = function scriptLoader(content) {
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
 
-      const { code, map } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
+      const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
       writeFileSync(distSourcePath, code, 'utf-8');
-      writeJSONSync(distSourcePath + '.map', map);
     }
   } else {
     const relativeFilePath = relative(
@@ -177,7 +176,7 @@ function transformCode({rawContent, mode, nodeModulesPathList = [], relativeReso
     plugins,
     filename: relativeResourcePath,
     parserOpts: babelParserOption,
-    sourceMaps: true
+    sourceMaps: mode === 'watch' ? 'inline' : false
   });
 }
 
