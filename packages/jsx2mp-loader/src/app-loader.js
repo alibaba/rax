@@ -1,12 +1,11 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
 const { join } = require('path');
-const terser = require('terser');
-const csso = require('csso');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const moduleResolve = require('./utils/moduleResolve');
 const { removeExt } = require('./utils/pathHelper');
 const { minifyJS, minifyCSS } = require('./utils/minifyCode');
+const eliminateDeadCode = require('./utils/dce');
 const defaultStyle = require('./defaultStyle');
 
 
@@ -51,7 +50,8 @@ module.exports = function appLoader(content) {
     sourcePath,
     type: 'app',
   });
-  const transformed = compiler(rawContent, compilerOptions);
+  const rawContentAfterDCE = eliminateDeadCode(rawContent);
+  const transformed = compiler(rawContentAfterDCE, compilerOptions);
 
   this.addDependency(appConfigPath);
 

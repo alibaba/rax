@@ -6,6 +6,7 @@ const cached = require('./cached');
 const isMiniappComponent = require('./utils/isMiniappComponent');
 const { removeExt } = require('./utils/pathHelper');
 const { isNpmModule } = require('./utils/judgeModule');
+const { minifyJS } = require('./utils/minifyCode');
 
 
 const AppLoader = require.resolve('./app-loader');
@@ -95,8 +96,14 @@ module.exports = function scriptLoader(content) {
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
-      writeFileSync(distSourcePath, code, 'utf-8');
-      writeJSONSync(distSourcePath + '.map', map);
+
+      let scriptCode = code;
+      if (loaderOptions.mode !== 'build') {
+        writeJSONSync(distSourcePath + '.map', map);
+      } else {
+        scriptCode = minifyJS(scriptCode);
+      }
+      writeFileSync(distSourcePath, scriptCode, 'utf-8');
     }
   } else {
     const relativeFilePath = relative(
@@ -109,7 +116,12 @@ module.exports = function scriptLoader(content) {
     const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
-    writeFileSync(distSourcePath, code, 'utf-8');
+
+    let scriptCode = code;
+    if (loaderOptions.mode === 'build') {
+      scriptCode = minifyJS(scriptCode);
+    }
+    writeFileSync(distSourcePath, scriptCode, 'utf-8');
   }
 
   return content;

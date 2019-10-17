@@ -5,7 +5,8 @@ const { getOptions } = require('loader-utils');
 
 const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
-const { minify, minifyJS, minifyCSS } = require('./utils/minifyCode');
+const { minify, minifyJS, minifyCSS, minifyXML } = require('./utils/minifyCode');
+const eliminateDeadCode = require('./utils/dce');
 
 const ComponentLoader = __filename;
 
@@ -38,7 +39,8 @@ module.exports = function componentLoader(content) {
     platform
   });
 
-  const transformed = compiler(rawContent, compilerOptions);
+  const rawContentAfterDCE = eliminateDeadCode(rawContent);
+  const transformed = compiler(rawContentAfterDCE, compilerOptions);
 
   const config = Object.assign({}, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
@@ -68,15 +70,18 @@ module.exports = function componentLoader(content) {
 
   let scriptCode = transformed.code;
   let cssCode = transformed.style || '';
+  let templateCode = transformed.template;
+
   if (mode === 'build') {
     scriptCode = minifyJS(scriptCode);
     cssCode = minifyCSS(cssCode);
+    templateCode = minifyXML(templateCode);
   }
 
   // Write code
   writeFileSync(distFileWithoutExt + '.js', scriptCode);
   // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
+  writeFileSync(distFileWithoutExt + platform.extension.xml, templateCode);
   // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   // Write acss style

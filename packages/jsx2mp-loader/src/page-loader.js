@@ -3,7 +3,8 @@ const { relative, join, dirname, extname } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const { removeExt } = require('./utils/pathHelper');
-const { minify, minifyJS, minifyCSS } = require('./utils/minifyCode');
+const { minify, minifyJS, minifyCSS, minifyXML } = require('./utils/minifyCode');
+const eliminateDeadCode = require('./utils/dce');
 
 
 const ComponentLoader = require.resolve('./component-loader');
@@ -27,8 +28,8 @@ module.exports = function pageLoader(content) {
     platform
   });
 
-
-  const transformed = compiler(rawContent, compilerOptions);
+  const rawContentAfterDCE = eliminateDeadCode(rawContent);
+  const transformed = compiler(rawContentAfterDCE, compilerOptions);
   const pageDistDir = dirname(targetFilePath);
   if (!existsSync(pageDistDir)) mkdirpSync(pageDistDir);
 
@@ -58,15 +59,17 @@ module.exports = function pageLoader(content) {
 
   let scriptCode = transformed.code;
   let cssCode = transformed.style || '';
+  let templateCode = transformed.template;
   if (mode === 'build') {
     scriptCode = minifyJS(scriptCode);
     cssCode = minifyCSS(cssCode);
+    templateCode = minifyXML(templateCode);
   }
 
   // Write js content
   writeFileSync(distFileWithoutExt + '.js', scriptCode);
   // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
+  writeFileSync(distFileWithoutExt + platform.extension.xml, templateCode);
   // Write config
   writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
   // Write acss style
