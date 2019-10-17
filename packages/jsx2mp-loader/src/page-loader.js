@@ -1,5 +1,5 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, sep } = require('path');
+const { relative, join, dirname } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const { removeExt } = require('./utils/pathHelper');
