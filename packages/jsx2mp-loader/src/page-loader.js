@@ -3,6 +3,7 @@ const { relative, join, dirname, sep } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const { removeExt } = require('./utils/pathHelper');
+const addSourceMap = require('./utils/addSourceMap');
 
 const ComponentLoader = require.resolve('./component-loader');
 
@@ -57,9 +58,8 @@ module.exports = function pageLoader(content) {
 
   let transformedCode = transformed.code;
   if (mode === 'watch') {
-    // Write source map
-    writeFileSync(distFileWithoutExt + '.js.map', JSON.stringify(transformed.map));
-    transformedCode = transformedCode + `\n//# sourceMappingURL=${distFileWithoutExt.split(sep).pop()}.js.map`;
+    // Append inline source map
+    transformedCode = addSourceMap(transformedCode, rawContent, transformed.map);
   }
   // Write js content
   writeFileSync(distFileWithoutExt + '.js', transformedCode);

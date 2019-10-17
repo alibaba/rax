@@ -4,6 +4,7 @@ const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const moduleResolve = require('./utils/moduleResolve');
 const { removeExt } = require('./utils/pathHelper');
+const addSourceMap = require('./utils/addSourceMap');
 const defaultStyle = require('./defaultStyle');
 
 
@@ -57,8 +58,8 @@ module.exports = function appLoader(content) {
 
   let transformedCode = transformed.code;
   if (mode === 'watch') {
-    writeFileSync(join(outputPath, 'app.js.map'), JSON.stringify(transformed.map));
-    transformedCode = transformedCode + '\n//# sourceMappingURL=app.js.map';
+    // Append inline source map
+    transformedCode = addSourceMap(transformedCode, rawContent, transformed.map);
   }
   writeFileSync(join(outputPath, 'app.js'), transformedCode);
 
