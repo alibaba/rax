@@ -1,3 +1,7 @@
+const babelMerge = require('babel-merge');
+
+const babelConfig = require('../../babel.config')();
+
 module.exports = function(ignoreModule) {
   const envOpt = {
     loose: true,
@@ -7,24 +11,9 @@ module.exports = function(ignoreModule) {
     envOpt.modules = false;
   }
 
-  return {
+  return babelMerge(babelConfig, {
     presets: [
-      '@babel/preset-flow',
       ['@babel/preset-env', envOpt],
-      ['@babel/preset-react', {
-        pragma: 'createElement'
-      }]
     ],
-    plugins: [
-      '@babel/plugin-proposal-export-default-from',
-      ['@babel/plugin-proposal-class-properties', { loose: false }],
-      'babel-plugin-transform-jsx-stylesheet',
-      ['@babel/plugin-proposal-decorators', { legacy: true }],
-    ],
-    ignore: [
-      'src/generator/templates',
-      '__mockc__',
-      'dist'
-    ],
-  };
+  });
 };
