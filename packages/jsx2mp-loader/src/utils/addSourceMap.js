@@ -1,6 +1,6 @@
 const convertSourceMap = require('convert-source-map');
 
-function addSourceMap (code, rawCode, originalMap) {
+function addSourceMap(code, rawCode, originalMap) {
   const map = Object.assign(originalMap, {
     sourcesContent: [rawCode]
   });
