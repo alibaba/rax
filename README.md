@@ -36,6 +36,7 @@ Create a new Rax project using `create-rax`:
 ```sh
 $ npm init rax <YourProjectName>
 ```
+_`npm init <initializer>` is available in npm 6+_
 
 Start local server to launch project:
 
