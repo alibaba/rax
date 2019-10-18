@@ -51,7 +51,7 @@ function getEntry(type, cwd, entryFilePath, options) {
       console.error('Can not found app.json in current work directory, please check.');
       process.exit(1);
     }
-    entry.app = AppLoader + '?' + JSON.stringify({ mode, entryPath, platform: platformConfig[platform] }) + '!./' + join(entryPath, 'app.js');
+    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.forEach(({ source, component }) => {
         component = source || component;
@@ -147,7 +147,7 @@ module.exports = (options = {}) => {
           NODE_ENV: mode === 'build' ? '"production"' : '"development"',
         }
       }),
-      new RuntimeWebpackPlugin({ platform }),
+      new RuntimeWebpackPlugin({ platform, mode }),
       new webpack.ProgressPlugin( (percentage, message) => {
         if (percentage === 0) {
           buildStartTime = Date.now();

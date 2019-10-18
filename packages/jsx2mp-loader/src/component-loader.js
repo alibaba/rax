@@ -1,12 +1,12 @@
-const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, sep } = require('path');
+const { readFileSync, existsSync, mkdirpSync } = require('fs-extra');
+const { relative, join, dirname, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
 const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
-const addSourceMap = require('./utils/addSourceMap');
-
+const eliminateDeadCode = require('./utils/dce');
+const output = require('./output');
 
 const ComponentLoader = __filename;
 
@@ -40,7 +40,8 @@ module.exports = function componentLoader(content) {
     sourceFileName: this.resourcePath
   });
 
-  const transformed = compiler(rawContent, compilerOptions);
+  const rawContentAfterDCE = eliminateDeadCode(rawContent);
+  const transformed = compiler(rawContentAfterDCE, compilerOptions);
 
   const config = Object.assign({}, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
@@ -68,30 +69,26 @@ module.exports = function componentLoader(content) {
   const distFileDir = dirname(distFileWithoutExt);
   if (!existsSync(distFileDir)) mkdirpSync(distFileDir);
 
-  let transformedCode = transformed.code;
-  if (mode === 'watch') {
-    // Append inline source map
-    transformedCode = addSourceMap(transformedCode, rawContent, transformed.map);
-  }
-  // Write js content
-  writeFileSync(distFileWithoutExt + '.js', transformedCode);
-  // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
-  // Write config
-  writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
-  // Write acss style
-  if (transformed.style) {
-    writeFileSync(distFileWithoutExt + platform.extension.css, transformed.style);
-  }
-  // Write extra assets
-  if (transformed.assets) {
-    Object.keys(transformed.assets).forEach((asset) => {
-      const content = transformed.assets[asset];
-      const assetDirectory = dirname(join(outputPath, asset));
-      if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
-      writeFileSync(join(outputPath, asset), content);
-    });
-  }
+  const outputContent = {
+    code: transformed.code,
+    map: transformed.map,
+    css: transformed.style || '',
+    json: config,
+    template: transformed.template,
+    assets: transformed.assets
+  };
+  const outputOption = {
+    outputPath: {
+      code: distFileWithoutExt + '.js',
+      json: distFileWithoutExt + '.json',
+      css: distFileWithoutExt + platform.extension.css,
+      template: distFileWithoutExt + platform.extension.xml,
+      assets: outputPath
+    },
+    mode
+  };
+
+  output(outputContent, rawContent, outputOption);
 
   function isCustomComponent(name, usingComponents = {}) {
     const matchingPath = join(dirname(resourcePath), name);
