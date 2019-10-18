@@ -1,13 +1,12 @@
-const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
+const { readFileSync, existsSync, mkdirpSync } = require('fs-extra');
 const { relative, join, dirname, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
 const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
-const { minify, minifyJS, minifyCSS, minifyXML } = require('./utils/minifyCode');
 const eliminateDeadCode = require('./utils/dce');
-const addSourceMap = require('./utils/addSourceMap');
+const output = require('./output');
 
 const ComponentLoader = __filename;
 
@@ -70,42 +69,26 @@ module.exports = function componentLoader(content) {
   const distFileDir = dirname(distFileWithoutExt);
   if (!existsSync(distFileDir)) mkdirpSync(distFileDir);
 
-  let scriptCode = transformed.code;
-  let cssCode = transformed.style || '';
-  let templateCode = transformed.template;
+  const outputContent = {
+    code: transformed.code,
+    map: transformed.map,
+    css: transformed.style || '',
+    json: config,
+    template: transformed.template,
+    assets: transformed.assets
+  };
+  const outputOption = {
+    outputPath: {
+      code: distFileWithoutExt + '.js',
+      json: distFileWithoutExt + '.json',
+      css: distFileWithoutExt + platform.extension.css,
+      template: distFileWithoutExt + platform.extension.xml,
+      assets: outputPath
+    },
+    mode
+  };
 
-  if (mode === 'build') {
-    scriptCode = minifyJS(scriptCode);
-    cssCode = minifyCSS(cssCode);
-    templateCode = minifyXML(templateCode);
-  } else {
-    // Append inline source map
-    scriptCode = addSourceMap(scriptCode, rawContent, transformed.map);
-  }
-
-  // Write code
-  writeFileSync(distFileWithoutExt + '.js', scriptCode);
-  // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, templateCode);
-  // Write config
-  writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
-  // Write acss style
-  if (transformed.style) {
-    writeFileSync(distFileWithoutExt + platform.extension.css, cssCode);
-  }
-  // Write extra assets
-  if (transformed.assets) {
-    Object.keys(transformed.assets).forEach((asset) => {
-      const ext = extname(asset);
-      let content = transformed.assets[asset];
-      if (mode === 'build') {
-        content = minify(content, ext);
-      }
-      const assetDirectory = dirname(join(outputPath, asset));
-      if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
-      writeFileSync(join(outputPath, asset), content);
-    });
-  }
+  output(outputContent, rawContent, outputOption);
 
   function isCustomComponent(name, usingComponents = {}) {
     const matchingPath = join(dirname(resourcePath), name);

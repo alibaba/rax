@@ -1,13 +1,12 @@
 const { join, dirname, relative } = require('path');
-const { copySync, lstatSync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
+const { copySync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const isMiniappComponent = require('./utils/isMiniappComponent');
 const { removeExt } = require('./utils/pathHelper');
 const { isNpmModule } = require('./utils/judgeModule');
-const { minifyJS } = require('./utils/minifyCode');
-
+const output = require('./output');
 
 const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
@@ -97,13 +96,14 @@ module.exports = function scriptLoader(content) {
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
 
-      let scriptCode = code;
-      if (loaderOptions.mode !== 'build') {
-        writeJSONSync(distSourcePath + '.map', map);
-      } else {
-        scriptCode = minifyJS(scriptCode);
-      }
-      writeFileSync(distSourcePath, scriptCode, 'utf-8');
+      const outputContent = { code };
+      const outputOption = {
+        outputPath: {
+          code: distSourcePath
+        },
+        mode: loaderOptions.mode
+      };
+      output(outputContent, null, outputOption);
     }
   } else {
     const relativeFilePath = relative(
@@ -117,11 +117,15 @@ module.exports = function scriptLoader(content) {
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
 
-    let scriptCode = code;
-    if (loaderOptions.mode === 'build') {
-      scriptCode = minifyJS(scriptCode);
-    }
-    writeFileSync(distSourcePath, scriptCode, 'utf-8');
+    const outputContent = { code };
+    const outputOption = {
+      outputPath: {
+        code: distSourcePath
+      },
+      mode: loaderOptions.mode
+    };
+
+    output(outputContent, null, outputOption);
   }
 
   return content;
