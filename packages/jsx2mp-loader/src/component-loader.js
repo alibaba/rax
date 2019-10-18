@@ -7,6 +7,7 @@ const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
 const { minify, minifyJS, minifyCSS, minifyXML } = require('./utils/minifyCode');
 const eliminateDeadCode = require('./utils/dce');
+const addSourceMap = require('./utils/addSourceMap');
 
 const ComponentLoader = __filename;
 
@@ -36,7 +37,8 @@ module.exports = function componentLoader(content) {
     outputPath,
     sourcePath,
     type: 'component',
-    platform
+    platform,
+    sourceFileName: this.resourcePath
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
@@ -76,6 +78,9 @@ module.exports = function componentLoader(content) {
     scriptCode = minifyJS(scriptCode);
     cssCode = minifyCSS(cssCode);
     templateCode = minifyXML(templateCode);
+  } else {
+    // Append inline source map
+    scriptCode = addSourceMap(scriptCode, rawContent, transformed.map);
   }
 
   // Write code
@@ -119,7 +124,7 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
+      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir, mode: loaderOptions.mode } });
     } else {
       denpendencies.push({ name });
     }

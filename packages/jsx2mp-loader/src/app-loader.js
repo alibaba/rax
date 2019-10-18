@@ -6,6 +6,7 @@ const moduleResolve = require('./utils/moduleResolve');
 const { removeExt } = require('./utils/pathHelper');
 const { minifyJS, minifyCSS } = require('./utils/minifyCode');
 const eliminateDeadCode = require('./utils/dce');
+const addSourceMap = require('./utils/addSourceMap');
 const defaultStyle = require('./defaultStyle');
 
 
@@ -49,6 +50,7 @@ module.exports = function appLoader(content) {
     outputPath,
     sourcePath,
     type: 'app',
+    sourceFileName: this.resourcePath
   });
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
   const transformed = compiler(rawContentAfterDCE, compilerOptions);
@@ -64,6 +66,9 @@ module.exports = function appLoader(content) {
     scriptCode = minifyJS(scriptCode);
     configCode = minifyJS(configCode);
     cssCode = minifyCSS(cssCode);
+  } else {
+    // Append inline source map
+    scriptCode = addSourceMap(scriptCode, rawContent, transformed.map);
   }
   writeFileSync(join(outputPath, 'app.js'), scriptCode);
   writeJSONSync(join(outputPath, 'app.json'), transformedAppConfig, { spaces: 2 });

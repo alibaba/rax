@@ -5,7 +5,7 @@ const compiler = require('jsx-compiler');
 const { removeExt } = require('./utils/pathHelper');
 const { minify, minifyJS, minifyCSS, minifyXML } = require('./utils/minifyCode');
 const eliminateDeadCode = require('./utils/dce');
-
+const addSourceMap = require('./utils/addSourceMap');
 
 const ComponentLoader = require.resolve('./component-loader');
 
@@ -25,7 +25,8 @@ module.exports = function pageLoader(content) {
     outputPath,
     sourcePath,
     type: 'page',
-    platform
+    platform,
+    sourceFileName: this.resourcePath
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
@@ -64,6 +65,9 @@ module.exports = function pageLoader(content) {
     scriptCode = minifyJS(scriptCode);
     cssCode = minifyCSS(cssCode);
     templateCode = minifyXML(templateCode);
+  } else {
+    // Append inline source map
+    scriptCode = addSourceMap(scriptCode, rawContent, transformed.map);
   }
 
   // Write js content
