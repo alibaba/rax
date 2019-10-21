@@ -42,7 +42,7 @@ module.exports = function visitor({ types: t }, options) {
 
     const rootNodeModulePath = join(rootContext, 'node_modules');
     const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target)));
-    return t.stringLiteral(normalizeNpmFileName(filePath));
+    return t.stringLiteral(normalizeNpmFileName('./' + filePath));
   };
 
   return {
