@@ -176,12 +176,12 @@ function transformTemplate(ast, adapter, templateVariables, code) {
     LogicalExpression(path) {
       if (path.parentPath.isJSXExpressionContainer()) {
         const { right, left, operator } = path.node;
-        let replaceNode;
-        if (['JSXElement', 'JSXText', 'JSXFragment'].includes(left.type)) {
+        let replacement = [];
+        if (isJSX(left)) {
           if (operator === '&&') {
-            replaceNode = right;
+            replacement.push(right);
           } else if (operator === '||') {
-            replaceNode = left;
+            replacement.push(left);
           } else {
             throw new CodeError(code, path.node, path.node.loc, 'Logical operator only support && or ||');
           }
@@ -200,14 +200,17 @@ function transformTemplate(ast, adapter, templateVariables, code) {
           } else {
             children.push(right);
           }
-          replaceNode = createJSX('block', {
+          replacement.push(createJSX('block', {
             [adapter.if]: generateConditionValue(test, {adapter, dynamicValue})
-          }, children);
+          }, children));
+          replacement.push(createJSX('block', {
+            [adapter.else]: null,
+          }, [t.jsxExpressionContainer(left)]));
           if (/Expression$/.test(left.type)) {
             console.log(chalk.yellow("When logicalExpression's left node is an expression, there may not have JSX"));
           }
         }
-        path.parentPath.replaceWith(replaceNode);
+        path.parentPath.replaceWithMultiple(replacement);
       } else {
         path.skip();
       }
@@ -324,4 +327,8 @@ function generateConditionValue(test, options) {
     if (t.isIdentifier(test)) options.dynamicValue[test.name] = test;
   }
   return conditionValue;
+}
+
+function isJSX(node) {
+  return ['JSXElement', 'JSXText', 'JSXFragment'].indexOf(node.type) > -1;
 }
