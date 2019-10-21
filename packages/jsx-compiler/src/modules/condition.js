@@ -57,7 +57,8 @@ function transformRenderFunction(ast, adapter) {
         consequent.body.map(({ expression }) => {
           if (
             t.isAssignmentExpression(expression) &&
-            expression.operator === '='
+            expression.operator === '=' &&
+            t.isIdentifier(expression.left)
           ) {
             let shouldRemove = false;
             const varName = expression.left.name;
@@ -66,10 +67,6 @@ function transformRenderFunction(ast, adapter) {
                 'block',
               );
             }
-            /**
-             * Todo:
-             * 1. value tranmits
-             */
             let testAttrName = adapter.if;
             const parentPathAlternate = nodePath.parent.alternate;
             /**
@@ -110,7 +107,8 @@ function transformRenderFunction(ast, adapter) {
           alternate.body.map(({ expression }) => {
             if (
               t.isAssignmentExpression(expression) &&
-              expression.operator === '='
+              expression.operator === '=' &&
+              t.isIdentifier(expression.left)
             ) {
               const varName = expression.left.name;
               const rightNode = expression.right;
