@@ -1,5 +1,6 @@
-const { join, relative, dirname } = require('path');
+const { join, relative, dirname, resolve } = require('path');
 const { readJSONSync } = require('fs-extra');
+const resolveModule = require('resolve');
 const t = require('@babel/types');
 const { _transform: transformTemplate } = require('./element');
 const genExpression = require('../codegen/genExpression');
@@ -293,7 +294,7 @@ function getComponentPath(alias, options) {
       moduleResolve(options.resourcePath, alias.from, '.js');
     return filename;
   } else {
-    const realNpmFile = require.resolve(alias.from, { paths: [options.resourcePath] });
+    const realNpmFile = resolveModule.sync(alias.from, { basedir: dirname(options.resourcePath), preserveSymlinks: false });
     const pkgName = getRealNpmPkgName(realNpmFile);
     // npm module
     const pkg = getComponentConfig(alias.from, options.resourcePath);
@@ -301,7 +302,11 @@ function getComponentPath(alias, options) {
       const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
       let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
       npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
-      return './' + join(npmRelativePath, pkgName, pkg.miniappConfig.main);
+
+      const miniappConfigRelativePath = relative(pkg.main, pkg.miniappConfig.main);
+      const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath).replace(/@/g, '_');
+      const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(pkgName) + pkgName.length);
+      return './' + join(npmRelativePath, pkgName, realMiniappRelativePath);
     } else {
       console.warn(
         'Can not found compatible rax miniapp component "' + pkg.name + '".',
