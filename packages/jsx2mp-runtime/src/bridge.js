@@ -67,9 +67,6 @@ function getComponentCycles(Klass) {
 
       if (this[PROPS].hasOwnProperty('__tagId')) {
         const componentId = this[PROPS].__tagId;
-        if (componentId == 201) {
-          debugger
-        }
         setComponentInstance(componentId, this.instance);
       }
 
