@@ -207,7 +207,8 @@ function transformTemplate(ast, adapter, templateVariables, code) {
             [adapter.else]: null,
           }, [t.jsxExpressionContainer(left)]));
           if (/Expression$/.test(left.type)) {
-            console.log(chalk.yellow("When logicalExpression's left node is an expression, there may not have JSX"));
+            console.log(chalk.yellow("When logicalExpression's left node is an expression, please write JSX directly instead of using a variable which is assigned a JSX element."
+            ));
           }
         }
         path.parentPath.replaceWithMultiple(replacement);
