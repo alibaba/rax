@@ -20,8 +20,7 @@ const SAFE_CREATE_STYLE = '__create_style__';
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 const USE_CONTEXT = 'useContext';
-const USE_HISTORY = 'useHistory';
-const USE_LOCATION = 'useLocation';
+const USE_REF = 'useRef';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = '/npm/jsx2mp-runtime';
@@ -29,8 +28,7 @@ const RUNTIME = '/npm/jsx2mp-runtime';
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
-const isHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT,
-  USE_HISTORY, USE_LOCATION].includes(node.name);
+const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -405,7 +403,7 @@ function collectHooks(root) {
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee) && isHooksAPI(node.callee)) {
+      if (t.isIdentifier(node.callee) && isCoreHooksAPI(node.callee)) {
         ret[node.callee.name] = true;
       }
     }
