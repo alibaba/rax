@@ -15,7 +15,9 @@ export function whenMapDispatchToPropsIsMissing(mapDispatchToProps) {
 
 export function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
   return mapDispatchToProps && typeof mapDispatchToProps === 'object'
-    ? wrapMapToPropsConstant(dispatch => bindActionCreators(mapDispatchToProps, dispatch))
+    ? wrapMapToPropsConstant(dispatch =>
+      bindActionCreators(mapDispatchToProps, dispatch)
+    )
     : undefined;
 }
 
