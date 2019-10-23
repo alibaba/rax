@@ -4,6 +4,10 @@ const chalk = require('chalk');
 
 const { isNpmModule, isWeexModule, isRaxModule } = require('./utils/judgeModule');
 
+const RUNTIME = 'jsx2mp-runtime';
+
+const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
+
 const defaultOptions = {
   normalizeNpmFileName: (s) => s,
 };
@@ -15,7 +19,7 @@ function getNpmName(value) {
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath } = options;
+  const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform } = options;
   const source = (value, npmList, filename, rootContext) => {
     const npmName = getNpmName(value);
     // Example:
@@ -52,10 +56,16 @@ module.exports = function visitor({ types: t }, options) {
         if (isWeexModule(value)) {
           path.remove();
         } else if (isRaxModule(value)) {
-          const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
-          path.node.source = t.stringLiteral('./' + join(rootNpmRelativePath, 'jsx2mp-runtime'));
+          let runtimePath = getRuntimeByPlatform(platform.type);
+          if (!disableCopyNpm) {
+            const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
+            runtimePath = './' + join(rootNpmRelativePath, RUNTIME);
+          }
+          path.node.source = t.stringLiteral(runtimePath);
         } else if (isNpmModule(value)) {
-          path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
+          if (!disableCopyNpm) {
+            path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
+          }
         }
       },
 

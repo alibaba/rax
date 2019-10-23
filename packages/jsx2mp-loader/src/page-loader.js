@@ -10,7 +10,7 @@ const ComponentLoader = require.resolve('./component-loader');
 
 module.exports = function pageLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, mode } = loaderOptions;
+  const { platform, entryPath, mode, disableCopyNpm } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
 
@@ -25,7 +25,8 @@ module.exports = function pageLoader(content) {
     sourcePath,
     type: 'page',
     platform,
-    sourceFileName: this.resourcePath
+    sourceFileName: this.resourcePath,
+    disableCopyNpm
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
@@ -92,7 +93,11 @@ module.exports = function pageLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir, mode: loaderOptions.mode } });
+      denpendencies.push({
+        name,
+        loader: ComponentLoader,
+        options: loaderOptions
+      });
     } else {
       denpendencies.push({ name });
     }

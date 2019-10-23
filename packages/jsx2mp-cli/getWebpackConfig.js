@@ -33,13 +33,14 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
-  const { platform = 'ali', constantDir, mode } = options;
+  const { platform = 'ali', constantDir, mode, disableCopyNpm } = options;
 
   const loaderParams = JSON.stringify({
     platform: platformConfig[platform],
     entryPath: entryFilePath,
     constantDir,
-    mode
+    mode,
+    disableCopyNpm
   });
 
   if (type === 'project') {
@@ -51,7 +52,7 @@ function getEntry(type, cwd, entryFilePath, options) {
       console.error('Can not found app.json in current work directory, please check.');
       process.exit(1);
     }
-    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode }) + '!./' + join(entryPath, 'app.js');
+    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode, disableCopyNpm }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.forEach(({ source, component }) => {
         component = source || component;
@@ -86,12 +87,12 @@ function getDepPath(path, rootContext) {
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode } = options;
+  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, disableCopyNpm } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
   entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
 
-  return {
+  const config = {
     mode: 'production', // Will be fast
     entry: getEntry(type, cwd, relativeEntryFilePath, options),
     output: {
@@ -109,7 +110,8 @@ module.exports = (options = {}) => {
               options: {
                 mode: options.mode,
                 entryPath: relativeEntryFilePath,
-                platform: platformConfig[platform]
+                platform: platformConfig[platform],
+                disableCopyNpm: options.disableCopyNpm
               },
             },
             {
@@ -147,7 +149,6 @@ module.exports = (options = {}) => {
           NODE_ENV: mode === 'build' ? '"production"' : '"development"',
         }
       }),
-      new RuntimeWebpackPlugin({ platform, mode }),
       new webpack.ProgressPlugin( (percentage, message) => {
         if (percentage === 0) {
           buildStartTime = Date.now();
@@ -159,4 +160,9 @@ module.exports = (options = {}) => {
       })
     ],
   };
+
+  if (!disableCopyNpm) {
+    config.plugins.push(new RuntimeWebpackPlugin({ platform, mode }));
+  }
+  return config;
 };

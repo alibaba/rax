@@ -21,6 +21,7 @@ module.exports = function scriptLoader(content) {
   if (loaderHandled) return;
 
   const loaderOptions = getOptions(this);
+  const { disableCopyNpm, mode, entryPath, platform } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const rootContext = this.rootContext;
   const nodeModulesPathList = getNearestNodeModulesPath(rootContext, this.resourcePath);
@@ -39,6 +40,9 @@ module.exports = function scriptLoader(content) {
   });
 
   if (isFromNodeModule(this.resourcePath)) {
+    if (disableCopyNpm) {
+      return '';
+    }
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmFolderName = getNpmFolderName(relativeNpmPath);
     const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
@@ -91,7 +95,7 @@ module.exports = function scriptLoader(content) {
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
 
-      const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
+      const { code } = transformCode({rawContent, mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath, platform});
 
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
@@ -101,19 +105,19 @@ module.exports = function scriptLoader(content) {
         outputPath: {
           code: distSourcePath
         },
-        mode: loaderOptions.mode
+        mode
       };
       output(outputContent, null, outputOption);
     }
   } else {
     const relativeFilePath = relative(
-      join(rootContext, dirname(loaderOptions.entryPath)),
+      join(rootContext, dirname(entryPath)),
       this.resourcePath
     );
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
 
-    const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
+    const { code } = transformCode({rawContent, mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath, disableCopyNpm, platform});
 
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
 
@@ -122,7 +126,7 @@ module.exports = function scriptLoader(content) {
       outputPath: {
         code: distSourcePath
       },
-      mode: loaderOptions.mode
+      mode
     };
 
     output(outputContent, null, outputOption);
@@ -140,14 +144,17 @@ module.exports = function scriptLoader(content) {
  * @param {array} option.relativeResourcePath current file path relative to rootContext
  * @param {array} option.distSourcePath file path that transformed to
  * @param {array} option.outputPath dist dir path
+ * @param {boolean} option.disableCopyNpm whether disable copy npm files action
+ * @param {object} option.platform which client the miniapp runs on
+ *
  *
  */
-function transformCode({rawContent, mode, nodeModulesPathList = [], relativeResourcePath, distSourcePath, outputPath}) {
+function transformCode({rawContent, mode, nodeModulesPathList = [], relativeResourcePath, distSourcePath, outputPath, disableCopyNpm, platform}) {
   const presets = [];
   const plugins = [
     [
       require('./babel-plugin-rename-import'),
-      { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath }
+      { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform }
 
     ], // for rename npm modules.
     require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
