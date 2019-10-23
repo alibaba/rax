@@ -157,6 +157,7 @@ module.exports = {
       addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
       addProviderIniter(parsed.contextList, parsed.renderFunctionPath);
+      addRegisterRefs(parsed.refs, parsed.renderFunctionPath);
     }
   },
 };
@@ -464,6 +465,33 @@ function addProviderIniter(contextList, renderFunctionPath) {
       fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
     });
   }
+}
+
+/**
+ * Insert register ref method
+ * @param {Array} refs
+ * @param {Object} renderFunctionPath
+ * */
+function addRegisterRefs(refs, renderFunctionPath) {
+  const registerRefsMethods = t.memberExpression(
+    t.thisExpression(),
+    t.identifier('_registerRefs')
+  );
+  const fnBody = renderFunctionPath.node.body.body;
+  /**
+   * this._registerRefs([
+   *  {
+   *    name: 'scrollViewRef',
+   *    method: scrollViewRef
+   *  }
+   * ])
+   * */
+  fnBody.push(t.expressionStatement(t.callExpression(registerRefsMethods, [
+    t.arrayExpression(refs.map(ref => t.objectExpression(
+      [t.objectProperty(t.stringLiteral('name'), ref),
+        t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]
+    )))
+  ])));
 }
 
 /**

@@ -100,6 +100,12 @@ export default class Component {
     updateChildProps(this, chlidInstanceId, props);
   }
 
+  _registerRefs(refs) {
+    refs.forEach(({name, method}) => {
+      this._internal[name] = method;
+    });
+  }
+
   _collectState() {
     const state = Object.assign({}, this.state);
     let parialState;

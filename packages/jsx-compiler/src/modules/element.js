@@ -328,24 +328,6 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
   }
 
   traverse(ast, {
-    JSXAttribute(path) {
-      const { node } = path;
-      const attrName = node.name.name;
-      // adapt the key attribute
-      if (attrName === 'key') {
-        node.name.name = adapter.key;
-      }
-      // Remove ref.
-      if (attrName === 'ref') {
-        path.remove();
-      }
-      if (attrName === 'className') {
-        node.name.name = adapter.className;
-      }
-      // if (attrName === 'style') {
-      //   node.name.name = adapter.style;
-      // }
-    },
     JSXExpressionContainer: handleJSXExpressionContainer,
     JSXOpeningElement: {
       exit(path) {
