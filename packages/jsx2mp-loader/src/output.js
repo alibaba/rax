@@ -62,7 +62,7 @@ function output(content, raw, options) {
       mode,
       externalPlugins.concat([require('@babel/plugin-proposal-class-properties')]),
       [require('@babel/preset-env')]
-      ).code);
+    ).code);
     if (config) {
       // Compile ES6 => ES5 and minify code
       config = minifyJS(transformCode(config,
