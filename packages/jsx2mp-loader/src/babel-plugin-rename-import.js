@@ -1,5 +1,4 @@
 const { join, relative, dirname } = require('path');
-const { existsSync, statSync } = require('fs-extra');
 const chalk = require('chalk');
 
 const { isNpmModule, isWeexModule, isRaxModule } = require('./utils/judgeModule');
@@ -12,16 +11,10 @@ const defaultOptions = {
   normalizeNpmFileName: (s) => s,
 };
 
-function getNpmName(value) {
-  const isScopedNpm = /^_?@/.test(value);
-  return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
-}
-
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
   const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform } = options;
   const source = (value, npmList, filename, rootContext) => {
-    const npmName = getNpmName(value);
     // Example:
     // value => '@ali/universal-goldlog' or '@ali/xxx/foo/lib'
     // npmList => ['/Users/xxx/node_modules/xxx', '/Users/xxx/node_modules/aaa/node_modules/bbb']
@@ -30,19 +23,6 @@ module.exports = function visitor({ types: t }, options) {
 
     const searchPaths = npmList.reverse();
     const target = require.resolve(value, { paths: searchPaths });
-
-    // In tnpm, target will be like following (symbol linked path):
-    // ***/_universal-toast_1.0.0_universal-toast/lib/index.js
-    let packageJSONPath;
-    try {
-      packageJSONPath = require.resolve(join(npmName, 'package.json'), { paths: searchPaths });
-    } catch (err) {
-      throw new Error(`You may not have npm installed: "${npmName}"`);
-    }
-
-    const moduleBasePath = join(packageJSONPath, '..');
-    const modulePathSuffix = relative(moduleBasePath, target);
-    // ret => '../npm/_ali/universal-goldlog/lib/index.js
 
     const rootNodeModulePath = join(rootContext, 'node_modules');
     const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target)));
@@ -62,10 +42,8 @@ module.exports = function visitor({ types: t }, options) {
             runtimePath = './' + join(rootNpmRelativePath, RUNTIME);
           }
           path.node.source = t.stringLiteral(runtimePath);
-        } else if (isNpmModule(value)) {
-          if (!disableCopyNpm) {
-            path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
-          }
+        } else if (isNpmModule(value) && !disableCopyNpm) {
+          path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
         }
       },
 
@@ -77,22 +55,21 @@ module.exports = function visitor({ types: t }, options) {
           node.arguments.length === 1
         ) {
           if (t.isStringLiteral(node.arguments[0])) {
-            if (isWeexModule(node.arguments[0].value)) {
-              path.replaceWith(t.nullLiteral());
-            } else if (isRaxModule()) {
+            const moduleName = node.arguments[0].value;
+            if (isWeexModule(moduleName)) {
+              path.remove();
+            } else if (isRaxModule(moduleName)) {
               let runtimePath = t.stringLiteral(getRuntimeByPlatform(platform.type));
               if (!disableCopyNpm) {
-                runtimePath = source(node.arguments[0].value, nodeModulesPathList, state.filename, state.cwd);
+                runtimePath = source(moduleName, nodeModulesPathList, state.filename, state.cwd);
               }
               path.node.arguments = [
                 runtimePath
               ];
-            } else if (isNpmModule(node.arguments[0].value)) {
-              if (!disableCopyNpm) {
-                path.node.arguments = [
-                  source(node.arguments[0].value, nodeModulesPathList, state.filename, state.cwd)
-                ];
-              }
+            } else if (isNpmModule(moduleName) && !disableCopyNpm) {
+              path.node.arguments = [
+                source(moduleName, nodeModulesPathList, state.filename, state.cwd)
+              ];
             }
           } else if (t.isExpression(node.arguments[0])) {
             // require with expression, can not staticly find target.
