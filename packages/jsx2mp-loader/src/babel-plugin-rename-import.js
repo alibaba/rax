@@ -79,10 +79,20 @@ module.exports = function visitor({ types: t }, options) {
           if (t.isStringLiteral(node.arguments[0])) {
             if (isWeexModule(node.arguments[0].value)) {
               path.replaceWith(t.nullLiteral());
-            } else if (isNpmModule(node.arguments[0].value)) {
+            } else if (isRaxModule()) {
+              let runtimePath = t.stringLiteral(getRuntimeByPlatform(platform.type));
+              if (!disableCopyNpm) {
+                runtimePath = source(node.arguments[0].value, nodeModulesPathList, state.filename, state.cwd)
+              }
               path.node.arguments = [
-                source(node.arguments[0].value, nodeModulesPathList, state.filename, state.cwd)
+                runtimePath
               ];
+            } else if (isNpmModule(node.arguments[0].value)) {
+              if (!disableCopyNpm) {
+                path.node.arguments = [
+                  source(node.arguments[0].value, nodeModulesPathList, state.filename, state.cwd)
+                ];
+              }
             }
           } else if (t.isExpression(node.arguments[0])) {
             // require with expression, can not staticly find target.
