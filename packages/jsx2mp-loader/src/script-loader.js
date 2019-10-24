@@ -21,6 +21,7 @@ module.exports = function scriptLoader(content) {
   if (loaderHandled) return;
 
   const loaderOptions = getOptions(this);
+  const { disableCopyNpm, mode, entryPath, platform } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const rootContext = this.rootContext;
   const nodeModulesPathList = getNearestNodeModulesPath(rootContext, this.resourcePath);
@@ -39,6 +40,9 @@ module.exports = function scriptLoader(content) {
   });
 
   if (isFromNodeModule(this.resourcePath)) {
+    if (disableCopyNpm) {
+      return '';
+    }
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmFolderName = getNpmFolderName(relativeNpmPath);
     const sourcePackagePath = join(currentNodeModulePath, npmFolderName);
@@ -91,38 +95,45 @@ module.exports = function scriptLoader(content) {
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
 
-      const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
-
       const distSourceDirPath = dirname(distSourcePath);
       if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
 
-      const outputContent = { code };
+      const outputContent = { code: rawContent };
       const outputOption = {
         outputPath: {
           code: distSourcePath
         },
-        mode: loaderOptions.mode
+        mode,
+        externalPlugins: [
+          [
+            require('./babel-plugin-rename-import'),
+            { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform }
+          ]
+        ]
       };
       output(outputContent, null, outputOption);
     }
   } else {
     const relativeFilePath = relative(
-      join(rootContext, dirname(loaderOptions.entryPath)),
+      join(rootContext, dirname(entryPath)),
       this.resourcePath
     );
     const distSourcePath = join(outputPath, relativeFilePath);
     const distSourceDirPath = dirname(distSourcePath);
 
-    const { code } = transformCode({rawContent, mode: loaderOptions.mode, nodeModulesPathList, relativeResourcePath, distSourcePath, outputPath});
-
     if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
-
-    const outputContent = { code };
+    const outputContent = { code: rawContent };
     const outputOption = {
       outputPath: {
         code: distSourcePath
       },
-      mode: loaderOptions.mode
+      mode,
+      externalPlugins: [
+        [
+          require('./babel-plugin-rename-import'),
+          { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform }
+        ]
+      ]
     };
 
     output(outputContent, null, outputOption);
@@ -130,72 +141,6 @@ module.exports = function scriptLoader(content) {
 
   return content;
 };
-
-/**
- *
- * @param {object} option
- * @param {string} option.rawContent code to be transformed
- * @param {string} option.mode transform mode, build or watch
- * @param {array} option.nodeModulesPathList existed node_modules paths
- * @param {array} option.relativeResourcePath current file path relative to rootContext
- * @param {array} option.distSourcePath file path that transformed to
- * @param {array} option.outputPath dist dir path
- *
- */
-function transformCode({rawContent, mode, nodeModulesPathList = [], relativeResourcePath, distSourcePath, outputPath}) {
-  const presets = [];
-  const plugins = [
-    [
-      require('./babel-plugin-rename-import'),
-      { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath }
-
-    ], // for rename npm modules.
-    require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
-    [
-      require('babel-plugin-transform-define'),
-      {
-        'process.env.NODE_ENV': mode === 'build' ? 'production' : 'development',
-      }
-    ],
-    [
-      require('babel-plugin-minify-dead-code-elimination'),
-      {
-        optimizeRawSize: true,
-        keepFnName: true
-      }
-    ]
-  ];
-
-  // Compile to ES5 for build.
-  if (mode === 'build') {
-    presets.push(require('@babel/preset-env'));
-    plugins.push(require('@babel/plugin-proposal-class-properties'));
-  }
-
-  const babelParserOption = {
-    plugins: [
-      'classProperties',
-      'jsx',
-      'flow',
-      'flowComment',
-      'trailingFunctionCommas',
-      'asyncFunctions',
-      'exponentiationOperator',
-      'asyncGenerators',
-      'objectRestSpread',
-      ['decorators', { decoratorsBeforeExport: false }],
-      'dynamicImport',
-    ], // support all plugins
-  };
-
-  return transformSync(rawContent, {
-    presets,
-    plugins,
-    filename: relativeResourcePath,
-    parserOpts: babelParserOption,
-    sourceMaps: mode === 'watch' ? 'inline' : false
-  });
-}
 
 /**
  * For that alipay build folder can not contain `@`, escape to `_`.

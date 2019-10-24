@@ -9,7 +9,8 @@ program
   .option('-e, --entry <entry>', 'set entry of component', DEFAULT_ENTRY)
   .option('-d, --dist <dist>', 'set export path', DEFAULT_DIST)
   .option('-s, --skip-clear-stdout', 'skip clear stdout of screen', false)
-  .option('-c --constant-dir <constantDir>', 'set constant directory to copy', DEFAULT_CONSTANT_DIR)
+  .option('-c, --constant-dir <constantDir>', 'set constant directory to copy', DEFAULT_CONSTANT_DIR)
+  .option('-n, --disable-copy-npm', 'disable copy node_modules action', false)
   .action((cmd) => {
     const workDirectory = resolve(process.env.CWD || process.cwd());
     const distDirectory = resolve(workDirectory, cmd.dist);
@@ -23,7 +24,8 @@ program
       dist: cmd.dist,
       platform: cmd.platform,
       skipClearStdout: cmd.skipClearStdout,
-      constantDir: cmd.constantDir === '' ? [] : cmd.constantDir.split(',').map(c => c.trim())
+      constantDir: cmd.constantDir === '' ? [] : cmd.constantDir.split(',').map(c => c.trim()),
+      disableCopyNpm: cmd.disableCopyNpm
     };
 
     require('..').build(options);

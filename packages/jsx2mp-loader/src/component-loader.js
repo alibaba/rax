@@ -12,7 +12,7 @@ const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, constantDir, mode } = loaderOptions;
+  const { platform, entryPath, constantDir, mode, disableCopyNpm } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
@@ -37,7 +37,8 @@ module.exports = function componentLoader(content) {
     sourcePath,
     type: 'component',
     platform,
-    sourceFileName: this.resourcePath
+    sourceFileName: this.resourcePath,
+    disableCopyNpm
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
@@ -107,7 +108,11 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir, mode: loaderOptions.mode } });
+      denpendencies.push({
+        name,
+        loader: ComponentLoader,
+        options: loaderOptions
+      });
     } else {
       denpendencies.push({ name });
     }

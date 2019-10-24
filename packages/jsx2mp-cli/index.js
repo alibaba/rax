@@ -27,7 +27,8 @@ function build(options = {}) {
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
-    constantDir = DEFAULT_CONSTANT_DIR_ARR
+    constantDir = DEFAULT_CONSTANT_DIR_ARR,
+    disableCopyNpm = false
   } = options;
 
   // Clean the dist dir before generating
@@ -51,7 +52,8 @@ function build(options = {}) {
     type,
     workDirectory,
     distDirectory,
-    constantDir
+    constantDir,
+    disableCopyNpm
   });
 
   if (options.webpackConfig) {
@@ -80,7 +82,8 @@ function watch(options = {}) {
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
-    constantDir = DEFAULT_CONSTANT_DIR_ARR
+    constantDir = DEFAULT_CONSTANT_DIR_ARR,
+    disableCopyNpm = false
   } = options;
 
   if (type === DEFAULT_TYPE) {
@@ -99,7 +102,8 @@ function watch(options = {}) {
     workDirectory,
     platform,
     distDirectory,
-    constantDir
+    constantDir,
+    disableCopyNpm
   });
 
   if (options.webpackConfig) {
