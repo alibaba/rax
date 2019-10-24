@@ -226,6 +226,7 @@ module.exports = {
     if (parsed.renderFunctionPath) {
       transformDirectiveCondition(parsed.templateAST, options.adapter);
       transformDirectiveList(parsed.templateAST, code, options.adapter);
+      transformComponentFragment(parsed.templateAST);
     }
   },
   _transformList: transformDirectiveList,
