@@ -30,6 +30,7 @@ export default class Component {
 
     this.__dependencies = {}; // for context
 
+    this.__mounted = false;
     this.__shouldUpdate = false;
     this._methods = {};
     this._hooks = {};
@@ -99,6 +100,24 @@ export default class Component {
     updateChildProps(this, chlidInstanceId, props);
   }
 
+  _registerRefs(refs) {
+    this.refs = {};
+    refs.forEach(({name, method}) => {
+      if (!method) {
+        const target = {
+          current: null
+        };
+        this._internal[name] = ref => {
+          target.current = ref;
+        };
+        this.refs[name] = target;
+      } else {
+        this._internal[name] = method;
+        this.refs[name] = method;
+      }
+    });
+  }
+
   _collectState() {
     const state = Object.assign({}, this.state);
     let parialState;
@@ -166,7 +185,6 @@ export default class Component {
     // Step4: mark __mounted = true
     if (!this.__mounted) {
       this.__mounted = true;
-
       // Step5: trigger did mount
       this._trigger(COMPONENT_DID_MOUNT);
     }
@@ -178,12 +196,11 @@ export default class Component {
 
   _updateComponent() {
     if (!this.__mounted) return;
-
     // Step1: propTypes check, now skipped.
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
-    if (this.__mounted && diffProps(prevProps, nextProps)) {
+    if (diffProps(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, this.props);
     }
 
@@ -202,18 +219,16 @@ export default class Component {
     if (stateFromProps !== undefined) nextState = stateFromProps;
 
     // Step5: judge shouldComponentUpdate
-    if (this.__mounted) {
-      this.__shouldUpdate = true;
-      if (
-        !this.__forceUpdate
-        && this.shouldComponentUpdate
-        && this.shouldComponentUpdate(nextProps, nextState) === false
-      ) {
-        this.__shouldUpdate = false;
-      } else {
-        // Step6: trigger will update
-        this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
-      }
+    this.__shouldUpdate = true;
+    if (
+      !this.__forceUpdate
+      && this.shouldComponentUpdate
+      && this.shouldComponentUpdate(nextProps, nextState) === false
+    ) {
+      this.__shouldUpdate = false;
+    } else {
+      // Step6: trigger will update
+      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
     }
 
     this.props = nextProps;

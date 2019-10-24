@@ -1,5 +1,6 @@
 const { join } = require('path');
-const { copySync, readJSONSync } = require('fs-extra');
+const { copySync, writeFileSync, readJSONSync, readFileSync } = require('fs-extra');
+const { minify } = require('terser');
 
 /**
  * Runtime packages should be a dependency of jsx2mp-cli,
@@ -11,8 +12,9 @@ const runtimePackageJSON = readJSONSync(runtimePackageJSONPath);
 const runtimePackagePath = join(runtimePackageJSONPath, '..');
 
 module.exports = class JSX2MPRuntimePlugin {
-  constructor({ platform = 'ali' }) {
+  constructor({ platform = 'ali', mode = 'build' }) {
     this.platform = platform;
+    this.mode = mode;
   }
 
   apply(compiler) {
@@ -25,7 +27,12 @@ module.exports = class JSX2MPRuntimePlugin {
         const sourceFile = require.resolve(join(runtimePackagePath, runtimeTargetPath));
         const targetFile = join(compiler.outputPath, 'npm', runtime + '.js');
 
-        copySync(sourceFile, targetFile);
+        if (this.mode === 'build') {
+          const sourceCode = minify(readFileSync(sourceFile, 'utf-8')).code;
+          writeFileSync(targetFile, sourceCode);
+        } else {
+          copySync(sourceFile, targetFile);
+        }
         callback();
       }
     );

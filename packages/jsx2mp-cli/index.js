@@ -4,6 +4,7 @@ const mergeWebpack = require('webpack-merge');
 const webpack = require('webpack');
 const consoleClear = require('console-clear');
 const chalk = require('chalk');
+const del = require('del');
 const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
 const { getCurrentDirectoryPath } = require('./utils/file');
@@ -26,8 +27,14 @@ function build(options = {}) {
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
-    constantDir = DEFAULT_CONSTANT_DIR_ARR
+    constantDir = DEFAULT_CONSTANT_DIR_ARR,
+    disableCopyNpm = false
   } = options;
+
+  // Clean the dist dir before generating
+  if (existsSync(distDirectory)) {
+    del.sync(distDirectory + '/**');
+  }
 
   if (type === DEFAULT_TYPE) {
     copyConstantDir(constantDir, distDirectory);
@@ -45,7 +52,8 @@ function build(options = {}) {
     type,
     workDirectory,
     distDirectory,
-    constantDir
+    constantDir,
+    disableCopyNpm
   });
 
   if (options.webpackConfig) {
@@ -74,7 +82,8 @@ function watch(options = {}) {
     workDirectory = cwd,
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
-    constantDir = DEFAULT_CONSTANT_DIR_ARR
+    constantDir = DEFAULT_CONSTANT_DIR_ARR,
+    disableCopyNpm = false
   } = options;
 
   if (type === DEFAULT_TYPE) {
@@ -93,7 +102,8 @@ function watch(options = {}) {
     workDirectory,
     platform,
     distDirectory,
-    constantDir
+    constantDir,
+    disableCopyNpm
   });
 
   if (options.webpackConfig) {

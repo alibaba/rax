@@ -11,6 +11,8 @@ module.exports = [
   require('./code'),
   // Handle template attrs
   require('./element'),
+  // Handle jsx attribute
+  require('./attribute'),
   // Handle template style attr
   require('./style'),
   // Handle Rax base components.

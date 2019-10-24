@@ -20,17 +20,16 @@ const SAFE_CREATE_STYLE = '__create_style__';
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 const USE_CONTEXT = 'useContext';
-const USE_HISTORY = 'useHistory';
-const USE_LOCATION = 'useLocation';
+const USE_REF = 'useRef';
 
 const EXPORTED_DEF = '__def__';
-const RUNTIME = '/npm/jsx2mp-runtime';
+const RUNTIME = 'jsx2mp-runtime';
 
+const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 
-const isHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT,
-  USE_HISTORY, USE_LOCATION].includes(node.name);
+const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -50,13 +49,14 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
-    if (options.type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
+    const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
+    if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
       // Can not found default export, otherwise app.js is excluded.
       return;
     }
     let userDefineType;
 
-    if (options.type === 'app') {
+    if (type === 'app') {
       userDefineType = 'function';
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
@@ -91,20 +91,22 @@ module.exports = {
     }
 
     const hooks = collectHooks(parsed.renderFunctionPath);
-
-    const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
+    const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
+    const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
 
     removeRaxImports(parsed.ast);
-    renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
+    renameCoreModule(parsed.ast, runtimePath);
     renameFileModule(parsed.ast);
-    renameAppConfig(parsed.ast, options.sourcePath, options.resourcePath);
+    renameAppConfig(parsed.ast, sourcePath, resourcePath);
 
-    const currentNodeModulePath = join(options.sourcePath, 'npm');
-    const npmRelativePath = relative(dirname(options.resourcePath), currentNodeModulePath);
-    renameNpmModules(parsed.ast, npmRelativePath, options.resourcePath, options.cwd);
+    if (!disableCopyNpm) {
+      const currentNodeModulePath = join(sourcePath, 'npm');
+      const npmRelativePath = relative(dirname(resourcePath), currentNodeModulePath);
+      renameNpmModules(parsed.ast, npmRelativePath, resourcePath, cwd);
+    }
 
-    if (options.type !== 'app') {
-      addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    if (type !== 'app') {
+      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks, runtimePath);
     }
 
     removeDefaultImports(parsed.ast);
@@ -112,7 +114,7 @@ module.exports = {
     /**
      * updateChildProps: collect props dependencies.
      */
-    if (options.type !== 'app' && parsed.renderFunctionPath) {
+    if (type !== 'app' && parsed.renderFunctionPath) {
       const fnBody = parsed.renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {
@@ -159,6 +161,7 @@ module.exports = {
       addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
       addProviderIniter(parsed.contextList, parsed.renderFunctionPath);
+      addRegisterRefs(parsed.refs, parsed.renderFunctionPath);
     }
   },
 };
@@ -176,14 +179,21 @@ function genTagIdExp(expressions) {
   return parseExpression(ret);
 }
 
-function renameCoreModule(ast, outputPath, targetFileDir) {
+function getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm) {
+  let runtimePath = getRuntimeByPlatform(platform.type);
+  if (!disableCopyNpm) {
+    runtimePath = relative(targetFileDir, join(outputPath, 'npm', RUNTIME));
+    runtimePath = runtimePath[0] !== '.' ? './' + runtimePath : runtimePath;
+  }
+  return runtimePath;
+}
+
+function renameCoreModule(ast, runtimePath) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
       if (source.isStringLiteral() && isAppRuntime(source.node.value)) {
-        let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
-        runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
-        source.replaceWith(t.stringLiteral(runtimeRelativePath));
+        source.replaceWith(t.stringLiteral(runtimePath));
       }
     }
   });
@@ -282,7 +292,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHandlers, useCreateStyle, hooks) {
+function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks, runtimePath) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -323,13 +333,10 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
         ));
       }
 
-      let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
-      runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
-
       path.node.body.unshift(
         t.importDeclaration(
           specifiers,
-          t.stringLiteral(runtimeRelativePath)
+          t.stringLiteral(runtimePath)
         )
       );
 
@@ -405,7 +412,7 @@ function collectHooks(root) {
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee) && isHooksAPI(node.callee)) {
+      if (t.isIdentifier(node.callee) && isCoreHooksAPI(node.callee)) {
         ret[node.callee.name] = true;
       }
     }
@@ -465,6 +472,51 @@ function addProviderIniter(contextList, renderFunctionPath) {
 
       fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
     });
+  }
+}
+
+/**
+ * Insert register ref method
+ * @param {Array} refs
+ * @param {Object} renderFunctionPath
+ * */
+function addRegisterRefs(refs, renderFunctionPath) {
+  const registerRefsMethods = t.memberExpression(
+    t.thisExpression(),
+    t.identifier('_registerRefs')
+  );
+  const fnBody = renderFunctionPath.node.body.body;
+  /**
+   * this._registerRefs([
+   *  {
+   *    name: 'scrollViewRef',
+   *    method: scrollViewRef
+   *  }
+   * ])
+   * */
+  const scopedRefs = [];
+  const stringRefs = [];
+  refs.map(ref => {
+    if (renderFunctionPath.scope.hasBinding(ref.value)) {
+      scopedRefs.push(ref);
+    } else {
+      stringRefs.push(ref);
+    }
+  });
+  if (scopedRefs.length > 0) {
+    fnBody.push(t.expressionStatement(t.callExpression(registerRefsMethods, [
+      t.arrayExpression(scopedRefs.map(ref => {
+        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref),
+          t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]);
+      }))
+    ])));
+  }
+  if (stringRefs.length > 0) {
+    fnBody.unshift(t.expressionStatement(t.callExpression(registerRefsMethods, [
+      t.arrayExpression(stringRefs.map(ref => {
+        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref)]);
+      }))
+    ])));
   }
 }
 

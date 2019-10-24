@@ -1,6 +1,9 @@
 const generate = require('@babel/generator').default;
 
-const generateOptions = {};
+const generateOptions = {
+  sourceFileName: '',
+  sourceMaps: true
+};
 
 /**
  * Generate code and map from babel ast.

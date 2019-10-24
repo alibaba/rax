@@ -1,5 +1,4 @@
 import nextTick from './nextTick';
-import { RENDER } from './cycles';
 
 let queue = [];
 

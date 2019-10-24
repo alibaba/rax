@@ -177,9 +177,15 @@ export function useRef(initialValue) {
   const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
-    hooks[hookID] = {
+    const ref = {
       current: initialValue
     };
+    const refFn = (instance) => {
+      ref.current = instance;
+    };
+    refFn.__proto__ = ref;
+    // currentInstance._internal.,
+    hooks[hookID] = refFn;
   }
 
   return hooks[hookID];

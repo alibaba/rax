@@ -1,17 +1,18 @@
-const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, sep } = require('path');
+const { readFileSync, existsSync, mkdirpSync } = require('fs-extra');
+const { relative, join, dirname, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
 const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
-
+const eliminateDeadCode = require('./utils/dce');
+const output = require('./output');
 
 const ComponentLoader = __filename;
 
 module.exports = function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, constantDir } = loaderOptions;
+  const { platform, entryPath, constantDir, mode, disableCopyNpm } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
@@ -35,10 +36,13 @@ module.exports = function componentLoader(content) {
     outputPath,
     sourcePath,
     type: 'component',
-    platform
+    platform,
+    sourceFileName: this.resourcePath,
+    disableCopyNpm
   });
 
-  const transformed = compiler(rawContent, compilerOptions);
+  const rawContentAfterDCE = eliminateDeadCode(rawContent);
+  const transformed = compiler(rawContentAfterDCE, compilerOptions);
 
   const config = Object.assign({}, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
@@ -65,25 +69,27 @@ module.exports = function componentLoader(content) {
 
   const distFileDir = dirname(distFileWithoutExt);
   if (!existsSync(distFileDir)) mkdirpSync(distFileDir);
-  // Write code
-  writeFileSync(distFileWithoutExt + '.js', transformed.code);
-  // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
-  // Write config
-  writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
-  // Write acss style
-  if (transformed.style) {
-    writeFileSync(distFileWithoutExt + platform.extension.css, transformed.style);
-  }
-  // Write extra assets
-  if (transformed.assets) {
-    Object.keys(transformed.assets).forEach((asset) => {
-      const content = transformed.assets[asset];
-      const assetDirectory = dirname(join(outputPath, asset));
-      if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
-      writeFileSync(join(outputPath, asset), content);
-    });
-  }
+
+  const outputContent = {
+    code: transformed.code,
+    map: transformed.map,
+    css: transformed.style || '',
+    json: config,
+    template: transformed.template,
+    assets: transformed.assets
+  };
+  const outputOption = {
+    outputPath: {
+      code: distFileWithoutExt + '.js',
+      json: distFileWithoutExt + '.json',
+      css: distFileWithoutExt + platform.extension.css,
+      template: distFileWithoutExt + platform.extension.xml,
+      assets: outputPath
+    },
+    mode
+  };
+
+  output(outputContent, rawContent, outputOption);
 
   function isCustomComponent(name, usingComponents = {}) {
     const matchingPath = join(dirname(resourcePath), name);
@@ -102,7 +108,11 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform, constantDir: loaderOptions.constantDir } });
+      denpendencies.push({
+        name,
+        loader: ComponentLoader,
+        options: loaderOptions
+      });
     } else {
       denpendencies.push({ name });
     }
