@@ -1,3 +1,5 @@
+import checkPropTypes from 'prop-types/checkPropTypes';
+
 export default function Element(type, key, ref, props, owner) {
   let element = {
     // Built-in properties that belong on the element
@@ -10,6 +12,19 @@ export default function Element(type, key, ref, props, owner) {
   };
 
   if (process.env.NODE_ENV !== 'production') {
+    const propTypes = type.propTypes;
+
+    // Validate its props provided by the propTypes definition
+    if (propTypes) {
+      const displayName = type.displayName || type.name;
+      checkPropTypes(
+        propTypes,
+        props,
+        'prop',
+        displayName,
+      );
+    }
+
     // We make validation flag non-enumerable, so the test framework could ignore it
     Object.defineProperty(element, '__validated', {
       configurable: false,
