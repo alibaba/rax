@@ -53,7 +53,9 @@ function getEntry(type, cwd, entryFilePath, options) {
     }
     entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
-      appConfig.routes.forEach(({ source, component }) => {
+      appConfig.routes.filter(({ targets }) => {
+        return !Array.isArray(targets) || targets.indexOf('miniapp') > -1;
+      }).forEach(({ source, component }) => {
         component = source || component;
         entry['page@' + component] = PageLoader + '?' + loaderParams + '!' + getDepPath(component, entryPath);
       });

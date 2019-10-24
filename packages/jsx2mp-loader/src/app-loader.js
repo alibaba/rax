@@ -93,9 +93,14 @@ function transformAppConfig(entryPath, originalConfig) {
         const pages = [];
         if (Array.isArray(value)) {
           // Only resolve first level of routes.
-          value.forEach(({ component, source }) => {
+          value.forEach(({ component, source, targets }) => {
             // Compatible with old version definition of `component`.
-            pages.push(moduleResolve(entryPath, getRelativePath(source || component)));
+            if (!Array.isArray(targets)) {
+              pages.push(moduleResolve(entryPath, getRelativePath(source || component)));
+            }
+            if (Array.isArray(targets) && targets.indexOf('miniapp') > -1) {
+              pages.push(moduleResolve(entryPath, getRelativePath(source || component)));
+            }
           });
         }
         config.pages = pages;
