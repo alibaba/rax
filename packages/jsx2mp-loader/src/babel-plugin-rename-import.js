@@ -57,7 +57,7 @@ module.exports = function visitor({ types: t }, options) {
           if (t.isStringLiteral(node.arguments[0])) {
             const moduleName = node.arguments[0].value;
             if (isWeexModule(moduleName)) {
-              path.remove();
+              path.replaceWith(t.nullLiteral());
             } else if (isRaxModule(moduleName)) {
               let runtimePath = t.stringLiteral(getRuntimeByPlatform(platform.type));
               if (!disableCopyNpm) {
