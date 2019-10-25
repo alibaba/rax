@@ -2,7 +2,7 @@
 /* eslint react/prefer-es6-class: "off" */
 
 import { createElement, render, shared } from 'rax';
-import PropTypes from 'rax-proptypes';
+import PropTypes from 'prop-types';
 import ServerDriver from 'driver-server';
 import createClass from '../';
 
