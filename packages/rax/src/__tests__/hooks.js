@@ -9,6 +9,7 @@ import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, us
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
 import memo from '../memo';
+import Component from '../vdom/component';
 
 describe('hooks', () => {
   function createNodeElement(tagName) {
@@ -45,6 +46,24 @@ describe('hooks', () => {
 
     render(<App value={2} />, container);
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
+  });
+
+  it('thorw error if used inside a class component', () => {
+    const container = createNodeElement('div');
+
+    class Counter extends Component {
+      render() {
+        let [count] = useState(0);
+        return <span>{count}</span>;
+      }
+    }
+
+    try {
+      render(<Counter />, container);
+      jest.runAllTimers();
+    } catch (err) {
+      expect(err.message).toContain('Hooks can only be called inside a component.');
+    }
   });
 
   it('lazy state initializer', () => {
