@@ -46,7 +46,7 @@ function isNativeComponent(path) {
   const {
     node: { name: tagName }
   } = path.parentPath.get('name');
-  return baseComponents[tagName];
+  return !!baseComponents[tagName];
 }
 
 module.exports = {
