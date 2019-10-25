@@ -58,12 +58,10 @@ describe('hooks', () => {
       }
     }
 
-    try {
+    expect(() => {
       render(<Counter />, container);
       jest.runAllTimers();
-    } catch (err) {
-      expect(err.message).toContain('Hooks can only be called inside a component.');
-    }
+    }).toThrowError('Hooks can only be called inside a component.');
   });
 
   it('lazy state initializer', () => {

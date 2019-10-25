@@ -39,11 +39,9 @@ describe('hooks', () => {
         }
       }
 
-      try {
+      expect(() => {
         renderToString(<Counter />);
-      } catch (err) {
-        expect(err.message).toContain('Hooks can only be called inside a component.');
-      }
+      }).toThrowError('Hooks can only be called inside a component.');
     });
 
     it('should ignore setCount on the server', () => {
