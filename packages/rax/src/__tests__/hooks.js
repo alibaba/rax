@@ -9,6 +9,7 @@ import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, us
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
 import memo from '../memo';
+import Component from '../vdom/component';
 
 describe('hooks', () => {
   function createNodeElement(tagName) {

@@ -224,7 +224,7 @@ const updater = {
  * Functional Reactive Component Class Wrapper
  */
 class ServerReactiveComponent {
-  constructor(pureRender) {
+  constructor(pureRender, ref) {
     // A pure function
     this._render = pureRender;
     this._hookID = 0;
@@ -233,6 +233,10 @@ class ServerReactiveComponent {
     this.didMount = [];
     this.didUpdate = [];
     this.willUnmount = [];
+
+    if (pureRender._forwardRef) {
+      this._forwardRef = ref;
+    }
   }
 
   getHooks() {
@@ -255,7 +259,7 @@ class ServerReactiveComponent {
 
   render() {
     this._hookID = 0;
-    let children = this._render(this.props, this.context);
+    let children = this._render(this.props, this._forwardRef ? this._forwardRef : this.context);
     return children;
   }
 }
@@ -297,6 +301,12 @@ function renderElementToString(element, context, options) {
       // Inject the updater into instance
       instance.updater = updater;
 
+      shared.Host.owner = {
+        // Give the component name in render error info(only for development)
+        __getName: () => type.name,
+        _instance: instance
+      };
+
       let childContext;
 
       if (instance.getChildContext) {
@@ -332,11 +342,13 @@ function renderElementToString(element, context, options) {
       var renderedElement = instance.render();
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
-      const instance = new ServerReactiveComponent(type);
+      const ref = element.ref;
+      const instance = new ServerReactiveComponent(type, ref);
       instance.props = props;
       instance.context = context;
 
       shared.Host.owner = {
+        // Give the component name in render error info(only for development)
         __getName: () => type.name,
         _instance: instance
       };
@@ -357,7 +369,7 @@ function renderElementToString(element, context, options) {
       } else {
         html = html + '>';
         var children = props.children;
-        if (children) {
+        if (children != null) {
           if (Array.isArray(children)) {
             for (var i = 0, l = children.length; i < l; i++) {
               var child = children[i];

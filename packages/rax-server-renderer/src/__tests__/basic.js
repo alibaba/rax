@@ -5,7 +5,7 @@ import {renderToString} from '../index';
 
 describe('renderToString', () => {
   describe('basic rendering', function() {
-    it('a blank div', () => {
+    it('render a blank div', () => {
       function MyComponent() {
         return <div />;
       }
@@ -14,7 +14,7 @@ describe('renderToString', () => {
       expect(str).toBe('<div></div>');
     });
 
-    it('a self-closing tag', () => {
+    it('render a self-closing tag', () => {
       function MyComponent() {
         return <br />;
       }
@@ -23,7 +23,7 @@ describe('renderToString', () => {
       expect(str).toBe('<br>');
     });
 
-    it('a self-closing tag as a child', () => {
+    it('render a self-closing tag as a child', () => {
       function MyComponent() {
         return (
           <div>
@@ -36,7 +36,7 @@ describe('renderToString', () => {
       expect(str).toBe('<div><br></div>');
     });
 
-    it('a string', () => {
+    it('render a string', () => {
       function MyComponent() {
         return 'Hello';
       }
@@ -45,7 +45,7 @@ describe('renderToString', () => {
       expect(str).toBe('Hello');
     });
 
-    it('a number', () => {
+    it('render a number', () => {
       function MyComponent() {
         return 42;
       }
@@ -54,7 +54,18 @@ describe('renderToString', () => {
       expect(str).toBe('42');
     });
 
-    it('an array with one child', () => {
+    it('render child with zero value', () => {
+      const value = 0;
+
+      function MyComponent() {
+        return <span>{value}</span>;
+      }
+
+      let str = renderToString(<MyComponent />);
+      expect(str).toBe('<span>0</span>');
+    });
+
+    it('render an array with one child', () => {
       function MyComponent() {
         return [<div key={1}>text1</div>];
       }
@@ -63,7 +74,7 @@ describe('renderToString', () => {
       expect(str).toBe('<div>text1</div>');
     });
 
-    it('an array with several children', () => {
+    it('render an array with several children', () => {
       let Header = props => {
         return <p>header</p>;
       };
@@ -84,7 +95,7 @@ describe('renderToString', () => {
       expect(str).toBe('<div>text1</div><span>text2</span><p>header</p><h2>footer</h2><h3>about</h3>');
     });
 
-    it('a nested array', () => {
+    it('render a nested array', () => {
       function MyComponent() {
         return [
           [<div key={1}>text1</div>],
@@ -98,10 +109,10 @@ describe('renderToString', () => {
     });
 
     // TODO: render an iterable
-    it('an iterable', async() => {
+    it('render an iterable', async() => {
     });
 
-    it('emptyish value', () => {
+    it('render emptyish value', () => {
       expect(renderToString(0)).toBe('0');
       expect(renderToString(<div>{''}</div>)).toBe('<div></div>');
       expect(renderToString([])).toBe('');

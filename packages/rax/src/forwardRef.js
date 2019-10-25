@@ -1,4 +1,5 @@
 export default function(render) {
-  render.__forwardRef = true;
+  // _forwardRef is also use in rax server renderer
+  render._forwardRef = true;
   return render;
 }
