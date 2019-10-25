@@ -299,16 +299,20 @@ function getComponentPath(alias, options) {
     const pkgName = getRealNpmPkgName(realNpmFile);
     // npm module
     const pkg = getComponentConfig(alias.from, options.resourcePath);
-    if (pkg.miniappConfig && pkg.miniappConfig.main) {
+    let mainName = 'main';
+    if (options.platform.type !== 'ali') {
+      mainName += `:${options.platform.type}`;
+    }
+    if (pkg.miniappConfig && pkg.miniappConfig[mainName]) {
       if (disableCopyNpm) {
-        return join(pkg.name, pkg.miniappConfig.main);
+        return join(pkg.name, pkg.miniappConfig[mainName]);
       }
 
       const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
       let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
       npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
 
-      const miniappConfigRelativePath = relative(pkg.main, pkg.miniappConfig.main);
+      const miniappConfigRelativePath = relative(pkg.main, pkg.miniappConfig[mainName]);
       const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath);
       const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(pkgName) + pkgName.length);
       return './' + join(npmRelativePath, pkgName.replace(/@/g, '_'), realMiniappRelativePath);
