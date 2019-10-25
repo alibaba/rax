@@ -302,6 +302,7 @@ function renderElementToString(element, context, options) {
       instance.updater = updater;
 
       shared.Host.owner = {
+        // Give the component name in render error info(only for development)
         __getName: () => type.name,
         _instance: instance
       };
@@ -347,6 +348,7 @@ function renderElementToString(element, context, options) {
       instance.context = context;
 
       shared.Host.owner = {
+        // Give the component name in render error info(only for development)
         __getName: () => type.name,
         _instance: instance
       };
