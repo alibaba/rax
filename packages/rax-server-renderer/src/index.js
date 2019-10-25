@@ -234,8 +234,8 @@ class ServerReactiveComponent {
     this.didUpdate = [];
     this.willUnmount = [];
 
-    if (pureRender.__forwardRef) {
-      this.__forwardRef = ref;
+    if (pureRender._forwardRef) {
+      this._forwardRef = ref;
     }
   }
 
@@ -259,7 +259,7 @@ class ServerReactiveComponent {
 
   render() {
     this._hookID = 0;
-    let children = this._render(this.props, this.__forwardRef ? this.__forwardRef : this.context);
+    let children = this._render(this.props, this._forwardRef ? this._forwardRef : this.context);
     return children;
   }
 }

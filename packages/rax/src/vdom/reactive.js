@@ -31,8 +31,8 @@ export default class ReactiveComponent extends Component {
 
     this.state = {};
 
-    if (pureRender.__forwardRef) {
-      this.__prevForwardRef = this.__forwardRef = ref;
+    if (pureRender._forwardRef) {
+      this.__prevForwardRef = this._forwardRef = ref;
     }
 
     const compares = pureRender.__compares;
@@ -48,7 +48,7 @@ export default class ReactiveComponent extends Component {
           }
         }
 
-        return !arePropsEqual || this.__prevForwardRef !== this.__forwardRef;
+        return !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
       };
     }
   }
@@ -121,7 +121,7 @@ export default class ReactiveComponent extends Component {
     this.__hookID = 0;
     this.__reRenders = 0;
     this.__isScheduled = false;
-    let children = this.__render(this.props, this.__forwardRef ? this.__forwardRef : this.context);
+    let children = this.__render(this.props, this._forwardRef ? this._forwardRef : this.context);
 
     while (this.__isScheduled) {
       this.__reRenders++;
@@ -135,7 +135,7 @@ export default class ReactiveComponent extends Component {
 
       this.__hookID = 0;
       this.__isScheduled = false;
-      children = this.__render(this.props, this.__forwardRef ? this.__forwardRef : this.context);
+      children = this.__render(this.props, this._forwardRef ? this._forwardRef : this.context);
     }
 
     if (this.__shouldUpdate) {

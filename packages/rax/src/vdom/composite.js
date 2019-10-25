@@ -165,7 +165,7 @@ class CompositeComponent extends BaseComponent {
       handleError(instance, error);
     }
 
-    if (!currentElement.type.__forwardRef && ref) {
+    if (!currentElement.type._forwardRef && ref) {
       attachRef(currentElement._owner, ref, this);
     }
 
@@ -214,7 +214,7 @@ class CompositeComponent extends BaseComponent {
       let currentElement = this.__currentElement;
       let ref = currentElement.ref;
 
-      if (!currentElement.type.__forwardRef && ref) {
+      if (!currentElement.type._forwardRef && ref) {
         detachRef(currentElement._owner, ref, this);
       }
 
@@ -329,9 +329,9 @@ class CompositeComponent extends BaseComponent {
     }
 
     // Update refs
-    if (this.__currentElement.type.__forwardRef) {
+    if (this.__currentElement.type._forwardRef) {
       instance.__prevForwardRef = prevElement.ref;
-      instance.__forwardRef = nextElement.ref;
+      instance._forwardRef = nextElement.ref;
     } else {
       updateRef(prevElement, nextElement, this);
     }
