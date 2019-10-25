@@ -31,19 +31,6 @@ describe('hooks', () => {
       expect(str).toBe('<span>Count: 0</span>');
     });
 
-    it('if used inside a class component', () => {
-      class Counter extends Component {
-        render() {
-          let [count] = useState(0);
-          return <Text text={count} />;
-        }
-      }
-
-      expect(() => {
-        renderToString(<Counter />);
-      }).toThrowError('Hooks can only be called inside a component.');
-    });
-
     it('should ignore setCount on the server', () => {
       function Counter() {
         let [count, setCount] = useState(0);

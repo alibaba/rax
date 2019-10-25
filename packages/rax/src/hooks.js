@@ -11,7 +11,7 @@ function getCurrentInstance() {
 
 function getCurrentRenderingInstance() {
   const currentInstance = getCurrentInstance();
-  if (currentInstance && currentInstance.getHooks) {
+  if (currentInstance) {
     return currentInstance;
   } else {
     if (process.env.NODE_ENV === 'production') {

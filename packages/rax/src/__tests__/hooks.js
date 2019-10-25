@@ -48,22 +48,6 @@ describe('hooks', () => {
     expect(container.childNodes[0].childNodes[0].data).toEqual('2');
   });
 
-  it('thorw error if used inside a class component', () => {
-    const container = createNodeElement('div');
-
-    class Counter extends Component {
-      render() {
-        let [count] = useState(0);
-        return <span>{count}</span>;
-      }
-    }
-
-    expect(() => {
-      render(<Counter />, container);
-      jest.runAllTimers();
-    }).toThrowError('Hooks can only be called inside a component.');
-  });
-
   it('lazy state initializer', () => {
     const container = createNodeElement('div');
     let stateUpdater = null;
