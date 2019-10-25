@@ -2,7 +2,7 @@
 /* @jsx createElement */
 
 import Component from '../component';
-import PropTypes from 'rax-proptypes';
+import PropTypes from 'prop-types';
 import createElement from '../../createElement';
 import Host from '../host';
 import ServerDriver from 'driver-server';
