@@ -19,8 +19,7 @@ const parserAdapters = {
       className: '__rax-view'
     },
 
-    className: 'class',
-    style: 'style'
+    styleKeyword: false,
   },
   'wechat': {
     if: 'wx:if',
@@ -41,9 +40,7 @@ const parserAdapters = {
       onTouchCancel: 'bindtouchcancel',
       className: '__rax-view'
     },
-
-    className: 'className',
-    style: 'styleSheet'
+    styleKeyword: true
   },
 };
 

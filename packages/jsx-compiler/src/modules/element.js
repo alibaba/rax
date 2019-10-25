@@ -331,7 +331,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
     JSXExpressionContainer: handleJSXExpressionContainer,
     JSXOpeningElement: {
       exit(path) {
-        const { node, parent } = path;
+        const { node } = path;
         const componentTagNode = node.name;
         if (t.isJSXIdentifier(componentTagNode)) {
           const name = componentTagNode.name;
@@ -339,10 +339,11 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           if (replaceName) {
             replaceComponentTagName(path, t.jsxIdentifier(replaceName));
             const propsMap = adapter[replaceName];
+            const classAttrName = adapter.styleKeyword ? 'className' : 'class';
             let hasClassName = false;
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
-                if (attr.name.name === adapter.className) {
+                if (attr.name.name === classAttrName) {
                   attr.value.value = propsMap.className + ' ' + attr.value.value;
                   hasClassName = true;
                 } else if (propsMap[attr.name.name]) {
@@ -351,7 +352,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
               }
             });
             if (!hasClassName) {
-              node.attributes.push(t.jsxAttribute(t.jsxIdentifier(adapter.className), t.stringLiteral(propsMap.className)));
+              node.attributes.push(t.jsxAttribute(t.jsxIdentifier(classAttrName), t.stringLiteral(propsMap.className)));
             }
           }
         }
