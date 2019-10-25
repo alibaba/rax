@@ -339,7 +339,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           if (replaceName) {
             replaceComponentTagName(path, t.jsxIdentifier(replaceName));
             const propsMap = adapter[replaceName];
-            const classAttrName = adapter.styleKeyword ? 'class' : 'className';
+            const classAttrName = adapter.styleKeyword ? 'className' : 'class';
             let hasClassName = false;
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
