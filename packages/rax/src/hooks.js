@@ -138,8 +138,7 @@ function useEffectImpl(effect, inputs, defered) {
                 '    // ...\n' +
                 '  }\n' +
                 '  fetchData();\n' +
-                '}, [someId]); // Or [] if effect doesn\'t need props or state\n\n' +
-                'Learn more about data fetching with Hooks: https://fb.me/react-hooks-data-fetching';
+                '}, [someId]); // Or [] if effect doesn\'t need props or state';
             } else {
               msg = ' You returned: ' + current;
             }
