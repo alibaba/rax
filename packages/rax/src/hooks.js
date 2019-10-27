@@ -138,7 +138,7 @@ function useEffectImpl(effect, inputs, defered) {
                 '    // ...\n' +
                 '  }\n' +
                 '  fetchData();\n' +
-                '}, [someId]); // Or [] if effect doesn\'t need props or state';
+                '}, [someId]); // Or [] if effect doesn\'t need props or state.';
             } else {
               msg = ' You returned: ' + current;
             }
