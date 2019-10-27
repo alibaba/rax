@@ -4,6 +4,7 @@ import { is } from './vdom/shallowEqual';
 import { isArray, isFunction, isNull } from './types';
 import { invokeMinifiedError } from './error';
 import { INSTANCE } from './constant';
+import warning from './warning';
 
 function getCurrentInstance() {
   return Host.owner && Host.owner[INSTANCE];
@@ -116,6 +117,39 @@ function useEffectImpl(effect, inputs, defered) {
       if (current) {
         __destory.current = current();
         __create.current = null;
+
+        if (process.env.NODE_ENV === 'development') {
+          const { current } = __destory;
+          if (current !== undefined && typeof current !== 'function') {
+            let msg;
+            if (current === null) {
+              msg =
+                ' You returned null. If your effect does not require clean ' +
+                'up, return undefined (or nothing).';
+            } else if (typeof current.then === 'function') {
+              msg =
+                '\n\nIt looks like you wrote useEffect(async () => ...) or returned a Promise. ' +
+                'Instead, write the async function inside your effect ' +
+                'and call it immediately:\n\n' +
+                'useEffect(() => {\n' +
+                '  async function fetchData() {\n' +
+                '    // You can await here\n' +
+                '    const response = await MyAPI.getData(someId);\n' +
+                '    // ...\n' +
+                '  }\n' +
+                '  fetchData();\n' +
+                `}, [someId]); // Or [] if effect doesn't need props or state\n\n` +
+                'Learn more about data fetching with Hooks: https://fb.me/react-hooks-data-fetching';
+            } else {
+              msg = ' You returned: ' + current;
+            }
+
+            warning(
+              'An effect function must not return anything besides a function, ' +
+              'which is used for clean-up.' + msg,
+            );
+          }
+        }
       }
     };
 
