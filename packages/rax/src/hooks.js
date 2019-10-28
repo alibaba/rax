@@ -119,14 +119,14 @@ function useEffectImpl(effect, inputs, defered) {
         __create.current = null;
 
         if (process.env.NODE_ENV === 'development') {
-          const destoryCurrent = __destory.current;
-          if (destoryCurrent !== undefined && typeof destoryCurrent !== 'function') {
+          const currentDestory = __destory.current;
+          if (currentDestory !== undefined && typeof currentDestory !== 'function') {
             let msg;
-            if (destoryCurrent === null) {
+            if (currentDestory === null) {
               msg =
                 ' You returned null. If your effect does not require clean ' +
                 'up, return undefined (or nothing).';
-            } else if (typeof destoryCurrent.then === 'function') {
+            } else if (typeof currentDestory.then === 'function') {
               msg =
                 '\n\nIt looks like you wrote useEffect(async () => ...) or returned a Promise. ' +
                 'Instead, write the async function inside your effect ' +
@@ -140,7 +140,7 @@ function useEffectImpl(effect, inputs, defered) {
                 '  fetchData();\n' +
                 '}, [someId]); // Or [] if effect doesn\'t need props or state.';
             } else {
-              msg = ' You returned: ' + destoryCurrent;
+              msg = ' You returned: ' + currentDestory;
             }
 
             warning(
