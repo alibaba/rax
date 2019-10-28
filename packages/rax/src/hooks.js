@@ -4,6 +4,7 @@ import { is } from './vdom/shallowEqual';
 import { isArray, isFunction, isNull } from './types';
 import { invokeMinifiedError } from './error';
 import { INSTANCE } from './constant';
+import warning from './warning';
 
 function getCurrentInstance() {
   return Host.owner && Host.owner[INSTANCE];
@@ -116,6 +117,38 @@ function useEffectImpl(effect, inputs, defered) {
       if (current) {
         __destory.current = current();
         __create.current = null;
+
+        if (process.env.NODE_ENV === 'development') {
+          const currentDestory = __destory.current;
+          if (currentDestory !== undefined && typeof currentDestory !== 'function') {
+            let msg;
+            if (currentDestory === null) {
+              msg =
+                ' You returned null. If your effect does not require clean ' +
+                'up, return undefined (or nothing).';
+            } else if (typeof currentDestory.then === 'function') {
+              msg =
+                '\n\nIt looks like you wrote useEffect(async () => ...) or returned a Promise. ' +
+                'Instead, write the async function inside your effect ' +
+                'and call it immediately:\n\n' +
+                'useEffect(() => {\n' +
+                '  async function fetchData() {\n' +
+                '    // You can await here\n' +
+                '    const response = await MyAPI.getData(someId);\n' +
+                '    // ...\n' +
+                '  }\n' +
+                '  fetchData();\n' +
+                '}, [someId]); // Or [] if effect doesn\'t need props or state.';
+            } else {
+              msg = ' You returned: ' + currentDestory;
+            }
+
+            warning(
+              'An effect function must not return anything besides a function, ' +
+              'which is used for clean-up.' + msg,
+            );
+          }
+        }
       }
     };
 
