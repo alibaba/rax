@@ -11,6 +11,9 @@ module.exports = {
     'jest-localstorage-mock'
   ],
   'setupTestFrameworkScriptFile': './scripts/jest/setupTests.js',
+  'moduleNameMapper': {
+    '\\.css$': '<rootDir>/scripts/jest/styleMock.js',
+  },
   'testPathIgnorePatterns': [
     '/node_modules/',
     '/fixtures/',

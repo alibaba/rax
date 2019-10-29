@@ -1,4 +1,5 @@
 import { render, createElement, useState, useEffect } from 'rax';
+import { Wrapper } from 'rax-pwa';
 import { isWeex, isWeb } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
@@ -9,6 +10,7 @@ const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
 const SHELL_DATA = 'shellData';
 
 let history;
+let appConfig;
 let launched = false;
 const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
 
@@ -56,6 +58,21 @@ function App(props) {
       // Early return null if initialProps were not get.
       return null;
     }
+
+    if (isWeb) {
+      return createElement(
+        Wrapper,
+        Object.assign(
+          {
+            _appConfig: appConfig,
+            _component: component,
+          },
+          props,
+          pageInitialProps[component.__path]
+        )
+      );
+    }
+
     return createElement(component, Object.assign({}, props, pageInitialProps[component.__path]));
   }
 }
@@ -64,11 +81,11 @@ function isNullableComponent(component) {
   return !component || Array.isArray(component) && component.length === 0;
 }
 
-export default function runApp(appConfig) {
+export default function runApp(config) {
   if (launched) throw new Error('Error: runApp can only be called once.');
   launched = true;
-
-  const { routes, shell, hydrate = false } = appConfig;
+  appConfig = config;
+  const { hydrate = false, routes, shell } = appConfig;
 
   if (isWeex) {
     history = createMemoryHistory();
@@ -85,6 +102,12 @@ export default function runApp(appConfig) {
     .then((initialComponent) => {
       _initialComponent = initialComponent;
       let appInstance = createElement(App, {
+        preload: () => {
+          // Only works in Web project for now.
+        },
+        prerender: () => {
+          // Only works in Web project for now.
+        },
         history,
         routes,
         InitialComponent: _initialComponent

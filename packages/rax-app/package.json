@@ -17,6 +17,7 @@
     "driver-universal": "^2.0.0",
     "history": "^4.9.0",
     "querystring": "^0.2.0",
+    "rax-pwa": "^1.1.0",
     "rax-use-router": "^3.0.0",
     "universal-env": "^1.0.7"
   },
