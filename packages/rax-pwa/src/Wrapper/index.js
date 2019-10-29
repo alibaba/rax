@@ -63,7 +63,7 @@ export default function Wrapper(props) {
     }
   });
 
-  // preload({path: 'pages/Home/index'});
+  // preload({path: '/page1'});
   // preload({href: '//xxx.com/font.woff', as: 'font', crossorigin: true});
   pageProps.preload = (config) => {
     if (config.path) {
@@ -79,7 +79,7 @@ export default function Wrapper(props) {
     }
   };
 
-  // rerender({path: 'pages/Home/index'});
+  // rerender({path: '/page1'});
   // rerender({href:'https://m.taobao.com'});
   pageProps.prerender = config => {
     if (config.path) {
