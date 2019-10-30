@@ -445,12 +445,15 @@ class CompositeComponent extends BaseComponent {
       // If getChildContext existed and invoked when component updated that will make
       // prevRenderedUnmaskedContext not equal nextRenderedUnmaskedContext under the tree
       if (prevRenderedElement !== nextRenderedElement || prevRenderedUnmaskedContext !== nextRenderedUnmaskedContext) {
-        prevRenderedComponent.__updateComponent(
-          prevRenderedElement,
-          nextRenderedElement,
-          prevRenderedUnmaskedContext,
-          nextRenderedUnmaskedContext
-        );
+        // If element type is illegal catch the error
+        performInSandbox(() => {
+          prevRenderedComponent.__updateComponent(
+            prevRenderedElement,
+            nextRenderedElement,
+            prevRenderedUnmaskedContext,
+            nextRenderedUnmaskedContext
+          );
+        }, instance);
       }
 
       if (process.env.NODE_ENV !== 'production') {
