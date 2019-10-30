@@ -267,10 +267,12 @@ describe('CompositeComponent', function() {
     class BrokenRender extends Component {
       state = {str: 'Hello'};
       componentDidMount() {
-        this.setState({
-          str: {
-            a: 2
-          }
+        setTimeout(() => {
+          this.setState({
+            str: {
+              a: 2
+            }
+          });
         });
       }
       render() {
