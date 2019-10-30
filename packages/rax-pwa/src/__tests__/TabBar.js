@@ -16,34 +16,34 @@ jest.mock('universal-env', () => {
 const defaultPathname = '/';
 const testProps = {
   history: createMemoryHistory(),
-  pathname: defaultPathname,
-  textColor: 'green',
-  selectedColor: 'red',
-  items: [
-    {
-      'name': 'welcome',
-      'pagePath': '/'
-    },
-    {
-      'name': 'page1',
-      'pagePath': '/page1'
-    },
-    {
-      'name': 'page2',
-      'pagePath': '/page2'
-    }
-  ]
+  config: {
+    textColor: 'green',
+    selectedColor: 'red',
+    items: [
+      {
+        'name': 'welcome',
+        'pagePath': '/'
+      },
+      {
+        'name': 'page1',
+        'pagePath': '/page1'
+      },
+      {
+        'name': 'page2',
+        'pagePath': '/page2'
+      }
+    ]
+  }
 };
 
 describe('PWA TabBar', () => {
-  beforeEach(() => {
-    testProps.history.push(defaultPathname);
-  });
-
   it('render TabBar', () => {
     const component = renderer.create(
       <TabBar {...testProps} />
     );
+
+    testProps.history.push('/');
+    component.update(<TabBar {...testProps} />);
 
     const tree = component.toJSON();
     const firstTab = tree.children[0];
@@ -56,16 +56,21 @@ describe('PWA TabBar', () => {
     expect(firstTabTxt.tagName).toEqual('SPAN');
 
     // check select tab
-    expect(firstTabTxt.style.color).toEqual(testProps.selectedColor);
-    expect(secondTabTxt.style.color).toEqual(testProps.textColor);
+    expect(firstTabTxt.style.color).toEqual(testProps.config.selectedColor);
+    expect(secondTabTxt.style.color).toEqual(testProps.config.textColor);
   });
 
   it('click TabBar', () => {
     const component = renderer.create(
       <TabBar {...testProps} />
     );
+
+    testProps.history.push('/');
+    component.update(<TabBar {...testProps} />);
+
     const tree = component.toJSON();
     tree.children[1].eventListeners.click();
-    expect(testProps.history.location.pathname).toEqual(testProps.items[1].pagePath);
+    component.update(<TabBar {...testProps} />);
+    expect(tree.children[1].children[0].style.color).toEqual(testProps.config.selectedColor);
   });
 });

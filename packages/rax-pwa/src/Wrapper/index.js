@@ -1,4 +1,4 @@
-import { createElement, Fragment, useEffect, useState } from 'rax';
+import { createElement, useEffect, useState, Fragment } from 'rax';
 import View from 'rax-view';
 import TabBar from '../TabBar/index';
 
@@ -33,11 +33,6 @@ export default function Wrapper(props) {
   const currentPathname = history.location.pathname;
   const currentPage = routes.find(route => route.path === currentPathname);
 
-  const showTabBar =
-    // Have tabBar config
-    typeof tabBar === 'object' && Array.isArray(tabBar.items)
-    // Current page need show tabBar
-    && tabBar.items.find(item => item.pagePath === currentPage.path);
   const isAlivePage = currentPage.keepAlive;
   useEffect(() => {
     history.listen(() => {
@@ -127,13 +122,10 @@ export default function Wrapper(props) {
         })}
       </View>
 
-      {showTabBar ? (
-        <TabBar
-          {...tabBar}
-          history={history}
-          pathname={currentPathname}
-        />
-      ) : null}
+      <TabBar
+        config={tabBar}
+        history={history}
+      />
     </Fragment>
   );
 }
