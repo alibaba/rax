@@ -2,8 +2,10 @@
  * Driver for Web DOM
  **/
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
+const NON_DIMENSIONAL_REG = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord/i;
+const EVENT_PREFIX_REG = /^on[A-Z]/;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
-const __HTML = '__html';
+const HTML = '__html';
 const INNER_HTML = 'innerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
@@ -15,7 +17,6 @@ const CREATE_COMMENT = 'createComment';
 const CREATE_TEXT_NODE = 'createTextNode';
 const SET_ATTRIBUTE = 'setAttribute';
 const REMOVE_ATTRIBUTE = 'removeAttribute';
-const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
@@ -86,9 +87,10 @@ function isRpx(str) {
 }
 
 // Cache the convert fn.
-const convertUnit = cached((value) => isRpx(value) ? calcRpxToVw(value) : value);
+const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
 
-const isEventProp = cached((prop) => EVENT_PREFIX_REGEXP.test(prop));
+const isDimensionalProp = cached(prop => !NON_DIMENSIONAL_REG.test(prop));
+const isEventProp = cached(prop => EVENT_PREFIX_REG.test(prop));
 
 export function setTagNamePrefix(prefix) {
   tagNamePrefix = prefix;
@@ -308,8 +310,8 @@ export function removeAttribute(node, propKey) {
 
 export function setAttribute(node, propKey, propValue) {
   // For reduce innerHTML operation to improve performance.
-  if (propKey === DANGEROUSLY_SET_INNER_HTML && node[INNER_HTML] !== propValue[__HTML]) {
-    return node[INNER_HTML] = propValue[__HTML];
+  if (propKey === DANGEROUSLY_SET_INNER_HTML && node[INNER_HTML] !== propValue[HTML]) {
+    return node[INNER_HTML] = propValue[HTML];
   }
 
   if (propKey === CLASS_NAME) propKey = CLASS;
@@ -328,10 +330,18 @@ export function setAttribute(node, propKey, propValue) {
 
 export function setStyle(node, style) {
   for (let prop in style) {
-    // Support CSS custom properties
-    const convertedValue = convertUnit(style[prop]);
+    const value = style[prop];
+    let convertedValue;
+    if (typeof value === 'number' && isDimensionalProp(prop)) {
+      convertedValue = value + 'px';
+    } else {
+      convertedValue = convertUnit(value);
+    }
+
+    // Support CSS custom properties (variables) like { --main-color: "black" }
     if (prop[0] === '-' && prop[1] === '-') {
-      // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty. style.setProperty do not support Camel-Case style properties.
+      // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty.
+      // style.setProperty do not support Camel-Case style properties.
       node.style.setProperty(prop, convertedValue);
     } else {
       node.style[prop] = convertedValue;
@@ -370,5 +380,5 @@ export function afterRender({ container }) {
  * @NOTE: Optimization at web.
  */
 export function removeChildren(node) {
-  node.textContent = '';
+  node.textContent = EMPTY;
 }
