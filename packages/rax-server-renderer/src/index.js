@@ -205,6 +205,12 @@ function rpx2vw(val, opts) {
   return parsedVal;
 }
 
+function checkContext(element) {
+  if (element.contextTypes || element.childConextTypes) {
+    console.warn('Warning: The legacy property: contextTypes and childContextTypes will be ignored .');
+  }
+}
+
 const updater = {
   setState(component, partialState, callback) {
     if (partialState) {
@@ -339,6 +345,10 @@ function renderElementToString(element, context, options) {
         }
       }
 
+      if (process.env.NODE_ENV !== 'production') {
+        checkContext(type);
+      }
+
       var renderedElement = instance.render();
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'function') {
@@ -352,6 +362,10 @@ function renderElementToString(element, context, options) {
         __getName: () => type.name,
         _instance: instance
       };
+
+      if (process.env.NODE_ENV !== 'production') {
+        checkContext(type);
+      }
 
       const renderedElement = instance.render();
       return renderElementToString(renderedElement, context, options);
