@@ -207,7 +207,11 @@ function rpx2vw(val, opts) {
 
 function checkContext(element) {
   if (element.contextTypes || element.childConextTypes) {
-    console.warn('Warning: The legacy property: contextTypes and childContextTypes will be ignored .');
+    try {
+      throw new Error(
+        'Warning: The legacy property contextTypes and childContextTypes will be ignored.'
+      );
+    } catch (e) {}
   }
 }
 
