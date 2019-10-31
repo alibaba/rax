@@ -4,30 +4,36 @@ import TabBar from '../TabBar/index';
 
 import styles from './index.css';
 
-let updatePageTrigger = () => { };
+let _maxAlivePageNum = 3;
+let _pageProps = {};
+let _routes = [];
+let _updatePageTrigger = () => { };
 
 const alivePages = [];
 const alivePagesCache = {};
 
-const activatePageComponent = (route, pageProps, maxAlivePageNum) => {
+export function activatePageComponent(route) {
   route.component()
     .then(fn => fn())
     .then((Page) => {
-      alivePagesCache[route.path] = <Page {...pageProps} />;
+      alivePagesCache[route.path] = <Page {..._pageProps} />;
       // Prevent cache from being too large
-      if (Object.keys(alivePagesCache).length > maxAlivePageNum) {
+      if (Object.keys(alivePagesCache).length > _maxAlivePageNum) {
         delete alivePagesCache[Object.keys(alivePagesCache)[0]];
       }
-      updatePageTrigger(Date.now());
+      _updatePageTrigger(Date.now());
     });
 };
 
-export default function Wrapper(props) {
+export function getRoutes() {
+  return _routes;
+}
+
+export default function Navigation(props) {
   const { history, routes, _appConfig, _component } = props;
-  const { maxAlivePageNum = 3, tabBar } = _appConfig;
+  const { maxAlivePageNum, tabBar } = _appConfig;
 
   const [updateTemp, setUpdateTemp] = useState(null);
-  updatePageTrigger = setUpdateTemp;
 
   const Component = _component;
   const currentPathname = history.location.pathname;
@@ -36,7 +42,7 @@ export default function Wrapper(props) {
   const isAlivePage = currentPage.keepAlive;
   useEffect(() => {
     history.listen(() => {
-      updatePageTrigger(Date.now());
+      _updatePageTrigger(Date.now());
     });
     // Use display control alive page, need get alive page list.
     routes.forEach((route) => {
@@ -46,7 +52,7 @@ export default function Wrapper(props) {
     });
     // If current page is alive page, need update routes.
     if (isAlivePage) {
-      updatePageTrigger(Date.now());
+      _updatePageTrigger(Date.now());
     }
   }, []);
 
@@ -58,41 +64,10 @@ export default function Wrapper(props) {
     }
   });
 
-  // preload({path: '/page1'});
-  // preload({href: '//xxx.com/font.woff', as: 'font', crossorigin: true});
-  pageProps.preload = (config) => {
-    if (config.path) {
-      const targetRoute = routes.find(route => route.path === config.path);
-      targetRoute && targetRoute.component();
-    } else {
-      const linkElement = document.createElement('link');
-      linkElement.rel = 'preload';
-      linkElement.as = config.as;
-      linkElement.href = config.href;
-      config.crossorigin && (linkElement.crossorigin = true);
-      document.head.appendChild(linkElement);
-    }
-  };
-
-  // rerender({path: '/page1'});
-  // rerender({href:'https://m.taobao.com'});
-  pageProps.prerender = config => {
-    if (config.path) {
-      const targetRoute = routes.find(route => route.path === config.path);
-      if (targetRoute) {
-        if (targetRoute.keepAlive) {
-          activatePageComponent(targetRoute, pageProps, maxAlivePageNum);
-        } else {
-          targetRoute.component();
-        }
-      }
-    } else {
-      const linkElement = document.createElement('link');
-      linkElement.rel = 'prerender';
-      linkElement.href = config.href;
-      document.head.appendChild(linkElement);
-    }
-  };
+  _pageProps = pageProps;
+  _routes = routes;
+  _updatePageTrigger = setUpdateTemp;
+  maxAlivePageNum && (_maxAlivePageNum = maxAlivePageNum);
 
   return (
     <Fragment>
@@ -108,7 +83,7 @@ export default function Wrapper(props) {
           const alivePageRoute = routes.find(route => route.path === alivePage.path);
           const isCurrentPage = alivePageRoute.path === currentPage.path;
           const alivePageComponent = alivePagesCache[alivePageRoute.path] || null;
-          if (isCurrentPage && !alivePageComponent) activatePageComponent(alivePageRoute, pageProps, maxAlivePageNum);
+          if (isCurrentPage && !alivePageComponent) activatePageComponent(alivePageRoute);
           return (
             <View
               key={`alivePage${index}`}

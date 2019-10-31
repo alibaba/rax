@@ -2,7 +2,7 @@ import { createElement } from 'rax';
 import renderer from 'rax-test-renderer';
 import Text from 'rax-text';
 import { createMemoryHistory } from 'history';
-import Wrapper from '../../lib/Wrapper/index';
+import Navigation from '../../lib/Navigation/index';
 
 jest.mock('universal-env', () => {
   return {
@@ -67,18 +67,18 @@ const testProps = {
 };
 
 
-describe('PWA Wrapper', () => {
+describe('PWA Navigation', () => {
   beforeEach(function() {
     jest.useFakeTimers();
   });
-  it('render Wrapper', async() => {
+  it('render Navigation', async() => {
     const component = renderer.create(
-      <Wrapper {...testProps} />
+      <Navigation {...testProps} />
     );
 
     testProps.history.push('/');
     // await dynamic import
-    await component.update(<Wrapper {...testProps} />);
+    await component.update(<Navigation {...testProps} />);
     let tree = component.toJSON();
 
     // There 2 alive page placeholder and 3 tabs;
@@ -91,7 +91,7 @@ describe('PWA Wrapper', () => {
 
 
     testProps.history.push('/page2');
-    await component.update(<Wrapper {...testProps} />);
+    await component.update(<Navigation {...testProps} />);
 
     tree = component.toJSON();
     expect(tree[0].children[0]).toEqual('Page: ROUTER');

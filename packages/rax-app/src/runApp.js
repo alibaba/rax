@@ -1,5 +1,5 @@
-import { render, createElement, useState, useEffect } from 'rax';
-import { Wrapper } from 'rax-pwa';
+import { render, createElement, useState, useEffect, Fragment } from 'rax';
+import { Navigation, TabBar } from 'rax-pwa';
 import { isWeex, isWeb } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
@@ -61,7 +61,7 @@ function App(props) {
 
     if (isWeb) {
       return createElement(
-        Wrapper,
+        Navigation,
         Object.assign(
           {
             _appConfig: appConfig,
@@ -73,7 +73,12 @@ function App(props) {
       );
     }
 
-    return createElement(component, Object.assign({}, props, pageInitialProps[component.__path]));
+    return createElement(
+      Fragment,
+      null,
+      createElement(component, Object.assign({}, props, pageInitialProps[component.__path])),
+      createElement(TabBar, { history, config: appConfig.tabBar })
+    );
   }
 }
 
