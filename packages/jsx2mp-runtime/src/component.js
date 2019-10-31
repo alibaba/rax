@@ -3,7 +3,7 @@
  * Base Component class definition.
  */
 import Host from './host';
-import {updateChildProps, removeComponentProps} from './updater';
+import {updateChildProps, removeComponentProps, getComponentProps} from './updater';
 import {enqueueRender} from './enqueueRender';
 import isFunction from './isFunction';
 import sameValue from './sameValue';
@@ -312,7 +312,8 @@ export default class Component {
    */
   _setInternal(internal) {
     this._internal = internal;
-    this.props = internal[PROPS];
+    const props = internal[PROPS];
+    this.props = Object.assign({}, props, getComponentProps(props.__tagId));
     if (!this.state) this.state = {};
     Object.assign(this.state, internal.data);
   }

@@ -64,7 +64,7 @@ describe('Transform list', () => {
       }</View>`;
     const ast = parseExpression(raw);
     _transformList(ast, [], adapter);
-    expect(genCode(ast).code).toEqual(`<View class="coupon-list"><block a:for={couponList.map(coupon => ({
+    expect(genCode(ast).code).toEqual(`<View class="coupon-list"><block a:for={couponList.map((coupon, index) => ({
     coupon: coupon
   }))} a:for-item="coupon" a:for-index="index"><Coupon coupon={coupon} onClick={this.handleClick} data-arg-context="this" data-arg-0={coupon} /></block></View>`);
   });
@@ -107,11 +107,21 @@ describe('Transform list', () => {
     expect(genCode(ast, { concise: true }).code).toEqual(`<View className="header" onClick={() => { setWorkYear(workYear + 1); }}>
   <View style={{ color: 'red' }}>workYear: {workYear}</View>
   <View style={{ color: 'red' }}>count: {count}</View>
-  <block a:for={arr.map(l1 => { return { l1: l1, l2: l2 }; })} a:for-item="l1" a:for-index="index"><View>
-        <block a:for={l1.map(l2 => { return { l2: l2 }; })} a:for-item="l2" a:for-index="index"><View>{l2}</View></block>
+  <block a:for={arr.map((l1, index) => { return { l1: l1, l2: l2, index: index }; })} a:for-item="l1" a:for-index="index"><View>
+        <block a:for={l1.map((l2, index) => { return { l2: l2 }; })} a:for-item="l2" a:for-index="index"><View>{l2}</View></block>
       </View></block>
   <Loading count={count} />
   {props.children}
 </View>`);
+  });
+
+  it('list default params', () => {
+    const raw = `<View>{[1,2,3].map(() => {
+      return <Text>test</Text>;
+    })}</View>`;
+    const ast = parseExpression(raw);
+    _transformList(ast, [], adapter);
+
+    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={[1, 2, 3].map((item, index) => { return {}; })} a:for-item="item" a:for-index="index"><Text>test</Text></block></View>');
   });
 });
