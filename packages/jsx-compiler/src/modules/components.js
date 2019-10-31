@@ -8,7 +8,7 @@ const traverse = require('../utils/traverseNodePath');
 const moduleResolve = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
 const Expression = require('../utils/Expression');
-const baseComponents = require('../baseComponents');
+const compiledComponents = require('../compiledComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
@@ -31,42 +31,44 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   } = parsed;
   // Miniapp template tag name does not support special characters.
   const componentTag = alias.name.replace(/@|\//g, '_');
-  const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
-  // <tag __tagId="tagId" />
-  let tagId = '' + tagCount++;
-  if (parentJSXListEl) {
-    const { args } = parentJSXListEl.node.__jsxlist;
-    const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
-    parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
-    tagId += '-{{' + indexValue + '}}';
-  }
-  parentPath.node.__tagId = tagId;
-  componentDependentProps[tagId] = componentDependentProps[tagId] || {};
-  if (parentPath.node.__tagIdExpression) {
-    componentDependentProps[tagId].tagIdExpression =
-      parentPath.node.__tagIdExpression;
-
-    if (renderFunctionPath) {
-      const { loopFnBody } = parentJSXListEl.node.__jsxlist;
-      componentDependentProps[tagId].parentNode = loopFnBody.body;
-    }
-  }
-
-  if (alias.isCustomEl) {
-    node.attributes.push(
-      t.jsxAttribute(
-        t.jsxIdentifier('__parentId'),
-        t.stringLiteral('{{__tagId}}'),
-      ),
-    );
-  }
-
-  node.attributes.push(
-    t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
-  );
-
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
-  if (!baseComponents[componentTag]) {
+
+  if (!compiledComponents[componentTag]) {
+    const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
+    // <tag __tagId="tagId" />
+    let tagId = '' + tagCount++;
+
+    if (parentJSXListEl) {
+      const { args } = parentJSXListEl.node.__jsxlist;
+      const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
+      parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+      tagId += '-{{' + indexValue + '}}';
+    }
+    parentPath.node.__tagId = tagId;
+    componentDependentProps[tagId] = componentDependentProps[tagId] || {};
+    if (parentPath.node.__tagIdExpression) {
+      componentDependentProps[tagId].tagIdExpression =
+        parentPath.node.__tagIdExpression;
+
+      if (renderFunctionPath) {
+        const { loopFnBody } = parentJSXListEl.node.__jsxlist;
+        componentDependentProps[tagId].parentNode = loopFnBody.body;
+      }
+    }
+
+    if (alias.isCustomEl) {
+      node.attributes.push(
+        t.jsxAttribute(
+          t.jsxIdentifier('__parentId'),
+          t.stringLiteral('{{__tagId}}'),
+        ),
+      );
+    }
+
+    node.attributes.push(
+      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+    );
+
     /**
      * Handle with special attrs.
      */

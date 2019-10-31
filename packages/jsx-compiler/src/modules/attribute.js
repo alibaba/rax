@@ -2,7 +2,7 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
-const baseComponents = require('../baseComponents');
+const compiledComponents = require('../compiledComponents');
 
 function transformAttribute(ast, code, adapter) {
   const refs = [];
@@ -46,7 +46,7 @@ function isNativeComponent(path) {
   const {
     node: { name: tagName }
   } = path.parentPath.get('name');
-  return !!baseComponents[tagName];
+  return !!compiledComponents[tagName];
 }
 
 module.exports = {
