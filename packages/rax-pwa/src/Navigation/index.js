@@ -16,6 +16,10 @@ export function activatePageComponent(route) {
   route.component()
     .then(fn => fn())
     .then((Page) => {
+      if (!route.keepAlive) {
+        // ignore page without keepAlive
+        return false;
+      }
       alivePagesCache[route.path] = <Page {..._pageProps} />;
       // Prevent cache from being too large
       if (Object.keys(alivePagesCache).length > _maxAlivePageNum) {
