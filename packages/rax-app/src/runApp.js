@@ -75,7 +75,7 @@ function App(props) {
 
     return createElement(
       Fragment,
-      null,
+      {},
       createElement(component, Object.assign({}, props, pageInitialProps[component.__path])),
       createElement(TabBar, { history, config: appConfig.tabBar })
     );

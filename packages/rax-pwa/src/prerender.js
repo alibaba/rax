@@ -1,9 +1,9 @@
 import { isWeb } from 'universal-env';
 import { getRoutes, activatePageComponent } from './Navigation/index';
 
-// rerender({path: '/page1'});
-// rerender({href:'https://m.taobao.com'});
-export default function preload(config) {
+// prerender({path: '/page1'});
+// prerender({href:'https://m.taobao.com'});
+export default function prerender(config) {
   if (isWeb) {
     if (config.path) {
       const routes = getRoutes() || [];
@@ -15,12 +15,14 @@ export default function preload(config) {
           targetRoute.component();
         }
       }
-    } else {
+    } else if (config.href) {
+      // https://www.w3.org/TR/resource-hints/#prerender
       const linkElement = document.createElement('link');
       linkElement.rel = 'prerender';
       linkElement.href = config.href;
       document.head.appendChild(linkElement);
     }
+  } else {
+    // ignore
   }
-  // ignore
 };
