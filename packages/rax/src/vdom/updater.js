@@ -1,7 +1,6 @@
 import Host from './host';
 import { flushEffect, schedule, flushLayout } from './scheduler';
-import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
-import performInSandbox from './performInSandbox';
+import { INTERNAL, RENDERED_COMPONENT } from '../constant';
 
 // Dirty components store
 let dirtyComponents = [];
@@ -46,17 +45,14 @@ function runUpdate(component) {
   internal.__penddingContext = undefined;
 
   if (getPendingStateQueue(internal) || internal.__isPendingForceUpdate) {
-    const instance = internal[INSTANCE];
-    performInSandbox(() => {
-      internal.__updateComponent(
-        prevElement,
-        prevElement,
-        prevUnmaskedContext,
-        nextUnmaskedContext
-      );
-    }, instance);
+    internal.__updateComponent(
+      prevElement,
+      prevElement,
+      prevUnmaskedContext,
+      nextUnmaskedContext
+    );
 
-    performInSandbox(flushLayout, instance);
+    flushLayout();
   }
 
   Host.__isUpdating = false;

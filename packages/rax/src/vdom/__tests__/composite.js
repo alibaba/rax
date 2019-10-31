@@ -217,6 +217,44 @@ describe('CompositeComponent', function() {
     ]);
   });
 
+  it('not break other component render when one component rise an error', () => {
+    let container = createNodeElement('div');
+    class MyComponent extends Component {
+      render() {
+        return [
+          <BrokenRender key="a" />,
+          <NoBrokenRender key="b" />
+        ];
+      }
+    }
+
+    class BrokenRender extends Component {
+      constructor() {
+        throw new Error('Hello');
+      }
+      render() {
+        return (
+          <span>Hello 1</span>
+        );
+      }
+    }
+
+    class NoBrokenRender extends Component {
+      render() {
+        return (
+          <span>Hello 2</span>
+        );
+      }
+    }
+
+    expect(() => {
+      render(<MyComponent />, container);
+      jest.runAllTimers();
+    }).toThrowError(/Hello/);
+
+    expect(container.childNodes[0].childNodes[0].data).toBe('Hello 2');
+  });
+
   it('catches render error in a boundary', () => {
     let container = createNodeElement('div');
     class ErrorBoundary extends Component {

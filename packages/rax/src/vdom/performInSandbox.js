@@ -6,7 +6,6 @@ export default function performInSandbox(fn, instance, callback) {
   try {
     return fn();
   } catch (e) {
-    debugger;
     if (callback) {
       callback(e);
     } else {
