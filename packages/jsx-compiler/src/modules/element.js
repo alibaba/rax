@@ -173,7 +173,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
         path.remove();
         break;
 
-      // <tag xxxlick={() => {}} /> => <tag onClick="_e0" />
+      // <tag onClick={() => {}} /> => <tag onClick="_e0" />
       // <tag>{() => {}}</tag> => throw Error
       case 'ArrowFunctionExpression':
       case 'FunctionExpression':
