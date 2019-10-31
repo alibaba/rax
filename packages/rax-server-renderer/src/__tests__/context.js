@@ -225,7 +225,9 @@ describe('context', () => {
 
   // contextTypes & childContextTypes is not work in ssr
   describe('legacy context', function() {
-    let PurpleContext, RedContext;
+    let Warning = 'Warning: The legacy property contextTypes and childContextTypes will be ignored.';
+
+    let PurpleContext;
     beforeEach(() => {
       class Parent extends Component {
         getChildContext() {
@@ -235,213 +237,73 @@ describe('context', () => {
           return this.props.children;
         }
       }
-      Parent.childContextTypes = {text: PropTypes.string};
 
       PurpleContext = props => <Parent text="purple">{props.children}</Parent>;
-      RedContext = props => <Parent text="red">{props.children}</Parent>;
     });
 
-    it('class child with context', () => {
-      class ClassChildWithContext extends Component {
-        render() {
-          return <div>{this.context.text}</div>;
+    it('class child with contextTypes', () => {
+      expect(() => {
+        class ClassChildWithContext extends Component {
+          render() {
+            return <div>{this.context.text}</div>;
+          }
         }
-      }
-      ClassChildWithContext.contextTypes = {text: PropTypes.string};
+        ClassChildWithContext.contextTypes = {text: PropTypes.string};
 
-      const str = renderToString(
-        <PurpleContext>
-          <ClassChildWithContext />
-        </PurpleContext>
-      );
-
-      expect(str).toBe('<div>purple</div>');
-    });
-
-    it('stateless child with context', () => {
-      function FunctionChildWithContext(props, context) {
-        return <div>{context.text}</div>;
-      }
-      FunctionChildWithContext.contextTypes = {text: PropTypes.string};
-
-      const str = renderToString(
-        <PurpleContext>
-          <FunctionChildWithContext />
-        </PurpleContext>
-      );
-
-      expect(str).toBe('<div>purple</div>');
-    });
-
-    it('class child without context', () => {
-      class ClassChildWithoutContext extends Component {
-        render() {
-          return <div>{this.context.text}</div>;
-        }
-      }
-
-      const str = renderToString(
-        <PurpleContext>
-          <ClassChildWithoutContext />
-        </PurpleContext>
-      );
-
-      expect(str).toBe('<div>purple</div>');
-    });
-
-    it('stateless child without context', () => {
-      function FunctionChildWithContext(props, context) {
-        return <div>{context.text}</div>;
-      }
-
-      const str = renderToString(
-        <PurpleContext>
-          <FunctionChildWithContext />
-        </PurpleContext>
-      );
-
-      expect(str).toBe('<div>purple</div>');
-    });
-
-    it('class child with wrong context', () => {
-      class ClassChildWithWrongContext extends Component {
-        render() {
-          return <div id="classWrongChild">{this.context.text}</div>;
-        }
-      }
-      ClassChildWithWrongContext.contextTypes = {foo: PropTypes.string};
-
-      const str = renderToString(
-        <PurpleContext>
-          <ClassChildWithWrongContext />
-        </PurpleContext>,
-      );
-
-      expect(str).toBe('<div id="classWrongChild">purple</div>');
-    });
-
-    it('stateless child with wrong context', () => {
-      function FunctionChildWithWrongContext(props, context) {
-        return <div id="statelessWrongChild">{context.text}</div>;
-      }
-      FunctionChildWithWrongContext.contextTypes = {
-        foo: PropTypes.string,
-      };
-
-      const str = renderToString(
-        <PurpleContext>
-          <FunctionChildWithWrongContext />
-        </PurpleContext>,
-      );
-
-      expect(str).toBe('<div id="statelessWrongChild">purple</div>');
-    });
-
-    it('with context passed through to a grandchild', () => {
-      function Grandchild(props, context) {
-        return <div>{context.text}</div>;
-      }
-      Grandchild.contextTypes = {text: PropTypes.string};
-
-      const Child = props => <Grandchild />;
-
-      const str = renderToString(
-        <PurpleContext>
-          <Child />
-        </PurpleContext>,
-      );
-
-      expect(str).toBe('<div>purple</div>');
-    });
-
-    it('a child context overriding a parent context', () => {
-      const Grandchild = (props, context) => {
-        return <div>{context.text}</div>;
-      };
-      Grandchild.contextTypes = {text: PropTypes.string};
-
-      const str = renderToString(
-        <PurpleContext>
-          <RedContext>
-            <Grandchild />
-          </RedContext>
-        </PurpleContext>,
-      );
-
-      expect(str).toBe('<div>red</div>');
-    });
-
-    it('a child context merged with a parent context', () => {
-      class Parent extends Component {
-        getChildContext() {
-          return {text1: 'purple'};
-        }
-        render() {
-          return <Child />;
-        }
-      }
-      Parent.childContextTypes = {text1: PropTypes.string};
-
-      class Child extends Component {
-        getChildContext() {
-          return {text2: 'red'};
-        }
-        render() {
-          return <Grandchild />;
-        }
-      }
-      Child.childContextTypes = {text2: PropTypes.string};
-
-      const Grandchild = (props, context) => {
-        return (
-          <div>
-            <div id="first">{context.text1}</div>
-            <div id="second">{context.text2}</div>
-          </div>
+        const str = renderToString(
+          <PurpleContext>
+            <ClassChildWithContext />
+          </PurpleContext>
         );
-      };
-      Grandchild.contextTypes = {
-        text1: PropTypes.string,
-        text2: PropTypes.string,
-      };
 
-      const str = renderToString(<Parent />);
-      expect(str).toBe('<div><div id="first">purple</div><div id="second">red</div></div>');
+        expect(str).toBe('<div>purple</div>');
+      }).toWarnDev(Warning, {withoutStack: true});
     });
 
-    it('if getChildContext exists but childContextTypes is missing', () => {
-      function HopefulChild(props, context) {
-        return context.foo || 'nope';
-      }
-      HopefulChild.contextTypes = {
-        foo: PropTypes.string,
-      };
-      class ForgetfulParent extends Component {
-        render() {
-          return <HopefulChild />;
+    it('stateless child with contextTypes', () => {
+      expect(() => {
+        function FunctionChildWithContext(props, context) {
+          return <div>{context.text}</div>;
         }
-        getChildContext() {
-          return {foo: 'bar'};
-        }
-      }
+        FunctionChildWithContext.contextTypes = {text: PropTypes.string};
 
-      const str = renderToString(<ForgetfulParent />);
-      expect(str).toBe('bar');
+        const str = renderToString(
+          <PurpleContext>
+            <FunctionChildWithContext />
+          </PurpleContext>
+        );
+
+        expect(str).toBe('<div>purple</div>');
+      }).toWarnDev(Warning, {withoutStack: true});
     });
 
-    it('if getChildContext returns a value not in childContextTypes', () => {
-      class MyComponent extends Component {
-        render() {
-          return <div />;
+    it('parent with childContextTypes', () => {
+      expect(() => {
+        class Parent extends Component {
+          getChildContext() {
+            return {text: this.props.text};
+          }
+          render() {
+            return this.props.children;
+          }
         }
-        getChildContext() {
-          return {value1: 'foo', value2: 'bar'};
-        }
-      }
-      MyComponent.childContextTypes = {value1: PropTypes.string};
 
-      const str = renderToString(<MyComponent />);
-      expect(str).toBe('<div></div>');
+        Parent.childContextTypes = {text: PropTypes.string};
+
+        const PurpleContext = props => <Parent text="purple">{props.children}</Parent>;
+
+        function FunctionChildWithContext(props, context) {
+          return <div>{context.text}</div>;
+        }
+
+        const str = renderToString(
+          <PurpleContext>
+            <FunctionChildWithContext />
+          </PurpleContext>
+        );
+
+        expect(str).toBe('<div>purple</div>');
+      }).toWarnDev(Warning, {withoutStack: true});
     });
   });
 });
