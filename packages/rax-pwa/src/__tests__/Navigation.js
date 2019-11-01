@@ -41,7 +41,7 @@ const testProps = {
       component: mockDynamicImport('Page2')
     },
   ],
-  _appConfig: {
+  appConfig: {
     'tabBar': {
       'textColor': 'green',
       'selectedColor': 'red',
@@ -61,7 +61,7 @@ const testProps = {
       ]
     }
   },
-  _component: () => {
+  component: () => {
     return <Text >Page: ROUTER</Text>;
   }
 };

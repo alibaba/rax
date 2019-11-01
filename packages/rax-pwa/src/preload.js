@@ -9,7 +9,7 @@ export default function preload(config) {
       const routes = getRoutes() || [];
       const targetRoute = routes.find(route => route.path === config.path);
       if (targetRoute && typeof targetRoute.component === 'function') {
-        targetRoute.component();
+        setTimeout(targetRoute.component, 0);
       }
     } else if (config.href) {
       // https://www.w3.org/TR/preload/
@@ -21,6 +21,6 @@ export default function preload(config) {
       document.head.appendChild(linkElement);
     }
   } else {
-    // ignore
+    // It just only work in Web App for now
   }
 };

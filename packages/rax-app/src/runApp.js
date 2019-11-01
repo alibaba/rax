@@ -10,7 +10,6 @@ const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
 const SHELL_DATA = 'shellData';
 
 let history;
-let appConfig;
 let launched = false;
 const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
 
@@ -19,7 +18,7 @@ export function getHistory() {
 }
 
 function App(props) {
-  const { history, routes, InitialComponent } = props;
+  const { appConfig, history, routes, InitialComponent } = props;
   const { component } = useRouter(() => ({ history, routes, InitialComponent }));
 
   if (isNullableComponent(component)) {
@@ -63,11 +62,7 @@ function App(props) {
       return createElement(
         Navigation,
         Object.assign(
-          {
-            _appConfig: appConfig,
-            _component: component,
-          },
-          props,
+          { appConfig, component, history, routes, InitialComponent },
           pageInitialProps[component.__path]
         )
       );
@@ -76,7 +71,7 @@ function App(props) {
     return createElement(
       Fragment,
       {},
-      createElement(component, Object.assign({}, props, pageInitialProps[component.__path])),
+      createElement(component, Object.assign({ history, routes, InitialComponent }, pageInitialProps[component.__path])),
       createElement(TabBar, { history, config: appConfig.tabBar })
     );
   }
@@ -86,10 +81,9 @@ function isNullableComponent(component) {
   return !component || Array.isArray(component) && component.length === 0;
 }
 
-export default function runApp(config) {
+export default function runApp(appConfig) {
   if (launched) throw new Error('Error: runApp can only be called once.');
   launched = true;
-  appConfig = config;
   const { hydrate = false, routes, shell } = appConfig;
 
   if (isWeex) {
@@ -107,6 +101,7 @@ export default function runApp(config) {
     .then((initialComponent) => {
       _initialComponent = initialComponent;
       let appInstance = createElement(App, {
+        appConfig,
         history,
         routes,
         InitialComponent: _initialComponent

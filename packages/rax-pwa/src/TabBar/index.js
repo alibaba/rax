@@ -5,7 +5,7 @@ import View from 'rax-view';
 import styles from './index.css';
 
 export default function TabBar(props) {
-  const [pathname, setPathname] = useState(null);
+  const [pathname, setPathname] = useState('');
   const { config, history, onClick } = props;
 
   const showTabBar =
@@ -46,17 +46,17 @@ export default function TabBar(props) {
                 }}>
                 {selected && item.activeIcon ? (
                   <Image
-                    style={styles.tabBarItem_img}
+                    style={styles.tabBarItemImg}
                     source={{ uri: item.activeIcon }} />
                 ) : null}
                 {!selected && item.icon ? (
                   <Image
-                    style={styles.tabBarItem_img}
+                    style={styles.tabBarItemImg}
                     source={{ uri: item.icon }} />
                 ) : null}
                 <Text
                   style={{
-                    ...styles.tabBarItem_txt,
+                    ...styles.tabBarItemTxt,
                     color: selected ? itemSelectedColor : itemTextColor
                   }}
                 >{item.name}</Text>

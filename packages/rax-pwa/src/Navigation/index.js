@@ -34,12 +34,12 @@ export function getRoutes() {
 }
 
 export default function Navigation(props) {
-  const { history, routes, _appConfig, _component } = props;
-  const { maxAlivePageNum, tabBar } = _appConfig;
+  const { appConfig, component, history, routes } = props;
+  const { maxAlivePageNum, tabBar } = appConfig;
 
   const [updateTemp, setUpdateTemp] = useState(null);
 
-  const Component = _component;
+  const Component = component;
   const currentPathname = history.location.pathname;
   const currentPage = routes.find(route => route.path === currentPathname);
 

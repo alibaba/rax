@@ -20,11 +20,11 @@
   justify-content: center;
 }
 
-.tabBarItem_txt {
+.tabBarItemTxt {
   font-size: 24rpx;
 }
 
-.tabBarItem_img {
+.tabBarItemImg {
   margin-bottom: 8rpx;
   width: 30rpx;
   height: 30rpx;

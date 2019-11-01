@@ -8,11 +8,15 @@ export default function prerender(config) {
     if (config.path) {
       const routes = getRoutes() || [];
       const targetRoute = routes.find(route => route.path === config.path);
+
       if (targetRoute) {
         if (targetRoute.keepAlive) {
-          activatePageComponent(targetRoute);
+          setTimeout(function() {
+            activatePageComponent(targetRoute);
+          }, 0);
         } else {
-          targetRoute.component();
+          // The page without keepAlive can't be injected in html, just load it.
+          setTimeout(targetRoute.component, 0);
         }
       }
     } else if (config.href) {
@@ -23,6 +27,6 @@ export default function prerender(config) {
       document.head.appendChild(linkElement);
     }
   } else {
-    // ignore
+    // It just only work in Web App for now
   }
 };
