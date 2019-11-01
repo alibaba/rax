@@ -51,6 +51,7 @@ function runUpdate(component) {
       prevUnmaskedContext,
       nextUnmaskedContext
     );
+
     flushLayout();
   }
 

@@ -217,6 +217,44 @@ describe('CompositeComponent', function() {
     ]);
   });
 
+  it('not break other component render when one component rise an error', () => {
+    let container = createNodeElement('div');
+    class MyComponent extends Component {
+      render() {
+        return [
+          <BrokenRender key="a" />,
+          <NoBrokenRender key="b" />
+        ];
+      }
+    }
+
+    class BrokenRender extends Component {
+      constructor() {
+        throw new Error('Hello');
+      }
+      render() {
+        return (
+          <span>Hello 1</span>
+        );
+      }
+    }
+
+    class NoBrokenRender extends Component {
+      render() {
+        return (
+          <span>Hello 2</span>
+        );
+      }
+    }
+
+    expect(() => {
+      render(<MyComponent />, container);
+      jest.runAllTimers();
+    }).toThrowError(/Hello/);
+
+    expect(container.childNodes[0].childNodes[0].data).toBe('Hello 2');
+  });
+
   it('catches render error in a boundary', () => {
     let container = createNodeElement('div');
     class ErrorBoundary extends Component {
@@ -245,6 +283,50 @@ describe('CompositeComponent', function() {
 
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
+  });
+
+  it('catches component update error in a boundary', () => {
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      state = {error: null};
+      componentDidCatch(error) {
+        this.setState({error});
+      }
+      render() {
+        if (this.state.error) {
+          return (
+            <span>{`Caught an error: ${this.state.error.message}.`}</span>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    class BrokenRender extends Component {
+      state = {str: 'Hello'};
+      componentDidMount() {
+        setTimeout(() => {
+          this.setState({
+            str: {
+              a: 2
+            }
+          });
+        });
+      }
+      render() {
+        return (
+          <span>{this.state.str}</span>
+        );
+      }
+    }
+
+    render(
+      <ErrorBoundary>
+        <BrokenRender />
+      </ErrorBoundary>, container);
+
+    jest.runAllTimers();
+    expect(container.childNodes[0].childNodes[0].data).toContain('Caught an error: Invalid element type');
   });
 
   it('catches lifeCycles errors in a boundary', () => {
