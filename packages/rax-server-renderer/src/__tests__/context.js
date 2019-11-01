@@ -225,7 +225,7 @@ describe('context', () => {
 
   // contextTypes & childContextTypes is not work in ssr
   describe('legacy context', function() {
-    let Warning = 'Warning: The legacy property contextTypes and childContextTypes will be ignored.';
+    let Warning = 'Warning: The legacy "contextTypes" and "childContextTypes" API not working properly in server renderer, use the new context API. ';
 
     let PurpleContext;
     beforeEach(() => {
@@ -257,7 +257,7 @@ describe('context', () => {
         );
 
         expect(str).toBe('<div>purple</div>');
-      }).toWarnDev(Warning, {withoutStack: true});
+      }).toWarnDev(Warning + '(Current: ClassChildWithContext)', {withoutStack: true});
     });
 
     it('stateless child with contextTypes', () => {
@@ -274,7 +274,7 @@ describe('context', () => {
         );
 
         expect(str).toBe('<div>purple</div>');
-      }).toWarnDev(Warning, {withoutStack: true});
+      }).toWarnDev(Warning + '(Current: FunctionChildWithContext)', {withoutStack: true});
     });
 
     it('parent with childContextTypes', () => {
@@ -303,7 +303,7 @@ describe('context', () => {
         );
 
         expect(str).toBe('<div>purple</div>');
-      }).toWarnDev(Warning, {withoutStack: true});
+      }).toWarnDev(Warning + '(Current: Parent)', {withoutStack: true});
     });
   });
 });
