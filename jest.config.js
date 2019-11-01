@@ -12,6 +12,8 @@ module.exports = {
   ],
   'setupTestFrameworkScriptFile': './scripts/jest/setupTests.js',
   'moduleNameMapper': {
+    // https://jestjs.io/docs/en/webpack#handling-static-assets
+    // For CSS Modules
     '\\.css$': '<rootDir>/scripts/jest/styleMock.js',
   },
   'testPathIgnorePatterns': [

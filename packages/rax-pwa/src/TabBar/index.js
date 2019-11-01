@@ -6,7 +6,11 @@ import styles from './index.css';
 
 export default function TabBar(props) {
   const [pathname, setPathname] = useState('');
-  const { config, history, onClick } = props;
+  const { config = {}, history, onClick } = props;
+
+  if (!history || !history.location) {
+    throw new Error('TabBar should have a props of "history". See https://www.npmjs.com/package/history.');
+  }
 
   const showTabBar =
     // Have tabBar config

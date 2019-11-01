@@ -4,13 +4,15 @@ import TabBar from '../TabBar/index';
 
 import styles from './index.css';
 
-let _maxAlivePageNum = 3;
-let _pageProps = {};
-let _routes = [];
 let _updatePageTrigger = () => { };
 
 const alivePages = [];
 const alivePagesCache = {};
+const config = {
+  maxAlivePageNum: 3,
+  pageProps: {},
+  routes: []
+};
 
 export function activatePageComponent(route) {
   route.component()
@@ -20,9 +22,9 @@ export function activatePageComponent(route) {
         // ignore page without keepAlive
         return false;
       }
-      alivePagesCache[route.path] = <Page {..._pageProps} />;
+      alivePagesCache[route.path] = <Page {...config.pageProps} />;
       // Prevent cache from being too large
-      if (Object.keys(alivePagesCache).length > _maxAlivePageNum) {
+      if (Object.keys(alivePagesCache).length > config.maxAlivePageNum) {
         delete alivePagesCache[Object.keys(alivePagesCache)[0]];
       }
       _updatePageTrigger(Date.now());
@@ -30,7 +32,7 @@ export function activatePageComponent(route) {
 };
 
 export function getRoutes() {
-  return _routes;
+  return config.routes;
 }
 
 export default function Navigation(props) {
@@ -63,15 +65,15 @@ export default function Navigation(props) {
   // Props to page component
   const pageProps = {};
   Object.keys(props).forEach((key) => {
-    if (key !== '_appConfig' && key !== '_component') {
+    if (key !== 'appConfig' && key !== 'component') {
       pageProps[key] = props[key];
     }
   });
 
-  _pageProps = pageProps;
-  _routes = routes;
+  config.pageProps = pageProps;
+  config.routes = routes;
   _updatePageTrigger = setUpdateTemp;
-  maxAlivePageNum && (_maxAlivePageNum = maxAlivePageNum);
+  maxAlivePageNum && (config.maxAlivePageNum = maxAlivePageNum);
 
   return (
     <Fragment>
