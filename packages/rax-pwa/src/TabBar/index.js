@@ -9,7 +9,7 @@ export default function TabBar(props) {
   const { config = {}, history, onClick } = props;
 
   if (!history || !history.location) {
-    throw new Error('TabBar should have a props of "history". See https://www.npmjs.com/package/history.');
+    throw new Error('TabBar should have a props of "history". See https://github.com/ReactTraining/history.');
   }
 
   const showTabBar =
