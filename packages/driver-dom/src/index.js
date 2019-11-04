@@ -2,7 +2,21 @@
  * Driver for Web DOM
  **/
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
-const NON_DIMENSIONAL_REG = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord/i;
+
+// opacity -> opa
+// fontWeight -> ntw
+// lineHeight|lineClamp -> ne[ch]
+// flex|flexGrow|flexPositive|flexShrink|flexNegative|boxFlex|boxFlexGroup|zIndex -> ex(?:s|g|n|p|$)
+// order -> ^ord
+// zoom -> zoo
+// gridArea|gridRow|gridRowEnd|gridRowSpan|gridRowStart|gridColumn|gridColumnEnd|gridColumnSpan|gridColumnStart -> grid
+// columnCount -> mnc
+// tabSize -> bs
+// orphans -> orp
+// windows -> ows
+// animationIterationCount -> onit
+// borderImageOutset|borderImageSlice|borderImageWidth -> erim
+const NON_DIMENSIONAL_REG = /opa|ntw|ne[ch]|ex(?:s|g|n|p|$)|^ord|zoo|grid|orp|ows|mnc|^columns$|bs|erim|onit/i;
 const EVENT_PREFIX_REG = /^on[A-Z]/;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const HTML = '__html';
