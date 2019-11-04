@@ -35,7 +35,7 @@ function transformAttribute(ast, code, adapter) {
           }
           break;
         default:
-          path.stop();
+          path.skip();
       }
     }
   });
