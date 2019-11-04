@@ -75,8 +75,15 @@ function transformList(ast, renderItemFunctions, adapter) {
             */
             if (t.isFunction(args[0])) {
               const { params, body } = args[0];
-              const forItem = params[0] || t.identifier('item');
-              const forIndex = params[1] || t.identifier('index');
+              // If item or index doesn't exist， set default value to params
+              if (!params[0]) {
+                params[0] = t.identifier('item');
+              }
+              if (!params[1]) {
+                params[1] = t.identifier('index');
+              }
+              const forItem = params[0];
+              const forIndex = params[1];
               const properties = [];
               let returnElPath;
               if (t.isBlockStatement(body)) {

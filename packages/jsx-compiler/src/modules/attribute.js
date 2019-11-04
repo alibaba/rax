@@ -2,6 +2,7 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
+const compiledComponents = require('../compiledComponents');
 
 function transformAttribute(ast, code, adapter) {
   const refs = [];
@@ -14,7 +15,14 @@ function transformAttribute(ast, code, adapter) {
           node.name.name = adapter.key;
           break;
         case 'className':
-          node.name.name = adapter.className;
+          if (!adapter.styleKeyword || isNativeComponent(path)) {
+            node.name.name = 'class';
+          }
+          break;
+        case 'style':
+          if (adapter.styleKeyword && !isNativeComponent(path)) {
+            node.name.name = 'styleSheet';
+          }
           break;
         case 'ref':
           if (t.isJSXExpressionContainer(node.value)) {
@@ -32,6 +40,13 @@ function transformAttribute(ast, code, adapter) {
     }
   });
   return refs;
+}
+
+function isNativeComponent(path) {
+  const {
+    node: { name: tagName }
+  } = path.parentPath.get('name');
+  return !!compiledComponents[tagName];
 }
 
 module.exports = {
