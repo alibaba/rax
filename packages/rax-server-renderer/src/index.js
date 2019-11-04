@@ -208,7 +208,10 @@ function rpx2vw(val, opts) {
 function checkContext(element) {
   if (element.contextTypes || element.childContextTypes) {
     console.error(
-      `Warning: The legacy "contextTypes" and "childContextTypes" API not working properly in server renderer, use the new context API. (Current: ${element.name})`
+      'Warning: ' +
+      'The legacy "contextTypes" and "childContextTypes" API not working properly in server renderer, ' +
+      'use the new context API. ' +
+      `(Current: ${shared.Host.owner.__getName()})`
     );
   }
 }
@@ -310,8 +313,8 @@ function renderElementToString(element, context, options) {
       instance.updater = updater;
 
       shared.Host.owner = {
-        // Give the component name in render error info(only for development)
-        __getName: () => type.name,
+        // Give the component name in render error info (only for development)
+        __getName: () => type.displayName || type.name || element,
         _instance: instance
       };
 
@@ -360,8 +363,8 @@ function renderElementToString(element, context, options) {
       instance.context = context;
 
       shared.Host.owner = {
-        // Give the component name in render error info(only for development)
-        __getName: () => type.name,
+        // Give the component name in render error info (only for development)
+        __getName: () => type.displayName || type.name || element,
         _instance: instance
       };
 
