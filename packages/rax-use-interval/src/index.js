@@ -1,15 +1,12 @@
 import { useEffect, useRef } from 'rax';
 
-function useInterval(fn, delay) {
+export default function useInterval(fn, delay) {
   const ref = useRef();
 
   // Update to the latest function.
-  useEffect(
-    () => {
-      ref.fn = fn;
-    },
-    [fn]
-  );
+  useEffect(() => {
+    ref.fn = fn;
+  }, [fn]);
 
   useEffect(() => {
     if (delay !== null) {
@@ -18,5 +15,3 @@ function useInterval(fn, delay) {
     }
   }, [delay]);
 }
-
-export default useInterval;
