@@ -281,6 +281,7 @@ function createInstance(element, context) {
 
   let instance;
 
+  // class component
   if (type.prototype && type.prototype.render) {
     instance = new type(props, context); // eslint-disable-line new-cap
     instance.props = props;
