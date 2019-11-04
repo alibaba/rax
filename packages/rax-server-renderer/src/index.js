@@ -205,6 +205,17 @@ function rpx2vw(val, opts) {
   return parsedVal;
 }
 
+function checkContext(element) {
+  if (element.contextTypes || element.childContextTypes) {
+    console.error(
+      'Warning: ' +
+      'The legacy "contextTypes" and "childContextTypes" API not working properly in server renderer, ' +
+      'use the new context API. ' +
+      `(Current: ${shared.Host.owner.__getName()})`
+    );
+  }
+}
+
 const updater = {
   setState(component, partialState, callback) {
     if (partialState) {
@@ -264,6 +275,47 @@ class ServerReactiveComponent {
   }
 }
 
+function createInstance(element, context) {
+  const { type } = element;
+  const props = element.props || EMPTY_OBJECT;
+
+  let instance;
+
+  // class component
+  if (type.prototype && type.prototype.render) {
+    instance = new type(props, context); // eslint-disable-line new-cap
+    instance.props = props;
+    instance.context = context;
+    // Inject the updater into instance
+    instance.updater = updater;
+
+    if (instance.componentWillMount) {
+      instance.componentWillMount();
+
+      if (instance._pendingState) {
+        const state = instance.state;
+        const pending = instance._pendingState;
+
+        if (state == null) {
+          instance.state = pending;
+        } else {
+          for (var key in pending) {
+            state[key] = pending[key];
+          }
+        }
+        instance._pendingState = null;
+      }
+    }
+  } else {
+    const ref = element.ref;
+    instance = new ServerReactiveComponent(type, ref);
+    instance.props = props;
+    instance.context = context;
+  }
+
+  return instance;
+}
+
 function renderElementToString(element, context, options) {
   if (typeof element === 'string') {
     return escapeText(element);
@@ -293,20 +345,21 @@ function renderElementToString(element, context, options) {
   const type = element.type;
 
   if (type) {
-    const props = element.props || EMPTY_OBJECT;
-    if (type.prototype && type.prototype.render) {
-      const instance = new type(props, context); // eslint-disable-line new-cap
-      instance.props = props;
-      let currentContext = instance.context = context;
-      // Inject the updater into instance
-      instance.updater = updater;
+    // class component || function component
+    if (type.prototype && type.prototype.render || typeof type === 'function') {
+      const instance = createInstance(element, context);
 
       shared.Host.owner = {
-        // Give the component name in render error info(only for development)
-        __getName: () => type.name,
+        // Give the component name in render error info (only for development)
+        __getName: () => type.displayName || type.name || element,
         _instance: instance
       };
 
+      if (process.env.NODE_ENV !== 'production') {
+        checkContext(type);
+      }
+
+      let currentContext = instance.context;
       let childContext;
 
       if (instance.getChildContext) {
@@ -321,41 +374,10 @@ function renderElementToString(element, context, options) {
         currentContext = merge({}, context, childContext);
       }
 
-      if (instance.componentWillMount) {
-        instance.componentWillMount();
-
-        if (instance._pendingState) {
-          const state = instance.state;
-          const pending = instance._pendingState;
-
-          if (state == null) {
-            instance.state = pending;
-          } else {
-            for (var key in pending) {
-              state[key] = pending[key];
-            }
-          }
-          instance._pendingState = null;
-        }
-      }
-
-      var renderedElement = instance.render();
-      return renderElementToString(renderedElement, currentContext, options);
-    } else if (typeof type === 'function') {
-      const ref = element.ref;
-      const instance = new ServerReactiveComponent(type, ref);
-      instance.props = props;
-      instance.context = context;
-
-      shared.Host.owner = {
-        // Give the component name in render error info(only for development)
-        __getName: () => type.name,
-        _instance: instance
-      };
-
       const renderedElement = instance.render();
-      return renderElementToString(renderedElement, context, options);
+      return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'string') {
+      const props = element.props || EMPTY_OBJECT;
       const isVoidElement = VOID_ELEMENTS[type];
       let html = `<${type}${propsToString(props, options)}`;
       let innerHTML;
