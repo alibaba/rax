@@ -78,31 +78,31 @@ export default function Navigation(props) {
   return (
     <Fragment>
       {isAlivePage ? null : <Component {...pageProps} />}
-
-      <View
-        style={{
-          ...styles.container,
-          display: isAlivePage ? 'block' : 'none'
-        }}
-      >
-        {alivePages.map((alivePage, index) => {
-          const alivePageRoute = routes.find(route => route.path === alivePage.path);
-          const isCurrentPage = alivePageRoute.path === currentPage.path;
-          const alivePageComponent = alivePagesCache[alivePageRoute.path] || null;
-          if (isCurrentPage && !alivePageComponent) activatePageComponent(alivePageRoute);
-          return (
-            <View
-              key={`alivePage${index}`}
-              style={{
-                ...styles.alivePage,
-                display: isCurrentPage ? 'block' : 'none'
-              }}>
-              {alivePageComponent}
-            </View>
-          );
-        })}
-      </View>
-
+      {alivePages.length > 0 ? (
+        <View
+          style={{
+            ...styles.container,
+            display: isAlivePage ? 'block' : 'none'
+          }}
+        >
+          {alivePages.map((alivePage, index) => {
+            const alivePageRoute = routes.find(route => route.path === alivePage.path);
+            const isCurrentPage = alivePageRoute.path === currentPage.path;
+            const alivePageComponent = alivePagesCache[alivePageRoute.path] || null;
+            if (isCurrentPage && !alivePageComponent) activatePageComponent(alivePageRoute);
+            return (
+              <View
+                key={`alivePage${index}`}
+                style={{
+                  ...styles.alivePage,
+                  display: isCurrentPage ? 'block' : 'none'
+                }}>
+                {alivePageComponent}
+              </View>
+            );
+          })}
+        </View>
+      ) : null}
       <TabBar
         config={tabBar}
         history={history}
