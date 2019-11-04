@@ -1,4 +1,5 @@
-const { join, relative, dirname } = require('path');
+const { join, relative, dirname, resolve } = require('path');
+const { existsSync } = require('fs-extra');
 const chalk = require('chalk');
 
 const { isNpmModule, isWeexModule, isRaxModule } = require('./utils/judgeModule');
@@ -13,8 +14,8 @@ const defaultOptions = {
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform } = options;
-  const source = (value, npmList, filename, rootContext) => {
+  const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, resourcePath, outputPath, disableCopyNpm, platform } = options;
+  const source = (value, npmList, rootContext) => {
     // Example:
     // value => '@ali/universal-goldlog' or '@ali/xxx/foo/lib'
     // npmList => ['/Users/xxx/node_modules/xxx', '/Users/xxx/node_modules/aaa/node_modules/bbb']
@@ -28,6 +29,12 @@ module.exports = function visitor({ types: t }, options) {
     const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target)));
     return t.stringLiteral(normalizeNpmFileName('./' + filePath));
   };
+
+  // In WeChat miniapp, `require` can't get index file if index is omitted
+  const checkIndex = (value, resourcePath) => {
+    const target = require.resolve(resolve(dirname(resourcePath), value));
+    return t.stringLiteral('./' + relative(dirname(resourcePath), target));
+  }
 
   return {
     visitor: {
@@ -43,7 +50,9 @@ module.exports = function visitor({ types: t }, options) {
           }
           path.node.source = t.stringLiteral(runtimePath);
         } else if (isNpmModule(value) && !disableCopyNpm) {
-          path.node.source = source(value, nodeModulesPathList, state.filename, state.cwd);
+          path.node.source = source(value, nodeModulesPathList, state.cwd);
+        } else {
+          path.node.source = checkIndex(value, resourcePath);
         }
       },
 
@@ -61,14 +70,18 @@ module.exports = function visitor({ types: t }, options) {
             } else if (isRaxModule(moduleName)) {
               let runtimePath = t.stringLiteral(getRuntimeByPlatform(platform.type));
               if (!disableCopyNpm) {
-                runtimePath = source(moduleName, nodeModulesPathList, state.filename, state.cwd);
+                runtimePath = source(moduleName, nodeModulesPathList, state.cwd);
               }
               path.node.arguments = [
                 runtimePath
               ];
             } else if (isNpmModule(moduleName) && !disableCopyNpm) {
               path.node.arguments = [
-                source(moduleName, nodeModulesPathList, state.filename, state.cwd)
+                source(moduleName, nodeModulesPathList, state.cwd)
+              ];
+            } else {
+              path.node.arguments = [
+                checkIndex(moduleName, resourcePath)
               ];
             }
           } else if (t.isExpression(node.arguments[0])) {
