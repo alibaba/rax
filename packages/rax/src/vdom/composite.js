@@ -57,6 +57,11 @@ class CompositeComponent extends BaseComponent {
     let publicProps = currentElement.props;
     let componentPrototype = Component.prototype;
 
+    // Props is immutable.
+    if (process.env.NODE_ENV !== 'production') {
+      Object.freeze(publicProps);
+    }
+
     // Context process
     let publicContext = this.__processContext(context);
 
@@ -286,6 +291,12 @@ class CompositeComponent extends BaseComponent {
       // Skip checking prop types again -- we don't read component.props to avoid
       // warning for DOM component props in this upgrade
       nextProps = nextElement.props;
+
+      // Props is immutable.
+      if (process.env.NODE_ENV !== 'production') {
+        Object.freeze(nextProps);
+      }
+
       if (prevElement !== nextElement) {
         willReceive = true;
       }
