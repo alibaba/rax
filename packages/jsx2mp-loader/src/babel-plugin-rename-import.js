@@ -31,7 +31,7 @@ module.exports = function visitor({ types: t }, options) {
   };
 
   // In WeChat miniapp, `require` can't get index file if index is omitted
-  const checkIndex = (value, resourcePath) => {
+  const ensureIndexInPath = (value, resourcePath) => {
     const target = require.resolve(resolve(dirname(resourcePath), value));
     return t.stringLiteral('./' + relative(dirname(resourcePath), target));
   };
@@ -52,7 +52,7 @@ module.exports = function visitor({ types: t }, options) {
         } else if (isNpmModule(value) && !disableCopyNpm) {
           path.node.source = source(value, nodeModulesPathList, state.cwd);
         } else {
-          path.node.source = checkIndex(value, resourcePath);
+          path.node.source = ensureIndexInPath(value, resourcePath);
         }
       },
 
@@ -81,7 +81,7 @@ module.exports = function visitor({ types: t }, options) {
               ];
             } else {
               path.node.arguments = [
-                checkIndex(moduleName, resourcePath)
+                ensureIndexInPath(moduleName, resourcePath)
               ];
             }
           } else if (t.isExpression(node.arguments[0])) {
