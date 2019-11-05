@@ -1,8 +1,7 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
-const hasListItem = require('../utils/hasListItem');
+const getListItem = require('../utils/getListItem');
 const CodeError = require('../utils/CodeError');
-const genExpression = require('../codegen/genExpression');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -37,6 +36,10 @@ function getCondition(jsxElement) {
     }
   }
   return null;
+}
+
+function insertListItemNewVal() {
+
 }
 
 function transformDirectiveCondition(ast, adapter) {
@@ -140,15 +143,35 @@ function transformDirectiveList(ast, code, adapter) {
           [
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
-        if (hasListItem(iterValue)) {
-          let parentList;
-          if (t.isMemberExpression(iterValue)) {
-            parentList = iterValue.object.__listItem.parentList;
-          } else if (t.isIdentifier(iterValue)) {
-            parentList = iterValue.__listItem.parentList;
-          }
+        const listItem = getListItem(iterValue);
+        if (listItem) {
+          const parentList = listItem.__listItem.parentList;
           if (parentList) {
-            parentList.loopFnBody.body.unshift(t.expressionStatement(t.assignmentExpression('=', iterValue, mapCallExpression)));
+            /**
+             * Assign an new object to item
+             * item: { ...item, info: item.info.map(i => {})
+             * */
+            const loopFnBodyLength = parentList.loopFnBody.body.length;
+            const properties = parentList.loopFnBody.body[loopFnBodyLength - 1].argument.properties;
+            const item = properties.find(({key}) => key.name === listItem.name);
+            if (t.isMemberExpression(iterValue)) {
+              if (t.isIdentifier(item.value)) {
+                if (t.isIdentifier(iterValue.value)) {
+                  item.value = t.objectExpression([
+                    t.spreadElement(item.value),
+                    t.objectProperty(iterValue.property, mapCallExpression)
+                  ]);
+                } else {
+                  throw new CodeError(code, iterValue.value, iterValue.value.loc, "Currently doesn't support x-for={it in item.info.list} in nested list");
+                }
+              } else if (t.isObjectExpression(item.value)) {
+                item.value.properties.push(
+                  t.objectProperty(iterValue.property, mapCallExpression)
+                );
+              }
+            } else if (t.isIdentifier(iterValue)) {
+              item.value = mapCallExpression;
+            }
           } else {
             throw new CodeError(code, iterValue, iterValue.loc, 'Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
           }
@@ -189,14 +212,16 @@ function transformListJSXElement(path, adapter) {
     const { args, iterValue } = node.__jsxlist;
     path.traverse({
       Identifier(innerPath) {
-        const innerNode = innerPath.node;
-        if (args.find(arg => arg.name === innerNode.name)
-        ) {
-          innerNode.__listItem = {
-            jsxplus: true,
-            item: args[0].name,
-            parentList: node.__jsxlist
-          };
+        const {node: innerNode, parentPath: innerParentPath} = innerPath;
+        if (args.find(arg => arg.name === innerNode.name)) {
+          if (!(innerParentPath.isMemberExpression()
+            && innerParentPath.get('property') === innerPath)) {
+            innerNode.__listItem = {
+              jsxplus: true,
+              item: args[0].name,
+              parentList: node.__jsxlist
+            };
+          }
         }
       }
     });

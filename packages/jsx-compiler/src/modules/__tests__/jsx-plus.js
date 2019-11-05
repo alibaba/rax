@@ -36,14 +36,13 @@ describe('Directives', () => {
       _transformList(ast, code, adapter);
       expect(genExpression(ast))
         .toEqual(`<View a:for={array.map((item, index) => {
-  item = item.map((item2, index) => {
-    return {
-      item2: item2,
-      index: index
-    };
-  });
   return {
-    item: item,
+    item: item.map((item2, index) => {
+      return {
+        item2: item2,
+        index: index
+      };
+    }),
     index: index
   };
 })} a:for-item="item" a:for-index="index">
