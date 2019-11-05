@@ -2,12 +2,12 @@ import ReactiveComponent from './reactive';
 import updater from './updater';
 import Host from './host';
 import { attachRef, updateRef, detachRef } from './ref';
-import instantiateComponent, { throwInvalidComponentError } from './instantiateComponent';
+import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
-import performInSandbox, { handleError } from './performInSandbox';
+import performInSandbox from './performInSandbox';
 import toArray from '../toArray';
 import { scheduleLayout } from './scheduler';
 import { isFunction, isArray } from '../types';
@@ -72,7 +72,12 @@ class CompositeComponent extends BaseComponent {
         // Functional reactive component with hooks
         instance = new ReactiveComponent(Component, ref);
       } else {
-        throwInvalidComponentError(Component);
+        let typeInfo = isObject(Component) ? `object with keys {${Object.keys(Component).join(', ')}}` : typeof Component;
+        if (process.env.NODE_ENV !== 'production') {
+          throw new Error(`Invalid component type (found: ${typeInfo}).`);
+        } else {
+          invokeMinifiedError(2, typeInfo);
+        }
       }
     }, parentInstance);
 

@@ -303,19 +303,20 @@ describe('CompositeComponent', function() {
     }
 
     class BrokenRender extends Component {
-      state = {str: 'Hello'};
+      state = {foo: 'Hello'};
       componentDidMount() {
         setTimeout(() => {
           this.setState({
-            str: {
-              a: 2
-            }
+            foo: 'error'
           });
         });
       }
       render() {
+        if (this.state.foo === 'error') {
+          throw Error('foo');
+        }
         return (
-          <span>{this.state.str}</span>
+          <span>{this.state.foo}</span>
         );
       }
     }
@@ -326,7 +327,7 @@ describe('CompositeComponent', function() {
       </ErrorBoundary>, container);
 
     jest.runAllTimers();
-    expect(container.childNodes[0].childNodes[0].data).toContain('Caught an error: Invalid element type');
+    expect(container.childNodes[0].childNodes[0].data).toContain('Caught an error: foo');
   });
 
   it('catches lifeCycles errors in a boundary', () => {

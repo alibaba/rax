@@ -114,12 +114,15 @@ describe('Element', () => {
     ));
   });
 
-  it('throw errors when the child array contains invalid element type', () => {
+  it('warns for the child array contains invalid element type', () => {
     let container = createNodeElement('div');
     expect(() => {
-      render(<div>{[{}, {}]}</div>, container);
+      render(<div>{[{}, {foo: 1}]}</div>, container);
       jest.runAllTimers();
-    }).toThrowError(/Invalid element type/);
+    }).toWarnDev([
+      'Warning: Invalid element type (found: object with keys {}).',
+      'Warning: Invalid element type (found: object with keys {foo}).'
+    ], {withoutStack: true});
   });
 
   it('warns for fragments of multiple elements with same key', () => {
