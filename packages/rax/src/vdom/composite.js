@@ -286,6 +286,7 @@ class CompositeComponent extends BaseComponent {
       // Skip checking prop types again -- we don't read component.props to avoid
       // warning for DOM component props in this upgrade
       nextProps = nextElement.props;
+
       if (prevElement !== nextElement) {
         willReceive = true;
       }
