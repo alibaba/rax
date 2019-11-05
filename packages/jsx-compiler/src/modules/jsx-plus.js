@@ -38,9 +38,6 @@ function getCondition(jsxElement) {
   return null;
 }
 
-function insertListItemNewVal() {
-
-}
 
 function transformDirectiveCondition(ast, adapter) {
   traverse(ast, {

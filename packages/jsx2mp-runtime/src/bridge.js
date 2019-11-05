@@ -90,7 +90,7 @@ function createProxyMethods(events) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
-        const event = args[args.length - 1];
+        const event = args[0];
         let context = this.instance; // Context default to Rax component instance.
 
         const dataset = event && event.target ? event.target.dataset : {};
@@ -109,11 +109,12 @@ function createProxyMethods(events) {
           });
         } else {
           Object.keys(this[PROPS]).forEach(key => {
-            if ('data-arg-context' === key) {
+            if (`data-${eventName}-arg-context` === key) {
               context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
             } else if (isDatasetKebabArg(key)) {
               // `data-arg-` length is 9.
-              datasetArgs[key.slice(9)] = this[PROPS][key];
+              const len = `data-${eventName}-arg-`.length;
+              datasetArgs[key.slice(len)] = this[PROPS][key];
             }
           });
         }
@@ -213,13 +214,13 @@ function isClassComponent(Klass) {
   return Klass.prototype.__proto__ === Component.prototype;
 }
 
-const DATASET_KEBAB_ARG_REG = /data-arg-\d+/;
+const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;
 
 function isDatasetKebabArg(str) {
   return DATASET_KEBAB_ARG_REG.test(str);
 }
 
-const DATASET_ARG_REG = /arg-?(\d+)/;
+const DATASET_ARG_REG = /\w+Arg?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
