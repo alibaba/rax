@@ -34,6 +34,13 @@ const driver = Object.assign({}, DriverDOM, {
     // Init rem unit
     setRpx(getDeviceWidth() / getViewportWidth());
     return DriverDOM.beforeRender(options);
+  },
+  setStyle(node, style) {
+    if (Array.isArray(style)) {
+      style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
+    }
+    const tranformedStyle = transformStyle(style);
+    DriverDOM.setStyle(node, tranformedStyle);
   }
 });
 
@@ -46,8 +53,10 @@ function transformStyle(style, ret = {}) {
         transformStyle(val, ret);
       } else if (Flexbox.isFlexProp(prop)) {
         Flexbox[prop](val, ret);
+      } else if (typeof val === 'number') {
+        ret[prop] = val;
       } else {
-        ret[prop] = convertUnit(val, prop);
+        ret[prop] = convertUnit(val, prop); ;
       }
     }
   }
