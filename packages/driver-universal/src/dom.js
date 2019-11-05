@@ -56,7 +56,7 @@ function transformStyle(style, ret = {}) {
       } else if (typeof val === 'number') {
         ret[prop] = val;
       } else {
-        ret[prop] = convertUnit(val, prop); ;
+        ret[prop] = convertUnit(val, prop);
       }
     }
   }
