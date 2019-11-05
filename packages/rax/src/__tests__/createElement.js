@@ -114,7 +114,7 @@ describe('Element', () => {
     ));
   });
 
-  it('trhow errors when the child array contains invalid element type', () => {
+  it('throw errors when the child array contains invalid element type', () => {
     let container = createNodeElement('div');
     expect(() => {
       render(<div>{[{}, {}]}</div>, container);
