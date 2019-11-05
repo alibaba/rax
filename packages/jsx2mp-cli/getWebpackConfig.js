@@ -142,6 +142,9 @@ module.exports = (options = {}) => {
         if (/\.css$/.test(request)) {
           return callback(null, `commonjs2 ${request}`);
         }
+        if (/^@weex-module\//.test(request)) {
+          return callback(null, `commonjs2 ${request}`);
+        }
         callback();
       },
     ],
