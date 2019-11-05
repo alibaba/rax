@@ -34,31 +34,7 @@ const driver = Object.assign({}, DriverDOM, {
     // Init rem unit
     setRpx(getDeviceWidth() / getViewportWidth());
     return DriverDOM.beforeRender(options);
-  },
-  setStyle(node, style) {
-    if (Array.isArray(style)) {
-      style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
-    }
-
-    const tranformedStyle = transformStyle(style);
-
-    for (let prop in tranformedStyle) {
-      if (tranformedStyle.hasOwnProperty(prop)) {
-        const transformValue = tranformedStyle[prop];
-        // Hack handle compatibility issue
-        if (Array.isArray(transformValue)) {
-          for (let i = 0; i < transformValue.length; i++) node.style[prop] = transformValue[i];
-        } else {
-          if (prop[0] === '-' && prop[1] === '-') {
-            // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty. style.setProperty do not support Camel-Case style properties.
-            node.style.setProperty(prop, transformValue);
-          } else {
-            node.style[prop] = transformValue;
-          }
-        }
-      }
-    }
-  },
+  }
 });
 
 function transformStyle(style, ret = {}) {
