@@ -21,14 +21,17 @@ describe('Element', () => {
   function renderToDocument(element) {
     let container = createNodeElement('div');
     render(element, container);
+    jest.runAllTimers();
   }
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('createElement', () => {
@@ -111,8 +114,12 @@ describe('Element', () => {
     ));
   });
 
-  it('does not warn when the child array contains non-element', () => {
-    void <div>{[{}, {}]}</div>;
+  it('trhow errors when the child array contains invalid element type', () => {
+    let container = createNodeElement('div');
+    expect(() => {
+      render(<div>{[{}, {}]}</div>, container);
+      jest.runAllTimers();
+    }).toThrowError(/Invalid element type/);
   });
 
   it('warns for fragments of multiple elements with same key', () => {
@@ -123,5 +130,18 @@ describe('Element', () => {
         <span key={'#2'}>3</span>
       </div>
     ))).toWarnDev('Warning: Encountered two children with the same key "#1".', {withoutStack: true});
+  });
+
+  it('throw errors in dev mode when modify props', () => {
+    let container = createNodeElement('div');
+    function Foo(props) {
+      props.foo = 'bar';
+      return null;
+    }
+
+    expect(() => {
+      render(<Foo foo="foo" />, container);
+      jest.runAllTimers();
+    }).toThrowError(/Cannot assign to read only property/);
   });
 });

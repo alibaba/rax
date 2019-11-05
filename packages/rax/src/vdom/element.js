@@ -32,6 +32,11 @@ export default function Element(type, key, ref, props, owner) {
       writable: true,
       value: false
     });
+
+    // Props is immutable
+    if (Object.freeze) {
+      Object.freeze(props);
+    }
   }
 
   return element;
