@@ -2,7 +2,7 @@ import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
 import { isArray, isFunction, isNull } from './types';
-import { invokeMinifiedError } from './error';
+import { throwMinifiedError } from './error';
 import { INSTANCE } from './constant';
 import warning from './warning';
 
@@ -16,7 +16,7 @@ function getCurrentRenderingInstance() {
     return currentInstance;
   } else {
     if (process.env.NODE_ENV === 'production') {
-      invokeMinifiedError(1);
+      throwMinifiedError(1);
     } else {
       throw new Error('Hooks can only be called inside a component.');
     }

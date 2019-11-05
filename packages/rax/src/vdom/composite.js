@@ -10,11 +10,12 @@ import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import performInSandbox from './performInSandbox';
 import toArray from '../toArray';
 import { scheduleLayout } from './scheduler';
-import { isFunction, isArray } from '../types';
+import { isObject, isFunction, isArray } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import validateChildKeys from '../validateChildKeys';
+import { throwMinifiedError } from '../error';
 
 let measureLifeCycle;
 if (process.env.NODE_ENV !== 'production') {
@@ -76,7 +77,7 @@ class CompositeComponent extends BaseComponent {
         if (process.env.NODE_ENV !== 'production') {
           throw new Error(`Invalid component type (found: ${typeInfo}).`);
         } else {
-          invokeMinifiedError(2, typeInfo);
+          throwMinifiedError(2, typeInfo);
         }
       }
     }, parentInstance);

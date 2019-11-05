@@ -1,11 +1,10 @@
 import Host from './vdom/host';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
-import { invokeMinifiedError } from './error';
+import { throwMinifiedError, getRenderErrorInfo } from './error';
 import { isString, isArray } from './types';
 import warning from './warning';
 import validateChildKeys from './validateChildKeys';
-import getRenderErrorInfo from './getRenderErrorInfo';
 
 const RESERVED_PROPS = {
   key: true,
@@ -13,13 +12,6 @@ const RESERVED_PROPS = {
 };
 
 export default function createElement(type, config, children) {
-  if (type == null) {
-    if (process.env.NODE_ENV !== 'production') {
-      throw new Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
-    } else {
-      invokeMinifiedError(0);
-    }
-  }
   // Reserved names are extracted
   let props = {};
   let propName;
@@ -82,6 +74,14 @@ export default function createElement(type, config, children) {
       if (props[propName] === undefined) {
         props[propName] = defaultProps[propName];
       }
+    }
+  }
+
+  if (type == null) {
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error(`Type of createElement should not be null or undefined, ${getRenderErrorInfo()}.`);
+    } else {
+      throwMinifiedError(0);
     }
   }
 

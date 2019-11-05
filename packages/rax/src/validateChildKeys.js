@@ -1,7 +1,6 @@
 import Host from './vdom/host';
 import warning from './warning';
 import {isArray, isObject} from './types';
-import getRenderErrorInfo from './getRenderErrorInfo';
 
 /**
  * Warn if there's no key explicitly set on dynamic arrays of children or
@@ -11,7 +10,15 @@ import getRenderErrorInfo from './getRenderErrorInfo';
 const ownerHasKeyUseWarning = {};
 
 function getCurrentComponentErrorInfo(parentType) {
-  let info = getRenderErrorInfo();
+  let info = '';
+
+  const ownerComponent = Host.owner;
+  if (ownerComponent) {
+    const name = ownerComponent.__getName();
+    if (name) {
+      info = ` Check the render method of <${name}>.`;
+    }
+  }
 
   if (!info) {
     const parentName =
@@ -19,7 +26,7 @@ function getCurrentComponentErrorInfo(parentType) {
         ? parentType
         : parentType.displayName || parentType.name;
     if (parentName) {
-      info = `\n\nCheck the top-level render call using <${parentName}>.`;
+      info = ` Check the top-level render call using <${parentName}>.`;
     }
   }
   return info;
@@ -52,7 +59,7 @@ function validateExplicitKey(element, parentType) {
     element._owner !== Host.owner
   ) {
     // Give the component that originally created this child.
-    childOwner = ` It was passed a child from ${element._owner.__getName()}.`;
+    childOwner = ` It was passed a child from <${element._owner.__getName()}>.`;
   }
 
   warning(

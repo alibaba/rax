@@ -1,7 +1,7 @@
 /*
  * Ref manager
  */
-import { invokeMinifiedError } from '../error';
+import { throwMinifiedError } from '../error';
 import { isFunction, isObject } from '../types';
 import { INSTANCE } from '../constant';
 import warning from '../warning';
@@ -24,7 +24,7 @@ export function attachRef(ownerComponent, ref, component) {
     if (process.env.NODE_ENV !== 'production') {
       return warning('ref: multiple version of Rax used in project.');
     } else {
-      invokeMinifiedError(3);
+      throwMinifiedError(3);
     }
   }
 

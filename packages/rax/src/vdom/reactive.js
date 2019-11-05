@@ -1,7 +1,7 @@
 import Host from './host';
 import Component from './component';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
-import { invokeMinifiedError } from '../error';
+import { throwMinifiedError } from '../error';
 import { INTERNAL } from '../constant';
 
 const RE_RENDER_LIMIT = 24;
@@ -129,7 +129,7 @@ export default class ReactiveComponent extends Component {
         if (process.env.NODE_ENV !== 'production') {
           throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
         } else {
-          invokeMinifiedError(4);
+          throwMinifiedError(4);
         }
       }
 

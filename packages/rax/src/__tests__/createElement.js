@@ -63,10 +63,7 @@ describe('Element', () => {
       var component = render(<ParentComp />);
 
       jest.runAllTimers();
-    }).toThrowError(
-      'createElement: type should not be null or undefined. Check ' +
-      'the render method of `ParentComp`.'
-    );
+    }).toThrowError(/should not be null or undefined/);
 
     jest.useRealTimers();
   });
@@ -90,7 +87,10 @@ describe('Element', () => {
       }
     }
 
-    expect(() => renderToDocument(<ComponentWrapper />)).toWarnDev('Warning: Each child in a list should have a unique "key" prop. Check the render method of `InnerComponent`. It was passed a child from ComponentWrapper.', {withoutStack: true});
+    expect(() => renderToDocument(<ComponentWrapper />)).toWarnDev(
+      'Each child in a list should have a unique "key" prop. Check the render method of <InnerComponent>. It was passed a child from <ComponentWrapper>.',
+      {withoutStack: true}
+    );
   });
 
   it('does not warn for arrays of elements with keys', () => {
