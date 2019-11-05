@@ -34,7 +34,7 @@ module.exports = function visitor({ types: t }, options) {
   const checkIndex = (value, resourcePath) => {
     const target = require.resolve(resolve(dirname(resourcePath), value));
     return t.stringLiteral('./' + relative(dirname(resourcePath), target));
-  }
+  };
 
   return {
     visitor: {
