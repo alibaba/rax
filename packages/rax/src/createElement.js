@@ -46,7 +46,7 @@ export default function createElement(type, config, children) {
     }
 
     // If no reserved props, assign config to props for better performance
-    if (hasReservedProps) {
+    if (hasReservedProps || config.children) { // When the property childern exists in config, prevent the same reference
       for (propName in config) {
         // Extract reserved props
         if (!RESERVED_PROPS[propName]) {
