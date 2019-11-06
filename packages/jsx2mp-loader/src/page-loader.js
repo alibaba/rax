@@ -4,11 +4,12 @@ const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
+const processCSS = require('./styleProcessor');
 const output = require('./output');
 
 const ComponentLoader = require.resolve('./component-loader');
 
-module.exports = function pageLoader(content) {
+module.exports = async function pageLoader(content) {
   const loaderOptions = getOptions(this);
   const { platform, entryPath, mode, disableCopyNpm } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
@@ -31,6 +32,11 @@ module.exports = function pageLoader(content) {
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
   const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
+  transformed.style = style;
+  transformed.assets = assets;
+
   const pageDistDir = dirname(targetFilePath);
   if (!existsSync(pageDistDir)) mkdirpSync(pageDistDir);
 

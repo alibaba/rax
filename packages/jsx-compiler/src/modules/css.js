@@ -1,7 +1,5 @@
 const t = require('@babel/types');
 const { readFileSync } = require('fs-extra');
-const { relative } = require('path');
-const stylesheetLoader = require('stylesheet-loader');
 const moduleResolve = require('../utils/moduleResolve');
 const traverse = require('../utils/traverseNodePath');
 
@@ -24,7 +22,7 @@ module.exports = {
     const cssFileMap = {};
     parsed.cssFiles = parsed.cssFiles || [];
 
-    Object.keys(imported).forEach((rawPath) => {
+    Object.keys(imported).forEach(rawPath => {
       if (isFilenameCSS(rawPath)) {
         const resolvedPath = moduleResolve(options.resourcePath, rawPath);
         if (resolvedPath) {
@@ -51,33 +49,16 @@ module.exports = {
     });
   },
   generate(ret, parsed, options) {
-    ret.style = ret.style || '';
-    ret.assets = ret.assets || {};
+    ret.cssFiles = parsed.cssFiles;
     ret.dependencies = ret.dependencies || [];
     if (parsed.cssFiles) {
       parsed.cssFiles.forEach((cssFile) => {
         ret.dependencies.push(cssFile.filename);
-        if (cssFile.type === 'cssObject') {
-          const relativePath = relative(options.sourcePath, cssFile.filename);
-          ret.assets[relativePath + '.js'] = createCSSModule(cssFile.content);
-        } else if (cssFile.type === 'cssFile') {
-          ret.style += convertCSSUnit(cssFile.content);
-        }
       });
     }
-  },
+  }
 };
 
 function isFilenameCSS(path) {
-  return /\.css$/i.test(path);
-}
-
-function convertCSSUnit(raw, originExt = 'rem', targetExt = 'rpx') {
-  const regexp = new RegExp(originExt, 'g');
-  return raw.replace(regexp, targetExt); // Maybe could use postcss plugin instead.
-}
-
-function createCSSModule(content) {
-  const loaderContext = { query: '?log=false' };
-  return stylesheetLoader.call(loaderContext, content);
+  return /\.(css|sass|less|scss|styl)$/i.test(path);
 }
