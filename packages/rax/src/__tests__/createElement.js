@@ -146,7 +146,7 @@ describe('Element', () => {
   });
 
 
-  it('The writing method of <Tag {...props} /> props can not reuse the same object', () => {
+  it('uses its own values, with the same props', () => {
     let thisProps = {};
     let tagA = <div {...thisProps}>A</div>;
     let tagB = <div {...thisProps} a={1}>B</div>;
