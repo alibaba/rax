@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { join, relative, dirname } = require('path');
+const { join, relative, dirname, resolve, extname } = require('path');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -30,6 +30,7 @@ const RUNTIME = 'jsx2mp-runtime';
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
+const isRelativeImport = (mod) => mod[0] === '.';
 
 const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF].includes(node.name);
 
@@ -97,6 +98,7 @@ module.exports = {
     const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
 
     removeRaxImports(parsed.ast);
+    ensureIndexPathInImports(parsed.ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
     renameCoreModule(parsed.ast, runtimePath);
     renameFileModule(parsed.ast);
     renameAppConfig(parsed.ast, sourcePath, resourcePath);
@@ -236,6 +238,18 @@ function renameAppConfig(ast, sourcePath, resourcePath) {
           const replacement = source.node.value.replace(/app\.json/, 'app.config.js');
           source.replaceWith(t.stringLiteral(replacement));
         }
+      }
+    }
+  });
+}
+
+function ensureIndexPathInImports(ast, resourcePath) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isRelativeImport(source.node.value)) {
+        const replacement = ensureIndexInPath(source.node.value, resourcePath);
+        source.replaceWith(t.stringLiteral(replacement));
       }
     }
   });
@@ -534,4 +548,24 @@ function addRegisterRefs(refs, renderFunctionPath) {
  */
 function normalizeFileName(filename) {
   return filename.replace(/@/g, '_');
+}
+
+/**
+ * add index if it's omitted
+ *
+ * @param {string} value  imported value
+ * @param {string} resourcePath current file path
+ * @returns
+ */
+function ensureIndexInPath(value, resourcePath) {
+  const target = require.resolve(resolve(dirname(resourcePath), value));
+  return removeJSExtension('./' + relative(dirname(resourcePath), target));
+};
+
+function removeJSExtension(filePath) {
+  const ext = extname(filePath);
+  if (ext === '.js') {
+    return filePath.slice(0, filePath.length - ext.length)
+  }
+  return filePath;
 }
