@@ -107,7 +107,14 @@ module.exports = function scriptLoader(content) {
         externalPlugins: [
           [
             require('./babel-plugin-rename-import'),
-            { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform }
+            { normalizeNpmFileName,
+              nodeModulesPathList,
+              distSourcePath,
+              resourcePath: this.resourcePath,
+              outputPath,
+              disableCopyNpm,
+              platform
+            }
           ]
         ]
       };
@@ -131,7 +138,14 @@ module.exports = function scriptLoader(content) {
       externalPlugins: [
         [
           require('./babel-plugin-rename-import'),
-          { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform }
+          { normalizeNpmFileName,
+            nodeModulesPathList,
+            distSourcePath,
+            resourcePath: this.resourcePath,
+            outputPath,
+            disableCopyNpm,
+            platform
+          }
         ]
       ]
     };
