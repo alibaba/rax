@@ -145,8 +145,7 @@ describe('Element', () => {
     }).toThrowError(/Cannot assign to read only property/);
   });
 
-
-  it('uses its own children, with the same props', () => {
+  it('make children output correct when thisProps does not change', () => {
     let thisProps = {};
     let tagA = <div {...thisProps}>A</div>;
     let tagB = <div {...thisProps} a={1}>B</div>;

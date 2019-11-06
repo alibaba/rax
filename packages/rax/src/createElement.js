@@ -33,7 +33,7 @@ export default function createElement(type, config, children) {
 
     if (process.env.NODE_ENV !== 'production') {
       if (isString(ref) && !ownerComponent) {
-        console.error('createElement: adding a string ref "' + ref + '" outside the render method.');
+        warning('createElement: adding a string ref "' + ref + '" outside the render method.');
       }
     }
 
