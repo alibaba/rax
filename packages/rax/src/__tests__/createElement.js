@@ -146,7 +146,7 @@ describe('Element', () => {
   });
 
 
-  it('uses its own values, with the same props', () => {
+  it('uses its own children, with the same props', () => {
     let thisProps = {};
     let tagA = <div {...thisProps}>A</div>;
     let tagB = <div {...thisProps} a={1}>B</div>;
