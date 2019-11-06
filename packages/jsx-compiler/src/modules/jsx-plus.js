@@ -153,13 +153,13 @@ function transformDirectiveList(ast, code, adapter) {
             const item = properties.find(({key}) => key.name === listItem.name);
             if (t.isMemberExpression(iterValue)) {
               if (t.isIdentifier(item.value)) {
-                if (t.isIdentifier(iterValue.value)) {
+                if (t.isIdentifier(iterValue.object)) {
                   item.value = t.objectExpression([
                     t.spreadElement(item.value),
                     t.objectProperty(iterValue.property, mapCallExpression)
                   ]);
                 } else {
-                  throw new CodeError(code, iterValue.value, iterValue.value.loc, "Currently doesn't support x-for={it in item.info.list} in nested list");
+                  throw new CodeError(code, iterValue, iterValue.loc, "Currently doesn't support x-for={it in item.info.list} in nested list");
                 }
               } else if (t.isObjectExpression(item.value)) {
                 item.value.properties.push(

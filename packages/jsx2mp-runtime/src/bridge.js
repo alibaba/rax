@@ -220,7 +220,7 @@ function isDatasetKebabArg(str) {
   return DATASET_KEBAB_ARG_REG.test(str);
 }
 
-const DATASET_ARG_REG = /\w+Arg?(\d+)/;
+const DATASET_ARG_REG = /\w+?-[aA]rg?-?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);

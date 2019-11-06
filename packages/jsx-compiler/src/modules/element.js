@@ -227,7 +227,7 @@ function transformTemplate(
         const callExp = expression.body;
         const args = callExp.arguments;
         const { attributes } = parentPath.parentPath.node;
-        const fnExpression = t.isCallExpression(callExp) ? callExp.callee : expression
+        const fnExpression = t.isCallExpression(callExp) ? callExp.callee : expression;
         const name = dynamicEvents.add({
           expression: fnExpression,
           isDirective,
