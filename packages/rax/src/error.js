@@ -2,7 +2,7 @@ import Host from './vdom/host';
 
 export function getRenderErrorInfo() {
   const ownerComponent = Host.owner;
-  return ownerComponent ? `check <${ownerComponent.__getName()}>` : 'owner is null';
+  return ownerComponent ? `check <${ownerComponent.__getName()}>` : 'no owner';
 }
 
 /**

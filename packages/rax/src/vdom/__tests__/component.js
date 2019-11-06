@@ -40,7 +40,7 @@ describe('Component', () => {
       let foo = <Foo key="key" ref="ref" />;
       expect(foo.props.key).toBe(undefined);
       expect(foo.props.ref).toBe(undefined);
-    }).toWarnDev('createElement: adding a string ref "ref" outside the render method.', {withoutStack: true});
+    }).toWarnDev('Adding a string ref "ref" that was not created inside render method, or multiple copies of Rax are used.', {withoutStack: true});
   });
 
   it('create a component based on state using initial values in this.props', function() {

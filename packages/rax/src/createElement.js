@@ -25,7 +25,9 @@ export default function createElement(type, config, children) {
 
     if (process.env.NODE_ENV !== 'production') {
       if (isString(ref) && !ownerComponent) {
-        warning('createElement: adding a string ref "' + ref + '" outside the render method.');
+        warning(
+          `Adding a string ref "${ref}" that was not created inside render method, or multiple copies of Rax are used.`
+        );
       }
     }
 
