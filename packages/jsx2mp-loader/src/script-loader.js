@@ -64,7 +64,8 @@ module.exports = function scriptLoader(content) {
       });
 
       // Modify referenced component location according to the platform
-      const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), platform.type === 'ali' ? pkg.miniappConfig.main : pkg.miniappConfig[`main:${platform.type}`] + '.json'));
+      const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), (platform.type === 'ali' ? pkg.miniappConfig.main : pkg.miniappConfig[`main:${platform.type}`]) + '.json'));
+
       if (existsSync(componentConfigPath)) {
         const componentConfig = readJSONSync(componentConfigPath);
         if (componentConfig.usingComponents) {
