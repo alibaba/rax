@@ -40,17 +40,26 @@ module.exports = function visitor({ types: t }, options) {
     visitor: {
       ImportDeclaration(path, state) {
         const { value } = path.node.source;
-        if (isWeexModule(value)) {
-          path.remove();
-        } else if (isRaxModule(value)) {
-          let runtimePath = getRuntimeByPlatform(platform.type);
-          if (!disableCopyNpm) {
-            const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
-            runtimePath = './' + join(rootNpmRelativePath, RUNTIME);
+
+        if (isNpmModule(value)) {
+          if (isWeexModule(value)) {
+            path.remove();
+            return;
           }
-          path.node.source = t.stringLiteral(runtimePath);
-        } else if (isNpmModule(value) && !disableCopyNpm) {
-          path.node.source = source(value, nodeModulesPathList, state.cwd);
+
+          if (isRaxModule(value)) {
+            let runtimePath = getRuntimeByPlatform(platform.type);
+            if (!disableCopyNpm) {
+              const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
+              runtimePath = './' + join(rootNpmRelativePath, RUNTIME);
+            }
+            path.node.source = t.stringLiteral(runtimePath);
+            return;
+          }
+
+          if (!disableCopyNpm) {
+            path.node.source = source(value, nodeModulesPathList, state.cwd);
+          }
         } else {
           path.node.source = ensureIndexInPath(value, resourcePath);
         }
@@ -65,20 +74,29 @@ module.exports = function visitor({ types: t }, options) {
         ) {
           if (t.isStringLiteral(node.arguments[0])) {
             const moduleName = node.arguments[0].value;
-            if (isWeexModule(moduleName)) {
-              path.replaceWith(t.nullLiteral());
-            } else if (isRaxModule(moduleName)) {
-              let runtimePath = t.stringLiteral(getRuntimeByPlatform(platform.type));
-              if (!disableCopyNpm) {
-                runtimePath = source(moduleName, nodeModulesPathList, state.cwd);
+
+            if (isNpmModule(moduleName)) {
+              if (isWeexModule(moduleName)) {
+                path.replaceWith(t.nullLiteral());
+                return;
               }
-              path.node.arguments = [
-                runtimePath
-              ];
-            } else if (isNpmModule(moduleName) && !disableCopyNpm) {
-              path.node.arguments = [
-                source(moduleName, nodeModulesPathList, state.cwd)
-              ];
+
+              if (isRaxModule(moduleName)) {
+                let runtimePath = t.stringLiteral(getRuntimeByPlatform(platform.type));
+                if (!disableCopyNpm) {
+                  runtimePath = source(moduleName, nodeModulesPathList, state.cwd);
+                }
+                path.node.arguments = [
+                  runtimePath
+                ];
+                return;
+              }
+
+              if (!disableCopyNpm) {
+                path.node.arguments = [
+                  source(moduleName, nodeModulesPathList, state.cwd)
+                ];
+              }
             } else {
               path.node.arguments = [
                 ensureIndexInPath(moduleName, resourcePath)
