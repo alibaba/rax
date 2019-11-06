@@ -17,11 +17,14 @@ function transformAttribute(ast, code, adapter) {
         case 'className':
           if (!adapter.styleKeyword || isNativeComponent(path)) {
             node.name.name = 'class';
+          } else {
+            path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'), node.value));
           }
           break;
         case 'style':
           if (adapter.styleKeyword && !isNativeComponent(path)) {
             node.name.name = 'styleSheet';
+            path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('style'), node.value));
           }
           break;
         case 'ref':

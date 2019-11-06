@@ -3,7 +3,7 @@ import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-import { getComponentLifecycle } from '@@ADAPTER@@';
+import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
 
@@ -153,11 +153,8 @@ function createConfig(component, options) {
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
   const config = {
     data: {},
-    [PROPS]: {
-      __tagId: null,
-      __parentId: null
-    },
     ...cycles,
+    ...getComponentBaseConfig()
   };
 
   const proxiedMethods = createProxyMethods(events);

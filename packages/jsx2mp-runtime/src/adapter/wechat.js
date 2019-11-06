@@ -31,3 +31,15 @@ export function getComponentLifecycle({ mount, unmount }) {
     detached,
   };
 }
+
+export function getComponentBaseConfig() {
+  return {
+    properties: {
+      __tagId: null,
+      __parentId: null,
+    },
+    options: {
+      addGlobalClass: true,
+    }
+  };
+}

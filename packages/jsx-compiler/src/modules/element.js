@@ -363,7 +363,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           // Handle native components, like rax-text
           if (baseComponents.indexOf(name) > -1 && adapter.needTransformEvent) {
             node.attributes.forEach(attr => {
-              if (attr.value.value.indexOf('_e') > -1) {
+              if (attr.value && attr.value.value && attr.value.value.indexOf('_e') > -1) {
                 attr.name.name = `bind${attr.name.name}`;
               }
             });
