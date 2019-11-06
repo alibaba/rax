@@ -46,7 +46,8 @@ export default function createElement(type, config, children) {
     }
 
     // If no reserved props, assign config to props for better performance
-    if (hasReservedProps || config.children) { // When the property childern exists in config, prevent the same reference
+    // The writing method of <Tag {...props} /> props will reuse the same object, and at the same time, the value of config.children will be overwritten
+    if (hasReservedProps || config.children != undefined) {
       for (propName in config) {
         // Extract reserved props
         if (!RESERVED_PROPS[propName]) {
