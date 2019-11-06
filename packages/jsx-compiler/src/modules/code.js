@@ -11,11 +11,13 @@ const SUPER_COMPONENT = 'Component';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
 const CREATE_STYLE = 'createStyle';
+const CLASSNAMES = 'classnames';
 
 const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
+const SAFE_CLASSNAMES = '__classnames__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
@@ -106,7 +108,7 @@ module.exports = {
     }
 
     if (type !== 'app') {
-      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks, runtimePath);
+      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, parsed.useClassnames, hooks, runtimePath);
     }
 
     removeDefaultImports(parsed.ast);
@@ -292,7 +294,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks, runtimePath) {
+function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, hooks, runtimePath) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -330,6 +332,13 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
         specifiers.push(t.importSpecifier(
           t.identifier(SAFE_CREATE_STYLE),
           t.identifier(CREATE_STYLE)
+        ));
+      }
+
+      if (useClassnames) {
+        specifiers.push(t.importSpecifier(
+          t.identifier(SAFE_CLASSNAMES),
+          t.identifier(CLASSNAMES)
         ));
       }
 

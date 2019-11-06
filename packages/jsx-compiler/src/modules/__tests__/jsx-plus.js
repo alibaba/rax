@@ -1,6 +1,7 @@
 const {
   _transformCondition,
   _transformList,
+  _transformClass,
   _transformFragment,
 } = require('../jsx-plus');
 const { parseExpression } = require('../../parser');
@@ -71,6 +72,24 @@ describe('Directives', () => {
       `);
       _transformFragment(ast);
       expect(genExpression(ast)).toEqual('<block foo="bar"></block>');
+    });
+  });
+
+  describe('class', () => {
+    it('simple', () => {
+      const ast = parseExpression(`
+        <View x-class={classNames}></View>
+      `);
+      _transformClass(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View className={__classnames__(classNames)}></View>');
+    });
+
+    it('combine', () => {
+      const ast = parseExpression(`
+        <View className="home" x-class={classNames}></View>
+      `);
+      _transformClass(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View className={"home" + " " + __classnames__(classNames)}></View>');
     });
   });
 });
