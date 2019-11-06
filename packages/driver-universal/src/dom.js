@@ -1,6 +1,6 @@
 /* global VIEWPORT_WIDTH, DEVICE_WIDTH */
 import * as DriverDOM from 'driver-dom';
-import { convertUnit, setRpx } from 'style-unit';
+import { setRpx } from 'style-unit';
 import * as Flexbox from './flexbox'; // Compatible with old version of safari.
 
 const STYLE = 'style';
@@ -40,11 +40,14 @@ const driver = Object.assign({}, DriverDOM, {
       style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
     }
     const tranformedStyle = transformStyle(style);
+
     DriverDOM.setStyle(node, tranformedStyle);
   }
 });
 
 function transformStyle(style, ret = {}) {
+  // Driver universal only process flex box compatible.
+  // Process convert unit in DriverDOM
   for (let prop in style) {
     if (style.hasOwnProperty(prop)) {
       let val = style[prop];
@@ -53,10 +56,8 @@ function transformStyle(style, ret = {}) {
         transformStyle(val, ret);
       } else if (Flexbox.isFlexProp(prop)) {
         Flexbox[prop](val, ret);
-      } else if (typeof val === 'number') {
-        ret[prop] = val;
       } else {
-        ret[prop] = convertUnit(val, prop);
+        ret[prop] = val;
       }
     }
   }

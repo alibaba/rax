@@ -1,6 +1,8 @@
 /**
  * Driver for Web DOM
  **/
+import { isRpx } from 'style-unit';
+
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 
 // opacity -> opa
@@ -94,10 +96,6 @@ function cached(fn) {
 
 function calcRpxToVw(value) {
   return value.replace(RPX_REG, unitTransformer);
-}
-
-function isRpx(str) {
-  return typeof str === 'string' && str.slice(0, -3) === 'rpx';
 }
 
 // Cache the convert fn.
@@ -352,13 +350,18 @@ export function setStyle(node, style) {
       convertedValue = convertUnit(value);
     }
 
-    // Support CSS custom properties (variables) like { --main-color: "black" }
-    if (prop[0] === '-' && prop[1] === '-') {
-      // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty.
-      // style.setProperty do not support Camel-Case style properties.
-      node.style.setProperty(prop, convertedValue);
+    // Support value array like mock display: ["-webkit-box", "-webkit-flex", "flex"];
+    if (Array.isArray(convertedValue)) {
+      for (let i = 0; i < convertedValue.length; i++) node.style[prop] = convertedValue[i];
     } else {
-      node.style[prop] = convertedValue;
+      // Support CSS custom properties (variables) like { --main-color: "black" }
+      if (prop[0] === '-' && prop[1] === '-') {
+        // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty.
+        // style.setProperty do not support Camel-Case style properties.
+        node.style.setProperty(prop, convertedValue);
+      } else {
+        node.style[prop] = convertedValue;
+      }
     }
   }
 }

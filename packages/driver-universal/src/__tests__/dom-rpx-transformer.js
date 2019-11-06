@@ -2,7 +2,7 @@ import { createElement, render } from 'rax';
 import DriverUniversalDOM from '../dom';
 
 describe('Transform rpx', () => {
-  const CLIENT_WIDTH = 414;
+  const CLIENT_WIDTH = 750;
 
   it('CSS custom properties works.', () => {
     global.DEVICE_WIDTH = CLIENT_WIDTH;
@@ -10,12 +10,12 @@ describe('Transform rpx', () => {
     const container = document.createElement('div');
     render((
       <div style={{
-        margin: '100rpx 100vh'
+        margin: '75rpx 100vh'
       }} />
     ), container, {
       driver: DriverUniversalDOM
     });
 
-    expect(container.childNodes[0].style.margin).toEqual('55.2px 100vh');
+    expect(container.childNodes[0].style.margin).toEqual('10vw 100vh');
   });
 });

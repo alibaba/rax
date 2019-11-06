@@ -1,6 +1,6 @@
 {
   "name": "driver-dom",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "DOM driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -15,5 +15,8 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "devDependencies": {
     "rax": "^1.0.0"
+  },
+  "dependencies": {
+    "style-unit": "^2.0.0"
   }
 }
