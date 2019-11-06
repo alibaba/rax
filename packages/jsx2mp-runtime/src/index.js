@@ -5,6 +5,7 @@ import { withRouter } from './router';
 import Component from './component';
 import createStyle from './createStyle';
 import createContext from './createContext';
+import classnames from './classnames';
 
 export {
   runApp,
@@ -12,6 +13,7 @@ export {
   createComponent,
   createStyle,
   createContext,
+  classnames,
 
   Component,
 
