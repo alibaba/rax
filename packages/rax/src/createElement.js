@@ -20,33 +20,20 @@ export default function createElement(type, config, children) {
   const ownerComponent = Host.owner;
 
   if (config != null) {
-    let hasReservedProps = false;
+    ref = config.ref === undefined ? null : config.ref;
+    key = config.key === undefined ? null : '' + config.key;
 
-    if (config.ref != null) {
-      hasReservedProps = true;
-      ref = config.ref;
-      if (process.env.NODE_ENV !== 'production') {
-        if (isString(ref) && !ownerComponent) {
-          warning('createElement: adding a string ref "' + ref + '" outside the render method.');
-        }
+    if (process.env.NODE_ENV !== 'production') {
+      if (isString(ref) && !ownerComponent) {
+        warning('createElement: adding a string ref "' + ref + '" outside the render method.');
       }
     }
 
-    if (config.key != null) {
-      hasReservedProps = true;
-      key = '' + config.key;
-    }
-
-    // If no reserved props, assign config to props for better performance
-    if (hasReservedProps) {
-      for (propName in config) {
-        // Extract reserved props
-        if (!RESERVED_PROPS[propName]) {
-          props[propName] = config[propName];
-        }
+    // Remaining properties are added to a new props object
+    for (propName in config) {
+      if (!RESERVED_PROPS[propName]) {
+        props[propName] = config[propName];
       }
-    } else {
-      props = config;
     }
   }
 
