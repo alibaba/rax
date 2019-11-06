@@ -565,7 +565,7 @@ function ensureIndexInPath(value, resourcePath) {
 function removeJSExtension(filePath) {
   const ext = extname(filePath);
   if (ext === '.js') {
-    return filePath.slice(0, filePath.length - ext.length)
+    return filePath.slice(0, filePath.length - ext.length);
   }
   return filePath;
 }
