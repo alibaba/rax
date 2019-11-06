@@ -1,7 +1,6 @@
 /**
  * Driver for Web DOM
  **/
-import { isRpx } from 'style-unit';
 
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 
@@ -96,6 +95,10 @@ function cached(fn) {
 
 function calcRpxToVw(value) {
   return value.replace(RPX_REG, unitTransformer);
+}
+
+function isRpx(str) {
+  return typeof str === 'string' && RPX_REG.test(str);
 }
 
 // Cache the convert fn.

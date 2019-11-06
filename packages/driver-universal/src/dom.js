@@ -41,7 +41,18 @@ const driver = Object.assign({}, DriverDOM, {
     }
     const tranformedStyle = transformStyle(style);
 
+    // Fist use DriverDOM set standard style.
     DriverDOM.setStyle(node, tranformedStyle);
+    // Second process flex compatible style, like {display: ["-webkit-box", "-webkit-flex", "flex"]}.
+    for (let prop in tranformedStyle) {
+      if (tranformedStyle.hasOwnProperty(prop)) {
+        const transformValue = tranformedStyle[prop];
+        // Hack handle compatibility issue
+        if (Array.isArray(transformValue)) {
+          for (let i = 0; i < transformValue.length; i++) node.style[prop] = transformValue[i];
+        }
+      }
+    }
   }
 });
 

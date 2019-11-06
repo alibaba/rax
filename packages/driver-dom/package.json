@@ -15,8 +15,5 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "devDependencies": {
     "rax": "^1.0.0"
-  },
-  "dependencies": {
-    "style-unit": "^2.0.0"
   }
 }
