@@ -58,8 +58,6 @@ async function processCSS(cssFiles, sourcePath) {
       style += convertCSSUnit(cssFile.content);
     }
   }
-  console.log("TCL: processCSS -> style", style)
-  console.log("TCL: processCSS -> assets", assets)
   return { style, assets };
 }
 
