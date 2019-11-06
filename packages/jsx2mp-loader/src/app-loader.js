@@ -6,6 +6,7 @@ const moduleResolve = require('./utils/moduleResolve');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const defaultStyle = require('./defaultStyle');
+const processCSS = require('./styleProcessor');
 const output = require('./output');
 
 
@@ -32,7 +33,7 @@ function getRelativePath(filePath) {
   return relativePath;
 }
 
-module.exports = function appLoader(content) {
+module.exports = async function appLoader(content) {
   const loaderOptions = getOptions(this);
   const { entryPath, platform, mode, disableCopyNpm } = loaderOptions;
   const appConfigPath = removeExt(this.resourcePath) + '.json';
@@ -55,6 +56,10 @@ module.exports = function appLoader(content) {
   });
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
   const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
+  transformed.style = style;
+  transformed.assets = assets;
 
   this.addDependency(appConfigPath);
 
