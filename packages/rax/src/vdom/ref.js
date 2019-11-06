@@ -30,7 +30,7 @@ export function attachRef(ownerComponent, ref, component) {
 
   if (process.env.NODE_ENV !== 'production') {
     if (instance == null) {
-      warning('Do not attach ref  to function components because they don’t have instances.');
+      warning('Do not attach ref to function components because they don’t have instances.');
     }
   }
 
