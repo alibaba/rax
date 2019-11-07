@@ -1,7 +1,7 @@
 /* global PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
@@ -50,7 +50,7 @@ function getPageCycles(Klass) {
       if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
   };
-  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH].forEach((hook) => {
+  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP].forEach((hook) => {
     config[hook] = function(e) {
       return this.instance._trigger(hook, e);
     };
@@ -108,12 +108,13 @@ function createProxyMethods(events) {
             }
           });
         } else {
+          const formatName = formatEventName(eventName);
           Object.keys(this[PROPS]).forEach(key => {
-            if (`data-${eventName}-arg-context` === key) {
+            if (`data-${formatName}-arg-context` === key) {
               context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
             } else if (isDatasetKebabArg(key)) {
               // `data-arg-` length is 9.
-              const len = `data-${eventName}-arg-`.length;
+              const len = `data-${formatName}-arg-`.length;
               datasetArgs[key.slice(len)] = this[PROPS][key];
             }
           });
@@ -221,4 +222,8 @@ const DATASET_ARG_REG = /\w+?-[aA]rg?-?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
+}
+
+function formatEventName(name) {
+  return name.replace('_', '');
 }

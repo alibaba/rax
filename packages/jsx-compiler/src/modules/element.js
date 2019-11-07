@@ -230,12 +230,13 @@ function transformTemplate(
           expression: fnExpression,
           isDirective,
         });
+        const formatName = formatEventName(name);
         if (Array.isArray(args)) {
           args.forEach((arg, index) => {
             const transformedArg = transformCallExpressionArg(arg);
             attributes.push(
               t.jsxAttribute(
-                t.jsxIdentifier(`data-${name}-arg-` + index),
+                t.jsxIdentifier(`data-${formatName}-arg-` + index),
                 t.stringLiteral(
                   createBinding(
                     genExpression(transformedArg, {
@@ -302,6 +303,7 @@ function transformTemplate(
               expression: callExp.callee.object,
               isDirective,
             });
+            const formatName = formatEventName(name);
             if (Array.isArray(args)) {
               args.forEach((arg, index) => {
                 if (index === 0) {
@@ -316,7 +318,7 @@ function transformTemplate(
                     );
                   attributes.push(
                     t.jsxAttribute(
-                      t.jsxIdentifier(`data-${name}-arg-context`),
+                      t.jsxIdentifier(`data-${formatName}-arg-context`),
                       t.stringLiteral(strValue),
                     ),
                   );
@@ -324,7 +326,7 @@ function transformTemplate(
                   const transformedArg = transformCallExpressionArg(arg);
                   attributes.push(
                     t.jsxAttribute(
-                      t.jsxIdentifier(`data-${name}-arg-` + (index - 1)),
+                      t.jsxIdentifier(`data-${formatName}-arg-` + (index - 1)),
                       t.stringLiteral(
                         createBinding(
                           genExpression(transformedArg, {
@@ -692,6 +694,11 @@ function checkMemberHasThis(expression) {
     hasThisExpression = checkMemberHasThis(object);
   }
   return hasThisExpression;
+}
+
+// _e0 -> e0
+function formatEventName(name) {
+  return name.replace('_', '');
 }
 
 module.exports = {

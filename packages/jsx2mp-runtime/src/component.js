@@ -15,6 +15,7 @@ import {
   ON_REACH_BOTTOM,
   ON_PULL_DOWN_REFRESH,
   ON_SHARE_APP_MESSAGE,
+  ON_TAB_ITEM_TAP,
   COMPONENT_DID_MOUNT,
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
@@ -276,13 +277,19 @@ export default class Component {
       case ON_HIDE:
       case ON_PAGE_SCROLL:
       case ON_REACH_BOTTOM:
+      case ON_TAB_ITEM_TAP:
       case ON_PULL_DOWN_REFRESH:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
         }
-        if (pageCycles.hasOwnProperty(cycle)) {
-          pageCycles[cycle].forEach(fn => fn(...args));
+        if (this.props.location) {
+          const pathname = this.props.location.pathname;
+          if (pageCycles[pathname]) {
+            if (pageCycles[pathname][cycle]) {
+              pageCycles[pathname][cycle].forEach(fn => fn(...args));
+            }
+          }
         }
         break;
 
