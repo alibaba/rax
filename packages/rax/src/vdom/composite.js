@@ -10,7 +10,7 @@ import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
 import performInSandbox from './performInSandbox';
 import toArray from '../toArray';
 import { scheduleLayout } from './scheduler';
-import { isObject, isFunction, isArray } from '../types';
+import { isFunction, isArray } from '../types';
 import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';

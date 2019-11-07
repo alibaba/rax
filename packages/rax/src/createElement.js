@@ -2,7 +2,7 @@ import Host from './vdom/host';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
 import { warning, throwError, throwMinifiedWarn } from './error';
-import { isString, isArray } from './types';
+import { isString, isArray, NOOP } from './types';
 import validateChildKeys from './validateChildKeys';
 
 const RESERVED_PROPS = {
@@ -61,7 +61,7 @@ export default function createElement(type, config, children) {
       throwError(`Invalid element type, expected a string or a class/function component but got "${type}".`);
     } else {
       // A empty component replaced avoid break render in producation
-      type = () => {};
+      type = NOOP;
       throwMinifiedWarn(0);
     }
   }

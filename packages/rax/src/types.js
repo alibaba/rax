@@ -21,3 +21,6 @@ export function isString(string) {
 export function isNumber(string) {
   return typeof string === 'number';
 }
+
+export const NOOP = () => {};
+export const EMPTY_OBJECT = {};

@@ -1,6 +1,6 @@
 import Host from './vdom/host';
 import { warning } from './error';
-import {isArray, isObject} from './types';
+import { isArray } from './types';
 
 /**
  * Warn if there's no key explicitly set on dynamic arrays of children or

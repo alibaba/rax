@@ -1,6 +1,6 @@
 import Host from './vdom/host';
 import { scheduler } from './vdom/scheduler';
-import { isObject } from './types';
+import { isObject, NOOP } from './types';
 
 function newMinifiedError(type, code, obj) {
   var typeInfo = obj === undefined ? '' : ' ' + getTypeInfo(obj);
@@ -50,7 +50,7 @@ export function throwError(message, obj) {
   throw Error(`${message} ${typeInfo}`);
 }
 
-export let warning = () => {};
+export let warning = NOOP;
 
 if (process.env.NODE_ENV !== 'production') {
   warning = (template, ...args) => {
