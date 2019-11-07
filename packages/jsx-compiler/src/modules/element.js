@@ -76,10 +76,8 @@ function transformTemplate(
       // <div foo={100} /> -> <div foo="{{100}}" />
       // <div>{100}</div>  -> <div>100</div>
       case 'NumericLiteral':
-        if (type === ATTR)
-          path.replaceWith(t.stringLiteral(createBinding(expression.value)));
-        else if (type === ELE)
-          path.replaceWith(t.jsxText(String(expression.value)));
+        if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(expression.value)));
+        else if (type === ELE) path.replaceWith(t.jsxText(String(expression.value)));
         break;
 
       // <div foo={true} /> -> <div foo="{{true}}" />
@@ -464,8 +462,7 @@ function transformTemplate(
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
                 if (attr.name.name === 'class') {
-                  attr.value.value =
-                    propsMap.className + ' ' + attr.value.value;
+                  attr.value.value = propsMap.className + ' ' + attr.value.value;
                   hasClassName = true;
                 } else if (propsMap[attr.name.name]) {
                   attr.name.name = propsMap[attr.name.name];
@@ -597,8 +594,8 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
 function transformIdentifier(expression, dynamicBinding, isDirective) {
   let replaceNode;
   if (
-    expression.__listItem && !expression.__listItem.item ||
-    expression.__templateVar
+    expression.__listItem && !expression.__listItem.item
+    || expression.__templateVar
   ) {
     // The identifier is x-for args or template variable or map's index
     replaceNode = expression;

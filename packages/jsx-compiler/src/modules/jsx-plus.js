@@ -150,24 +150,28 @@ function transformDirectiveList(ast, code, adapter) {
              * */
             const loopFnBodyLength = parentList.loopFnBody.body.length;
             const properties = parentList.loopFnBody.body[loopFnBodyLength - 1].argument.properties;
-            const item = properties.find(({key}) => key.name === listItem.name);
+            const forItem = properties.find(({key}) => key.name === listItem.name);
+            if (t.isIdentifier(iterValue)) {
+              forItem.value = mapCallExpression;
+            }
             if (t.isMemberExpression(iterValue)) {
-              if (t.isIdentifier(item.value)) {
-                if (t.isIdentifier(iterValue.object)) {
-                  item.value = t.objectExpression([
-                    t.spreadElement(item.value),
+              switch (forItem.value.type) {
+                case 'Identifier':
+                  if (t.isIdentifier(iterValue.object)) {
+                    forItem.value = t.objectExpression([
+                      t.spreadElement(forItem.value),
+                      t.objectProperty(iterValue.property, mapCallExpression)
+                    ]);
+                  } else {
+                    throw new CodeError(code, iterValue, iterValue.loc, "Currently doesn't support x-for={it in item.info.list} in nested list");
+                  }
+                  break;
+                case 'ObjectExpression':
+                  forItem.value.properties.push(
                     t.objectProperty(iterValue.property, mapCallExpression)
-                  ]);
-                } else {
-                  throw new CodeError(code, iterValue, iterValue.loc, "Currently doesn't support x-for={it in item.info.list} in nested list");
-                }
-              } else if (t.isObjectExpression(item.value)) {
-                item.value.properties.push(
-                  t.objectProperty(iterValue.property, mapCallExpression)
-                );
+                  );
+                  break;
               }
-            } else if (t.isIdentifier(iterValue)) {
-              item.value = mapCallExpression;
             }
           } else {
             throw new CodeError(code, iterValue, iterValue.loc, 'Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
