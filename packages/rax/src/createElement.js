@@ -60,7 +60,7 @@ export default function createElement(type, config, children) {
     if (process.env.NODE_ENV !== 'production') {
       throwError(`Invalid element type, expected a string or a class/function component but got "${type}".`);
     } else {
-      // Mock as empty component
+      // A empty component replaced avoid break render in producation
       type = () => {};
       throwMinifiedWarn(0);
     }
