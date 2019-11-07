@@ -12,6 +12,8 @@ const defaultOptions = {
   normalizeNpmFileName: (s) => s,
 };
 
+const transformPathMap = {};
+
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
   const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, resourcePath, outputPath, disableCopyNpm, platform } = options;
@@ -33,7 +35,7 @@ module.exports = function visitor({ types: t }, options) {
   // In WeChat miniapp, `require` can't get index file if index is omitted
   const ensureIndexInPath = (value, resourcePath) => {
     const target = require.resolve(resolve(dirname(resourcePath), value));
-    return t.stringLiteral('./' + relative(dirname(resourcePath), target));
+    return './' + relative(dirname(resourcePath), target);
   };
 
   return {
@@ -58,10 +60,14 @@ module.exports = function visitor({ types: t }, options) {
           }
 
           if (!disableCopyNpm) {
-            path.node.source = source(value, nodeModulesPathList, state.cwd);
+            const processedSource = source(value, nodeModulesPathList, state.cwd);
+            // Add lock to avoid repeatly transformed in CallExpression if @babel/preset-env invoked
+            transformPathMap[processedSource.value] = true;
+            path.node.source = processedSource;
           }
         } else {
-          path.node.source = ensureIndexInPath(value, resourcePath);
+          const ensuredPath = ensureIndexInPath(value, resourcePath);
+          path.node.source = t.stringLiteral(ensuredPath);
         }
       },
 
@@ -98,9 +104,11 @@ module.exports = function visitor({ types: t }, options) {
                 ];
               }
             } else {
-              path.node.arguments = [
-                ensureIndexInPath(moduleName, resourcePath)
-              ];
+              if (!transformPathMap[moduleName]) {
+                path.node.arguments = [
+                  t.stringLiteral(ensureIndexInPath(moduleName, resourcePath))
+                ];
+              }
             }
           } else if (t.isExpression(node.arguments[0])) {
             // require with expression, can not staticly find target.
