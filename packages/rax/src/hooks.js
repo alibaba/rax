@@ -117,7 +117,7 @@ function useEffectImpl(effect, inputs, defered) {
         __destory.current = current();
         __create.current = null;
 
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV !== 'production') {
           const currentDestory = __destory.current;
           if (currentDestory !== undefined && typeof currentDestory !== 'function') {
             let msg;
