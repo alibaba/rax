@@ -3,7 +3,7 @@
  */
 import { isFunction, isObject } from '../types';
 import { INSTANCE } from '../constant';
-import warning from '../warning';
+import { warning } from '../error';
 
 export function updateRef(prevElement, nextElement, component) {
   let prevRef = prevElement ? prevElement.ref : null;
@@ -30,7 +30,7 @@ export function attachRef(ownerComponent, ref, component) {
 
   if (process.env.NODE_ENV !== 'production') {
     if (instance == null) {
-      warning('Do not attach ref to function components because they don’t have instances.');
+      warning('Do not attach ref to function component because they don’t have instances.');
     }
   }
 

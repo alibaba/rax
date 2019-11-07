@@ -5,7 +5,7 @@ import TextComponent from './text';
 import CompositeComponent from './composite';
 import FragmentComponent from './fragment';
 import reconciler from '../devtools/reconciler';
-import { throwMinifiedError } from '../error';
+import { throwError, throwMinifiedError } from '../error';
 
 export default function inject({ driver, measurer }) {
   // Inject component class
@@ -18,9 +18,9 @@ export default function inject({ driver, measurer }) {
   // Inject render driver
   if (!(Host.driver = driver || Host.driver)) {
     if (process.env.NODE_ENV !== 'production') {
-      throw new Error('Driver not found.');
+      throwError('Rax driver not found.');
     } else {
-      throwMinifiedError(5);
+      throwMinifiedError(0);
     }
   }
 

@@ -1,5 +1,5 @@
 import Host from './vdom/host';
-import warning from './warning';
+import { warning } from './error';
 import {isArray, isObject} from './types';
 
 /**
@@ -70,7 +70,7 @@ function validateExplicitKey(element, parentType) {
 }
 
 export default function validateChildKeys(node, parentType) {
-  if (!isObject(node)) {
+  if (typeof node !== 'object') {
     return;
   }
 
@@ -84,6 +84,6 @@ export default function validateChildKeys(node, parentType) {
   } else if (isValidElement(node)) {
     node.__validated = true;
   }
-  // rax isn't support iterator object as element children
+  // Rax isn't support iterator object as element children
   // TODO: add validate when rax support iterator object as element.
 }

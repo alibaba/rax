@@ -63,7 +63,7 @@ describe('Element', () => {
       var component = render(<ParentComp />);
 
       jest.runAllTimers();
-    }).toThrowError(/should not be null or undefined/);
+    }).toThrowError(/Invalid element type/);
 
     jest.useRealTimers();
   });
@@ -114,15 +114,22 @@ describe('Element', () => {
     ));
   });
 
-  it('warns for the child array contains invalid element type', () => {
-    let container = createNodeElement('div');
+  it('throws for the child array contains invalid element type', () => {
     expect(() => {
-      render(<div>{[{}, {foo: 1}]}</div>, container);
+      let container = createNodeElement('div');
+      render(<div>{[{}]}</div>, container);
       jest.runAllTimers();
-    }).toWarnDev([
-      'Warning: Invalid element type (found: object with keys {}).',
-      'Warning: Invalid element type (found: object with keys {foo}).'
-    ], {withoutStack: true});
+    }).toThrowError(
+      'Invalid child type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {})'
+    );
+
+    expect(() => {
+      let container = createNodeElement('div');
+      render(<div>{[{foo: 1}]}</div>, container);
+      jest.runAllTimers();
+    }).toThrowError(
+      'Invalid child type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {foo})'
+    );
   });
 
   it('warns for fragments of multiple elements with same key', () => {

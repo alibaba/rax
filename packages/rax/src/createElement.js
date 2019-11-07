@@ -1,9 +1,8 @@
 import Host from './vdom/host';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
-import { throwMinifiedError, getRenderErrorInfo } from './error';
+import { warning, throwError, throwMinifiedWarn } from './error';
 import { isString, isArray } from './types';
-import warning from './warning';
 import validateChildKeys from './validateChildKeys';
 
 const RESERVED_PROPS = {
@@ -17,19 +16,10 @@ export default function createElement(type, config, children) {
   let propName;
   let key = null;
   let ref = null;
-  const ownerComponent = Host.owner;
 
   if (config != null) {
     ref = config.ref === undefined ? null : config.ref;
     key = config.key === undefined ? null : '' + config.key;
-
-    if (process.env.NODE_ENV !== 'production') {
-      if (isString(ref) && !ownerComponent) {
-        warning(
-          `Adding a string ref "${ref}" that was not created inside render method, or multiple copies of Rax are used.`
-        );
-      }
-    }
 
     // Remaining properties are added to a new props object
     for (propName in config) {
@@ -68,13 +58,21 @@ export default function createElement(type, config, children) {
 
   if (type == null) {
     if (process.env.NODE_ENV !== 'production') {
-      throw new Error(`Type of createElement should not be null or undefined, ${getRenderErrorInfo()}.`);
+      throwError(`Invalid element type, expected a string or a class/function component but got "${type}".`);
     } else {
-      throwMinifiedError(0);
+      // Mock as empty component
+      type = () => {};
+      throwMinifiedWarn(0);
     }
   }
 
   if (process.env.NODE_ENV !== 'production') {
+    if (isString(ref) && !Host.owner) {
+      warning(
+        `Adding a string ref "${ref}" that was not created inside render method, or multiple copies of Rax are used.`
+      );
+    }
+
     for (let i = 2; i < arguments.length; i ++) {
       validateChildKeys(arguments[i], type);
     }
@@ -85,7 +83,7 @@ export default function createElement(type, config, children) {
     key,
     ref,
     props,
-    ownerComponent
+    Host.owner
   );
 }
 

@@ -7,7 +7,7 @@ export function isFunction(obj) {
 }
 
 export function isObject(obj) {
-  return typeof obj === 'object';
+  return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
 export function isArray(array) {

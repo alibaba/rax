@@ -2,9 +2,8 @@ import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
 import { isArray, isFunction, isNull } from './types';
-import { throwMinifiedError } from './error';
+import { warning, throwError, throwMinifiedError } from './error';
 import { INSTANCE } from './constant';
-import warning from './warning';
 
 function getCurrentInstance() {
   return Host.owner && Host.owner[INSTANCE];
@@ -15,10 +14,10 @@ function getCurrentRenderingInstance() {
   if (currentInstance) {
     return currentInstance;
   } else {
-    if (process.env.NODE_ENV === 'production') {
-      throwMinifiedError(1);
+    if (process.env.NODE_ENV !== 'production') {
+      throwError('Hooks called outside a component, or multiple version of Rax are used.');
     } else {
-      throw new Error('Hooks called outside a component, or multiple version of Rax are used.');
+      throwMinifiedError(2);
     }
   }
 }

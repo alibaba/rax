@@ -1,6 +1,6 @@
 import Host from './host';
 import {isString, isNumber, isObject, isArray, isNull} from '../types';
-import warning from '../warning';
+import { throwMinifiedWarn, throwError } from '../error';
 
 export default function instantiateComponent(element) {
   let instance;
@@ -17,10 +17,11 @@ export default function instantiateComponent(element) {
   } else if (isArray(element)) {
     instance = new Host.__Fragment(element);
   } else {
-    if (process.env.NODE_ENV !== 'production') {
-      if (!(element === undefined || isNull(element) || element === false || element === true)) {
-        let typeInfo = isObject(element) ? `object with keys {${Object.keys(element).join(', ')}}` : typeof element;
-        warning(`Invalid element type (found: ${typeInfo}).`);
+    if (!(element === undefined || isNull(element) || element === false || element === true)) {
+      if (process.env.NODE_ENV !== 'production') {
+        throwError('Invalid child type, expected types: Element instance, string, boolean, array, null, undefined.', element);
+      } else {
+        throwMinifiedWarn(1, element);
       }
     }
 

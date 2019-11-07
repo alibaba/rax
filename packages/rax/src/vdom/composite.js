@@ -15,7 +15,7 @@ import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import validateChildKeys from '../validateChildKeys';
-import { throwMinifiedError } from '../error';
+import { throwError, throwMinifiedError } from '../error';
 
 let measureLifeCycle;
 if (process.env.NODE_ENV !== 'production') {
@@ -73,11 +73,10 @@ class CompositeComponent extends BaseComponent {
         // Functional reactive component with hooks
         instance = new ReactiveComponent(Component, ref);
       } else {
-        let typeInfo = isObject(Component) ? `object with keys {${Object.keys(Component).join(', ')}}` : typeof Component;
         if (process.env.NODE_ENV !== 'production') {
-          throw new Error(`Invalid component type (found: ${typeInfo}).`);
+          throwError('Invalid component type, expected a class or function component.', Component);
         } else {
-          throwMinifiedError(2, typeInfo);
+          throwMinifiedError(1, Component);
         }
       }
     }, parentInstance);
