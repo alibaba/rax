@@ -21,7 +21,7 @@ export default function instantiateComponent(element) {
       if (process.env.NODE_ENV !== 'production') {
         throwError('Invalid child type, expected types: Element instance, string, boolean, array, null, undefined.', element);
       } else {
-        throwMinifiedWarn(1, element);
+        throwMinifiedWarn(2, element);
       }
     }
 

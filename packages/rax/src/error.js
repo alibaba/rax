@@ -2,13 +2,13 @@ import Host from './vdom/host';
 import { scheduler } from './vdom/scheduler';
 import { isObject, NOOP } from './types';
 
-function newMinifiedError(type, code, obj) {
-  var typeInfo = obj === undefined ? '' : ' ' + getTypeInfo(obj);
+function createMinifiedError(type, code, obj) {
+  var typeInfo = obj === undefined ? '' : ' got: ' + getTypeInfo(obj);
   return new Error(`${type}: #${code}, ${getRenderErrorInfo()}.` + typeInfo);
 }
 
 export function getTypeInfo(obj) {
-  return isObject(obj) ? `got: {${Object.keys(obj)}}` : obj;
+  return isObject(obj) ? Object.keys(obj) : obj;
 }
 
 export function getRenderErrorInfo() {
@@ -17,27 +17,28 @@ export function getRenderErrorInfo() {
 }
 
 /**
- * Error code:
- *  0: Rax driver not found.
- *  1: Invalid component type, expected a class or function component.
- *  2: Hooks called outside a component, or multiple version of Rax are used.
- *  3: Too many re-renders, the number of renders is limited to prevent an infinite loop.
+ * Minified code:
+ *  1: Hooks called outside a component, or multiple version of Rax are used.
+ *  6: Invalid component type, expected a class or function component.
+ *  4: Too many re-renders, the number of renders is limited to prevent an infinite loop.
+ *  5: Rax driver not found.
  * @param code {Number}
  * @param obj {Object}
  */
 export function throwMinifiedError(code, obj) {
-  throw newMinifiedError('Error', code, obj);
+  throw createMinifiedError('Error', code, obj);
 }
 
 /**
- * Warn Code:
+ * Minified Code:
  * 0: Invalid element type, expected a string or a class/function component but got "null" or "undefined".
- * 1. Invalid child type, expected types: Element instance, string, boolean, array, null, undefined.
+ * 2. Invalid child type, expected types: Element instance, string, boolean, array, null, undefined.
+ * 3. Ref can not attach because multiple copies of Rax are used.
  * @param {number} code
  * @param {string} info
  */
 export function throwMinifiedWarn(code, obj) {
-  let err = newMinifiedError('Warn', code, obj);
+  let err = createMinifiedError('Warn', code, obj);
   scheduler(() => {
     throw err;
   }, 0);

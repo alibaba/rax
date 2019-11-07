@@ -17,7 +17,7 @@ function getCurrentRenderingInstance() {
     if (process.env.NODE_ENV !== 'production') {
       throwError('Hooks called outside a component, or multiple version of Rax are used.');
     } else {
-      throwMinifiedError(2);
+      throwMinifiedError(1);
     }
   }
 }

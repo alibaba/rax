@@ -3,7 +3,7 @@
  */
 import { isFunction, isObject } from '../types';
 import { INSTANCE } from '../constant';
-import { warning } from '../error';
+import { warning, throwMinifiedWarn } from '../error';
 
 export function updateRef(prevElement, nextElement, component) {
   let prevRef = prevElement ? prevElement.ref : null;
@@ -22,6 +22,8 @@ export function attachRef(ownerComponent, ref, component) {
   if (!ownerComponent) {
     if (process.env.NODE_ENV !== 'production') {
       warning('Ref can not attach because multiple copies of Rax are used.');
+    } else {
+      throwMinifiedWarn(3);
     }
     return;
   }
