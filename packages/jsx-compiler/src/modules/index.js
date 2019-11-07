@@ -27,4 +27,6 @@ module.exports = [
   require('./render-function'),
   // Parse and generate template.
   require('./template'),
+  // Handle function
+  require('./function'),
 ];

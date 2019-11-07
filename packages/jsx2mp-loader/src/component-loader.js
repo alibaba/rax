@@ -15,12 +15,10 @@ module.exports = function componentLoader(content) {
   const { platform, entryPath, constantDir, mode, disableCopyNpm } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
-  const rootContext = this.rootContext;
 
   const outputPath = this._compiler.outputPath;
   const sourcePath = join(this.rootContext, dirname(entryPath));
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
-  const targetFilePath = join(outputPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
 
   const isFromConstantDir = cached(function isFromConstantDir(dir) {

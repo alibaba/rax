@@ -119,7 +119,6 @@ function createProxyMethods(events) {
         }
         // Concat args.
         args = datasetArgs.concat(args);
-
         if (this.instance._methods[eventName]) {
           return this.instance._methods[eventName].apply(context, args);
         } else {
@@ -154,7 +153,10 @@ function createConfig(component, options) {
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
   const config = {
     data: {},
-    props: {},
+    [PROPS]: {
+      __tagId: null,
+      __parentId: null
+    },
     ...cycles,
   };
 
@@ -167,9 +169,6 @@ function createConfig(component, options) {
 
   return config;
 }
-
-function noop() {}
-
 
 /**
  * Bridge App definition.
