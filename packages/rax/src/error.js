@@ -1,6 +1,6 @@
 import Host from './vdom/host';
 import { scheduler } from './vdom/scheduler';
-import { isObject, NOOP } from './types';
+import { NOOP, isPlainObject } from './types';
 
 function createMinifiedError(type, code, obj) {
   var typeInfo = obj === undefined ? '' : ' got: ' + getTypeInfo(obj);
@@ -8,7 +8,7 @@ function createMinifiedError(type, code, obj) {
 }
 
 export function getTypeInfo(obj) {
-  return isObject(obj) ? Object.keys(obj) : obj;
+  return isPlainObject(obj) ? Object.keys(obj) : obj;
 }
 
 export function getRenderErrorInfo() {
@@ -46,7 +46,7 @@ export function throwMinifiedWarn(code, obj) {
 
 export function throwError(message, obj) {
   let typeInfo = obj === undefined ? '' :
-    '(found: ' + (isObject(obj) ? `object with keys {${Object.keys(obj).join(', ')}}` : Component) + ')';
+    '(found: ' + (isPlainObject(obj) ? `object with keys {${Object.keys(obj)}}` : obj) + ')';
 
   throw Error(`${message} ${typeInfo}`);
 }

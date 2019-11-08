@@ -76,7 +76,7 @@ class CompositeComponent extends BaseComponent {
         if (process.env.NODE_ENV !== 'production') {
           throwError('Invalid component type, expected a class or function component.', Component);
         } else {
-          throwMinifiedError(1, Component);
+          throwMinifiedError(6, Component);
         }
       }
     }, parentInstance);

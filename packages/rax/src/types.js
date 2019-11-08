@@ -7,7 +7,11 @@ export function isFunction(obj) {
 }
 
 export function isObject(obj) {
-  return Object.prototype.toString.call(obj) === '[object Object]';
+  return typeof obj === 'object';
+}
+
+export function isPlainObject(obj) {
+  return EMPTY_OBJECT.toString.call(obj) === '[object Object]';
 }
 
 export function isArray(array) {

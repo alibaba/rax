@@ -130,7 +130,7 @@ export default class ReactiveComponent extends Component {
         if (process.env.NODE_ENV !== 'production') {
           throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
         } else {
-          throwMinifiedError(3);
+          throwMinifiedError(4);
         }
       }
 

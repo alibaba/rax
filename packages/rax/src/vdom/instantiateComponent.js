@@ -1,11 +1,11 @@
 import Host from './host';
-import {isString, isNumber, isObject, isArray, isNull} from '../types';
+import {isString, isNumber, isArray, isNull, isPlainObject} from '../types';
 import { throwMinifiedWarn, throwError } from '../error';
 
 export default function instantiateComponent(element) {
   let instance;
 
-  if (isObject(element) && element !== null && element.type) {
+  if (isPlainObject(element) && element !== null && element.type) {
     // Special case string values
     if (isString(element.type)) {
       instance = new Host.__Native(element);
