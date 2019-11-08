@@ -70,7 +70,7 @@ function validateExplicitKey(element, parentType) {
 }
 
 export default function validateChildKeys(node, parentType) {
-  // If not array or 
+  // Only array or element object is valid child
   if (typeof node !== 'object') {
     return;
   }
