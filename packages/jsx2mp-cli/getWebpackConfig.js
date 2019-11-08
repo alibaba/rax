@@ -133,13 +133,17 @@ module.exports = (options = {}) => {
     },
     resolve: {
       extensions: ['.js', '.jsx', '.json'],
+      mainFields: ['main', 'module']
     },
     externals: [
       function(context, request, callback) {
         if (/^@core\//.test(request)) {
           return callback(null, `commonjs2 ${request}`);
         }
-        if (/\.css$/.test(request)) {
+        if (/\.(css|sass|scss|styl|less)$/.test(request)) {
+          return callback(null, `commonjs2 ${request}`);
+        }
+        if (/^@weex-module\//.test(request)) {
           return callback(null, `commonjs2 ${request}`);
         }
         callback();

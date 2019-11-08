@@ -1,8 +1,7 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
-const hasListItem = require('../utils/hasListItem');
+const getListItem = require('../utils/getListItem');
 const CodeError = require('../utils/CodeError');
-const genExpression = require('../codegen/genExpression');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -38,6 +37,7 @@ function getCondition(jsxElement) {
   }
   return null;
 }
+
 
 function transformDirectiveCondition(ast, adapter) {
   traverse(ast, {
@@ -90,6 +90,62 @@ function transformDirectiveCondition(ast, adapter) {
   });
 }
 
+// babel-plugin-transform-jsx-class
+function transformDirectiveClass(ast, parsed) {
+  let useClassnames = false;
+
+  traverse(ast, {
+    Program(path) {
+      path.__classHelperImported = false;
+    },
+    JSXOpeningElement(parentPath) {
+      const attributePaths = parentPath.get('attributes') || [];
+      const attributes = parentPath.node.attributes || [];
+
+      attributePaths.some(function(path) {
+        const { node } = path;
+        if (t.isJSXIdentifier(node.name, { name: 'x-class' })) {
+          const params = [];
+          if (t.isJSXExpressionContainer(node.value)) params.push(node.value.expression);
+          else if (t.isStringLiteral(node.value)) params.push(node.value);
+
+          const callExp = t.callExpression(t.identifier('__classnames__'), params);
+
+          let classNameAttribute;
+          for (let i = 0, l = attributes.length; i < l; i++ ) {
+            if (t.isJSXIdentifier(attributes[i].name, { name: 'className'})) classNameAttribute = attributes[i];
+          }
+
+          if (classNameAttribute) {
+            let prevVal;
+            if (t.isJSXExpressionContainer(classNameAttribute.value)) prevVal = classNameAttribute.value.expression;
+            else if (t.isStringLiteral(classNameAttribute.value)) prevVal = classNameAttribute.value;
+            else prevVal = t.stringLiteral('');
+
+            classNameAttribute.value = t.jsxExpressionContainer(
+              t.binaryExpression('+', t.binaryExpression('+', prevVal, t.stringLiteral(' ')), callExp)
+            );
+          } else {
+            attributes.push(t.jsxAttribute(
+              t.jsxIdentifier('className'),
+              t.jsxExpressionContainer(callExp)
+            ));
+          }
+
+          path.remove();
+          useClassnames = true;
+
+          return true;
+        }
+      });
+    },
+  });
+
+  if (parsed) {
+    parsed.useClassnames = useClassnames;
+  }
+}
+
 function transformDirectiveList(ast, code, adapter) {
   traverse(ast, {
     JSXAttribute(path) {
@@ -140,15 +196,39 @@ function transformDirectiveList(ast, code, adapter) {
           [
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
-        if (hasListItem(iterValue)) {
-          let parentList;
-          if (t.isMemberExpression(iterValue)) {
-            parentList = iterValue.object.__listItem.parentList;
-          } else if (t.isIdentifier(iterValue)) {
-            parentList = iterValue.__listItem.parentList;
-          }
+        const listItem = getListItem(iterValue);
+        if (listItem) {
+          const parentList = listItem.__listItem.parentList;
           if (parentList) {
-            parentList.loopFnBody.body.unshift(t.expressionStatement(t.assignmentExpression('=', iterValue, mapCallExpression)));
+            /**
+             * Assign an new object to item
+             * item: { ...item, info: item.info.map(i => {})
+             * */
+            const loopFnBodyLength = parentList.loopFnBody.body.length;
+            const properties = parentList.loopFnBody.body[loopFnBodyLength - 1].argument.properties;
+            const forItem = properties.find(({key}) => key.name === listItem.name);
+            if (t.isIdentifier(iterValue)) {
+              forItem.value = mapCallExpression;
+            }
+            if (t.isMemberExpression(iterValue)) {
+              switch (forItem.value.type) {
+                case 'Identifier':
+                  if (t.isIdentifier(iterValue.object)) {
+                    forItem.value = t.objectExpression([
+                      t.spreadElement(forItem.value),
+                      t.objectProperty(iterValue.property, mapCallExpression)
+                    ]);
+                  } else {
+                    throw new CodeError(code, iterValue, iterValue.loc, "Currently doesn't support x-for={it in item.info.list} in nested list");
+                  }
+                  break;
+                case 'ObjectExpression':
+                  forItem.value.properties.push(
+                    t.objectProperty(iterValue.property, mapCallExpression)
+                  );
+                  break;
+              }
+            }
           } else {
             throw new CodeError(code, iterValue, iterValue.loc, 'Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
           }
@@ -189,14 +269,16 @@ function transformListJSXElement(path, adapter) {
     const { args, iterValue } = node.__jsxlist;
     path.traverse({
       Identifier(innerPath) {
-        const innerNode = innerPath.node;
-        if (args.find(arg => arg.name === innerNode.name)
-        ) {
-          innerNode.__listItem = {
-            jsxplus: true,
-            item: args[0].name,
-            parentList: node.__jsxlist
-          };
+        const {node: innerNode, parentPath: innerParentPath} = innerPath;
+        if (args.find(arg => arg.name === innerNode.name)) {
+          if (!(innerParentPath.isMemberExpression()
+            && innerParentPath.get('property') === innerPath)) {
+            innerNode.__listItem = {
+              jsxplus: true,
+              item: args[0].name,
+              parentList: node.__jsxlist
+            };
+          }
         }
       }
     });
@@ -224,12 +306,14 @@ function transformListJSXElement(path, adapter) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
+      transformDirectiveClass(parsed.templateAST, parsed);
       transformDirectiveCondition(parsed.templateAST, options.adapter);
       transformDirectiveList(parsed.templateAST, code, options.adapter);
       transformComponentFragment(parsed.templateAST);
     }
   },
   _transformList: transformDirectiveList,
+  _transformClass: transformDirectiveClass,
   _transformCondition: transformDirectiveCondition,
   _transformFragment: transformComponentFragment,
 };

@@ -6,11 +6,12 @@ const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
+const processCSS = require('./styleProcessor');
 const output = require('./output');
 
 const ComponentLoader = __filename;
 
-module.exports = function componentLoader(content) {
+module.exports = async function componentLoader(content) {
   const loaderOptions = getOptions(this);
   const { platform, entryPath, constantDir, mode, disableCopyNpm } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
@@ -41,6 +42,10 @@ module.exports = function componentLoader(content) {
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
   const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
+  transformed.style = style;
+  transformed.assets = assets;
 
   const config = Object.assign({}, transformed.config);
   if (Array.isArray(transformed.dependencies)) {

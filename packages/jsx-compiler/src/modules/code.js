@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { join, relative, dirname } = require('path');
+const { join, relative, dirname, resolve, extname } = require('path');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -11,11 +11,13 @@ const SUPER_COMPONENT = 'Component';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
 const CREATE_STYLE = 'createStyle';
+const CLASSNAMES = 'classnames';
 
 const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
+const SAFE_CLASSNAMES = '__classnames__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
@@ -28,6 +30,7 @@ const RUNTIME = 'jsx2mp-runtime';
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
+const isRelativeImport = (mod) => mod[0] === '.';
 
 const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF].includes(node.name);
 
@@ -95,6 +98,7 @@ module.exports = {
     const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
 
     removeRaxImports(parsed.ast);
+    ensureIndexPathInImports(parsed.ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
     renameCoreModule(parsed.ast, runtimePath);
     renameFileModule(parsed.ast);
     renameAppConfig(parsed.ast, sourcePath, resourcePath);
@@ -106,7 +110,7 @@ module.exports = {
     }
 
     if (type !== 'app') {
-      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, hooks, runtimePath);
+      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, parsed.useClassnames, hooks, runtimePath);
     }
 
     removeDefaultImports(parsed.ast);
@@ -239,6 +243,18 @@ function renameAppConfig(ast, sourcePath, resourcePath) {
   });
 }
 
+function ensureIndexPathInImports(ast, resourcePath) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isRelativeImport(source.node.value)) {
+        const replacement = ensureIndexInPath(source.node.value, resourcePath);
+        source.replaceWith(t.stringLiteral(replacement));
+      }
+    }
+  });
+}
+
 const WEEX_MODULE_REG = /^@weex(-module)?\//;
 
 function isNpmModule(value) {
@@ -292,7 +308,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hooks, runtimePath) {
+function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, hooks, runtimePath) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -330,6 +346,13 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, hoo
         specifiers.push(t.importSpecifier(
           t.identifier(SAFE_CREATE_STYLE),
           t.identifier(CREATE_STYLE)
+        ));
+      }
+
+      if (useClassnames) {
+        specifiers.push(t.importSpecifier(
+          t.identifier(SAFE_CLASSNAMES),
+          t.identifier(CLASSNAMES)
         ));
       }
 
@@ -525,4 +548,24 @@ function addRegisterRefs(refs, renderFunctionPath) {
  */
 function normalizeFileName(filename) {
   return filename.replace(/@/g, '_');
+}
+
+/**
+ * add index if it's omitted
+ *
+ * @param {string} value  imported value
+ * @param {string} resourcePath current file path
+ * @returns
+ */
+function ensureIndexInPath(value, resourcePath) {
+  const target = require.resolve(resolve(dirname(resourcePath), value));
+  return removeJSExtension('./' + relative(dirname(resourcePath), target));
+};
+
+function removeJSExtension(filePath) {
+  const ext = extname(filePath);
+  if (ext === '.js') {
+    return filePath.slice(0, filePath.length - ext.length);
+  }
+  return filePath;
 }

@@ -2,7 +2,6 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
-const createBinding = require('../utils/createBinding');
 const genExpression = require('../codegen/genExpression');
 const findIndex = require('../utils/findIndex');
 
@@ -23,38 +22,6 @@ function transformList(ast, renderItemFunctions, adapter) {
         const { callee, arguments: args } = node;
         if (parentPath.parentPath.isJSXAttribute()) {
           if (t.isMemberExpression(callee) && t.isIdentifier(callee.property, { name: 'bind' })) {
-            // <tag onClick={props.onClick.bind(this, item)} />
-            // => <tag onClick={props.onClick.bind(this, item)} />
-            // parentPath => JSXContainerExpression
-            // parentPath.parentPath => JSXAttribute
-            // parentPath.parentPath.parentPath => JSXOpeningElement
-            const { attributes } = parentPath.parentPath.parentPath.node;
-            if (Array.isArray(args)) {
-              args.forEach((arg, index) => {
-                if (index === 0) {
-                  // first arg is `this` context.
-                  const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
-                    concise: true,
-                    comments: false,
-                  }));
-                  attributes.push(
-                    t.jsxAttribute(
-                      t.jsxIdentifier('data-arg-context'),
-                      t.stringLiteral(strValue)
-                    )
-                  );
-                } else {
-                  attributes.push(
-                    t.jsxAttribute(
-                      t.jsxIdentifier('data-arg-' + (index - 1)),
-                      t.jsxExpressionContainer(arg)
-                    )
-                  );
-                }
-              });
-            }
-            path.replaceWith(callee.object);
-            // node is tagged with __bindEvent, avoid be transformed when exit
             path.node.__bindEvent = true;
           }
         }
