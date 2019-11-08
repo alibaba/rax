@@ -20,7 +20,7 @@ export default function inject({ driver, measurer }) {
     if (process.env.NODE_ENV !== 'production') {
       throwError('Rax driver not found.');
     } else {
-      throwMinifiedError(0);
+      throwMinifiedError(5);
     }
   }
 
