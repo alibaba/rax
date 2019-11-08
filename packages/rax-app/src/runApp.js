@@ -1,4 +1,5 @@
-import { render, createElement, useState, useEffect } from 'rax';
+import { render, createElement, useState, useEffect, Fragment } from 'rax';
+import { Navigation, TabBar } from 'rax-pwa';
 import { isWeex, isWeb } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
@@ -17,7 +18,7 @@ export function getHistory() {
 }
 
 function App(props) {
-  const { history, routes, InitialComponent } = props;
+  const { appConfig, history, routes, InitialComponent } = props;
   const { component } = useRouter(() => ({ history, routes, InitialComponent }));
 
   if (isNullableComponent(component)) {
@@ -56,7 +57,23 @@ function App(props) {
       // Early return null if initialProps were not get.
       return null;
     }
-    return createElement(component, Object.assign({}, props, pageInitialProps[component.__path]));
+
+    if (isWeb) {
+      return createElement(
+        Navigation,
+        Object.assign(
+          { appConfig, component, history, routes, InitialComponent },
+          pageInitialProps[component.__path]
+        )
+      );
+    }
+
+    return createElement(
+      Fragment,
+      {},
+      createElement(component, Object.assign({ history, routes, InitialComponent }, pageInitialProps[component.__path])),
+      createElement(TabBar, { history, config: appConfig.tabBar })
+    );
   }
 }
 
@@ -67,8 +84,7 @@ function isNullableComponent(component) {
 export default function runApp(appConfig) {
   if (launched) throw new Error('Error: runApp can only be called once.');
   launched = true;
-
-  const { routes, shell, hydrate = false } = appConfig;
+  const { hydrate = false, routes, shell } = appConfig;
 
   if (isWeex) {
     history = createMemoryHistory();
@@ -85,6 +101,7 @@ export default function runApp(appConfig) {
     .then((initialComponent) => {
       _initialComponent = initialComponent;
       let appInstance = createElement(App, {
+        appConfig,
         history,
         routes,
         InitialComponent: _initialComponent

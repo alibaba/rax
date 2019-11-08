@@ -3,7 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 
 const TEMPLATE_AST = 'templateAST';
 const DynamicBinding = require('../utils/DynamicBinding');
-const hasListItem = require('../utils/hasListItem');
+const getListItem = require('../utils/getListItem');
 
 /**
  * Transform style object.
@@ -35,7 +35,7 @@ function transformStyle(ast) {
 function shouldReplace(path) {
   const { node } = path;
   if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
-    return !hasListItem(node.value.expression);
+    return !getListItem(node.value.expression);
   }
   return false;
 }

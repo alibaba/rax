@@ -144,4 +144,14 @@ describe('Element', () => {
       jest.runAllTimers();
     }).toThrowError(/Cannot assign to read only property/);
   });
+
+  it('make children output correct when components use the same props object', () => {
+    let thisProps = {};
+    let tagA = <div {...thisProps}>A</div>;
+    let tagB = <div {...thisProps} a={1}>B</div>;
+    let tagC = <div {...thisProps}>C</div>;
+    expect(tagA.props.children).toBe('A');
+    expect(tagB.props.children).toBe('B');
+    expect(tagC.props.children).toBe('C');
+  });
 });

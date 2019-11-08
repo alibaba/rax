@@ -63,8 +63,9 @@ module.exports = function scriptLoader(content) {
         filter: (filename) => !/__(mocks|tests?)__/.test(filename),
       });
 
-      // Modify referenced component location
-      const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), pkg.miniappConfig.main + '.json'));
+      // Modify referenced component location according to the platform
+      const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), (platform.type === 'ali' ? pkg.miniappConfig.main : pkg.miniappConfig[`main:${platform.type}`]) + '.json'));
+
       if (existsSync(componentConfigPath)) {
         const componentConfig = readJSONSync(componentConfigPath);
         if (componentConfig.usingComponents) {
@@ -107,7 +108,14 @@ module.exports = function scriptLoader(content) {
         externalPlugins: [
           [
             require('./babel-plugin-rename-import'),
-            { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform }
+            { normalizeNpmFileName,
+              nodeModulesPathList,
+              distSourcePath,
+              resourcePath: this.resourcePath,
+              outputPath,
+              disableCopyNpm,
+              platform
+            }
           ]
         ]
       };
@@ -131,7 +139,14 @@ module.exports = function scriptLoader(content) {
       externalPlugins: [
         [
           require('./babel-plugin-rename-import'),
-          { normalizeNpmFileName, nodeModulesPathList, distSourcePath, outputPath, disableCopyNpm, platform }
+          { normalizeNpmFileName,
+            nodeModulesPathList,
+            distSourcePath,
+            resourcePath: this.resourcePath,
+            outputPath,
+            disableCopyNpm,
+            platform
+          }
         ]
       ]
     };

@@ -35,7 +35,7 @@ describe('Transform JSX Attribute', () => {
     const code = '<Custom className="box">test</Custom>';
     const ast = parseExpression(code);
     _transformAttribute(ast, code, wxAdapter);
-    expect(genCode(ast).code).toEqual('<Custom className="box">test</Custom>');
+    expect(genCode(ast).code).toEqual('<Custom className="box" class="box">test</Custom>');
   });
   it('should not transform wechat native component style', () => {
     const code = "<rax-view style={{width: '100rpx'}}>test</rax-view>";
@@ -50,6 +50,8 @@ describe('Transform JSX Attribute', () => {
     const ast = parseExpression(code);
     _transformAttribute(ast, code, wxAdapter);
     expect(genCode(ast).code).toEqual(`<Custom styleSheet={{
+  width: '100rpx'
+}} style={{
   width: '100rpx'
 }}>test</Custom>`);
   });

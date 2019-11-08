@@ -32,19 +32,6 @@ describe('Transform list', () => {
   })} a:for-item="val" a:for-index="idx"><item data-value={val} data-key={idx} /></block></View>`);
   });
 
-  it('bind props', () => {
-    const ast = parseExpression(`
-      <View>{arr.map((val, idx) => <item
-        onClick={props.onClick.bind(this, val, 1)}
-      />)}</View>
-    `);
-    _transformList(ast, [], adapter);
-
-    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => ({
-    val: val
-  }))} a:for-item="val" a:for-index="idx"><item onClick={props.onClick} data-arg-context="this" data-arg-0={val} data-arg-1={1} /></block></View>`);
-  });
-
   it('bind list variable', () => {
     const ast = parseExpression(`
       <View>{arr.map((item, idx) => <View>{item.title}<image source={{ uri: item.picUrl }} resizeMode={resizeMode} /></View>)}</View>
@@ -56,17 +43,6 @@ describe('Transform list', () => {
   }))} a:for-item="item" a:for-index="idx"><View>{item.title}<image source={{
         uri: item.picUrl
       }} resizeMode={resizeMode} /></View></block></View>`);
-  });
-
-  it('bind list item', () => {
-    const raw = `<View class="coupon-list">{
-        couponList.map(coupon => <Coupon coupon={coupon} onClick={this.handleClick.bind(this, coupon)} />)
-      }</View>`;
-    const ast = parseExpression(raw);
-    _transformList(ast, [], adapter);
-    expect(genCode(ast).code).toEqual(`<View class="coupon-list"><block a:for={couponList.map((coupon, index) => ({
-    coupon: coupon
-  }))} a:for-item="coupon" a:for-index="index"><Coupon coupon={coupon} onClick={this.handleClick} data-arg-context="this" data-arg-0={coupon} /></block></View>`);
   });
 
   it('list elements', () => {

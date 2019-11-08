@@ -8,7 +8,7 @@ import { createMiniAppHistory } from './history';
 
 const history = createMiniAppHistory();
 
-function getCurrentInstance() {
+export function getCurrentInstance() {
   return Host.current;
 }
 

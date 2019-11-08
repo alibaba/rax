@@ -1,10 +1,20 @@
 import { runApp, createPage, createComponent } from './bridge';
 import { useAppEffect, useAppLaunch } from './app';
-import { usePageEffect, usePageShow, usePageHide } from './page';
+import {
+  usePageEffect,
+  usePageShow,
+  usePageHide,
+  usePagePullDownRefresh,
+  usePageReachBottom,
+  usePageScroll,
+  useShareAppMessage,
+  useTabItemTap
+} from './page';
 import { withRouter } from './router';
 import Component from './component';
 import createStyle from './createStyle';
 import createContext from './createContext';
+import classnames from './classnames';
 
 export {
   runApp,
@@ -12,6 +22,7 @@ export {
   createComponent,
   createStyle,
   createContext,
+  classnames,
 
   Component,
 
@@ -19,6 +30,11 @@ export {
   useAppLaunch,
   usePageShow,
   usePageHide,
+  usePagePullDownRefresh,
+  usePageReachBottom,
+  usePageScroll,
+  useShareAppMessage,
+  useTabItemTap,
 
   // Compatible old version of cycles.
   useAppEffect,
