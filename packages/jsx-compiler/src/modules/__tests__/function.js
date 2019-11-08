@@ -22,4 +22,26 @@ describe('Transform function', () => {
   }
 }`);
   });
+  it('should remove weex module in another function', () => {
+    const code = `
+        export default function Index() {
+          useEffect(() => {
+            if (isWeex) {
+              const dom = require('@weex-module/dom');
+              console.log(dom);
+            }
+          });
+        }
+      `;
+    const ast = parseCode(code);
+    _transformFunction(ast);
+    expect(genExpression(ast)).toEqual(`export default function Index() {
+  useEffect(() => {
+    if (isWeex) {
+      const dom = null;
+      console.log(dom);
+    }
+  });
+}`);
+  });
 });
