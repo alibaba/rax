@@ -18,4 +18,17 @@ describe('Transform rpx', () => {
 
     expect(container.childNodes[0].style.margin).toEqual('10vw 100vh');
   });
+
+  it('should automatically append `rpx` to relevant styles', () => {
+    const container = document.createElement('div');
+    render((
+      <div style={{
+        margin: 75
+      }} />
+    ), container, {
+      driver: DriverUniversalDOM
+    });
+
+    expect(container.childNodes[0].style.margin).toEqual('10vw');
+  });
 });

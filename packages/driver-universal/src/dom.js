@@ -1,12 +1,9 @@
 /* global VIEWPORT_WIDTH, DEVICE_WIDTH */
 import * as DriverDOM from 'driver-dom';
-import { setRpx } from 'style-unit';
-import * as Flexbox from './flexbox'; // Compatible with old version of safari.
 
 const STYLE = 'style';
 const DEFAULT_VIEWPORT = 750;
-let deviceWidth = null;
-let viewportWidth = null;
+const NON_DIMENSIONAL_REG = /opa|ntw|ne[ch]|ex(?:s|g|n|p|$)|^ord|zoo|grid|orp|ows|mnc|^columns$|bs|erim|onit/i;
 
 const driver = Object.assign({}, DriverDOM, {
   createElement(type, props, component) {
@@ -30,11 +27,7 @@ const driver = Object.assign({}, DriverDOM, {
     eventName = normalizeEventName(node, eventName, props);
     return DriverDOM.removeEventListener(node, eventName, eventHandler, props);
   },
-  beforeRender(options) {
-    // Init rem unit
-    setRpx(getDeviceWidth() / getViewportWidth());
-    return DriverDOM.beforeRender(options);
-  },
+
   setStyle(node, style) {
     if (Array.isArray(style)) {
       style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
@@ -65,8 +58,9 @@ function transformStyle(style, ret = {}) {
       if (typeof val === 'object') {
         delete style[prop];
         transformStyle(val, ret);
-      } else if (Flexbox.isFlexProp(prop)) {
-        Flexbox[prop](val, ret);
+      } else if (typeof val === 'number' && !NON_DIMENSIONAL_REG.test(prop)) {
+        // append `rpx` to relevant styles
+        ret[prop] = val + 'rpx';
       } else {
         ret[prop] = val;
       }
@@ -89,26 +83,6 @@ function normalizeEventName(node, eventName, props) {
     eventName = 'dblclick';
   }
   return eventName;
-}
-
-function getDeviceWidth() {
-  return deviceWidth || typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || getClientWidth();
-}
-
-function getClientWidth() {
-  return document.documentElement.clientWidth;
-}
-
-export function setDeviceWidth(width) {
-  deviceWidth = width;
-}
-
-function getViewportWidth() {
-  return viewportWidth || typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || DEFAULT_VIEWPORT;
-}
-
-export function setViewportWidth(width) {
-  viewportWidth = width;
 }
 
 export default driver;

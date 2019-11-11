@@ -98,7 +98,7 @@ function calcRpxToVw(value) {
 }
 
 function isRpx(str) {
-  return typeof str === 'string' && RPX_REG.test(str);
+  return RPX_REG.test(str);
 }
 
 // Cache the convert fn.
