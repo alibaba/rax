@@ -46,13 +46,9 @@ function setStyles(node, styles) {
 
 function addEventListener(node, eventName, eventHandler, props) {
   if (isWeb) {
-    if (this.eventRegistry[eventName]) {
-      return this.eventRegistry[eventName](ADD_EVENT, node, eventName, eventHandler, props);
-    } else {
-      return node.addEventListener(eventName, eventHandler);
-    }
+    return node.addEventListener(eventName, eventHandler);
   } else if (isWeex) {
-    shared.Host.driver.addEventListener(node, eventName, eventHandler, props);
+    return shared.Host.driver.addEventListener(node, eventName, eventHandler, props);
   }
 }
 
