@@ -2,6 +2,7 @@
 
 import {createElement, createContext, Component, Fragment} from 'rax';
 import {renderToString} from '../index';
+import { exec } from 'child_process';
 
 describe('elements and children', () => {
   describe('text children', function() {
@@ -396,6 +397,37 @@ describe('elements and children', () => {
         <div>{'\nHello'}</div>
       );
       expect(str).toBe('<div>\nHello</div>');
+    });
+  });
+
+  describe('different component implementations', function() {
+    it('stateless components', () => {
+      const FunctionComponent = () => <div>foo</div>;
+      const str = renderToString(<FunctionComponent />);
+      expect(str).toBe('<div>foo</div>');
+    });
+
+    it('ES6 class components', () => {
+      class ClassComponent extends Component {
+        render() {
+          return <div>foo</div>;
+        }
+      }
+      const str = renderToString(<ClassComponent />);
+      expect(str).toBe('<div>foo</div>');
+    });
+
+    it('should throw error when render factory components', () => {
+      const FactoryComponent = () => {
+        return {
+          render: function() {
+            return <div>foo</div>;
+          },
+        };
+      };
+      expect(() => {
+        renderToString(<FactoryComponent />);
+      }).toWarnDev('renderToString: received an element that is not valid. (keys: render)', {withoutStack: true});
     });
   });
 });
