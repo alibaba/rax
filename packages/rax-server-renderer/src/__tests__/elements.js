@@ -417,7 +417,7 @@ describe('elements and children', () => {
       expect(str).toBe('<div>foo</div>');
     });
 
-    it('should throw error when render factory components', () => {
+    it('throw when rendering factory components', () => {
       const FactoryComponent = () => {
         return {
           render: function() {
@@ -504,6 +504,25 @@ describe('elements and children', () => {
         <Component>{['a', 'b', [undefined], [[false, 'c']]]}</Component>,
       );
       expect(str).toBe('ab<!-- _ --><!-- _ -->c');
+    });
+  });
+
+  describe('escaping >, <, and &', function() {
+    it('>,<, and & as single child', () => {
+      const str = renderToString(
+        <div>{'<span>Text&quot;</span>'}</div>
+      );
+      expect(str).toBe('<div>&lt;span&gt;Text&amp;quot;&lt;/span&gt;</div>');
+    });
+
+    it('>,<, and & as multiple children', () => {
+      const str = renderToString(
+        <div>
+          {'<span>Text1&quot;</span>'}
+          {'<span>Text2&quot;</span>'}
+        </div>
+      );
+      expect(str).toBe('<div>&lt;span&gt;Text1&amp;quot;&lt;/span&gt;&lt;span&gt;Text2&amp;quot;&lt;/span&gt;</div>');
     });
   });
 });
