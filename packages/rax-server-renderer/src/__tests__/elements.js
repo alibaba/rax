@@ -525,4 +525,30 @@ describe('elements and children', () => {
       expect(str).toBe('<div>&lt;span&gt;Text1&amp;quot;&lt;/span&gt;&lt;span&gt;Text2&amp;quot;&lt;/span&gt;</div>');
     });
   });
+
+  describe('carriage return and null character', function() {
+    it('an element with one text child with special characters', () => {
+      const str = renderToString(
+        <div>{'foo\rbar\r\nbaz\nqux\u0000'}</div>
+      );
+      expect(str).toBe('<div>foo\rbar\r\nbaz\nqux\u0000</div>');
+    });
+
+    it('an element with two text children with special characters', () => {
+      const str = renderToString(
+        <div>
+          {'foo\rbar'}
+          {'\r\nbaz\nqux\u0000'}
+        </div>
+      );
+      expect(str).toBe('<div>foo\rbar\r\nbaz\nqux\u0000</div>');
+    });
+
+    it('an element with an attribute value with special characters', () => {
+      const str = renderToString(
+        <a title={'foo\rbar\r\nbaz\nqux\u0000'} />
+      );
+      expect(str).toBe('<a title="foo\rbar\r\nbaz\nqux\u0000"></a>');
+    });
+  });
 });
