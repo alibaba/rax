@@ -2,7 +2,9 @@ const { readFileSync, existsSync, mkdirpSync } = require('fs-extra');
 const { relative, join, dirname, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
-
+const chalk = require('chalk');
+const PrettyError = require('pretty-error');
+const pe = new PrettyError();
 const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
@@ -41,7 +43,15 @@ module.exports = async function componentLoader(content) {
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
-  const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  let transformed;
+  try {
+    transformed = compiler(rawContentAfterDCE, compilerOptions);
+  } catch (e) {
+    console.log(chalk.red(`\n[Miniapp ${platform.type}] Error occured when handling Component ${this.resourcePath}`));
+    console.log(pe.render(e));
+    return '';
+  }
 
   const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
   transformed.style = style;

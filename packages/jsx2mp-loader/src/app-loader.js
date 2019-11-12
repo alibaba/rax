@@ -2,6 +2,9 @@ const { readJSONSync, readFileSync, existsSync, mkdirSync } = require('fs-extra'
 const { join } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
+const chalk = require('chalk');
+const PrettyError = require('pretty-error');
+const pe = new PrettyError();
 const moduleResolve = require('./utils/moduleResolve');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
@@ -55,7 +58,15 @@ module.exports = async function appLoader(content) {
     disableCopyNpm
   });
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
-  const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  let transformed;
+  try {
+    transformed = compiler(rawContentAfterDCE, compilerOptions);
+  } catch (e) {
+    console.log(chalk.red(`\n[Miniapp ${platform.type}] Error occured when handling App ${this.resourcePath}`));
+    console.log(pe.render(e));
+    return '';
+  }
 
   const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
   transformed.style = style;

@@ -158,7 +158,7 @@ module.exports = (options = {}) => {
       new webpack.ProgressPlugin( (percentage, message) => {
         if (percentage === 0) {
           buildStartTime = Date.now();
-          spinner.start('Compiling...');
+          spinner.start(`[Miniapp ${platform}] Compiling...`);
         } else if (percentage === 1) {
           const endTime = Date.now();
           spinner.succeed(`${chalk.green('Successfully compiled!')}\n\nCost: [${endTime - buildStartTime}ms]`);
