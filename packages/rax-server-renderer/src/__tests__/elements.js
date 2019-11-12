@@ -305,6 +305,15 @@ describe('elements and children', () => {
     expect(str).toBe('<button></button>');
   });
 
+  it('a noscript with children', () => {
+    const str = renderToString(
+      <noscript>
+        <div>Enable JavaScript to run this app.</div>
+      </noscript>
+    );
+    expect(str).toBe('<noscript><div>Enable JavaScript to run this app.</div></noscript>');
+  });
+
   describe('elements with implicit namespaces', function() {
     it('a div with dangerouslySetInnerHTML number', () => {
       const str = renderToString(
