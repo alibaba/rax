@@ -4,12 +4,13 @@ const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
-const pe = new PrettyError();
 const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
+
+const pe = new PrettyError();
 
 const ComponentLoader = __filename;
 

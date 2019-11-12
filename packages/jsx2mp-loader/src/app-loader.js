@@ -4,7 +4,6 @@ const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
-const pe = new PrettyError();
 const moduleResolve = require('./utils/moduleResolve');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
@@ -12,6 +11,7 @@ const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 
+const pe = new PrettyError();
 
 function createImportStatement(req) {
   return `import '${req}';`;

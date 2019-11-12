@@ -4,13 +4,14 @@ const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
-const pe = new PrettyError();
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 
 const ComponentLoader = require.resolve('./component-loader');
+
+const pe = new PrettyError();
 
 module.exports = async function pageLoader(content) {
   const loaderOptions = getOptions(this);
