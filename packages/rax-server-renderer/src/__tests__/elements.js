@@ -430,4 +430,80 @@ describe('elements and children', () => {
       }).toWarnDev('renderToString: received an element that is not valid. (keys: render)', {withoutStack: true});
     });
   });
+
+  describe('component hierarchies', function() {
+    it('single child hierarchies of components', () => {
+      const Component = props => <div>{props.children}</div>;
+      const str = renderToString(
+        <Component>
+          <Component>
+            <Component>
+              <Component />
+            </Component>
+          </Component>
+        </Component>
+      );
+      expect(str).toBe('<div><div><div><div><!-- _ --></div></div></div></div>');
+    });
+
+    it('multi-child hierarchies of components', () => {
+      const Component = props => <div>{props.children}</div>;
+      const str = renderToString(
+        <Component>
+          <Component>
+            <Component />
+            <Component />
+          </Component>
+          <Component>
+            <Component />
+            <Component />
+          </Component>
+        </Component>
+      );
+      expect(str).toBe('<div><div><div><!-- _ --></div><div><!-- _ --></div></div><div><div><!-- _ --></div><div><!-- _ --></div></div></div>');
+    });
+
+    it('a div with a child', () => {
+      const str = renderToString(
+        <div id="parent">
+          <div id="child" />
+        </div>
+      );
+      expect(str).toBe('<div id="parent"><div id="child"></div></div>');
+    });
+
+    it('a div with multiple children', () => {
+      const str = renderToString(
+        <div id="parent">
+          <div id="child1" />
+          <div id="child2" />
+        </div>
+      );
+      expect(str).toBe('<div id="parent"><div id="child1"></div><div id="child2"></div></div>');
+    });
+
+    it('a div with multiple children separated by whitespace', () => {
+      const str = renderToString(
+        <div id="parent">
+          <div id="child1" /> <div id="child2" />
+        </div>
+      );
+      expect(str).toBe('<div id="parent"><div id="child1"></div> <div id="child2"></div></div>');
+    });
+
+    it('a div with a single child surrounded by whitespace', () => {
+      const str = renderToString(
+        <div id="parent">  <div id="child" />   </div>
+      );
+      expect(str).toBe('<div id="parent">  <div id="child"></div>   </div>');
+    });
+
+    it('a composite with multiple children', () => {
+      const Component = props => props.children;
+      const str = renderToString(
+        <Component>{['a', 'b', [undefined], [[false, 'c']]]}</Component>,
+      );
+      expect(str).toBe('ab<!-- _ --><!-- _ -->c');
+    });
+  });
 });
