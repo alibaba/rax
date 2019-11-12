@@ -551,4 +551,57 @@ describe('elements and children', () => {
       expect(str).toBe('<a title="foo\rbar\r\nbaz\nqux\u0000"></a>');
     });
   });
+
+  describe('components that throw errors', function() {
+    it('a function returning undefined', () => {
+      const UndefinedComponent = () => undefined;
+      const str = renderToString(
+        <UndefinedComponent />
+      );
+      expect(str).toBe('<!-- _ -->');
+    });
+
+    it('a function returning undefined', () => {
+      class UndefinedComponent extends Component {
+        render() {
+          return undefined;
+        }
+      }
+      const str = renderToString(
+        <UndefinedComponent />
+      );
+      expect(str).toBe('<!-- _ -->');
+    });
+
+    it('a function returning an object', () => {
+      const ObjectComponent = () => ({x: 123});
+      expect(() => {
+        renderToString(
+          <ObjectComponent />
+        );
+      }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
+    });
+
+    it('a class returning an object', () => {
+      class ObjectComponent extends Component {
+        render() {
+          return {x: 123};
+        }
+      }
+
+      expect(() => {
+        renderToString(
+          <ObjectComponent />
+        );
+      }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
+    });
+
+    it('top-level object', () => {
+      expect(() => {
+        renderToString({
+          x: 123
+        });
+      }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
+    });
+  });
 });
