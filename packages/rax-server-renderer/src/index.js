@@ -390,8 +390,9 @@ function renderElementToString(element, context, options) {
         html = html + '>';
       } else {
         html = html + '>';
-        var children = props.children;
-        if (children != null) {
+        // children may be null or undefined
+        if (props.hasOwnProperty('children')) {
+          const children = props.children;
           if (Array.isArray(children)) {
             for (var i = 0, l = children.length; i < l; i++) {
               var child = children[i];
@@ -400,7 +401,7 @@ function renderElementToString(element, context, options) {
           } else {
             html = html + renderElementToString(children, context, options);
           }
-        } else if (innerHTML) {
+        } else if (innerHTML != null) { // innerHTML may be 0
           html = html + innerHTML;
         }
 
