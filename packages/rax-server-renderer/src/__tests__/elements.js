@@ -375,4 +375,27 @@ describe('elements and children', () => {
       expect(str).toBe('<div></div>');
     });
   });
+
+  describe('newline-eating elements', function() {
+    it('a newline-eating tag with content not starting with \\n', () => {
+      const str = renderToString(
+        <pre>Hello</pre>
+      );
+      expect(str).toBe('<pre>Hello</pre>');
+    });
+
+    it('a newline-eating tag with content starting with \\n', () => {
+      const str = renderToString(
+        <pre>{'\nHello'}</pre>
+      );
+      expect(str).toBe('<pre>\nHello</pre>');
+    });
+
+    it('a normal tag with content starting with \\n', () => {
+      const str = renderToString(
+        <div>{'\nHello'}</div>
+      );
+      expect(str).toBe('<div>\nHello</div>');
+    });
+  });
 });
