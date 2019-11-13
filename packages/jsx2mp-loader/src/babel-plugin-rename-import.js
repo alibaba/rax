@@ -36,7 +36,7 @@ module.exports = function visitor({ types: t }, options) {
   const ensureIndexInPath = (value, resourcePath) => {
     const target = require.resolve(resolve(dirname(resourcePath), value));
     const result = relative(dirname(resourcePath), target);
-    return result[0] === '.' ? result : ('./' + result);
+    return result[0] === '.' ? result : './' + result;
   };
 
   return {

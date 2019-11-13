@@ -560,7 +560,7 @@ function normalizeFileName(filename) {
 function ensureIndexInPath(value, resourcePath) {
   const target = require.resolve(resolve(dirname(resourcePath), value));
   const result = relative(dirname(resourcePath), target);
-  return removeJSExtension(result[0] === '.' ? result : ('./' + result));
+  return removeJSExtension(result[0] === '.' ? result : './' + result);
 };
 
 function removeJSExtension(filePath) {
