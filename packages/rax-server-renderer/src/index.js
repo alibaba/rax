@@ -409,10 +409,16 @@ function renderElementToString(element, context, options) {
       }
 
       return html;
+    } else {
+      throwInValidElementError(element);
     }
   } else {
-    console.error(`renderToString: received an element that is not valid. (keys: ${Object.keys(element)})`);
+    throwInValidElementError(element);
   }
+}
+
+function throwInValidElementError(element) {
+  console.error(`renderToString: received an element that is not valid. (keys: ${Object.keys(element)})`);
 }
 
 export function renderToString(element, options = {}) {

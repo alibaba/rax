@@ -553,7 +553,7 @@ describe('elements and children', () => {
   });
 
   describe('components that throw errors', function() {
-    it('a function returning undefined', () => {
+    it('render a function returning undefined', () => {
       const UndefinedComponent = () => undefined;
       const str = renderToString(
         <UndefinedComponent />
@@ -561,7 +561,7 @@ describe('elements and children', () => {
       expect(str).toBe('<!-- _ -->');
     });
 
-    it('a function returning undefined', () => {
+    it('render a function returning undefined', () => {
       class UndefinedComponent extends Component {
         render() {
           return undefined;
@@ -573,7 +573,7 @@ describe('elements and children', () => {
       expect(str).toBe('<!-- _ -->');
     });
 
-    it('a function returning an object', () => {
+    it('throw error when rendering a function returning an object', () => {
       const ObjectComponent = () => ({x: 123});
       expect(() => {
         renderToString(
@@ -582,7 +582,7 @@ describe('elements and children', () => {
       }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
     });
 
-    it('a class returning an object', () => {
+    it('throw error when rendering a class returning an object', () => {
       class ObjectComponent extends Component {
         render() {
           return {x: 123};
@@ -596,12 +596,35 @@ describe('elements and children', () => {
       }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
     });
 
-    it('top-level object', () => {
+    it('throw error when rendering top-level object', () => {
       expect(() => {
         renderToString({
           x: 123
         });
       }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
+    });
+  });
+
+  describe('badly-typed elements', function() {
+    it('render object', () => {
+      let EmptyComponent = {};
+      expect(() => {
+        renderToString(<EmptyComponent />);
+      }).toThrowError('renderToString: received an element that is not valid. (keys: type,key,ref,props,_owner)', {withoutStack: true});
+    });
+
+    it('throw error when rendering null', () => {
+      let NullComponent = null;
+      expect(() => {
+        renderToString(<NullComponent />);
+      }).toThrowError('Invalid element type, expected a string or a class/function component but got "null"', {withoutStack: true});
+    });
+
+    it('throw error when rendering undefined', () => {
+      let UndefinedComponent = undefined;
+      expect(() => {
+        renderToString(<UndefinedComponent />);
+      }).toThrowError('Invalid element type, expected a string or a class/function component but got "undefined"', {withoutStack: true});
     });
   });
 });
