@@ -2,12 +2,16 @@ const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mk
 const { relative, join, dirname, extname } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
+const chalk = require('chalk');
+const PrettyError = require('pretty-error');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 
 const ComponentLoader = require.resolve('./component-loader');
+
+const pe = new PrettyError();
 
 module.exports = async function pageLoader(content) {
   const loaderOptions = getOptions(this);
@@ -31,7 +35,15 @@ module.exports = async function pageLoader(content) {
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
-  const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  let transformed;
+  try {
+    transformed = compiler(rawContentAfterDCE, compilerOptions);
+  } catch (e) {
+    console.log(chalk.red(`\n[Miniapp ${platform.type}] Error occured when handling Page ${this.resourcePath}`));
+    console.log(pe.render(e));
+    return '';
+  }
 
   const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
   transformed.style = style;
