@@ -610,7 +610,7 @@ describe('elements and children', () => {
       let EmptyComponent = {};
       expect(() => {
         renderToString(<EmptyComponent />);
-      }).toThrowError('renderToString: received an element that is not valid. (keys: type,key,ref,props,_owner)', {withoutStack: true});
+      }).toWarnDev('renderToString: received an element that is not valid. (keys: type,key,ref,props,_owner)', {withoutStack: true});
     });
 
     it('throw error when rendering null', () => {
