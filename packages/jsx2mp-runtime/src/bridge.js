@@ -61,14 +61,13 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getComponentLifecycle({
     mount: function() {
-      const props = Object.assign({}, this[PROPS], getComponentProps(this[PROPS].__tagId));
+      const instanceId = this[PROPS].__parentId !== undefined ?
+        `${this[PROPS].__parentId}-${this[PROPS].__tagId}` : this[PROPS].__tagId;
+
+      const props = Object.assign({}, this[PROPS], getComponentProps(instanceId));
       this.instance = new Klass(props);
       this.instance.type = Klass;
-
-      if (this[PROPS].hasOwnProperty('__tagId')) {
-        const componentId = this[PROPS].__tagId;
-        setComponentInstance(componentId, this.instance);
-      }
+      setComponentInstance(instanceId, this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
