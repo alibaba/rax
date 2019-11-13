@@ -390,7 +390,7 @@ function renderElementToString(element, context, options) {
         html = html + '>';
       } else {
         html = html + '>';
-        // children may be null or undefined
+        // When child is null or undefined, it should be render as <!-- _ -->
         if (props.hasOwnProperty('children')) {
           const children = props.children;
           if (Array.isArray(children)) {
@@ -401,7 +401,7 @@ function renderElementToString(element, context, options) {
           } else {
             html = html + renderElementToString(children, context, options);
           }
-        } else if (innerHTML != null) { // innerHTML may be 0
+        } else if (innerHTML != null) { // When dangerouslySetInnerHTML is 0, it should be render as 0
           html = html + innerHTML;
         }
 
