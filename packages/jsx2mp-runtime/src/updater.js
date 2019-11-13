@@ -2,7 +2,7 @@ import nextTick from './nextTick';
 import { enqueueRender } from './enqueueRender';
 
 const propsMap = {
-  // tagId -> props
+  // instanceId -> props
 };
 const componentIntances = {};
 
@@ -17,14 +17,14 @@ export function setComponentInstance(instanceId, instance) {
   }
 }
 
-export function getComponentProps(tagId) {
-  if (propsMap.hasOwnProperty(tagId)) return propsMap[tagId];
+export function getComponentProps(instanceId) {
+  if (propsMap.hasOwnProperty(instanceId)) return propsMap[instanceId];
   else return null;
 }
 
-export function removeComponentProps(tagId) {
-  if (propsMap.hasOwnProperty(tagId)) {
-    delete propsMap[tagId];
+export function removeComponentProps(instanceId) {
+  if (propsMap.hasOwnProperty(instanceId)) {
+    delete propsMap[instanceId];
   }
 }
 
@@ -34,7 +34,10 @@ export function updateChildProps(trigger, instanceId, nextProps) {
     // Create a new object reference.
     if (targetComponent) {
       propsMap[instanceId] = Object.assign(
-        {},
+        {
+          __parentId: trigger.props.__tagId,
+          __tagId: instanceId
+        },
         targetComponent.props,
         nextProps,
       );

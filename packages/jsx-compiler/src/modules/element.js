@@ -13,22 +13,26 @@ const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
 const isDirectiveAttr = attr => /^(a:|wx:|x-)/.test(attr);
 const isEventHandlerAttr = propKey => /^on[A-Z]/.test(propKey);
+const BINDING_REG = /{{|}}/g;
 
 /**
  * 1. Normalize jsxExpressionContainer to binding var.
  * 2. Collect dynamicValue (dependent identifiers)
  * 3. Normalize function bounds.
- * @param ast
+ * @param parsed
  * @param scope
  * @param adapter
  * @param sourceCode
  */
 function transformTemplate(
-  ast,
+  {
+    templateAST: ast,
+    componentDependentProps = {},
+    dynamicValue
+  },
   scope = null,
   adapter,
   sourceCode,
-  componentDependentProps = {},
 ) {
   const dynamicValues = new DynamicBinding('_d');
   const dynamicEvents = new DynamicBinding('_e');
@@ -40,25 +44,12 @@ function transformTemplate(
       : ELE; // <View>{xxx}</View>
     let { expression } = node;
     let attributeName = null;
-    const jsxEl =
-      type === ATTR ? path.findParent(p => p.isJSXElement()).node : null;
-
     let isDirective;
 
     if (type === ATTR) {
       attributeName = parentPath.node.name.name;
       isDirective = isDirectiveAttr(attributeName);
-      if (
-        !isDirective &&
-        jsxEl.__tagId &&
-        !compiledComponents[jsxEl.openingElement.name.name]
-      ) {
-        componentDependentProps[jsxEl.__tagId].props =
-          componentDependentProps[jsxEl.__tagId].props || {};
-        componentDependentProps[jsxEl.__tagId].props[
-          attributeName
-        ] = expression;
-      }
+      collectComponentDependentProps(parentPath, expression, componentDependentProps);
     } else {
       isDirective = isDirectiveAttr(attributeName);
     }
@@ -448,6 +439,13 @@ function transformTemplate(
   }
 
   traverse(ast, {
+    JSXAttribute(path) {
+      const originalAttrValue = path.node.value;
+      if (t.isStringLiteral(originalAttrValue)) {
+        const attrValue = dynamicValue && dynamicValue[originalAttrValue.value.replace(BINDING_REG, '')] || originalAttrValue.value;
+        collectComponentDependentProps(path, attrValue, componentDependentProps);
+      }
+    },
     JSXExpressionContainer: handleJSXExpressionContainer,
     JSXOpeningElement: {
       exit(path) {
@@ -696,6 +694,27 @@ function checkMemberHasThis(expression) {
   return hasThisExpression;
 }
 
+/**
+ * JSXAttribute path
+ * */
+function collectComponentDependentProps(path, attrValue, componentDependentProps) {
+  const { node } = path;
+  const attrName = node.name.name;
+  const jsxEl = path.findParent(p => p.isJSXElement()).node;
+  const isDirective = isDirectiveAttr(attrName);
+  if (
+    !isDirective
+    && attrValue.type
+    && jsxEl.__tagId
+  ) {
+    componentDependentProps[jsxEl.__tagId].props =
+      componentDependentProps[jsxEl.__tagId].props || {};
+    componentDependentProps[jsxEl.__tagId].props[
+      attrName
+    ] = attrValue;
+  }
+}
+
 // _e0 -> e0
 function formatEventName(name) {
   return name.replace('_', '');
@@ -705,11 +724,10 @@ module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       const { dynamicValues, dynamicEvents } = transformTemplate(
-        parsed.templateAST,
+        parsed,
         null,
         options.adapter,
-        code,
-        parsed.componentDependentProps,
+        code
       );
 
       const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {

@@ -25,7 +25,9 @@ describe('Transform JSXElement', () => {
     it('identifier', () => {
       const sourceCode = '<View foo={bar}>{ bar }</View>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
       const code = genInlineCode(ast).code;
       expect(code).toEqual('<View foo="{{_d0}}">{{ _d0 }}</View>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: bar }');
@@ -44,7 +46,9 @@ describe('Transform JSXElement', () => {
         >{false}{'string'}{8}{}{undefined}{null}{/a-z/}</View>
       `;
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
 
       expect(genInlineCode(ast).code).toEqual('<View bool="{{true}}" str=\'string\' num="{{8}}" nil="{{null}}" regexp="{{_d0}}" tpl="hello world {{_d1}}">string8{{ _d0 }}</View>');
 
@@ -79,7 +83,9 @@ describe('Transform JSXElement', () => {
         />
       `;
       const ast = parseExpression(sourceCode);
-      const { dynamicValues, dynamicEvents } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues, dynamicEvents } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
 
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo, _d3: fn(), _d4: foo.method(), _d5: a, _d6: a() ? 1 : 2, _d7: ~a, _d8: b, _d9: c, _d10: new Foo(), _d11: delete foo.bar, _d12: typeof aaa, _d13: { ...{ a: 1 } } }');
 
@@ -90,14 +96,18 @@ describe('Transform JSXElement', () => {
 
     it('unsupported', () => {
       expect(() => {
-        _transform(parseExpression('<View assign={a = 1} />'));
+        _transform({
+          templateAST: parseExpression('<View assign={a = 1} />')
+        });
       }).toThrowError();
     });
 
     it('should handle MemberExpression', () => {
       const sourceCode = '<View>{a.b.c}</View>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<View>{{ _d0.b.c }}</View>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: a }');
     });
@@ -105,7 +115,9 @@ describe('Transform JSXElement', () => {
     it('should handle nested MemberExpression', () => {
       const sourceCode = '<View>{a ? a.b[c.d] : 1}</View>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<View>{{ _d0 ? _d0.b[_d1.d] : 1 }}</View>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: a, _d1: c }');
     });
@@ -121,7 +133,9 @@ describe('Transform JSXElement', () => {
       /**
        * { _e0: this.handleClick }
        */
-      const { dynamicEvents } = _transform(ast);
+      const { dynamicEvents } = _transform({
+        templateAST: ast
+      });
       expect(genDynamicAttrs(dynamicEvents)).toEqual('{ _e0: this.handleClick }');
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
     });
@@ -132,7 +146,9 @@ describe('Transform JSXElement', () => {
           onClick={props.onClick}
         />
       `);
-      const { dynamicEvents } = _transform(ast);
+      const { dynamicEvents } = _transform({
+        templateAST: ast
+      });
 
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
       expect(genDynamicAttrs(dynamicEvents)).toEqual('{ _e0: props.onClick }');
@@ -145,7 +161,9 @@ describe('Transform JSXElement', () => {
           onKeyPress={this.handleClick.bind(this, 'hello')}
         />
       `);
-      const { dynamicEvents } = _transform(ast);
+      const { dynamicEvents } = _transform({
+        templateAST: ast
+      });
 
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" onKeyPress="_e1" data-e0-arg-context="this" data-e0-arg-0="{{ a: 1 }}" data-e1-arg-context="this" data-e1-arg-0="{{\'hello\'}}" />');
       expect(genDynamicAttrs(dynamicEvents)).toEqual('{ _e0: onClick, _e1: this.handleClick }');
@@ -161,7 +179,9 @@ describe('Transform JSXElement', () => {
           p.node.__transformed = true;
         }
       });
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
       expect(genDynamicAttrs(dynamicValues)).toEqual('{}');
     });
   });
@@ -169,7 +189,9 @@ describe('Transform JSXElement', () => {
   describe('element', () => {
     it('should handle identifier', () => {
       const ast = parseExpression('<View>{foo}</View>');
-      const { dynamicValues } = _transform(ast);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      });
       const code = genInlineCode(ast).code;
       expect(code).toEqual('<View>{{ _d0 }}</View>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: foo }');
@@ -188,7 +210,9 @@ describe('Transform JSXElement', () => {
         </View>
       `;
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
 
       expect(genInlineCode(ast).code).toEqual(`<View>
           string
@@ -224,7 +248,9 @@ describe('Transform JSXElement', () => {
         {{...{ a: 1 }}}
       </View>`;
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, null, sourceCode);
 
       expect(genInlineCode(ast).code).toEqual(`<View>
         {{ _d0 }}
@@ -253,7 +279,9 @@ describe('Transform JSXElement', () => {
     it('should handle text', () => {
       const sourceCode = '<Text style={styles.name}>{data && data.itemTitle ? data.itemTitle : \'\'}</Text>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Text style="{{_d0.name}}">{{ _d1 && _d1.itemTitle ? _d1.itemTitle : \'\' }}</Text>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: styles, _d1: data }');
     });
@@ -261,14 +289,18 @@ describe('Transform JSXElement', () => {
     it('should collect object expression', () => {
       const sourceCode = '<Image style={{...styles.avator, ...styles[\`\${rank}Avator\`]}} source={{ uri: avator }}></Image>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
+      const { dynamicValues } = _transform({
+        templateAST: ast
+      }, null, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Image style="{{_d0}}" source="{{ uri: _d1 }}"></Image>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: { ...styles.avator, ...styles[`${rank}Avator`] }, _d1: avator }');
     });
 
     it('unsupported', () => {
       expect(() => {
-        _transform(parseExpression('<View>{a = 1}</View>'));
+        _transform({
+          templateAST: parseExpression('<View>{a = 1}</View>')
+        });
       }).toThrowError();
     });
   });
