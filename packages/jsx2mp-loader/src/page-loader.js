@@ -15,7 +15,7 @@ const pe = new PrettyError();
 
 module.exports = async function pageLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, mode, disableCopyNpm } = loaderOptions;
+  const { platform, entryPath, mode, disableCopyNpm, turnOffSourceMap } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
 
@@ -31,7 +31,8 @@ module.exports = async function pageLoader(content) {
     type: 'page',
     platform,
     sourceFileName: this.resourcePath,
-    disableCopyNpm
+    disableCopyNpm,
+    turnOffSourceMap
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);

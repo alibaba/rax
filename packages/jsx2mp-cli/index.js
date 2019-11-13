@@ -83,7 +83,8 @@ function watch(options = {}) {
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
     constantDir = DEFAULT_CONSTANT_DIR_ARR,
-    disableCopyNpm = false
+    disableCopyNpm = false,
+    turnOffSourceMap = false
   } = options;
 
   if (type === DEFAULT_TYPE) {
@@ -103,7 +104,8 @@ function watch(options = {}) {
     platform,
     distDirectory,
     constantDir,
-    disableCopyNpm
+    disableCopyNpm,
+    turnOffSourceMap
   });
 
   if (options.webpackConfig) {
