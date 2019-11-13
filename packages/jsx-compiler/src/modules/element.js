@@ -442,7 +442,7 @@ function transformTemplate(
     JSXAttribute(path) {
       const originalAttrValue = path.node.value;
       if (t.isStringLiteral(originalAttrValue)) {
-        const attrValue = dynamicValue[originalAttrValue.value.replace(BINDING_REG, '')] || originalAttrValue.value;
+        const attrValue = dynamicValue && dynamicValue[originalAttrValue.value.replace(BINDING_REG, '')] || originalAttrValue.value;
         collectComponentDependentProps(path, attrValue, componentDependentProps);
       }
     },
