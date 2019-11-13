@@ -57,7 +57,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
       }
     }
 
-    if (!baseComponents[componentTag]) {
+    if (baseComponents.indexOf(componentTag) < 0) {
       node.attributes.push(
         t.jsxAttribute(
           t.jsxIdentifier('__parentId'),
