@@ -13,7 +13,7 @@ const ComponentLoader = __filename;
 
 module.exports = async function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, constantDir, mode, disableCopyNpm } = loaderOptions;
+  const { platform, entryPath, constantDir, mode, disableCopyNpm, turnOffSourceMap } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
 
@@ -37,7 +37,8 @@ module.exports = async function componentLoader(content) {
     type: 'component',
     platform,
     sourceFileName: this.resourcePath,
-    disableCopyNpm
+    disableCopyNpm,
+    turnOffSourceMap
   });
 
   const rawContentAfterDCE = eliminateDeadCode(rawContent);

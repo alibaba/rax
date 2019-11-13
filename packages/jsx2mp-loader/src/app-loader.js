@@ -35,7 +35,7 @@ function getRelativePath(filePath) {
 
 module.exports = async function appLoader(content) {
   const loaderOptions = getOptions(this);
-  const { entryPath, platform, mode, disableCopyNpm } = loaderOptions;
+  const { entryPath, platform, mode, disableCopyNpm, turnOffSourceMap } = loaderOptions;
   const appConfigPath = removeExt(this.resourcePath) + '.json';
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const config = readJSONSync(appConfigPath);
@@ -52,7 +52,8 @@ module.exports = async function appLoader(content) {
     platform,
     type: 'app',
     sourceFileName: this.resourcePath,
-    disableCopyNpm
+    disableCopyNpm,
+    turnOffSourceMap
   });
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
   const transformed = compiler(rawContentAfterDCE, compilerOptions);
