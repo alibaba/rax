@@ -428,7 +428,7 @@ function isPlainObject(obj) {
   return EMPTY_OBJECT.toString.call(obj) === '[object Object]';
 }
 
-export function renderToString(element, options = {}) {
+export function renderToString(element, options) {
   return renderElementToString(element, EMPTY_OBJECT, Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
 }
 
