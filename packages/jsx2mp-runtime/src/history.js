@@ -8,6 +8,10 @@ export function createMiniAppHistory() {
   return history = new MiniAppHistory();
 }
 
+export function getMiniAppHistory() {
+  return history;
+}
+
 class MiniAppHistory {
   constructor() {
     this.location = new Location();
