@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-cli",
-  "version": "0.2.7",
+  "version": "0.2.1",
   "license": "BSD-3-Clause",
   "description": "A cli tool to transform Rax JSX based project to MiniApp.",
   "bin": {
@@ -33,6 +33,7 @@
     "memory-fs": "^0.4.1",
     "ora": "^3.4.0",
     "terser": "^4.3.8",
+    "update-notifier": "^3.0.1",
     "webpack": "^4.38.0",
     "webpack-cli": "^3.3.6",
     "webpack-merge": "^4.2.1"
