@@ -1,11 +1,11 @@
 const { readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, sep, extname } = require('path');
+const { relative, join, dirname, resolve } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
@@ -13,25 +13,22 @@ const output = require('./output');
 const pe = new PrettyError();
 
 const ComponentLoader = __filename;
+const ScriptLoader = require.resolve('./script-loader');
 
 module.exports = async function componentLoader(content) {
   const loaderOptions = getOptions(this);
   const { platform, entryPath, constantDir, mode, disableCopyNpm, turnOffSourceMap } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
-
+  const rootContext = this.rootContext;
+  const absoluteConstantDir = constantDir.map(dir => join(rootContext, dir));
   const outputPath = this._compiler.outputPath;
-  const sourcePath = join(this.rootContext, dirname(entryPath));
+  const sourcePath = join(rootContext, dirname(entryPath));
+
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
 
-  const isFromConstantDir = cached(function isFromConstantDir(dir) {
-    return constantDir.some(singleDir => isChildOf(singleDir, dir));
-  });
-
-  if (isFromConstantDir(this.resourcePath)) {
-    return '';
-  }
+  const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
@@ -123,9 +120,10 @@ module.exports = async function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
+      const componentPath = resolve(dirname(resourcePath), name);
       denpendencies.push({
         name,
-        loader: ComponentLoader,
+        loader: isFromConstantDir(componentPath) ? ScriptLoader : ComponentLoader, // Native miniapp component js file will loaded by script-loader
         options: loaderOptions
       });
     } else {
@@ -151,27 +149,4 @@ function generateDependencies(dependencies) {
 
 function createImportStatement(req) {
   return `import '${req}';`;
-}
-
-/**
- * judge whether the child dir is part of parent dir
- * @param {string} child
- * @param {string} parent
- */
-function isChildOf(child, parent) {
-  const childArray = child.split(sep).filter(i => i.length);
-  const parentArray = parent.split(sep).filter(i => i.length);
-  const clen = childArray.length;
-  const plen = parentArray.length;
-
-  let j = 0;
-  for (let i = 0; i < plen; i++) {
-    if (parentArray[i] === childArray[j]) {
-      j++;
-    }
-    if (j === clen) {
-      return true;
-    }
-  }
-  return false;
 }
