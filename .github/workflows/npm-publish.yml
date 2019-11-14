@@ -1,11 +1,8 @@
-name: Rax NPM Deployment
+name: NPM Publish
+
 on:
-  pull_request:
-    branches:
-      - master
-  push:
-    branches:
-      - master
+  release:
+    types: [created]
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
