@@ -427,7 +427,7 @@ describe('elements and children', () => {
       };
       expect(() => {
         renderToString(<FactoryComponent />);
-      }).toWarnDev('renderToString: received an element that is not valid. (keys: render)', {withoutStack: true});
+      }).toWarnDev('Invalid element type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {render})', {withoutStack: true});
     });
   });
 
@@ -579,7 +579,7 @@ describe('elements and children', () => {
         renderToString(
           <ObjectComponent />
         );
-      }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
+      }).toWarnDev('Invalid element type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {x})', {withoutStack: true});
     });
 
     it('throw error when rendering a class returning an object', () => {
@@ -593,7 +593,7 @@ describe('elements and children', () => {
         renderToString(
           <ObjectComponent />
         );
-      }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
+      }).toWarnDev('Invalid element type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {x})', {withoutStack: true});
     });
 
     it('throw error when rendering top-level object', () => {
@@ -601,7 +601,7 @@ describe('elements and children', () => {
         renderToString({
           x: 123
         });
-      }).toWarnDev('renderToString: received an element that is not valid. (keys: x)', {withoutStack: true});
+      }).toWarnDev('Invalid element type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {x})', {withoutStack: true});
     });
   });
 
@@ -610,7 +610,7 @@ describe('elements and children', () => {
       let EmptyComponent = {};
       expect(() => {
         renderToString(<EmptyComponent />);
-      }).toWarnDev('renderToString: received an element that is not valid. (keys: type,key,ref,props,_owner)', {withoutStack: true});
+      }).toWarnDev('Invalid element type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {type,key,ref,props,_owner})', {withoutStack: true});
     });
 
     it('throw error when rendering null', () => {
