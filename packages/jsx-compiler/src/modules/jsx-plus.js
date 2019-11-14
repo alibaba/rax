@@ -269,16 +269,13 @@ function transformListJSXElement(path, adapter) {
     const { args, iterValue } = node.__jsxlist;
     path.traverse({
       Identifier(innerPath) {
-        const {node: innerNode, parentPath: innerParentPath} = innerPath;
+        const {node: innerNode} = innerPath;
         if (args.find(arg => arg.name === innerNode.name)) {
-          if (!(innerParentPath.isMemberExpression()
-            && innerParentPath.get('property') === innerPath)) {
-            innerNode.__listItem = {
-              jsxplus: true,
-              item: args[0].name,
-              parentList: node.__jsxlist
-            };
-          }
+          innerNode.__listItem = {
+            jsxplus: true,
+            item: args[0].name,
+            parentList: node.__jsxlist
+          };
         }
       }
     });
