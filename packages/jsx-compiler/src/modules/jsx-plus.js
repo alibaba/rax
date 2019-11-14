@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const DynamicBinding = require('../utils/DynamicBinding');
 const traverse = require('../utils/traverseNodePath');
 const getListItem = require('../utils/getListItem');
 const CodeError = require('../utils/CodeError');
@@ -265,6 +266,8 @@ function transformComponentFragment(ast) {
 function transformListJSXElement(path, adapter) {
   const { node } = path;
   const { attributes } = node.openingElement;
+  const dynamicFilter = new DynamicBinding('_f');
+  const filters = [];
   if (node.__jsxlist && !node.__jsxlist.generated) {
     const { args, iterValue } = node.__jsxlist;
     path.traverse({
@@ -278,6 +281,18 @@ function transformListJSXElement(path, adapter) {
               item: args[0].name,
               parentList: node.__jsxlist
             };
+          }
+          // <View x-for={items} data-item={setDataset(item)}>
+          //   <Text class={classnames({ selected: index > 0 })}>{parse(item, index)}</Text>
+          // </View>
+          const containerPath = innerPath.findParent(p => p.isJSXExpressionContainer());
+          if (containerPath && t.isCallExpression(containerPath.node.expression)) {
+            const filterName = dynamicFilter.add({ expression: containerPath.node.expression });
+            containerPath.node.expression.__listItemFilter = {
+              item: args[0].name, // item
+              filter: filterName // _f0
+            };
+            filters.push(containerPath.node.expression);
           }
         }
       }
@@ -299,6 +314,20 @@ function transformListJSXElement(path, adapter) {
       const skipIds = node.skipIds = node.skipIds || new Map();
       skipIds.set(arg.name, true);
     });
+    if (filters.length) {
+      // return {
+      //   item: item,
+      //   index: index,
+      //   "_f0": setDataset(item),
+      //   "_f1": classnames({ selected: index > 0 })
+      //   "_f2": parse(item, index)
+      // }
+      const loopBody = node.__jsxlist.loopFnBody.body;
+      const properties = loopBody[loopBody.length - 1].argument.properties;
+      filters.forEach(function(f) {
+        properties.push(t.objectProperty(t.identifier(f.__listItemFilter.filter), f));
+      });
+    }
 
     node.__jsxlist.generated = true;
   }
