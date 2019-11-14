@@ -7,12 +7,7 @@ export function whenMapStateToPropsIsFunction(mapStateToProps) {
 }
 
 export function whenMapStateToPropsIsMissing(mapStateToProps) {
-  return !mapStateToProps
-    ? wrapMapToPropsConstant(() => ({}))
-    : undefined;
+  return !mapStateToProps ? wrapMapToPropsConstant(() => ({})) : undefined;
 }
 
-export default [
-  whenMapStateToPropsIsFunction,
-  whenMapStateToPropsIsMissing
-];
+export default [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
