@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const DynamicBinding = require('../utils/DynamicBinding');
 const traverse = require('../utils/traverseNodePath');
 const getListItem = require('../utils/getListItem');
 const CodeError = require('../utils/CodeError');
@@ -265,6 +266,7 @@ function transformComponentFragment(ast) {
 function transformListJSXElement(path, adapter) {
   const { node } = path;
   const { attributes } = node.openingElement;
+  const dynamicFilter = new DynamicBinding('_f');
   const filters = [];
   if (node.__jsxlist && !node.__jsxlist.generated) {
     const { args, iterValue } = node.__jsxlist;
@@ -285,9 +287,10 @@ function transformListJSXElement(path, adapter) {
           // </View>
           const containerPath = innerPath.findParent(p => p.isJSXExpressionContainer());
           if (containerPath && t.isCallExpression(containerPath.node.expression)) {
+            const filterName = dynamicFilter.add({ expression: containerPath.node.expression });
             containerPath.node.expression.__listItemFilter = {
               item: args[0].name, // item
-              filter: '_f' + filters.length // _f0
+              filter: filterName // _f0
             };
             filters.push(containerPath.node.expression);
           }
@@ -321,8 +324,8 @@ function transformListJSXElement(path, adapter) {
       // }
       const loopBody = node.__jsxlist.loopFnBody.body;
       const properties = loopBody[loopBody.length - 1].argument.properties;
-      filters.forEach(function(f, i) {
-        properties.push(t.objectProperty(t.identifier('_f' + i), f));
+      filters.forEach(function(f) {
+        properties.push(t.objectProperty(t.identifier(f.__listItemFilter.filter), f));
       });
     }
 
