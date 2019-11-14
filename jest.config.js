@@ -11,6 +11,11 @@ module.exports = {
     'jest-localstorage-mock'
   ],
   'setupTestFrameworkScriptFile': './scripts/jest/setupTests.js',
+  'moduleNameMapper': {
+    // https://jestjs.io/docs/en/webpack#handling-static-assets
+    // For CSS Modules
+    '\\.css$': '<rootDir>/scripts/jest/styleMock.js',
+  },
   'testPathIgnorePatterns': [
     '/node_modules/',
     '/fixtures/',
@@ -18,6 +23,7 @@ module.exports = {
     '/__files__/',
     '/lib/',
     '/dist/',
+    '/es/',
     'sfc-loader',
     'atag',
     'rax-cli/src/generator/'

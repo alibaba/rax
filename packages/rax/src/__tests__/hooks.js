@@ -9,6 +9,7 @@ import {useState, useContext, useEffect, useLayoutEffect, useRef, useReducer, us
 import forwardRef from '../forwardRef';
 import createRef from '../createRef';
 import memo from '../memo';
+import Component from '../vdom/component';
 
 describe('hooks', () => {
   function createNodeElement(tagName) {
@@ -1111,7 +1112,7 @@ describe('hooks', () => {
       }
       let passive = <PassiveEffect key="p" />;
       render([<LayoutEffect key="l" />, passive], container);
-      expect(logs).toEqual(['Layout', 'Layout effect', 'Passive']);
+      expect(logs).toEqual(['Layout', 'Passive', 'Layout effect']);
       expect(container.childNodes[0].childNodes[0].data).toEqual('Layout');
       expect(container.childNodes[1].childNodes[0].data).toEqual('Passive');
 

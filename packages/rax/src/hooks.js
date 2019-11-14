@@ -2,7 +2,7 @@ import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
 import { isArray, isFunction, isNull } from './types';
-import { invokeMinifiedError } from './error';
+import { warning, throwError, throwMinifiedError } from './error';
 import { INSTANCE } from './constant';
 
 function getCurrentInstance() {
@@ -14,10 +14,10 @@ function getCurrentRenderingInstance() {
   if (currentInstance) {
     return currentInstance;
   } else {
-    if (process.env.NODE_ENV === 'production') {
-      invokeMinifiedError(1);
+    if (process.env.NODE_ENV !== 'production') {
+      throwError('Hooks called outside a component, or multiple version of Rax are used.');
     } else {
-      throw new Error('Hooks can only be called inside a component.');
+      throwMinifiedError(1);
     }
   }
 }
@@ -116,6 +116,38 @@ function useEffectImpl(effect, inputs, defered) {
       if (current) {
         __destory.current = current();
         __create.current = null;
+
+        if (process.env.NODE_ENV !== 'production') {
+          const currentDestory = __destory.current;
+          if (currentDestory !== undefined && typeof currentDestory !== 'function') {
+            let msg;
+            if (currentDestory === null) {
+              msg =
+                ' You returned null. If your effect does not require clean ' +
+                'up, return undefined (or nothing).';
+            } else if (typeof currentDestory.then === 'function') {
+              msg =
+                '\n\nIt looks like you wrote useEffect(async () => ...) or returned a Promise. ' +
+                'Instead, write the async function inside your effect ' +
+                'and call it immediately:\n\n' +
+                'useEffect(() => {\n' +
+                '  async function fetchData() {\n' +
+                '    // You can await here\n' +
+                '    const response = await MyAPI.getData(someId);\n' +
+                '    // ...\n' +
+                '  }\n' +
+                '  fetchData();\n' +
+                '}, [someId]); // Or [] if effect doesn\'t need props or state.';
+            } else {
+              msg = ' You returned: ' + currentDestory;
+            }
+
+            warning(
+              'An effect function must not return anything besides a function, ' +
+              'which is used for clean-up.' + msg,
+            );
+          }
+        }
       }
     };
 

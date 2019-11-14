@@ -4,7 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const RaxPlugin = require('rax-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const babelOptions = require('../babel.config')();
+const babelOptions = require('./config/getBabelConfig')();
 
 dist(getConfig(
   {

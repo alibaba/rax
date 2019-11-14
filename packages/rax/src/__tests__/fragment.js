@@ -143,7 +143,7 @@ describe('Fragment', () => {
       expect(el.childNodes[0].childNodes[0].data).toBe('1');
       expect(el.childNodes[1].childNodes[0].data).toBe('2');
       expect(el.childNodes[2].childNodes[0].data).toBe('3');
-    }).toWarnDev('Warning: Each child in a list should have a unique "key" prop. Check the render method of `App`.', {withoutStack: true});
+    }).toWarnDev('Warning: Each child in a list should have a unique "key" prop. Check the render method of <App>', {withoutStack: true});
   });
 
   it('should render correct when swap element position', function() {

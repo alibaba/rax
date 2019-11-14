@@ -1,14 +1,13 @@
 /* global PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH } from './cycles';
-import { setComponentInstance, getComponentProps, executeCallbacks } from './updater';
-import { getComponentLifecycle } from '@@ADAPTER@@';
+import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP } from './cycles';
+import { setComponentInstance, getComponentProps } from './updater';
+import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
-const history = createMiniAppHistory();
 let _appConfig;
 
 /**
@@ -23,6 +22,8 @@ let _appConfig;
 function getPageCycles(Klass) {
   let config = {
     onLoad(options) {
+      // Ensure page has loaded
+      const history = createMiniAppHistory();
       this.instance = new Klass(this[PROPS]);
       // Reverse sync from state to data.
       this.instance._setInternal(this);
@@ -49,7 +50,7 @@ function getPageCycles(Klass) {
       if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
   };
-  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH].forEach((hook) => {
+  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP].forEach((hook) => {
     config[hook] = function(e) {
       return this.instance._trigger(hook, e);
     };
@@ -67,7 +68,6 @@ function getComponentCycles(Klass) {
       if (this[PROPS].hasOwnProperty('__tagId')) {
         const componentId = this[PROPS].__tagId;
         setComponentInstance(componentId, this.instance);
-        executeCallbacks();
       }
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
@@ -90,7 +90,7 @@ function createProxyMethods(events) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
-        const event = args[args.length - 1];
+        const event = args[0];
         let context = this.instance; // Context default to Rax component instance.
 
         const dataset = event && event.target ? event.target.dataset : {};
@@ -108,18 +108,19 @@ function createProxyMethods(events) {
             }
           });
         } else {
+          const formatName = formatEventName(eventName);
           Object.keys(this[PROPS]).forEach(key => {
-            if ('data-arg-context' === key) {
+            if (`data-${formatName}-arg-context` === key) {
               context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
             } else if (isDatasetKebabArg(key)) {
               // `data-arg-` length is 9.
-              datasetArgs[key.slice(9)] = this[PROPS][key];
+              const len = `data-${formatName}-arg-`.length;
+              datasetArgs[key.slice(len)] = this[PROPS][key];
             }
           });
         }
         // Concat args.
         args = datasetArgs.concat(args);
-
         if (this.instance._methods[eventName]) {
           return this.instance._methods[eventName].apply(context, args);
         } else {
@@ -154,8 +155,8 @@ function createConfig(component, options) {
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
   const config = {
     data: {},
-    props: {},
     ...cycles,
+    ...getComponentBaseConfig()
   };
 
   const proxiedMethods = createProxyMethods(events);
@@ -167,9 +168,6 @@ function createConfig(component, options) {
 
   return config;
 }
-
-function noop() {}
-
 
 /**
  * Bridge App definition.
@@ -214,14 +212,18 @@ function isClassComponent(Klass) {
   return Klass.prototype.__proto__ === Component.prototype;
 }
 
-const DATASET_KEBAB_ARG_REG = /data-arg-\d+/;
+const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;
 
 function isDatasetKebabArg(str) {
   return DATASET_KEBAB_ARG_REG.test(str);
 }
 
-const DATASET_ARG_REG = /arg-?(\d+)/;
+const DATASET_ARG_REG = /\w+?-[aA]rg?-?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
+}
+
+function formatEventName(name) {
+  return name.replace('_', '');
 }

@@ -115,13 +115,10 @@ export default class NativeComponent extends BaseComponent {
 
       if (!shouldNotRemoveChild) {
         Host.driver.removeChild(this[NATIVE_NODE], this._parent);
-
-        // If the parent node has been removed, child node don't need to be removed
-        shouldNotRemoveChild = true;
       }
     }
 
-    this.__unmountChildren(shouldNotRemoveChild);
+    this.__unmountChildren(true);
 
     this.__prevStyleCopy = null;
     this.__destoryComponent();
@@ -398,7 +395,7 @@ export default class NativeComponent extends BaseComponent {
             // Should reverse order when insert new child after lastPlacedNode:
             // [lastPlacedNode, *newChild1, *newChild2],
             // And if prev is empty fragment, lastPlacedNode is the prevSiblingNativeNode found.
-            driver.insertAfter(nativeNodes[l - i - 1], lastPlacedNode);
+            driver.insertAfter(nativeNodes[l - 1 - i], lastPlacedNode);
           } else if (prevFirstNativeNode) {
             // [*newChild1, *newChild2, prevFirstNativeNode]
             driver.insertBefore(nativeNodes[i], prevFirstNativeNode);

@@ -1,12 +1,12 @@
 import * as DriverWeex from 'driver-weex';
-import { convertUnit, setRem } from 'style-unit';
+import { convertUnit, setRpx } from 'style-unit';
 
 const driver = Object.assign({}, DriverWeex, {
   beforeRender() {
     // Turn off batched updates
     document.open();
     // Init rem unit
-    setRem( 1 );
+    setRpx( 1 );
   },
   createElement(type, props = {}) {
     const style = {};

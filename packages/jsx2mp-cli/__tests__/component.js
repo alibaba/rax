@@ -31,26 +31,14 @@ afterAll(() => {
 describe('Component compiled result', () => {
   it('should return correct axml', () => {
     expect(axmlContent).toEqual(
-      `<block a:if="{{$ready}}"><view __tagId="0" class="__rax-view">
+      `<block a:if="{{$ready}}"><view class="__rax-view">
       Hello World!
-      <rax-image source="{{ uri: _d0 }}" __tagId="1" />
-    </view></block>`);
+      <rax-image source="{{ uri: _d0 }}" __tagId="0" /></view></block>`);
   });
 
   it('should return correct js', () => {
     expect(jsContent).toEqual(
-      `import { createComponent as __create_component__ } from "./npm/jsx2mp-runtime";
-const img = "./assets/rax.png";
-
-const __def__ = function Index() {
-  this._updateData({
-    "_d0": img
-  });
-
-  this._updateMethods({});
-};
-
-Component(__create_component__(__def__));`
+      '\"use strict\";var _jsx2mpRuntime=require(\"./npm/jsx2mp-runtime\"),img=\"./assets/rax.png\",__def__=function(){this._updateChildProps(\"0\",{source:{uri:img}}),this._updateData({_d0:img}),this._updateMethods({})};Component((0,_jsx2mpRuntime.createComponent)(__def__));'
     );
   });
 

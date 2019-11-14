@@ -18,6 +18,10 @@ const parserAdapters = {
       onLongPress: 'onLongTap',
       className: '__rax-view'
     },
+    // Need transform style & class keyword
+    styleKeyword: false,
+    // Need transform onClick -> bindonclick
+    needTransformEvent: false
   },
   'wechat': {
     if: 'wx:if',
@@ -35,9 +39,12 @@ const parserAdapters = {
       onTouchStart: 'bindtouchstart',
       onTouchEnd: 'bindtouchend',
       onTouchMove: 'bindtouchmove',
-      onTouchCancel: 'bindtouchcancel'
+      onTouchCancel: 'bindtouchcancel',
+      className: '__rax-view'
     },
+    styleKeyword: true,
+    needTransformEvent: true
   },
 };
 
-module.exports = parserAdapters.ali;
+module.exports = parserAdapters;

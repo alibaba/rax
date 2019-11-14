@@ -3,7 +3,7 @@ const { _transform } = require('../element');
 const { parseExpression } = require('../../parser');
 const genCode = require('../../codegen/genCode');
 const traverse = require('../../utils/traverseNodePath');
-const adapter = require('../../adapter');
+const adapter = require('../../adapter').ali;
 
 function genInlineCode(ast) {
   return genCode(ast, {
@@ -83,9 +83,9 @@ describe('Transform JSXElement', () => {
 
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo, _d3: fn(), _d4: foo.method(), _d5: a, _d6: a() ? 1 : 2, _d7: ~a, _d8: b, _d9: c, _d10: new Foo(), _d11: delete foo.bar, _d12: typeof aaa, _d13: { ...{ a: 1 } } }');
 
-      expect(genDynamicAttrs(dynamicEvents)).toEqual('{ _e0: event => { console.log(event); }, _e1: event => console.log(event), _e2: function (event) { console.log(event); } }');
+      expect(genDynamicAttrs(dynamicEvents)).toEqual('{ _e0: event => { console.log(event); }, _e1: console.log, _e2: function (event) { console.log(event); } }');
 
-      expect(genInlineCode(ast).code).toEqual('<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{_d0}}" state="{{_d1}}" member="{{_d2.bar.c}}" call1="{{_d3}}" call2="{{_d4}}" conditional="{{_d5 ? 1 : 2}}" conditionalComplex="{{_d6}}" compare="{{_d5 >= 1}}" math="{{_d5 - 1}}" bitwise="{{_d7}}" logical="{{_d5 || _d8}}" stringOp="{{\'a\' + _d9}}" comma="{{_d5, _d9}}" inst="{{_d10}}" delete="{{_d11}}" type="{{_d12}}" relation="{{\'a\' in _d8}}" group="{{_d5 + 1}}" spread="{{_d13}}" />');
+      expect(genInlineCode(ast).code).toEqual('<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{_d0}}" state="{{_d1}}" member="{{_d2.bar.c}}" call1="{{_d3}}" call2="{{_d4}}" conditional="{{_d5 ? 1 : 2}}" conditionalComplex="{{_d6}}" compare="{{_d5 >= 1}}" math="{{_d5 - 1}}" bitwise="{{_d7}}" logical="{{_d5 || _d8}}" stringOp="{{\'a\' + _d9}}" comma="{{_d5, _d9}}" inst="{{_d10}}" delete="{{_d11}}" type="{{_d12}}" relation="{{\'a\' in _d8}}" group="{{_d5 + 1}}" spread="{{_d13}}" data-e1-arg-0="{{event}}" />');
     });
 
     it('unsupported', () => {
@@ -108,15 +108,6 @@ describe('Transform JSXElement', () => {
       const { dynamicValues } = _transform(ast, null, null, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<View>{{ _d0 ? _d0.b[_d1.d] : 1 }}</View>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: a, _d1: c }');
-    });
-
-    it('should adapt attribute key', () => {
-      const sourceCode = '<View key={\'key\'}>{ bar }</View>';
-      const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
-      const code = genInlineCode(ast).code;
-      expect(code).toEqual('<View a:key=\'key\'>{{ _d0 }}</View>');
-      expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: bar }');
     });
   });
 
@@ -156,7 +147,7 @@ describe('Transform JSXElement', () => {
       `);
       const { dynamicEvents } = _transform(ast);
 
-      expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" onKeyPress="_e1" data-arg-context="this" data-arg-0="{{ a: 1 }}" data-arg-context="this" data-arg-0="{{\'hello\'}}" />');
+      expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" onKeyPress="_e1" data-e0-arg-context="this" data-e0-arg-0="{{ a: 1 }}" data-e1-arg-context="this" data-e1-arg-0="{{\'hello\'}}" />');
       expect(genDynamicAttrs(dynamicEvents)).toEqual('{ _e0: onClick, _e1: this.handleClick }');
     });
 
@@ -189,11 +180,11 @@ describe('Transform JSXElement', () => {
         <View>
           {'string'}
           {8}
-          {undefined}
-          {null}
           {/a-z/}
           {{ a: 1 }}
           {[0, 1, 2]}
+          {undefined}
+          {null}
         </View>
       `;
       const ast = parseExpression(sourceCode);
@@ -202,11 +193,11 @@ describe('Transform JSXElement', () => {
       expect(genInlineCode(ast).code).toEqual(`<View>
           string
           8
-          
-          
           {{ _d0 }}
           {{ _d1 }}
           {{ _d2 }}
+          
+          
         </View>`);
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: /a-z/, _d1: { a: 1 }, _d2: [0, 1, 2] }');
     });
@@ -262,7 +253,7 @@ describe('Transform JSXElement', () => {
     it('should handle text', () => {
       const sourceCode = '<Text style={styles.name}>{data && data.itemTitle ? data.itemTitle : \'\'}</Text>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Text style="{{_d0.name}}">{{ _d1 && _d1.itemTitle ? _d1.itemTitle : \'\' }}</Text>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: styles, _d1: data }');
     });
@@ -270,7 +261,7 @@ describe('Transform JSXElement', () => {
     it('should collect object expression', () => {
       const sourceCode = '<Image style={{...styles.avator, ...styles[\`\${rank}Avator\`]}} source={{ uri: avator }}></Image>';
       const ast = parseExpression(sourceCode);
-      const { dynamicValues } = _transform(ast, null, null, sourceCode);
+      const { dynamicValues } = _transform(ast, null, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Image style="{{_d0}}" source="{{ uri: _d1 }}"></Image>');
       expect(genDynamicAttrs(dynamicValues)).toEqual('{ _d0: { ...styles.avator, ...styles[`${rank}Avator`] }, _d1: avator }');
     });

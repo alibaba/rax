@@ -1,11 +1,9 @@
 import Host from './vdom/host';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
-import { invokeMinifiedError } from './error';
-import { isString, isArray } from './types';
-import warning from './warning';
+import { warning, throwError, throwMinifiedWarn } from './error';
+import { isString, isArray, NOOP } from './types';
 import validateChildKeys from './validateChildKeys';
-import getRenderErrorInfo from './getRenderErrorInfo';
 
 const RESERVED_PROPS = {
   key: true,
@@ -13,48 +11,21 @@ const RESERVED_PROPS = {
 };
 
 export default function createElement(type, config, children) {
-  if (type == null) {
-    if (process.env.NODE_ENV !== 'production') {
-      throw new Error('createElement: type should not be null or undefined.' + getRenderErrorInfo());
-    } else {
-      invokeMinifiedError(0);
-    }
-  }
   // Reserved names are extracted
   let props = {};
   let propName;
   let key = null;
   let ref = null;
-  const ownerComponent = Host.owner;
 
   if (config != null) {
-    let hasReservedProps = false;
+    ref = config.ref === undefined ? null : config.ref;
+    key = config.key === undefined ? null : '' + config.key;
 
-    if (config.ref != null) {
-      hasReservedProps = true;
-      ref = config.ref;
-      if (process.env.NODE_ENV !== 'production') {
-        if (isString(ref) && !ownerComponent) {
-          warning('createElement: adding a string ref "' + ref + '" outside the render method.');
-        }
+    // Remaining properties are added to a new props object
+    for (propName in config) {
+      if (!RESERVED_PROPS[propName]) {
+        props[propName] = config[propName];
       }
-    }
-
-    if (config.key != null) {
-      hasReservedProps = true;
-      key = '' + config.key;
-    }
-
-    // If no reserved props, assign config to props for better performance
-    if (hasReservedProps) {
-      for (propName in config) {
-        // Extract reserved props
-        if (!RESERVED_PROPS[propName]) {
-          props[propName] = config[propName];
-        }
-      }
-    } else {
-      props = config;
     }
   }
 
@@ -85,7 +56,23 @@ export default function createElement(type, config, children) {
     }
   }
 
+  if (type == null) {
+    if (process.env.NODE_ENV !== 'production') {
+      throwError(`Invalid element type, expected a string or a class/function component but got "${type}".`);
+    } else {
+      // A empty component replaced avoid break render in production
+      type = NOOP;
+      throwMinifiedWarn(0);
+    }
+  }
+
   if (process.env.NODE_ENV !== 'production') {
+    if (isString(ref) && !Host.owner) {
+      warning(
+        `Adding a string ref "${ref}" that was not created inside render method, or multiple copies of Rax are used.`
+      );
+    }
+
     for (let i = 2; i < arguments.length; i ++) {
       validateChildKeys(arguments[i], type);
     }
@@ -96,7 +83,7 @@ export default function createElement(type, config, children) {
     key,
     ref,
     props,
-    ownerComponent
+    Host.owner
   );
 }
 

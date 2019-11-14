@@ -8,7 +8,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const fs = require('fs');
 
 const PACKAGES_DIR = path.resolve(__dirname, '../universal');
-const babelOptions = require('../babel.config')();
+const babelOptions = require('./config/getBabelConfig')();
 
 function normalizeGlobalName(name) {
   return uppercamelcase(name);

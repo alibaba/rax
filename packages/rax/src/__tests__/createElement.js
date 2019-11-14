@@ -21,14 +21,17 @@ describe('Element', () => {
   function renderToDocument(element) {
     let container = createNodeElement('div');
     render(element, container);
+    jest.runAllTimers();
   }
 
   beforeEach(function() {
     Host.driver = ServerDriver;
+    jest.useFakeTimers();
   });
 
   afterEach(function() {
     Host.driver = null;
+    jest.useRealTimers();
   });
 
   it('createElement', () => {
@@ -60,10 +63,7 @@ describe('Element', () => {
       var component = render(<ParentComp />);
 
       jest.runAllTimers();
-    }).toThrowError(
-      'createElement: type should not be null or undefined. Check ' +
-      'the render method of `ParentComp`.'
-    );
+    }).toThrowError(/Invalid element type/);
 
     jest.useRealTimers();
   });
@@ -87,7 +87,10 @@ describe('Element', () => {
       }
     }
 
-    expect(() => renderToDocument(<ComponentWrapper />)).toWarnDev('Warning: Each child in a list should have a unique "key" prop. Check the render method of `InnerComponent`. It was passed a child from ComponentWrapper.', {withoutStack: true});
+    expect(() => renderToDocument(<ComponentWrapper />)).toWarnDev(
+      'Each child in a list should have a unique "key" prop. Check the render method of <InnerComponent>. It was passed a child from <ComponentWrapper>.',
+      {withoutStack: true}
+    );
   });
 
   it('does not warn for arrays of elements with keys', () => {
@@ -111,8 +114,22 @@ describe('Element', () => {
     ));
   });
 
-  it('does not warn when the child array contains non-element', () => {
-    void <div>{[{}, {}]}</div>;
+  it('throws for the child array contains invalid element type', () => {
+    expect(() => {
+      let container = createNodeElement('div');
+      render(<div>{[{}]}</div>, container);
+      jest.runAllTimers();
+    }).toThrowError(
+      'Invalid child type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {})'
+    );
+
+    expect(() => {
+      let container = createNodeElement('div');
+      render(<div>{[{foo: 1}]}</div>, container);
+      jest.runAllTimers();
+    }).toThrowError(
+      'Invalid child type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {foo})'
+    );
   });
 
   it('warns for fragments of multiple elements with same key', () => {
@@ -123,5 +140,28 @@ describe('Element', () => {
         <span key={'#2'}>3</span>
       </div>
     ))).toWarnDev('Warning: Encountered two children with the same key "#1".', {withoutStack: true});
+  });
+
+  it('throw errors in dev mode when modify props', () => {
+    let container = createNodeElement('div');
+    function Foo(props) {
+      props.foo = 'bar';
+      return null;
+    }
+
+    expect(() => {
+      render(<Foo foo="foo" />, container);
+      jest.runAllTimers();
+    }).toThrowError(/Cannot assign to read only property/);
+  });
+
+  it('make children output correct when components use the same props object', () => {
+    let thisProps = {};
+    let tagA = <div {...thisProps}>A</div>;
+    let tagB = <div {...thisProps} a={1}>B</div>;
+    let tagC = <div {...thisProps}>C</div>;
+    expect(tagA.props.children).toBe('A');
+    expect(tagB.props.children).toBe('B');
+    expect(tagC.props.children).toBe('C');
   });
 });

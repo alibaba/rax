@@ -4,8 +4,11 @@ import sameValue from './sameValue';
 import isFunction from './isFunction';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 import { enqueueRender } from './enqueueRender';
+import { createMiniAppHistory } from './history';
 
-function getCurrentInstance() {
+const history = createMiniAppHistory();
+
+export function getCurrentInstance() {
   return Host.current;
 }
 
@@ -89,7 +92,7 @@ export function useState(initialState) {
 
 export function useContext(context) {
   const currentInstance = getCurrentRenderingInstance();
-  return currentInstance.readContext(context);
+  return currentInstance._readContext(context);
 }
 
 export function useEffect(effect, inputs) {
@@ -174,9 +177,15 @@ export function useRef(initialValue) {
   const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
-    hooks[hookID] = {
+    const ref = {
       current: initialValue
     };
+    const refFn = (instance) => {
+      ref.current = instance;
+    };
+    refFn.__proto__ = ref;
+    // currentInstance._internal.,
+    hooks[hookID] = refFn;
   }
 
   return hooks[hookID];
@@ -271,4 +280,12 @@ export function useReducer(reducer, initialArg, init) {
   queue.eagerState = next;
   queue.actions.length = 0;
   return hooks[hookID];
+}
+
+export function useHistory() {
+  return history;
+}
+
+export function useLocation() {
+  return history.location;
 }

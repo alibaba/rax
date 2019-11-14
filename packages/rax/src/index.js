@@ -20,3 +20,12 @@ export const shared = {
   Element,
   flattenChildren
 };
+
+if (process.env.NODE_ENV !== 'production') {
+  if (typeof window !== 'undefined') {
+    if (window.__RAX_INITIALISED__) {
+      console.error('Warning: more than one instance of Rax has been initialised, this could lead to unexpected behaviour.');
+    }
+    window.__RAX_INITIALISED__ = true;
+  }
+}

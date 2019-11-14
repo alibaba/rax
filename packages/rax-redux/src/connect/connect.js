@@ -29,7 +29,11 @@ function match(arg, factories, name) {
   }
 
   return (dispatch, options) => {
-    throw new Error(`Invalid value of type ${typeof arg} for ${name} argument when connecting component ${options.wrappedComponentName}.`);
+    throw new Error(
+      `Invalid value of type ${typeof arg} for ${name} argument when connecting component ${
+        options.wrappedComponentName
+      }.`
+    );
   };
 }
 
@@ -59,8 +63,16 @@ export function createConnect({
       ...extraOptions
     } = {}
   ) {
-    const initMapStateToProps = match(mapStateToProps, mapStateToPropsFactories, 'mapStateToProps');
-    const initMapDispatchToProps = match(mapDispatchToProps, mapDispatchToPropsFactories, 'mapDispatchToProps');
+    const initMapStateToProps = match(
+      mapStateToProps,
+      mapStateToPropsFactories,
+      'mapStateToProps'
+    );
+    const initMapDispatchToProps = match(
+      mapDispatchToProps,
+      mapDispatchToPropsFactories,
+      'mapDispatchToProps'
+    );
     const initMergeProps = match(mergeProps, mergePropsFactories, 'mergeProps');
 
     return connectHOC(selectorFactory, {

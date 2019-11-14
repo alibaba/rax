@@ -10,7 +10,7 @@ const fs = require('fs');
 // build packages
 const PACKAGES_NAME = 'packages';
 const PACKAGES_DIR = path.resolve(__dirname, `../${PACKAGES_NAME}`);
-const babelOptions = require('../babel.config')();
+const babelOptions = require('./config/getBabelConfig')();
 
 let packageList = fs.readdirSync(PACKAGES_DIR);
 let buildinObj = {};

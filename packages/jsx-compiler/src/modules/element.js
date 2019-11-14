@@ -5,11 +5,14 @@ const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 const CodeError = require('../utils/CodeError');
 const DynamicBinding = require('../utils/DynamicBinding');
+const compiledComponents = require('../compiledComponents');
 const baseComponents = require('../baseComponents');
+const replaceComponentTagName = require('../utils/replaceComponentTagName');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
-const isDirectiveAttr = (attr) => /^(a:|wx:|x-)/.test(attr);
+const isDirectiveAttr = attr => /^(a:|wx:|x-)/.test(attr);
+const isEventHandlerAttr = propKey => /^on[A-Z]/.test(propKey);
 
 /**
  * 1. Normalize jsxExpressionContainer to binding var.
@@ -20,7 +23,13 @@ const isDirectiveAttr = (attr) => /^(a:|wx:|x-)/.test(attr);
  * @param adapter
  * @param sourceCode
  */
-function transformTemplate(ast, scope = null, adapter, sourceCode, componentDependentProps = {}) {
+function transformTemplate(
+  ast,
+  scope = null,
+  adapter,
+  sourceCode,
+  componentDependentProps = {},
+) {
   const dynamicValues = new DynamicBinding('_d');
   const dynamicEvents = new DynamicBinding('_e');
   function handleJSXExpressionContainer(path) {
@@ -30,14 +39,31 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       ? ATTR // <View foo={bar} />
       : ELE; // <View>{xxx}</View>
     let { expression } = node;
-    const attributeName = type === ATTR
-      ? parentPath.node.name.name
-      : null;
-    const jsxEl = type === ATTR
-      ? path.findParent(p => p.isJSXElement()).node
-      : null;
+    let attributeName = null;
+    const jsxEl =
+      type === ATTR ? path.findParent(p => p.isJSXElement()).node : null;
 
-    const isDirective = isDirectiveAttr(attributeName);
+    let isDirective;
+
+    if (type === ATTR) {
+      attributeName = parentPath.node.name.name;
+      isDirective = isDirectiveAttr(attributeName);
+      if (
+        !isDirective &&
+        jsxEl.__tagId &&
+        !compiledComponents[jsxEl.openingElement.name.name]
+      ) {
+        componentDependentProps[jsxEl.__tagId].props =
+          componentDependentProps[jsxEl.__tagId].props || {};
+        componentDependentProps[jsxEl.__tagId].props[
+          attributeName
+        ] = expression;
+      }
+    } else {
+      isDirective = isDirectiveAttr(attributeName);
+    }
+
+    const isEventHandler = isEventHandlerAttr(attributeName);
 
     switch (expression.type) {
       // <div foo={'string'} /> -> <div foo="string" />
@@ -57,14 +83,16 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       // <div foo={true} /> -> <div foo="{{true}}" />
       // <div>{true}</div>  -> <div></div>
       case 'BooleanLiteral':
-        if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(expression.value)));
+        if (type === ATTR)
+          path.replaceWith(t.stringLiteral(createBinding(expression.value)));
         else if (type === ELE) path.remove();
         break;
 
       // <div foo={null} /> -> <div foo="{{null}}" />
       // <div>{null}</div>  -> <div></div>
       case 'NullLiteral':
-        if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding('null')));
+        if (type === ATTR)
+          path.replaceWith(t.stringLiteral(createBinding('null')));
         else if (type === ELE) path.remove();
         break;
 
@@ -73,7 +101,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       case 'RegExpLiteral':
         const dynamicName = dynamicValues.add({
           expression,
-          isDirective
+          isDirective,
         });
         if (type === ATTR) {
           path.replaceWith(t.stringLiteral(createBinding(dynamicName)));
@@ -85,7 +113,13 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       // <div foo={`hello ${exp}`} /> -> <div foo="hello {{exp}}" />
       // <div>/regexp/</div>  -> <div>{{ _dx }}</div>
       case 'TemplateLiteral':
-        if (type === ELE) throw new CodeError(sourceCode, node, node.loc, 'Unsupported TemplateLiteral in JSXElement Children:');
+        if (type === ELE)
+          throw new CodeError(
+            sourceCode,
+            node,
+            node.loc,
+            'Unsupported TemplateLiteral in JSXElement Children:',
+          );
 
         if (path.isTaggedTemplateExpression()) break;
 
@@ -117,7 +151,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           } else {
             const name = dynamicValues.add({
               expression: nodes[i],
-              isDirective
+              isDirective,
             });
             retString += createBinding(name);
           }
@@ -133,26 +167,32 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           if (expression.name === 'undefined') {
             parentPath.remove(); // Remove jsxAttribute
             break;
-          } else if (isEventHandler(attributeName)) {
+          } else if (isEventHandler) {
             const name = dynamicEvents.add({
               expression,
-              isDirective
+              isDirective,
             });
             path.replaceWith(t.stringLiteral(name));
           } else {
-            const replaceNode = transformIdentifier(expression, dynamicValues, isDirective);
-            path.replaceWith(t.stringLiteral(createBinding(genExpression(replaceNode))));
-          }
-          if (!isDirective && jsxEl.__tagId) {
-            componentDependentProps[jsxEl.__tagId].props = componentDependentProps[jsxEl.__tagId].props || {};
-            componentDependentProps[jsxEl.__tagId].props[attributeName] = expression;
+            const replaceNode = transformIdentifier(
+              expression,
+              dynamicValues,
+              isDirective,
+            );
+            path.replaceWith(
+              t.stringLiteral(createBinding(genExpression(replaceNode))),
+            );
           }
         } else if (type === ELE) {
           if (expression.name === 'undefined') {
             path.remove(); // Remove expression
             break;
           } else {
-            const replaceNode = transformIdentifier(expression, dynamicValues, isDirective);
+            const replaceNode = transformIdentifier(
+              expression,
+              dynamicValues,
+              isDirective,
+            );
             path.replaceWith(createJSXBinding(genExpression(replaceNode)));
           }
         }
@@ -167,14 +207,49 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       // <tag>{() => {}}</tag> => throw Error
       case 'ArrowFunctionExpression':
       case 'FunctionExpression':
-        if (type === ELE) throw new CodeError(sourceCode, node, node.loc, 'Unsupported Function in JSXElement:');
+        if (type === ELE)
+          throw new CodeError(
+            sourceCode,
+            node,
+            node.loc,
+            'Unsupported Function in JSXElement:',
+          );
 
-        if (!isEventHandler(attributeName)) throw new CodeError(sourceCode, node, node.loc, `Only EventHandlers are supported in Mini Program, eg: onClick/onChange, instead of "${attributeName}".`);
-
+        if (!isEventHandler)
+          throw new CodeError(
+            sourceCode,
+            node,
+            node.loc,
+            `Only EventHandlers are supported in Mini Program, eg: onClick/onChange, instead of "${attributeName}".`,
+          );
+        const callExp = expression.body;
+        const args = callExp.arguments;
+        const { attributes } = parentPath.parentPath.node;
+        const fnExpression = t.isCallExpression(callExp) ? callExp.callee : expression;
         const name = dynamicEvents.add({
-          expression,
-          isDirective
+          expression: fnExpression,
+          isDirective,
         });
+        const formatName = formatEventName(name);
+        if (Array.isArray(args)) {
+          args.forEach((arg, index) => {
+            const transformedArg = transformCallExpressionArg(arg);
+            attributes.push(
+              t.jsxAttribute(
+                t.jsxIdentifier(`data-${formatName}-arg-` + index),
+                t.stringLiteral(
+                  createBinding(
+                    genExpression(transformedArg, {
+                      concise: true,
+                      comments: false,
+                    }),
+                  ),
+                ),
+              ),
+            );
+          });
+        }
+
         path.replaceWith(t.stringLiteral(name));
         break;
 
@@ -182,25 +257,31 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       // <tag>{ foo.bar }</tag> => <tag>{{ _d0.bar }}</tag>
       case 'MemberExpression':
         if (type === ATTR) {
-          if (isEventHandler(attributeName)) {
+          if (isEventHandler) {
             const name = dynamicEvents.add({
               expression,
-              isDirective
+              isDirective,
             });
             const replaceNode = t.stringLiteral(name);
             replaceNode.__transformed = true;
             path.replaceWith(replaceNode);
           } else {
-            const replaceNode = transformMemberExpression(expression, dynamicValues, isDirective);
+            const replaceNode = transformMemberExpression(
+              expression,
+              dynamicValues,
+              isDirective,
+            );
             replaceNode.__transformed = true;
-            path.replaceWith(t.stringLiteral(createBinding(genExpression(replaceNode))));
-            if (!isDirective && jsxEl.__tagId) {
-              componentDependentProps[jsxEl.__tagId].props = componentDependentProps[jsxEl.__tagId].props || {};
-              componentDependentProps[jsxEl.__tagId].props[attributeName] = expression;
-            }
+            path.replaceWith(
+              t.stringLiteral(createBinding(genExpression(replaceNode))),
+            );
           }
         } else if (type === ELE) {
-          const replaceNode = transformMemberExpression(expression, dynamicValues, isDirective);
+          const replaceNode = transformMemberExpression(
+            expression,
+            dynamicValues,
+            isDirective,
+          );
           path.replaceWith(createJSXBinding(genExpression(replaceNode)));
         }
         break;
@@ -210,50 +291,61 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
       case 'CallExpression':
         if (type === ATTR) {
           if (
-            isEventHandler(attributeName)
-            && t.isMemberExpression(expression.callee)
-            && t.isIdentifier(expression.callee.property, { name: 'bind' })
+            isEventHandler &&
+            t.isMemberExpression(expression.callee) &&
+            t.isIdentifier(expression.callee.property, { name: 'bind' })
           ) {
             // function bounds
             const callExp = node.expression;
             const args = callExp.arguments;
             const { attributes } = parentPath.parentPath.node;
+            const name = dynamicEvents.add({
+              expression: callExp.callee.object,
+              isDirective,
+            });
+            const formatName = formatEventName(name);
             if (Array.isArray(args)) {
               args.forEach((arg, index) => {
                 if (index === 0) {
                   // first arg is `this` context.
-                  const strValue = t.isThisExpression(arg) ? 'this' : createBinding(genExpression(arg, {
-                    concise: true,
-                    comments: false,
-                  }));
-                  attributes.push(
-                    t.jsxAttribute(
-                      t.jsxIdentifier('data-arg-context'),
-                      t.stringLiteral(strValue)
-                    )
-                  );
-                } else {
-                  attributes.push(
-                    t.jsxAttribute(
-                      t.jsxIdentifier('data-arg-' + (index - 1)),
-                      t.stringLiteral(createBinding(genExpression(arg, {
+                  const strValue = t.isThisExpression(arg)
+                    ? 'this'
+                    : createBinding(
+                      genExpression(arg, {
                         concise: true,
                         comments: false,
-                      })))
-                    )
+                      }),
+                    );
+                  attributes.push(
+                    t.jsxAttribute(
+                      t.jsxIdentifier(`data-${formatName}-arg-context`),
+                      t.stringLiteral(strValue),
+                    ),
+                  );
+                } else {
+                  const transformedArg = transformCallExpressionArg(arg);
+                  attributes.push(
+                    t.jsxAttribute(
+                      t.jsxIdentifier(`data-${formatName}-arg-` + (index - 1)),
+                      t.stringLiteral(
+                        createBinding(
+                          genExpression(transformedArg, {
+                            concise: true,
+                            comments: false,
+                          }),
+                        ),
+                      ),
+                    ),
                   );
                 }
               });
             }
-            const name = dynamicEvents.add({
-              expression: callExp.callee.object,
-              isDirective
-            });
+
             path.replaceWith(t.stringLiteral(name));
           } else {
             const name = dynamicValues.add({
               expression,
-              isDirective
+              isDirective,
             });
             path.replaceWith(t.stringLiteral(createBinding(name)));
           }
@@ -261,7 +353,7 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
           // Skip `array.map(iterableFunction)`.
           const name = dynamicValues.add({
             expression,
-            isDirective
+            isDirective,
           });
           path.replaceWith(createJSXBinding(name));
         }
@@ -278,48 +370,77 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
         if (hasComplexExpression(path)) {
           const expressionName = dynamicValues.add({
             expression,
-            isDirective
+            isDirective,
           });
-          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(expressionName)));
-          else if (type === ELE) path.replaceWith(createJSXBinding(expressionName));
+          if (type === ATTR)
+            path.replaceWith(t.stringLiteral(createBinding(expressionName)));
+          else if (type === ELE)
+            path.replaceWith(createJSXBinding(expressionName));
         } else {
           path.traverse({
             Identifier(innerPath) {
-              if (innerPath.node.__transformed
-              || innerPath.parentPath.isMemberExpression()
-              || innerPath.parentPath.isObjectProperty()
-              || innerPath.node.__listItem
-              && !innerPath.node.__listItem.item) return;
-              const replaceNode = transformIdentifier(innerPath.node, dynamicValues, isDirective);
+              if (
+                innerPath.node.__transformed ||
+                innerPath.parentPath.isMemberExpression() ||
+                innerPath.parentPath.isObjectProperty() ||
+                innerPath.node.__listItem && !innerPath.node.__listItem.item
+              )
+                return;
+              const replaceNode = transformIdentifier(
+                innerPath.node,
+                dynamicValues,
+                isDirective,
+              );
               replaceNode.__transformed = true;
               innerPath.replaceWith(replaceNode);
             },
             // <tag>{a ? a.b[c.d] : 1}</tag> => <tag>{{_d0 ? _d0.b[_d1.d] : 1}}</tag>
             MemberExpression(innerPath) {
               if (innerPath.node.__transformed) return;
-              const replaceNode = transformMemberExpression(innerPath.node, dynamicValues, isDirective);
+              const replaceNode = transformMemberExpression(
+                innerPath.node,
+                dynamicValues,
+                isDirective,
+              );
               replaceNode.__transformed = true;
               innerPath.replaceWith(replaceNode);
             },
             ObjectExpression(innerPath) {
               if (innerPath.node.__transformed) return;
-              const replaceProperties = transformObjectExpression(innerPath.node, dynamicValues, isDirective);
+              const replaceProperties = transformObjectExpression(
+                innerPath.node,
+                dynamicValues,
+                isDirective,
+              );
               const replaceNode = t.objectExpression(replaceProperties);
               replaceNode.__transformed = true;
               innerPath.replaceWith(replaceNode);
               expression = innerPath.node;
-            }
+            },
           });
 
-          if (type === ATTR) path.replaceWith(t.stringLiteral(createBinding(genExpression(expression, {
-            concise: true,
-            comments: false,
-          }))));
-          else if (type === ELE) path.replaceWith(createJSXBinding(genExpression(expression)));
+          if (type === ATTR)
+            path.replaceWith(
+              t.stringLiteral(
+                createBinding(
+                  genExpression(expression, {
+                    concise: true,
+                    comments: false,
+                  }),
+                ),
+              ),
+            );
+          else if (type === ELE)
+            path.replaceWith(createJSXBinding(genExpression(expression)));
         }
         break;
       default: {
-        throw new CodeError(sourceCode, node, node.loc, `Unsupported Stynax in JSX Elements, ${expression.type}:`);
+        throw new CodeError(
+          sourceCode,
+          node,
+          node.loc,
+          `Unsupported Stynax in JSX Elements, ${expression.type}:`,
+        );
       }
     }
 
@@ -327,34 +448,17 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
   }
 
   traverse(ast, {
-    JSXAttribute(path) {
-      const { node } = path;
-      const attrName = node.name.name;
-      // adapt the key attribute
-      if (attrName === 'key') {
-        node.name.name = adapter.key;
-      }
-      // Remove ref.
-      if (attrName === 'ref') {
-        path.remove();
-      }
-      if (attrName === 'className') {
-        node.name.name = 'class';
-      }
-    },
     JSXExpressionContainer: handleJSXExpressionContainer,
     JSXOpeningElement: {
       exit(path) {
-        const { node, parent } = path;
+        const { node } = path;
         const componentTagNode = node.name;
         if (t.isJSXIdentifier(componentTagNode)) {
           const name = componentTagNode.name;
-          const replaceName = baseComponents[name];
+          // Handle rax-view
+          const replaceName = compiledComponents[name];
           if (replaceName) {
-            componentTagNode.name = replaceName;
-            if (parent.closingElement) {
-              parent.closingElement.name = t.jsxIdentifier(replaceName);
-            }
+            replaceComponentTagName(path, t.jsxIdentifier(replaceName));
             const propsMap = adapter[replaceName];
             let hasClassName = false;
             node.attributes.forEach(attr => {
@@ -368,19 +472,31 @@ function transformTemplate(ast, scope = null, adapter, sourceCode, componentDepe
               }
             });
             if (!hasClassName) {
-              node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'), t.stringLiteral(propsMap.className)));
+              node.attributes.push(
+                t.jsxAttribute(
+                  t.jsxIdentifier('class'),
+                  t.stringLiteral(propsMap.className),
+                ),
+              );
             }
           }
+          // Handle native components, like rax-text
+          if (baseComponents.indexOf(name) > -1 && adapter.needTransformEvent) {
+            node.attributes.forEach(attr => {
+              if (attr.value && attr.value.value && attr.value.value.indexOf('_e') > -1) {
+                attr.name.name = `bind${attr.name.name}`;
+              }
+            });
+          }
         }
-      }
-    }
+      },
+    },
   });
 
-  return { dynamicValues: dynamicValues.getStore(), dynamicEvents: dynamicEvents.getStore() };
-}
-
-function isEventHandler(propKey) {
-  return /^on[A-Z]/.test(propKey);
+  return {
+    dynamicValues: dynamicValues.getStore(),
+    dynamicEvents: dynamicEvents.getStore(),
+  };
 }
 
 function hasComplexExpression(path) {
@@ -402,7 +518,11 @@ function hasComplexExpression(path) {
       const { properties } = innerPath.node;
       const checkNested = properties.some(property => {
         const { value } = property;
-        return !t.isIdentifier(value) && !t.isMemberExpression(value) && !t.isBinaryExpression(value);
+        return (
+          !t.isIdentifier(value) &&
+          !t.isMemberExpression(value) &&
+          !t.isBinaryExpression(value)
+        );
       });
       if (checkNested) {
         isComplex(innerPath);
@@ -422,7 +542,7 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
   if (checkMemberHasThis(expression)) {
     const name = dynamicBinding.add({
       expression,
-      isDirective
+      isDirective,
     });
     return t.identifier(name);
   }
@@ -434,24 +554,36 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
     if (t.isThisExpression(object)) {
       const name = dynamicBinding.add({
         expression,
-        isDirective
+        isDirective,
       });
       const replaceNode = t.identifier(name);
       replaceNode.__transformed = true;
       return replaceNode;
     }
     if (t.isIdentifier(object)) {
-      objectReplaceNode = transformIdentifier(object, dynamicBinding, isDirective);
+      objectReplaceNode = transformIdentifier(
+        object,
+        dynamicBinding,
+        isDirective,
+      );
       objectReplaceNode.__transformed = true;
     }
     if (t.isMemberExpression(object)) {
-      objectReplaceNode = transformMemberExpression(object, dynamicBinding, isDirective);
+      objectReplaceNode = transformMemberExpression(
+        object,
+        dynamicBinding,
+        isDirective,
+      );
     }
   }
 
   if (!property.__transformed) {
     if (t.isMemberExpression(property)) {
-      propertyReplaceNode = transformMemberExpression(property, dynamicBinding, isDirective);
+      propertyReplaceNode = transformMemberExpression(
+        property,
+        dynamicBinding,
+        isDirective,
+      );
     }
   }
 
@@ -463,21 +595,22 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
  * */
 function transformIdentifier(expression, dynamicBinding, isDirective) {
   let replaceNode;
-  if (expression.__listItem
-    && !expression.__listItem.item
-    || expression.__templateVar) {
+  if (
+    expression.__listItem && !expression.__listItem.item
+    || expression.__templateVar
+  ) {
     // The identifier is x-for args or template variable or map's index
     replaceNode = expression;
   } else if (expression.__listItem && expression.__listItem.item) {
     const itemNode = t.identifier(expression.__listItem.item);
     itemNode.__listItem = {
-      jsxplus: expression.__listItem.jsxplus
+      jsxplus: expression.__listItem.jsxplus,
     };
     replaceNode = t.memberExpression(itemNode, expression);
   } else {
     const name = dynamicBinding.add({
       expression,
-      isDirective
+      isDirective,
     });
     replaceNode = t.identifier(name);
   }
@@ -496,13 +629,56 @@ function transformObjectExpression(expression, dynamicBinding, isDirective) {
       replaceNode = transformIdentifier(value, dynamicBinding, isDirective);
     }
     if (t.isMemberExpression(value)) {
-      replaceNode = transformMemberExpression(value, dynamicBinding, isDirective);
+      replaceNode = transformMemberExpression(
+        value,
+        dynamicBinding,
+        isDirective,
+      );
     }
     if (t.isObjectExpression(value)) {
-      replaceNode = transformObjectExpression(value, dynamicBinding, isDirective);
+      replaceNode = transformObjectExpression(
+        value,
+        dynamicBinding,
+        isDirective,
+      );
     }
     return t.objectProperty(key, replaceNode);
   });
+}
+
+/**
+ * Transform CallExpression arg
+ * @param {Object} ast
+ */
+function transformCallExpressionArg(ast) {
+  let arg;
+  if (t.isIdentifier(ast)) {
+    if (ast.__listItem) {
+      arg = t.memberExpression(
+        t.identifier(ast.__listItem.item),
+        ast,
+      );
+    }
+  } else {
+    traverse(ast, {
+      Identifier(innerPath) {
+        const { node: innerNode } = innerPath;
+        if (innerNode.__listItem) {
+          const item = innerNode.__listItem.item;
+          innerPath.replaceWith(
+            t.memberExpression(
+              t.identifier(item),
+              t.identifier(innerNode.name),
+            ),
+          );
+        }
+      },
+    });
+  }
+  if (!arg) {
+    arg = ast;
+  }
+  return arg;
 }
 
 function checkMemberHasThis(expression) {
@@ -520,10 +696,21 @@ function checkMemberHasThis(expression) {
   return hasThisExpression;
 }
 
+// _e0 -> e0
+function formatEventName(name) {
+  return name.replace('_', '');
+}
+
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
-      const { dynamicValues, dynamicEvents } = transformTemplate(parsed.templateAST, null, options.adapter, code, parsed.componentDependentProps);
+      const { dynamicValues, dynamicEvents } = transformTemplate(
+        parsed.templateAST,
+        null,
+        options.adapter,
+        code,
+        parsed.componentDependentProps,
+      );
 
       const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {
         const name = curr.name;

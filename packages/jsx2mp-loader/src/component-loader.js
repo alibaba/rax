@@ -1,35 +1,51 @@
-const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, extname } = require('path');
+const { readFileSync, existsSync, mkdirpSync } = require('fs-extra');
+const { relative, join, dirname, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 
+const cached = require('./cached');
 const { removeExt } = require('./utils/pathHelper');
-
+const eliminateDeadCode = require('./utils/dce');
+const processCSS = require('./styleProcessor');
+const output = require('./output');
 
 const ComponentLoader = __filename;
 
-module.exports = function componentLoader(content) {
+module.exports = async function componentLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath } = loaderOptions;
+  const { platform, entryPath, constantDir, mode, disableCopyNpm } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
-  const rootContext = this.rootContext;
 
   const outputPath = this._compiler.outputPath;
   const sourcePath = join(this.rootContext, dirname(entryPath));
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
-  const targetFilePath = join(outputPath, relativeSourcePath);
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
+
+  const isFromConstantDir = cached(function isFromConstantDir(dir) {
+    return constantDir.some(singleDir => isChildOf(singleDir, dir));
+  });
+
+  if (isFromConstantDir(this.resourcePath)) {
+    return '';
+  }
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
     outputPath,
     sourcePath,
     type: 'component',
-    platform
+    platform,
+    sourceFileName: this.resourcePath,
+    disableCopyNpm
   });
 
-  const transformed = compiler(rawContent, compilerOptions);
+  const rawContentAfterDCE = eliminateDeadCode(rawContent);
+  const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
+  transformed.style = style;
+  transformed.assets = assets;
 
   const config = Object.assign({}, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
@@ -56,25 +72,27 @@ module.exports = function componentLoader(content) {
 
   const distFileDir = dirname(distFileWithoutExt);
   if (!existsSync(distFileDir)) mkdirpSync(distFileDir);
-  // Write code
-  writeFileSync(distFileWithoutExt + '.js', transformed.code);
-  // Write template
-  writeFileSync(distFileWithoutExt + platform.extension.xml, transformed.template);
-  // Write config
-  writeJSONSync(distFileWithoutExt + '.json', config, { spaces: 2 });
-  // Write acss style
-  if (transformed.style) {
-    writeFileSync(distFileWithoutExt + platform.extension.css, transformed.style);
-  }
-  // Write extra assets
-  if (transformed.assets) {
-    Object.keys(transformed.assets).forEach((asset) => {
-      const content = transformed.assets[asset];
-      const assetDirectory = dirname(join(outputPath, asset));
-      if (!existsSync(assetDirectory)) mkdirpSync(assetDirectory);
-      writeFileSync(join(outputPath, asset), content);
-    });
-  }
+
+  const outputContent = {
+    code: transformed.code,
+    map: transformed.map,
+    css: transformed.style || '',
+    json: config,
+    template: transformed.template,
+    assets: transformed.assets
+  };
+  const outputOption = {
+    outputPath: {
+      code: distFileWithoutExt + '.js',
+      json: distFileWithoutExt + '.json',
+      css: distFileWithoutExt + platform.extension.css,
+      template: distFileWithoutExt + platform.extension.xml,
+      assets: outputPath
+    },
+    mode
+  };
+
+  output(outputContent, rawContent, outputOption);
 
   function isCustomComponent(name, usingComponents = {}) {
     const matchingPath = join(dirname(resourcePath), name);
@@ -93,7 +111,11 @@ module.exports = function componentLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
-      denpendencies.push({ name, loader: ComponentLoader, options: { entryPath: loaderOptions.entryPath, platform: loaderOptions.platform } });
+      denpendencies.push({
+        name,
+        loader: ComponentLoader,
+        options: loaderOptions
+      });
     } else {
       denpendencies.push({ name });
     }
@@ -119,3 +141,25 @@ function createImportStatement(req) {
   return `import '${req}';`;
 }
 
+/**
+ * judge whether the child dir is part of parent dir
+ * @param {string} child
+ * @param {string} parent
+ */
+function isChildOf(child, parent) {
+  const childArray = child.split(sep).filter(i => i.length);
+  const parentArray = parent.split(sep).filter(i => i.length);
+  const clen = childArray.length;
+  const plen = parentArray.length;
+
+  let j = 0;
+  for (let i = 0; i < plen; i++) {
+    if (parentArray[i] === childArray[j]) {
+      j++;
+    }
+    if (j === clen) {
+      return true;
+    }
+  }
+  return false;
+}

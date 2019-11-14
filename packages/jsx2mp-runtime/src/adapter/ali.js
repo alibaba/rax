@@ -23,3 +23,9 @@ export function getComponentLifecycle({ mount, unmount }) {
     },
   };
 }
+
+export function getComponentBaseConfig() {
+  return {
+    props: {},
+  };
+}

@@ -3,9 +3,10 @@
  * Base Component class definition.
  */
 import Host from './host';
-import {updateChildProps, removeComponentProps} from './updater';
+import {updateChildProps, removeComponentProps, getComponentProps} from './updater';
 import {enqueueRender} from './enqueueRender';
 import isFunction from './isFunction';
+import sameValue from './sameValue';
 import {
   RENDER,
   ON_SHOW,
@@ -14,18 +15,23 @@ import {
   ON_REACH_BOTTOM,
   ON_PULL_DOWN_REFRESH,
   ON_SHARE_APP_MESSAGE,
+  ON_TAB_ITEM_TAP,
   COMPONENT_DID_MOUNT,
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
   COMPONENT_WILL_UNMOUNT,
   COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
+import { cycles as pageCycles } from './page';
 
 export default class Component {
   constructor() {
     this.state = {};
     this.props = {};
 
+    this.__dependencies = {}; // for context
+
+    this.__mounted = false;
     this.__shouldUpdate = false;
     this._methods = {};
     this._hooks = {};
@@ -95,6 +101,24 @@ export default class Component {
     updateChildProps(this, chlidInstanceId, props);
   }
 
+  _registerRefs(refs) {
+    this.refs = {};
+    refs.forEach(({name, method}) => {
+      if (!method) {
+        const target = {
+          current: null
+        };
+        this._internal[name] = ref => {
+          target.current = ref;
+        };
+        this.refs[name] = target;
+      } else {
+        this._internal[name] = method;
+        this.refs[name] = method;
+      }
+    });
+  }
+
   _collectState() {
     const state = Object.assign({}, this.state);
     let parialState;
@@ -107,6 +131,41 @@ export default class Component {
       }
     }
     return state;
+  }
+
+  _readContext(context) {
+    const Provider = context.Provider;
+    const contextProp = Provider.contextProp;
+    let contextItem = this.__dependencies[contextProp];
+    if (!contextItem) {
+      const readEmitter = Provider.readEmitter;
+      const contextEmitter = readEmitter();
+      contextItem = {
+        emitter: contextEmitter,
+        renderedContext: contextEmitter.value,
+      };
+
+      const contextUpdater = (newContext) => {
+        if (!sameValue(newContext, contextItem.renderedContext)) {
+          this.__shouldUpdate = true;
+          this._updateComponent();
+        }
+      };
+
+      contextItem.emitter.on(contextUpdater);
+      this._registerLifeCycle(COMPONENT_WILL_UNMOUNT, () => {
+        contextItem.emitter.off(contextUpdater);
+      });
+      this.__dependencies[contextProp] = contextItem;
+    }
+    return contextItem.renderedContext = contextItem.emitter.value;
+  }
+
+  _injectContextType() {
+    const contextType = this.constructor.contextType;
+    if (contextType) {
+      this.context = this._readContext(contextType);
+    }
   }
 
   _mountComponent() {
@@ -127,7 +186,6 @@ export default class Component {
     // Step4: mark __mounted = true
     if (!this.__mounted) {
       this.__mounted = true;
-
       // Step5: trigger did mount
       this._trigger(COMPONENT_DID_MOUNT);
     }
@@ -139,12 +197,11 @@ export default class Component {
 
   _updateComponent() {
     if (!this.__mounted) return;
-
     // Step1: propTypes check, now skipped.
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
-    if (this.__mounted && diffProps(prevProps, nextProps)) {
+    if (diffProps(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, this.props);
     }
 
@@ -163,18 +220,16 @@ export default class Component {
     if (stateFromProps !== undefined) nextState = stateFromProps;
 
     // Step5: judge shouldComponentUpdate
-    if (this.__mounted) {
-      this.__shouldUpdate = true;
-      if (
-        !this.__forceUpdate
-        && this.shouldComponentUpdate
-        && this.shouldComponentUpdate(nextProps, nextState) === false
-      ) {
-        this.__shouldUpdate = false;
-      } else {
-        // Step6: trigger will update
-        this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
-      }
+    this.__shouldUpdate = true;
+    if (
+      !this.__forceUpdate
+      && this.shouldComponentUpdate
+      && this.shouldComponentUpdate(nextProps, nextState) === false
+    ) {
+      this.__shouldUpdate = false;
+    } else {
+      // Step6: trigger will update
+      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
     }
 
     this.props = nextProps;
@@ -222,10 +277,19 @@ export default class Component {
       case ON_HIDE:
       case ON_PAGE_SCROLL:
       case ON_REACH_BOTTOM:
+      case ON_TAB_ITEM_TAP:
       case ON_PULL_DOWN_REFRESH:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
+        }
+        if (this.props.location) {
+          const pathname = this.props.location.pathname;
+          if (pageCycles[pathname]) {
+            if (pageCycles[pathname][cycle]) {
+              pageCycles[pathname][cycle].forEach(fn => fn(...args));
+            }
+          }
         }
         break;
 
@@ -235,6 +299,8 @@ export default class Component {
         this._hookID = 0;
         const nextProps = args[0] || this.props;
         const nextState = args[1] || this.state;
+
+        this._injectContextType();
 
         this.render(this.props = nextProps, this.state = nextState);
         break;
@@ -253,7 +319,8 @@ export default class Component {
    */
   _setInternal(internal) {
     this._internal = internal;
-    this.props = internal[PROPS];
+    const props = internal[PROPS];
+    this.props = Object.assign({}, props, getComponentProps(props.__tagId));
     if (!this.state) this.state = {};
     Object.assign(this.state, internal.data);
   }

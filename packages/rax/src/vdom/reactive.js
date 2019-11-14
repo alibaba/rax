@@ -1,8 +1,9 @@
 import Host from './host';
 import Component from './component';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
-import { invokeMinifiedError } from '../error';
+import { throwMinifiedError } from '../error';
 import { INTERNAL } from '../constant';
+import { EMPTY_OBJECT } from '../types';
 
 const RE_RENDER_LIMIT = 24;
 /**
@@ -29,10 +30,10 @@ export default class ReactiveComponent extends Component {
     this.didUpdate = [];
     this.willUnmount = [];
 
-    this.state = {};
+    this.state = EMPTY_OBJECT;
 
-    if (pureRender.__forwardRef) {
-      this.__prevForwardRef = this.__forwardRef = ref;
+    if (pureRender._forwardRef) {
+      this.__prevForwardRef = this._forwardRef = ref;
     }
 
     const compares = pureRender.__compares;
@@ -48,7 +49,7 @@ export default class ReactiveComponent extends Component {
           }
         }
 
-        return !arePropsEqual || this.__prevForwardRef !== this.__forwardRef;
+        return !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
       };
     }
   }
@@ -64,9 +65,6 @@ export default class ReactiveComponent extends Component {
   useContext(context) {
     const contextID = context._contextID;
     let contextItem = this.__contexts[contextID];
-    function getValue() {
-      return contextItem.__provider ? contextItem.__provider.getValue() : context._defaultValue;
-    }
     if (!contextItem) {
       const provider = context.__getNearestParentProvider(this);
       contextItem = this.__contexts[contextID] = {
@@ -74,10 +72,10 @@ export default class ReactiveComponent extends Component {
       };
 
       if (provider) {
-        const handleContextChange = () => {
+        const handleContextChange = (value) => {
           // Check the last value that maybe alread rerender
           // avoid rerender twice when provider value changed
-          if (contextItem.__lastValue !== getValue()) {
+          if (contextItem.__lastValue !== value) {
             this.__shouldUpdate = true;
             this.__update();
           }
@@ -87,7 +85,8 @@ export default class ReactiveComponent extends Component {
       }
     }
 
-    return contextItem.__lastValue = getValue();
+    return contextItem.__lastValue = contextItem.__provider ?
+      contextItem.__provider.getValue() : context._defaultValue;
   }
 
   componentWillMount() {
@@ -112,7 +111,7 @@ export default class ReactiveComponent extends Component {
 
   __update() {
     this[INTERNAL].__isPendingForceUpdate = true;
-    this.setState({});
+    this.setState(EMPTY_OBJECT);
   }
 
   render() {
@@ -123,7 +122,7 @@ export default class ReactiveComponent extends Component {
     this.__hookID = 0;
     this.__reRenders = 0;
     this.__isScheduled = false;
-    let children = this.__render(this.props, this.__forwardRef ? this.__forwardRef : this.context);
+    let children = this.__render(this.props, this._forwardRef ? this._forwardRef : this.context);
 
     while (this.__isScheduled) {
       this.__reRenders++;
@@ -131,13 +130,13 @@ export default class ReactiveComponent extends Component {
         if (process.env.NODE_ENV !== 'production') {
           throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
         } else {
-          invokeMinifiedError(4);
+          throwMinifiedError(4);
         }
       }
 
       this.__hookID = 0;
       this.__isScheduled = false;
-      children = this.__render(this.props, this.__forwardRef ? this.__forwardRef : this.context);
+      children = this.__render(this.props, this._forwardRef ? this._forwardRef : this.context);
     }
 
     if (this.__shouldUpdate) {

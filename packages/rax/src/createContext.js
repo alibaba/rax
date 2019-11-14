@@ -2,7 +2,6 @@ import invokeFunctionsWithContext from './invokeFunctionsWithContext';
 import { useState, useLayoutEffect } from './hooks';
 import { isFunction } from './types';
 import toArray from './toArray';
-import { INTERNAL } from './constant';
 import getNearestParent from './vdom/getNearestParent';
 
 let id = 0;
@@ -28,6 +27,7 @@ export default function createContext(defaultValue) {
         [contextID]: this
       };
     }
+    // `getValue()` called in rax-server-renderer
     getValue() {
       return this.props.value !== undefined ? this.props.value : defaultValue;
     }
@@ -77,7 +77,8 @@ export default function createContext(defaultValue) {
   return {
     Provider,
     Consumer,
-    _contextID: contextID, // Export for SSR
+    // `_contextID` and `_defaultValue` accessed in rax-server-renderer
+    _contextID: contextID,
     _defaultValue: defaultValue,
     __getNearestParentProvider: getNearestParentProvider,
   };

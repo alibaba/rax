@@ -1,5 +1,5 @@
 import { isString } from '../types';
-import warning from '../warning';
+import { warning } from '../error';
 
 export default function getElementKeyName(children, element, index) {
   const elementKey = element && element.key;

@@ -1,11 +1,9 @@
 {
-  "name": "create-rax",
-  "version": "0.1.2",
-  "description": "Creator alias for rax.",
-  "bin": {
-    "create": "bin/create.js"
-  },
+  "name": "rax-use-interval",
+  "version": "1.0.0",
+  "description": "Rax useInterval hook",
   "license": "BSD-3-Clause",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
@@ -14,7 +12,10 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "dependencies": {
-    "rax-cli": "latest"
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0"
   }
 }

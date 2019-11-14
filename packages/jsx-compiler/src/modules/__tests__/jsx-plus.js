@@ -1,11 +1,12 @@
 const {
   _transformCondition,
   _transformList,
+  _transformClass,
   _transformFragment,
 } = require('../jsx-plus');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
-const adapter = require('../../adapter');
+const adapter = require('../../adapter').ali;
 
 describe('Directives', () => {
   describe('list', () => {
@@ -36,14 +37,13 @@ describe('Directives', () => {
       _transformList(ast, code, adapter);
       expect(genExpression(ast))
         .toEqual(`<View a:for={array.map((item, index) => {
-  item = item.map((item2, index) => {
-    return {
-      item2: item2,
-      index: index
-    };
-  });
   return {
-    item: item,
+    item: item.map((item2, index) => {
+      return {
+        item2: item2,
+        index: index
+      };
+    }),
     index: index
   };
 })} a:for-item="item" a:for-index="index">
@@ -71,6 +71,24 @@ describe('Directives', () => {
       `);
       _transformFragment(ast);
       expect(genExpression(ast)).toEqual('<block foo="bar"></block>');
+    });
+  });
+
+  describe('class', () => {
+    it('simple', () => {
+      const ast = parseExpression(`
+        <View x-class={classNames}></View>
+      `);
+      _transformClass(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View className={__classnames__(classNames)}></View>');
+    });
+
+    it('combine', () => {
+      const ast = parseExpression(`
+        <View className="home" x-class={classNames}></View>
+      `);
+      _transformClass(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View className={"home" + " " + __classnames__(classNames)}></View>');
     });
   });
 });

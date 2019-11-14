@@ -1,4 +1,5 @@
 import { shared } from 'rax';
+import { BOOLEAN, BOOLEANISH_STRING, OVERLOADED_BOOLEAN, shouldRemoveAttribute, getPropertyInfo } from './attribute';
 
 const EMPTY_OBJECT = {};
 const TRUE = true;
@@ -121,37 +122,78 @@ function styleToCSS(style, options = {}) {
   return css;
 }
 
+function createMarkupForProperty(prop, value, options) {
+  if (prop === 'children') {
+    // Ignore children prop
+    return '';
+  }
+
+  if (prop === 'style') {
+    return ` style="${styleToCSS(value, options)}"`;
+  }
+
+  if (prop === 'className') {
+    return typeof value === 'string' ? ` class="${escapeText(value)}"` : '';
+  }
+
+  if (prop === 'dangerouslySetInnerHTML') {
+    // Ignore innerHTML
+    return '';
+  }
+
+  if (shouldRemoveAttribute(prop, value)) {
+    return '';
+  }
+
+  const propInfo = getPropertyInfo(prop);
+  const propType = propInfo ? propInfo.type : null;
+  const valueType = typeof value;
+
+  if (propType === BOOLEAN || propType === OVERLOADED_BOOLEAN && value === true) {
+    return ` ${prop}`;
+  }
+
+  if (valueType === 'string') {
+    return ` ${prop}="${escapeText(value)}"`;
+  }
+
+  if (valueType === 'number') {
+    return ` ${prop}="${String(value)}"`;
+  }
+
+  if (valueType === 'boolean') {
+    if (propType === BOOLEANISH_STRING || prop.indexOf('data-') === 0 || prop.indexOf('aria-') === 0) {
+      return ` ${prop}="${value ? 'true' : 'false'}"`;
+    }
+  }
+
+  return '';
+};
+
 function propsToString(props, options) {
   let html = '';
   for (var prop in props) {
     var value = props[prop];
 
-    if (prop === 'children') {
-      // Ignore children prop
-    } else if (prop === 'style') {
-      html = html + ` style="${styleToCSS(value, options)}"`;
-    } else if (prop === 'className') {
-      html = html + ` class="${escapeText(value)}"`;
-    } else if (prop === 'defaultValue') {
-      if (!props.value) {
-        html = html + ` value="${typeof value === 'string' ? escapeText(value) : value}"`;
-      }
-    } else if (prop === 'defaultChecked') {
+    if (prop === 'defaultValue') {
       if (!props.checked) {
-        html = html + ` checked="${value}"`;
-      }
-    } else if (prop === 'dangerouslySetInnerHTML') {
-      // Ignore innerHTML
-    } else {
-      if (typeof value === 'string') {
-        html = html + ` ${prop}="${escapeText(value)}"`;
-      } else if (typeof value === 'number') {
-        html = html + ` ${prop}="${String(value)}"`;
-      } else if (typeof value === 'boolean') {
-        html = html + ` ${prop}`;
+        prop = 'value';
+      } else {
+        continue;
       }
     }
+
+    if (prop === 'defaultChecked') {
+      if (!props.checked) {
+        prop = 'checked';
+      } else {
+        continue;
+      }
+    }
+
+    html = html + createMarkupForProperty(prop, value, options);
   }
+
   return html;
 }
 
@@ -161,6 +203,17 @@ function rpx2vw(val, opts) {
   const parsedVal = parseFloat(vw.toFixed(opts.unitPrecision));
 
   return parsedVal;
+}
+
+function checkContext(element) {
+  if (element.contextTypes || element.childContextTypes) {
+    console.error(
+      'Warning: ' +
+      'The legacy "contextTypes" and "childContextTypes" API not working properly in server renderer, ' +
+      'use the new context API. ' +
+      `(Current: ${shared.Host.owner.__getName()})`
+    );
+  }
 }
 
 const updater = {
@@ -182,7 +235,7 @@ const updater = {
  * Functional Reactive Component Class Wrapper
  */
 class ServerReactiveComponent {
-  constructor(pureRender) {
+  constructor(pureRender, ref) {
     // A pure function
     this._render = pureRender;
     this._hookID = 0;
@@ -191,6 +244,10 @@ class ServerReactiveComponent {
     this.didMount = [];
     this.didUpdate = [];
     this.willUnmount = [];
+
+    if (pureRender._forwardRef) {
+      this._forwardRef = ref;
+    }
   }
 
   getHooks() {
@@ -213,9 +270,50 @@ class ServerReactiveComponent {
 
   render() {
     this._hookID = 0;
-    let children = this._render(this.props, this.context);
+    let children = this._render(this.props, this._forwardRef ? this._forwardRef : this.context);
     return children;
   }
+}
+
+function createInstance(element, context) {
+  const { type } = element;
+  const props = element.props || EMPTY_OBJECT;
+
+  let instance;
+
+  // class component
+  if (type.prototype && type.prototype.render) {
+    instance = new type(props, context); // eslint-disable-line new-cap
+    instance.props = props;
+    instance.context = context;
+    // Inject the updater into instance
+    instance.updater = updater;
+
+    if (instance.componentWillMount) {
+      instance.componentWillMount();
+
+      if (instance._pendingState) {
+        const state = instance.state;
+        const pending = instance._pendingState;
+
+        if (state == null) {
+          instance.state = pending;
+        } else {
+          for (var key in pending) {
+            state[key] = pending[key];
+          }
+        }
+        instance._pendingState = null;
+      }
+    }
+  } else {
+    const ref = element.ref;
+    instance = new ServerReactiveComponent(type, ref);
+    instance.props = props;
+    instance.context = context;
+  }
+
+  return instance;
 }
 
 function renderElementToString(element, context, options) {
@@ -247,14 +345,21 @@ function renderElementToString(element, context, options) {
   const type = element.type;
 
   if (type) {
-    const props = element.props || EMPTY_OBJECT;
-    if (type.prototype && type.prototype.render) {
-      const instance = new type(props, context); // eslint-disable-line new-cap
-      instance.props = props;
-      let currentContext = instance.context = context;
-      // Inject the updater into instance
-      instance.updater = updater;
+    // class component || function component
+    if (type.prototype && type.prototype.render || typeof type === 'function') {
+      const instance = createInstance(element, context);
 
+      shared.Host.owner = {
+        // Give the component name in render error info (only for development)
+        __getName: () => type.displayName || type.name || element,
+        _instance: instance
+      };
+
+      if (process.env.NODE_ENV !== 'production') {
+        checkContext(type);
+      }
+
+      let currentContext = instance.context;
       let childContext;
 
       if (instance.getChildContext) {
@@ -269,39 +374,10 @@ function renderElementToString(element, context, options) {
         currentContext = merge({}, context, childContext);
       }
 
-      if (instance.componentWillMount) {
-        instance.componentWillMount();
-
-        if (instance._pendingState) {
-          const state = instance.state;
-          const pending = instance._pendingState;
-
-          if (state == null) {
-            instance.state = pending;
-          } else {
-            for (var key in pending) {
-              state[key] = pending[key];
-            }
-          }
-          instance._pendingState = null;
-        }
-      }
-
-      var renderedElement = instance.render();
-      return renderElementToString(renderedElement, currentContext, options);
-    } else if (typeof type === 'function') {
-      const instance = new ServerReactiveComponent(type);
-      instance.props = props;
-      instance.context = context;
-
-      shared.Host.owner = {
-        __getName: () => type.name,
-        _instance: instance
-      };
-
       const renderedElement = instance.render();
-      return renderElementToString(renderedElement, context, options);
+      return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'string') {
+      const props = element.props || EMPTY_OBJECT;
       const isVoidElement = VOID_ELEMENTS[type];
       let html = `<${type}${propsToString(props, options)}`;
       let innerHTML;
@@ -315,7 +391,7 @@ function renderElementToString(element, context, options) {
       } else {
         html = html + '>';
         var children = props.children;
-        if (children) {
+        if (children != null) {
           if (Array.isArray(children)) {
             for (var i = 0, l = children.length; i < l; i++) {
               var child = children[i];

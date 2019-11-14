@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { join, relative, dirname } = require('path');
+const { join, relative, dirname, resolve, extname } = require('path');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -11,20 +11,28 @@ const SUPER_COMPONENT = 'Component';
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
 const CREATE_STYLE = 'createStyle';
+const CLASSNAMES = 'classnames';
 
 const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
+const SAFE_CLASSNAMES = '__classnames__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
+const USE_CONTEXT = 'useContext';
+const USE_REF = 'useRef';
 
 const EXPORTED_DEF = '__def__';
-const RUNTIME = '/npm/jsx2mp-runtime';
+const RUNTIME = 'jsx2mp-runtime';
 
+const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
+const isRelativeImport = (mod) => mod[0] === '.';
+
+const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -44,13 +52,14 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, eventHandlers = [] } = parsed;
-    if (options.type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
+    const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
+    if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
       // Can not found default export, otherwise app.js is excluded.
       return;
     }
     let userDefineType;
 
-    if (options.type === 'app') {
+    if (type === 'app') {
       userDefineType = 'function';
     } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
       userDefineType = 'function';
@@ -85,20 +94,23 @@ module.exports = {
     }
 
     const hooks = collectHooks(parsed.renderFunctionPath);
-
-    const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
+    const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
+    const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
 
     removeRaxImports(parsed.ast);
-    renameCoreModule(parsed.ast, options.outputPath, targetFileDir);
+    ensureIndexPathInImports(parsed.ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
+    renameCoreModule(parsed.ast, runtimePath);
     renameFileModule(parsed.ast);
-    renameAppConfig(parsed.ast, options.sourcePath, options.resourcePath);
+    renameAppConfig(parsed.ast, sourcePath, resourcePath);
 
-    const currentNodeModulePath = join(options.sourcePath, 'npm');
-    const npmRelativePath = relative(dirname(options.resourcePath), currentNodeModulePath);
-    renameNpmModules(parsed.ast, npmRelativePath, options.resourcePath, options.cwd);
+    if (!disableCopyNpm) {
+      const currentNodeModulePath = join(sourcePath, 'npm');
+      const npmRelativePath = relative(dirname(resourcePath), currentNodeModulePath);
+      renameNpmModules(parsed.ast, npmRelativePath, resourcePath, cwd);
+    }
 
-    if (options.type !== 'app') {
-      addDefine(parsed.ast, options.type, options.outputPath, targetFileDir, userDefineType, eventHandlers, parsed.useCreateStyle, hooks);
+    if (type !== 'app') {
+      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, parsed.useClassnames, hooks, runtimePath);
     }
 
     removeDefaultImports(parsed.ast);
@@ -106,7 +118,7 @@ module.exports = {
     /**
      * updateChildProps: collect props dependencies.
      */
-    if (options.type !== 'app' && parsed.renderFunctionPath) {
+    if (type !== 'app' && parsed.renderFunctionPath) {
       const fnBody = parsed.renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {
@@ -152,6 +164,8 @@ module.exports = {
       });
       addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
       addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
+      addProviderIniter(parsed.contextList, parsed.renderFunctionPath);
+      addRegisterRefs(parsed.refs, parsed.renderFunctionPath);
     }
   },
 };
@@ -169,14 +183,21 @@ function genTagIdExp(expressions) {
   return parseExpression(ret);
 }
 
-function renameCoreModule(ast, outputPath, targetFileDir) {
+function getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm) {
+  let runtimePath = getRuntimeByPlatform(platform.type);
+  if (!disableCopyNpm) {
+    runtimePath = relative(targetFileDir, join(outputPath, 'npm', RUNTIME));
+    runtimePath = runtimePath[0] !== '.' ? './' + runtimePath : runtimePath;
+  }
+  return runtimePath;
+}
+
+function renameCoreModule(ast, runtimePath) {
   traverse(ast, {
     ImportDeclaration(path) {
       const source = path.get('source');
       if (source.isStringLiteral() && isAppRuntime(source.node.value)) {
-        let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
-        runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
-        source.replaceWith(t.stringLiteral(runtimeRelativePath));
+        source.replaceWith(t.stringLiteral(runtimePath));
       }
     }
   });
@@ -200,9 +221,9 @@ function renameFileModule(ast) {
 }
 
 /**
- * Rename app.json to app.raw.json, for prev is compiled to adapte miniapp.
+ * Rename app.json to app.config.js, for prev is compiled to adapte miniapp.
  * eg:
- *   import appConfig from './app.json' => import appConfig from './app.raw.json'
+ *   import appConfig from './app.json' => import appConfig from './app.config.js'
  * @param ast Babel AST.
  * @param sourcePath Folder path to source.
  * @param resourcePath Current handling file source path.
@@ -214,9 +235,21 @@ function renameAppConfig(ast, sourcePath, resourcePath) {
       if (source.isStringLiteral()) {
         const appConfigSourcePath = join(resourcePath, '..', source.node.value);
         if (appConfigSourcePath === join(sourcePath, 'app.json')) {
-          const replacement = source.node.value.replace(/app\.json/, 'app.raw.json');
+          const replacement = source.node.value.replace(/app\.json/, 'app.config.js');
           source.replaceWith(t.stringLiteral(replacement));
         }
+      }
+    }
+  });
+}
+
+function ensureIndexPathInImports(ast, resourcePath) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isRelativeImport(source.node.value)) {
+        const replacement = ensureIndexInPath(source.node.value, resourcePath);
+        source.replaceWith(t.stringLiteral(replacement));
       }
     }
   });
@@ -275,7 +308,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHandlers, useCreateStyle, hooks) {
+function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, hooks, runtimePath) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -316,13 +349,17 @@ function addDefine(ast, type, outputPath, targetFileDir, userDefineType, eventHa
         ));
       }
 
-      let runtimeRelativePath = relative(targetFileDir, join(outputPath, RUNTIME));
-      runtimeRelativePath = runtimeRelativePath[0] !== '.' ? './' + runtimeRelativePath : runtimeRelativePath;
+      if (useClassnames) {
+        specifiers.push(t.importSpecifier(
+          t.identifier(SAFE_CLASSNAMES),
+          t.identifier(CLASSNAMES)
+        ));
+      }
 
       path.node.body.unshift(
         t.importDeclaration(
           specifiers,
-          t.stringLiteral(runtimeRelativePath)
+          t.stringLiteral(runtimePath)
         )
       );
 
@@ -398,8 +435,7 @@ function collectHooks(root) {
   traverse(root, {
     CallExpression(path) {
       const { node } = path;
-      if (t.isIdentifier(node.callee, { name: USE_STATE })
-        || t.isIdentifier(node.callee, { name: USE_EFFECT })) {
+      if (t.isIdentifier(node.callee) && isCoreHooksAPI(node.callee)) {
         ret[node.callee.name] = true;
       }
     }
@@ -448,9 +484,88 @@ function addUpdateEvent(dynamicEvent, eventHandlers = [], renderFunctionPath) {
   ])));
 }
 
+function addProviderIniter(contextList, renderFunctionPath) {
+  if (contextList) {
+    contextList.forEach(ctx => {
+      const ProviderIniter = t.memberExpression(
+        t.identifier(ctx.contextName),
+        t.identifier('Provider')
+      );
+      const fnBody = renderFunctionPath.node.body.body;
+
+      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
+    });
+  }
+}
+
+/**
+ * Insert register ref method
+ * @param {Array} refs
+ * @param {Object} renderFunctionPath
+ * */
+function addRegisterRefs(refs, renderFunctionPath) {
+  const registerRefsMethods = t.memberExpression(
+    t.thisExpression(),
+    t.identifier('_registerRefs')
+  );
+  const fnBody = renderFunctionPath.node.body.body;
+  /**
+   * this._registerRefs([
+   *  {
+   *    name: 'scrollViewRef',
+   *    method: scrollViewRef
+   *  }
+   * ])
+   * */
+  const scopedRefs = [];
+  const stringRefs = [];
+  refs.map(ref => {
+    if (renderFunctionPath.scope.hasBinding(ref.value)) {
+      scopedRefs.push(ref);
+    } else {
+      stringRefs.push(ref);
+    }
+  });
+  if (scopedRefs.length > 0) {
+    fnBody.push(t.expressionStatement(t.callExpression(registerRefsMethods, [
+      t.arrayExpression(scopedRefs.map(ref => {
+        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref),
+          t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]);
+      }))
+    ])));
+  }
+  if (stringRefs.length > 0) {
+    fnBody.unshift(t.expressionStatement(t.callExpression(registerRefsMethods, [
+      t.arrayExpression(stringRefs.map(ref => {
+        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref)]);
+      }))
+    ])));
+  }
+}
+
 /**
  * For that alipay build folder can not contain `@`, escape to `_`.
  */
 function normalizeFileName(filename) {
   return filename.replace(/@/g, '_');
+}
+
+/**
+ * add index if it's omitted
+ *
+ * @param {string} value  imported value
+ * @param {string} resourcePath current file path
+ * @returns
+ */
+function ensureIndexInPath(value, resourcePath) {
+  const target = require.resolve(resolve(dirname(resourcePath), value));
+  return removeJSExtension('./' + relative(dirname(resourcePath), target));
+};
+
+function removeJSExtension(filePath) {
+  const ext = extname(filePath);
+  if (ext === '.js') {
+    return filePath.slice(0, filePath.length - ext.length);
+  }
+  return filePath;
 }
