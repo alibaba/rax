@@ -6,6 +6,7 @@ import { setComponentInstance, getComponentProps } from './updater';
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
+import getId from './getId';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
@@ -61,13 +62,18 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getComponentLifecycle({
     mount: function() {
-      const instanceId = this[PROPS].__parentId !== undefined ?
-        `${this[PROPS].__parentId}-${this[PROPS].__tagId}` : this[PROPS].__tagId;
+      const tagId = getId('tag', this);
+      const parentId = getId('parent', this);
+      const instanceId = `${parentId}-${tagId}`;
 
-      const props = Object.assign({}, this[PROPS], getComponentProps(instanceId));
+      const props = Object.assign({}, this[PROPS], {
+        __tagId: tagId,
+        __parentId: parentId
+      }, getComponentProps(instanceId));
       this.instance = new Klass(props);
+      this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      setComponentInstance(instanceId, this.instance);
+      setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
