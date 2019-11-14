@@ -2,7 +2,7 @@ const { readFileSync } = require('fs');
 const { join } = require('path');
 const { execSync } = require('child_process');
 
-const compileCommand = '../bin/jsx2mp.js build --type component --entry ./component --dist ./dist';
+const compileCommand = '../bin/jsx2mp.js build --type component --entry ./component --dist ./dist --turn-off-check-update';
 
 let jsonContent, jsContent, axmlContent;
 

@@ -11,6 +11,7 @@ program
   .option('-s, --skip-clear-stdout', 'skip clear stdout of screen', false)
   .option('-c, --constant-dir <constantDir>', 'set constant directory to copy', DEFAULT_CONSTANT_DIR)
   .option('-n, --disable-copy-npm', 'disable copy node_modules action', false)
+  .option('-u, --turn-off-check-update', 'turn off package update check', false)
   .action((cmd) => {
     const workDirectory = resolve(process.env.CWD || process.cwd());
     const distDirectory = resolve(workDirectory, cmd.dist);
@@ -25,7 +26,8 @@ program
       platform: cmd.platform,
       skipClearStdout: cmd.skipClearStdout,
       constantDir: cmd.constantDir === '' ? [] : cmd.constantDir.split(',').map(c => c.trim()),
-      disableCopyNpm: cmd.disableCopyNpm
+      disableCopyNpm: cmd.disableCopyNpm,
+      turnOffCheckUpdate: cmd.turnOffCheckUpdate
     };
 
     require('..').build(options);
