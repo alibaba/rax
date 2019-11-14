@@ -12,15 +12,16 @@ describe('Directives', () => {
   describe('list', () => {
     it('simple', () => {
       const code = `
-      <View x-for={val in array}>{val}</View>
+      <View x-for={val in array} data-item={parse(val)}>{val}</View>
     `;
       const ast = parseExpression(code);
       _transformList(ast, code, adapter);
       expect(genExpression(ast))
-        .toEqual(`<View a:for={array.map((val, index) => {
+        .toEqual(`<View data-item={parse(val)} a:for={array.map((val, index) => {
   return {
     val: val,
-    index: index
+    index: index,
+    _f0: parse(val)
   };
 })} a:for-item="val" a:for-index="index">{val}</View>`);
     });
