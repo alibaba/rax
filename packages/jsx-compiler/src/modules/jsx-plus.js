@@ -291,6 +291,18 @@ function transformListJSXElement(path, adapter) {
             };
             filters.push(containerPath.node.expression);
           }
+          // <View x-for={items} data-item={setDataset(item)}>
+          //   <Text class={classnames({ selected: index > 0 })}>{parse(item, index)}</Text>
+          // </View>
+          const containerPath = innerPath.findParent(p => p.isJSXExpressionContainer());
+          if (containerPath && t.isCallExpression(containerPath.node.expression)) {
+            const filterName = dynamicFilter.add({ expression: containerPath.node.expression });
+            containerPath.node.expression.__listItemFilter = {
+              item: args[0].name, // item
+              filter: filterName // _f0
+            };
+            filters.push(containerPath.node.expression);
+          }
         }
       }
     });
