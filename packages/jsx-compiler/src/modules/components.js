@@ -9,6 +9,7 @@ const moduleResolve = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
 const Expression = require('../utils/Expression');
 const compiledComponents = require('../compiledComponents');
+const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
@@ -56,12 +57,14 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
       }
     }
 
-    node.attributes.push(
-      t.jsxAttribute(
-        t.jsxIdentifier('__parentId'),
-        t.stringLiteral('{{__tagId}}'),
-      ),
-    );
+    if (baseComponents.indexOf(componentTag) < 0) {
+      node.attributes.push(
+        t.jsxAttribute(
+          t.jsxIdentifier('__parentId'),
+          t.stringLiteral('{{__tagId}}'),
+        ),
+      );
+    }
 
     node.attributes.push(
       t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
