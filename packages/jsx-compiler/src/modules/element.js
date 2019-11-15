@@ -444,9 +444,17 @@ function transformTemplate(
 
   traverse(ast, {
     JSXAttribute(path) {
+      const attrName = path.node.name.name;
+      if (['__parentId', '__tagId'].indexOf(attrName) > -1) {
+        return;
+      }
       const originalAttrValue = path.node.value;
       if (t.isStringLiteral(originalAttrValue)) {
-        const attrValue = dynamicValue && dynamicValue[originalAttrValue.value.replace(BINDING_REG, '')] || originalAttrValue.value;
+        let clearBindAttrValue;
+        if (dynamicValue) {
+          clearBindAttrValue = dynamicValue[originalAttrValue.value.replace(BINDING_REG, '')];
+        }
+        const attrValue = clearBindAttrValue || originalAttrValue;
         collectComponentDependentProps(path, attrValue, componentDependentProps);
       }
     },
