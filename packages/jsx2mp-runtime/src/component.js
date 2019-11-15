@@ -97,8 +97,8 @@ export default class Component {
     Object.assign(this._methods, methods);
   }
 
-  _updateChildProps(instanceId, props) {
-    const chlidInstanceId = `${this.props.__tagId}-${instanceId}`;
+  _updateChildProps(tagId, props) {
+    const chlidInstanceId = `${this.props.__tagId}-${tagId}`;
     updateChildProps(this, chlidInstanceId, props);
   }
 
