@@ -279,11 +279,11 @@ function transformTemplate(
 
       // <tag foo={fn()} /> => <tag foo="{{_d0}} /> _d0 = fn();
       // <tag>{fn()}</tag> => <tag>{{ _d0 }}</tag> _d0 = fn();
-      // <tag x-for={item in items}>{fn(item)}</tag> => <tag a:for={item in items}>{{ item.item._f0 }}</tag> item.item._f0 = fn();
+      // <tag x-for={item in items}>{fn(item)}</tag> => <tag a:for={item in items}>{{ item._f0 }}</tag> item._f0 = fn();
       case 'CallExpression':
         if (expression.__listItemFilter) {
           const { item, filter } = expression.__listItemFilter;
-          path.replaceWith(t.stringLiteral(createBinding(`${item}.${item}.${filter}`)));
+          path.replaceWith(t.stringLiteral(createBinding(`${item}.${filter}`)));
         } else if (type === ATTR) {
           if (
             isEventHandler &&
