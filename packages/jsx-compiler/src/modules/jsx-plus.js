@@ -3,6 +3,8 @@ const DynamicBinding = require('../utils/DynamicBinding');
 const traverse = require('../utils/traverseNodePath');
 const getListItem = require('../utils/getListItem');
 const CodeError = require('../utils/CodeError');
+const createJSX = require('../utils/createJSX');
+const findIndex = require('../utils/findIndex');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -154,9 +156,7 @@ function transformDirectiveList(ast, code, adapter) {
       if (t.isJSXIdentifier(node.name, { name: 'x-for' })) {
         // Check stynax.
         if (!t.isJSXExpressionContainer(node.value)) {
-          // TODO: throw err prettier.
-          console.warn('ignore x-for due to stynax error.');
-          return;
+          throw new CodeError(code, node, node.loc, 'Invalid x-for usage');
         }
         const { expression } = node.value;
         let params = [];
@@ -236,13 +236,29 @@ function transformDirectiveList(ast, code, adapter) {
         } else {
           iterValue = mapCallExpression;
         }
-        parentJSXEl.node.__jsxlist = {
+        const parentAttributes = path.parentPath.node.attributes;
+        const keyAttrIndex = findIndex(parentAttributes, attr => t.isJSXIdentifier(attr.name, {
+          name: 'key'
+        }));
+        const listAttr = {};
+        if (keyAttrIndex > -1) {
+          listAttr.key = parentAttributes[keyAttrIndex].value;
+          path.parentPath.node.attributes = [
+            ...parentAttributes.slice(0, keyAttrIndex),
+            ...parentAttributes.slice(keyAttrIndex + 1)
+          ];
+        }
+        const listEl = createJSX('block', listAttr, [
+          parentJSXEl.node
+        ]);
+        listEl.__jsxlist = {
           args: params,
           iterValue,
           loopFnBody,
           jsxplus: true
         };
-        transformListJSXElement(path.parentPath.parentPath, adapter);
+        parentJSXEl.replaceWith(listEl);
+        transformListJSXElement(parentJSXEl, adapter);
         path.remove();
       }
     }

@@ -6,12 +6,13 @@ import {
   ON_SHARE_APP_MESSAGE,
   ON_REACH_BOTTOM,
   ON_PULL_DOWN_REFRESH,
-  ON_TAB_ITEM_TAP
+  ON_TAB_ITEM_TAP,
+  ON_TITLE_CLICK
 } from './cycles';
 import { useEffect } from './hooks';
-import { createMiniAppHistory } from './history';
+import { getMiniAppHistory } from './history';
 
-const history = createMiniAppHistory();
+const history = getMiniAppHistory();
 
 export const cycles = {};
 
@@ -24,6 +25,7 @@ export function usePageEffect(cycle, callback) {
     case ON_REACH_BOTTOM:
     case ON_PULL_DOWN_REFRESH:
     case ON_TAB_ITEM_TAP:
+    case ON_TITLE_CLICK:
       const pathname = history && history.location.pathname;
       useEffect(() => {
         if (isFunction(callback)) {
@@ -68,4 +70,8 @@ export function usePagePullDownRefresh(callback) {
 
 export function useTabItemTap(callback) {
   return usePageEffect(ON_TAB_ITEM_TAP, callback);
+}
+
+export function useTitleClick(callback) {
+  return usePageEffect(ON_TITLE_CLICK, callback);
 }

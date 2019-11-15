@@ -8,7 +8,8 @@ import {
   usePageReachBottom,
   usePageScroll,
   useShareAppMessage,
-  useTabItemTap
+  useTabItemTap,
+  useTitleClick
 } from './page';
 import { withRouter } from './router';
 import Component from './component';
@@ -35,6 +36,7 @@ export {
   usePageScroll,
   useShareAppMessage,
   useTabItemTap,
+  useTitleClick,
 
   // Compatible old version of cycles.
   useAppEffect,
