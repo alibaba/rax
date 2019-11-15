@@ -47,10 +47,7 @@ function build(options = {}) {
     }
   }
 
-  let needUpdate = false;
-  if (!turnOffCheckUpdate) {
-    needUpdate = require('./checkPkgVersion');
-  }
+  const needUpdate = checkNeedUpdate(turnOffCheckUpdate);
 
   let config = getWebpackConfig({
     mode: 'build',
@@ -107,10 +104,7 @@ function watch(options = {}) {
     }
   }
 
-  let needUpdate = false;
-  if (!turnOffCheckUpdate) {
-    needUpdate = require('./checkPkgVersion');
-  }
+  const needUpdate = checkNeedUpdate(turnOffCheckUpdate);
 
   let config = getWebpackConfig({
     mode: 'watch',
@@ -179,6 +173,13 @@ function copyConstantDir(dirs, distDirectory) {
     }
     copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')));
   });
+}
+
+function checkNeedUpdate(turnOff) {
+  if (turnOff) {
+    return false;
+  }
+  return require('./checkPkgVersion');
 }
 
 exports.build = build;
