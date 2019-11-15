@@ -6,7 +6,6 @@ const consoleClear = require('console-clear');
 const chalk = require('chalk');
 const del = require('del');
 
-const needUpdate = require('./checkPkgVersion');
 const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
 const { getCurrentDirectoryPath } = require('./utils/file');
@@ -30,7 +29,8 @@ function build(options = {}) {
     distDirectory = join(cwd, DEFAULT_DIST),
     skipClearStdout = false,
     constantDir = DEFAULT_CONSTANT_DIR_ARR,
-    disableCopyNpm = false
+    disableCopyNpm = false,
+    turnOffCheckUpdate = false
   } = options;
 
   // Clean the dist dir before generating
@@ -38,14 +38,9 @@ function build(options = {}) {
     del.sync(distDirectory + '/**');
   }
 
-  if (type === DEFAULT_TYPE) {
-    copyConstantDir(constantDir, distDirectory);
-  } else {
-    // Can't use in component type
-    if (constantDir.length !== 0) {
-      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
-    }
-  }
+  copyConstantDir(constantDir, distDirectory);
+
+  const needUpdate = checkNeedUpdate(turnOffCheckUpdate);
 
   let config = getWebpackConfig({
     mode: 'build',
@@ -89,17 +84,13 @@ function watch(options = {}) {
     skipClearStdout = false,
     constantDir = DEFAULT_CONSTANT_DIR_ARR,
     disableCopyNpm = false,
-    turnOffSourceMap = false
+    turnOffSourceMap = false,
+    turnOffCheckUpdate = false
   } = options;
 
-  if (type === DEFAULT_TYPE) {
-    copyConstantDir(constantDir, distDirectory);
-  } else {
-    // Can't use in component type
-    if (constantDir.length !== 0) {
-      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
-    }
-  }
+  copyConstantDir(constantDir, distDirectory);
+
+  const needUpdate = checkNeedUpdate(turnOffCheckUpdate);
 
   let config = getWebpackConfig({
     mode: 'watch',
@@ -168,6 +159,13 @@ function copyConstantDir(dirs, distDirectory) {
     }
     copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')));
   });
+}
+
+function checkNeedUpdate(turnOff) {
+  if (turnOff) {
+    return false;
+  }
+  return require('./checkPkgVersion');
 }
 
 exports.build = build;

@@ -1,11 +1,12 @@
 /* global PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
+import getId from './getId';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
@@ -50,7 +51,7 @@ function getPageCycles(Klass) {
       if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
   };
-  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP].forEach((hook) => {
+  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK].forEach((hook) => {
     config[hook] = function(e) {
       return this.instance._trigger(hook, e);
     };
@@ -61,13 +62,18 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getComponentLifecycle({
     mount: function() {
-      const instanceId = this[PROPS].__parentId !== undefined ?
-        `${this[PROPS].__parentId}-${this[PROPS].__tagId}` : this[PROPS].__tagId;
+      const tagId = getId('tag', this);
+      const parentId = getId('parent', this);
+      const instanceId = `${parentId}-${tagId}`;
 
-      const props = Object.assign({}, this[PROPS], getComponentProps(instanceId));
+      const props = Object.assign({}, this[PROPS], {
+        __tagId: tagId,
+        __parentId: parentId
+      }, getComponentProps(instanceId));
       this.instance = new Klass(props);
+      this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      setComponentInstance(instanceId, this.instance);
+      setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];

@@ -1,22 +1,16 @@
 const updateNotifier = require('update-notifier');
 
+const jsx2mpCliPkg = require('./package.json');
+const jsx2mpLoaderPkg = require('jsx2mp-loader/package.json');
+// eslint-disable-next-line
+const jsx2mpCompilerPkg = require('jsx-compiler/package.json');
+const jsx2mpRuntimePkg = require('jsx2mp-runtime/package.json');
+
 const pkgVersion = [
-  {
-    name: 'jsx2mp-cli',
-    version: '0.2.7'
-  },
-  {
-    name: 'jsx2mp-runtime',
-    version: '0.3.7'
-  },
-  {
-    name: 'jsx2mp-loader',
-    version: '0.2.8'
-  },
-  {
-    name: 'jsx-compiler',
-    version: '0.3.8'
-  }
+  jsx2mpCliPkg,
+  jsx2mpLoaderPkg,
+  jsx2mpCompilerPkg,
+  jsx2mpRuntimePkg
 ];
 
 let needUpdate = false;

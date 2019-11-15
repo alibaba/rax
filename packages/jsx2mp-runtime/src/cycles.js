@@ -12,3 +12,4 @@ export const ON_SHARE_APP_MESSAGE = 'onShareAppMessage';
 export const ON_REACH_BOTTOM = 'onReachBottom';
 export const ON_PULL_DOWN_REFRESH = 'onPullDownRefresh';
 export const ON_TAB_ITEM_TAP = 'onTabItemTap';
+export const ON_TITLE_CLICK = 'onTitleClick';

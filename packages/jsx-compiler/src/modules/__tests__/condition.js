@@ -116,7 +116,8 @@ describe('Transform condition', () => {
 
 describe('Transiform condition render function', () => {
   it('basic case', () => {
-    const ast = parseExpression(`(function render() {
+    const ast = parseExpression(`(function render(props) {
+        let { a, b, ...c } = props;
         let vdom;
         if (a > 0) {
           vdom = <view>case 1</view>
@@ -132,7 +133,12 @@ describe('Transiform condition render function', () => {
 
     const tmpVars = _transformRenderFunction(ast, adapter);
     expect(genExpression(tmpVars.vdom.value)).toEqual('<block><block a:if="{{a > 0}}"><view>case 1</view></block><block a:else><view>case 1.1</view></block><block a:if="{{a > 1}}"><view>case 2</view></block></block>');
-    expect(genExpression(ast)).toEqual(`function render() {
+    expect(genExpression(ast)).toEqual(`function render(props) {
+  let {
+    a,
+    b,
+    ...c
+  } = props;
   let vdom;
   return vdom;
 }`);
