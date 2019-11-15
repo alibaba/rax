@@ -8,7 +8,8 @@ const componentIntances = {};
 
 const updateChildPropsCallbacks = {};
 
-export function setComponentInstance(instanceId, instance) {
+export function setComponentInstance(instance) {
+  const instanceId = instance.instanceId;
   componentIntances[instanceId] = instance;
   // Check component should update chlid props
   if (updateChildPropsCallbacks[instanceId]) {
