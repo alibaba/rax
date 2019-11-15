@@ -38,14 +38,7 @@ function build(options = {}) {
     del.sync(distDirectory + '/**');
   }
 
-  if (type === DEFAULT_TYPE) {
-    copyConstantDir(constantDir, distDirectory);
-  } else {
-    // Can't use in component type
-    if (constantDir.length !== 0) {
-      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
-    }
-  }
+  copyConstantDir(constantDir, distDirectory);
 
   let config = getWebpackConfig({
     mode: 'build',
@@ -92,14 +85,7 @@ function watch(options = {}) {
     turnOffSourceMap = false
   } = options;
 
-  if (type === DEFAULT_TYPE) {
-    copyConstantDir(constantDir, distDirectory);
-  } else {
-    // Can't use in component type
-    if (constantDir.length !== 0) {
-      console.log(chalk.yellow('Cannot copy constant directories in component type.'));
-    }
-  }
+  copyConstantDir(constantDir, distDirectory);
 
   let config = getWebpackConfig({
     mode: 'watch',

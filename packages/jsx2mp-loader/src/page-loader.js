@@ -1,28 +1,34 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, extname } = require('path');
+const { relative, join, dirname, resolve } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
-const { removeExt } = require('./utils/pathHelper');
+const cached = require('./cached');
+const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 
 const ComponentLoader = require.resolve('./component-loader');
+const ScriptLoader = require.resolve('./script-loader');
 
 const pe = new PrettyError();
 
 module.exports = async function pageLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, mode, disableCopyNpm, turnOffSourceMap } = loaderOptions;
+  const { platform, entryPath, mode, disableCopyNpm, constantDir, turnOffSourceMap } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
+  const rootContext = this.rootContext;
+  const absoluteConstantDir = constantDir.map(dir => join(rootContext, dir));
 
   const outputPath = this._compiler.outputPath;
-  const sourcePath = join(this.rootContext, dirname(entryPath));
+  const sourcePath = join(rootContext, dirname(entryPath));
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
   const targetFilePath = join(outputPath, relativeSourcePath);
+
+  const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
 
   const compilerOptions = Object.assign({}, compiler.baseOptions, {
     resourcePath: this.resourcePath,
@@ -112,9 +118,10 @@ module.exports = async function pageLoader(content) {
   const denpendencies = [];
   Object.keys(transformed.imported).forEach(name => {
     if (isCustomComponent(name, transformed.usingComponents)) {
+      const componentPath = resolve(dirname(resourcePath), name);
       denpendencies.push({
         name,
-        loader: ComponentLoader,
+        loader: isFromConstantDir(componentPath) ? ScriptLoader : ComponentLoader, // Native miniapp component js file will loaded by script-loader
         options: loaderOptions
       });
     } else {

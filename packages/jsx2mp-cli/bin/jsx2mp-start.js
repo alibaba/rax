@@ -11,7 +11,7 @@ program
   .option('-s, --skip-clear-stdout', 'skip clear stdout of screen', false)
   .option('-c, --constant-dir <constantDir>', 'set constant directory to copy', DEFAULT_CONSTANT_DIR)
   .option('-n, --disable-copy-npm', 'disable copy node_modules action', false)
-  .option('-m --turn-off-source-map', 'turn off source map in dev mode', false)
+  .option('-m, --turn-off-source-map', 'turn off source map in dev mode', false)
   .action((cmd) => {
     const workDirectory = resolve(process.env.CWD || process.cwd());
     const distDirectory = resolve(workDirectory, cmd.dist);

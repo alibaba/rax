@@ -4,7 +4,7 @@ const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const isMiniappComponent = require('./utils/isMiniappComponent');
-const { removeExt } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
 const { isNpmModule } = require('./utils/judgeModule');
 const output = require('./output');
 
@@ -15,15 +15,18 @@ const ComponentLoader = require.resolve('./component-loader');
 const MINIAPP_CONFIG_FIELD = 'miniappConfig';
 
 module.exports = function scriptLoader(content) {
+  const loaderOptions = getOptions(this);
+  const { disableCopyNpm, mode, entryPath, platform, constantDir } = loaderOptions;
+  const rootContext = this.rootContext;
+  const absoluteConstantDir = constantDir.map(dir => join(rootContext, dir));
+  const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
+
   const loaderHandled = this.loaders.some(
     ({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1
   );
-  if (loaderHandled) return;
+  if (loaderHandled && !isFromConstantDir(this.resourcePath)) return;
 
-  const loaderOptions = getOptions(this);
-  const { disableCopyNpm, mode, entryPath, platform } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
-  const rootContext = this.rootContext;
   const nodeModulesPathList = getNearestNodeModulesPath(rootContext, this.resourcePath);
   const currentNodeModulePath = nodeModulesPathList[nodeModulesPathList.length - 1];
   const rootNodeModulePath = join(rootContext, 'node_modules');

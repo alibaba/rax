@@ -90,7 +90,7 @@ function getDepPath(path, rootContext) {
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, disableCopyNpm, turnOffSourceMap } = options;
+  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, constantDir, disableCopyNpm, turnOffSourceMap } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
   entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
@@ -114,6 +114,7 @@ module.exports = (options = {}) => {
                 mode: options.mode,
                 entryPath: relativeEntryFilePath,
                 platform: platformConfig[platform],
+                constantDir,
                 disableCopyNpm,
                 turnOffSourceMap
               },
