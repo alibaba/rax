@@ -4,18 +4,22 @@ describe('Parse imported', () => {
   it('should parse default imported', () => {
     expect(getImported(parseCode(`
       import Hello from './Hello';
+      import * as Env from 'universal-env';
       import Rax, { Component } from 'rax';
     `))).toEqual({
-      './Hello': [{ default: true, isCustomEl: true, local: 'Hello', name: 'c-702789' }],
+      './Hello': [{ default: true, namespace: false, isCustomEl: true, local: 'Hello', name: 'c-702789' }],
+      'universal-env': [{ default: false, namespace: true, isCustomEl: false, local: 'Env', name: 'universal-env' }],
       rax: [
         {
           default: true,
+          namespace: false,
           isCustomEl: false,
           local: 'Rax',
           name: 'rax',
         },
         {
           default: false,
+          namespace: false,
           isCustomEl: false,
           importFrom: 'Component',
           local: 'Component',

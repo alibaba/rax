@@ -5,6 +5,8 @@ const webpack = require('webpack');
 const consoleClear = require('console-clear');
 const chalk = require('chalk');
 const del = require('del');
+
+const needUpdate = require('./checkPkgVersion');
 const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
 const { getCurrentDirectoryPath } = require('./utils/file');
@@ -66,6 +68,9 @@ function build(options = {}) {
   compiler.run((err, stats) => {
     handleCompiled(err, stats, { skipClearStdout });
     afterCompiled && afterCompiled(err, stats);
+    if (needUpdate) {
+      console.log(chalk.black.bgYellow.bold('Update for miniapp related packages available, please reinstall dependencies.'));
+    }
   });
 }
 
@@ -119,6 +124,9 @@ function watch(options = {}) {
   compiler.watch(watchOpts, (err, stats) => {
     handleCompiled(err, stats, { skipClearStdout });
     afterCompiled && afterCompiled(err, stats);
+    if (needUpdate) {
+      console.log(chalk.black.bgYellow.bold('Update for miniapp related packages available, please reinstall dependencies.'));
+    }
     console.log('\nWatching file changes...');
   });
 }

@@ -36,8 +36,8 @@ function getImported(ast) {
 
       path.node.specifiers.forEach((specifier) => {
         const local = specifier.local.name;
-        const ret = { local, default: t.isImportDefaultSpecifier(specifier) };
-        if (ret.default === false) {
+        const ret = { local, default: t.isImportDefaultSpecifier(specifier), namespace: t.isImportNamespaceSpecifier(specifier) };
+        if (ret.default === false && ret.namespace === false) {
           ret.importFrom = specifier.imported.name;
         }
 
