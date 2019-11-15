@@ -385,7 +385,7 @@ function diffData(prevData, nextData) {
     const nextKeys = Object.keys(nextData);
     if (prevKeys.length !== nextKeys.length) return true;
     if (prevKeys.length === 0) return false;
-    return !prevKeys.some(key => prevData[key] === nextData[key] );
+    return !prevKeys.every(key => prevData[key] === nextData[key] );
   } else {
     return prevData !== nextData;
   }
