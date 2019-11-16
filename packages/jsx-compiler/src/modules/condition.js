@@ -196,18 +196,19 @@ function transformTemplate(ast, adapter, templateVariables, code) {
             throw new CodeError(code, path.node, path.node.loc, 'Logical operator only support && or ||');
           }
           const children = [];
-          if (/Expression$/.test(right.type)) {
-            children.push(t.jsxExpressionContainer(right));
-          } else {
+          if (isJSX(right)) {
             children.push(right);
+          } else {
+            children.push(t.jsxExpressionContainer(right));
           }
           replacement.push(createJSX('block', {
             [adapter.if]: generateConditionValue(test, {adapter, dynamicValue})
           }, children));
-          replacement.push(createJSX('block', {
-            [adapter.else]: null,
-          }, [t.jsxExpressionContainer(left)]));
-          if (/Expression$/.test(left.type)) {
+          if (!/Expression$/.test(left.type)) {
+            replacement.push(createJSX('block', {
+              [adapter.else]: null,
+            }, [t.jsxExpressionContainer(left)]));
+          } else {
             console.log(chalk.yellow("When logicalExpression's left node is an expression, please write JSX directly instead of using a variable which is assigned a JSX element."
             ));
           }
