@@ -25,4 +25,4 @@ render(
 
 ### API
 
-Some with https://react-redux.js.org
+Some with react-redux v7.1 https://react-redux.js.org

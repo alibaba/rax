@@ -22,8 +22,8 @@ export default class Component {
  * Pure component.
  */
 export class PureComponent extends Component {
-  constructor() {
-    super(...arguments);
+  constructor(props, context) {
+    super(props, context);
     this.__isPureComponent = true;
   }
 }

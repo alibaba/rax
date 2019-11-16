@@ -167,7 +167,7 @@ describe('NativeComponent', function() {
       expect(container.childNodes[0].childNodes[2].childNodes[0].data).toBe('b');
       expect(container.childNodes[0].childNodes[3].childNodes[0].data).toBe('a');
       expect(container.childNodes[0].childNodes[4].childNodes[0].data).toBe('d');
-    }).toWarnDev('Warning: Each child in a list should have a unique "key" prop. Check the render method of `App`.', {withoutStack: true});
+    }).toWarnDev('Each child in a list should have a unique "key" prop. Check the render method of <App>', {withoutStack: true});
   });
 
   it('updates empty children can remove all directly', function() {

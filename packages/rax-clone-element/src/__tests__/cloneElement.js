@@ -287,7 +287,7 @@ describe('cloneElement', () => {
       expect(clone.key).toBe('12');
       expect(clone.ref).toBe('34');
       expect(clone.props).toEqual({foo: 'ef'});
-    }).toWarnDev('createElement: adding a string ref "34" outside the render method.', {withoutStack: true});
+    }).toWarnDev('Adding a string ref "34" that was not created inside render method, or multiple copies of Rax are used.', {withoutStack: true});
   });
 
   it('should extract null key and ref', function() {
@@ -307,6 +307,6 @@ describe('cloneElement', () => {
       expect(clone.key).toBe('null');
       expect(clone.ref).toBe(null);
       expect(clone.props).toEqual({foo: 'ef'});
-    }).toWarnDev('createElement: adding a string ref "34" outside the render method.', {withoutStack: true});
+    }).toWarnDev('Adding a string ref "34" that was not created inside render method, or multiple copies of Rax are used.', {withoutStack: true});
   });
 });

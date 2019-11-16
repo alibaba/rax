@@ -63,10 +63,7 @@ describe('Element', () => {
       var component = render(<ParentComp />);
 
       jest.runAllTimers();
-    }).toThrowError(
-      'createElement: type should not be null or undefined. Check ' +
-      'the render method of `ParentComp`.'
-    );
+    }).toThrowError(/Invalid element type/);
 
     jest.useRealTimers();
   });
@@ -90,7 +87,10 @@ describe('Element', () => {
       }
     }
 
-    expect(() => renderToDocument(<ComponentWrapper />)).toWarnDev('Warning: Each child in a list should have a unique "key" prop. Check the render method of `InnerComponent`. It was passed a child from ComponentWrapper.', {withoutStack: true});
+    expect(() => renderToDocument(<ComponentWrapper />)).toWarnDev(
+      'Each child in a list should have a unique "key" prop. Check the render method of <InnerComponent>. It was passed a child from <ComponentWrapper>.',
+      {withoutStack: true}
+    );
   });
 
   it('does not warn for arrays of elements with keys', () => {
@@ -114,12 +114,22 @@ describe('Element', () => {
     ));
   });
 
-  it('throw errors when the child array contains invalid element type', () => {
-    let container = createNodeElement('div');
+  it('throws for the child array contains invalid element type', () => {
     expect(() => {
-      render(<div>{[{}, {}]}</div>, container);
+      let container = createNodeElement('div');
+      render(<div>{[{}]}</div>, container);
       jest.runAllTimers();
-    }).toThrowError(/Invalid element type/);
+    }).toThrowError(
+      'Invalid child type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {})'
+    );
+
+    expect(() => {
+      let container = createNodeElement('div');
+      render(<div>{[{foo: 1}]}</div>, container);
+      jest.runAllTimers();
+    }).toThrowError(
+      'Invalid child type, expected types: Element instance, string, boolean, array, null, undefined. (found: object with keys {foo})'
+    );
   });
 
   it('warns for fragments of multiple elements with same key', () => {

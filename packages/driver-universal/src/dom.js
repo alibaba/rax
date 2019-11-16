@@ -1,12 +1,9 @@
 /* global VIEWPORT_WIDTH, DEVICE_WIDTH */
 import * as DriverDOM from 'driver-dom';
-import { convertUnit, setRpx } from 'style-unit';
-import * as Flexbox from './flexbox'; // Compatible with old version of safari.
 
 const STYLE = 'style';
 const DEFAULT_VIEWPORT = 750;
-let deviceWidth = null;
-let viewportWidth = null;
+const NON_DIMENSIONAL_REG = /opa|ntw|ne[ch]|ex(?:s|g|n|p|$)|^ord|zoo|grid|orp|ows|mnc|^columns$|bs|erim|onit/i;
 
 const driver = Object.assign({}, DriverDOM, {
   createElement(type, props, component) {
@@ -30,48 +27,42 @@ const driver = Object.assign({}, DriverDOM, {
     eventName = normalizeEventName(node, eventName, props);
     return DriverDOM.removeEventListener(node, eventName, eventHandler, props);
   },
-  beforeRender(options) {
-    // Init rem unit
-    setRpx(getDeviceWidth() / getViewportWidth());
-    return DriverDOM.beforeRender(options);
-  },
+
   setStyle(node, style) {
     if (Array.isArray(style)) {
       style = style.reduce((prev, curr) => Object.assign(prev, curr), {});
     }
-
     const tranformedStyle = transformStyle(style);
 
+    // Fist use DriverDOM set standard style.
+    DriverDOM.setStyle(node, tranformedStyle);
+    // Second process flex compatible style, like {display: ["-webkit-box", "-webkit-flex", "flex"]}.
     for (let prop in tranformedStyle) {
       if (tranformedStyle.hasOwnProperty(prop)) {
         const transformValue = tranformedStyle[prop];
         // Hack handle compatibility issue
         if (Array.isArray(transformValue)) {
           for (let i = 0; i < transformValue.length; i++) node.style[prop] = transformValue[i];
-        } else {
-          if (prop[0] === '-' && prop[1] === '-') {
-            // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty. style.setProperty do not support Camel-Case style properties.
-            node.style.setProperty(prop, transformValue);
-          } else {
-            node.style[prop] = transformValue;
-          }
         }
       }
     }
-  },
+  }
 });
 
 function transformStyle(style, ret = {}) {
+  // Driver universal only process flex box compatible.
+  // Process convert unit in DriverDOM
   for (let prop in style) {
     if (style.hasOwnProperty(prop)) {
       let val = style[prop];
       if (typeof val === 'object') {
         delete style[prop];
         transformStyle(val, ret);
-      } else if (Flexbox.isFlexProp(prop)) {
-        Flexbox[prop](val, ret);
+      } else if (typeof val === 'number' && !NON_DIMENSIONAL_REG.test(prop)) {
+        // append `rpx` to relevant styles
+        ret[prop] = val + 'rpx';
       } else {
-        ret[prop] = convertUnit(val, prop);
+        ret[prop] = val;
       }
     }
   }
@@ -92,26 +83,6 @@ function normalizeEventName(node, eventName, props) {
     eventName = 'dblclick';
   }
   return eventName;
-}
-
-function getDeviceWidth() {
-  return deviceWidth || typeof DEVICE_WIDTH !== 'undefined' && DEVICE_WIDTH || getClientWidth();
-}
-
-function getClientWidth() {
-  return document.documentElement.clientWidth;
-}
-
-export function setDeviceWidth(width) {
-  deviceWidth = width;
-}
-
-function getViewportWidth() {
-  return viewportWidth || typeof VIEWPORT_WIDTH !== 'undefined' && VIEWPORT_WIDTH || DEFAULT_VIEWPORT;
-}
-
-export function setViewportWidth(width) {
-  viewportWidth = width;
 }
 
 export default driver;
