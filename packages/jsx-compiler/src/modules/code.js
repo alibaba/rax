@@ -27,6 +27,8 @@ const USE_REF = 'useRef';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
+const coreMethodList = ['createContext'];
+
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
@@ -92,11 +94,10 @@ module.exports = {
         );
       }
     }
-
-    const hooks = collectHooks(parsed.renderFunctionPath);
+    const exportedVariables = [...collectHooks(parsed.renderFunctionPath),
+      ...collectCoreMethods(parsed.imported[RAX_PACKAGE] || [])];
     const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
     const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
-
     removeRaxImports(parsed.ast);
     ensureIndexPathInImports(parsed.ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
     renameCoreModule(parsed.ast, runtimePath);
@@ -110,7 +111,7 @@ module.exports = {
     }
 
     if (type !== 'app') {
-      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, parsed.useClassnames, hooks, runtimePath);
+      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, parsed.useClassnames, exportedVariables, runtimePath);
     }
 
     removeDefaultImports(parsed.ast);
@@ -308,7 +309,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, hooks, runtimePath) {
+function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -337,8 +338,8 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, use
         ));
       }
 
-      if (Array.isArray(hooks)) {
-        hooks.forEach(id => {
+      if (Array.isArray(exportedVariables)) {
+        exportedVariables.forEach(id => {
           specifiers.push(t.importSpecifier(t.identifier(id), t.identifier(id)));
         });
       }
@@ -442,6 +443,19 @@ function collectHooks(root) {
   });
 
   return Object.keys(ret);
+}
+
+/**
+ * Collect core methods, like createContext or createRef
+ * */
+function collectCoreMethods(raxExported) {
+  const vaildList = [];
+  raxExported.forEach(exported => {
+    if (coreMethodList.indexOf(exported.local) > -1) {
+      vaildList.push(exported.local);
+    }
+  });
+  return vaildList;
 }
 
 function addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath) {
