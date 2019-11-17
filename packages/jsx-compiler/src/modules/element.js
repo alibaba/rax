@@ -473,11 +473,13 @@ function transformTemplate(
             let hasClassName = false;
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
-                if (attr.name.name === 'class') {
+                const attrName = attr.name.name;
+                if (attrName === 'class') {
                   attr.value.value = propsMap.className + ' ' + attr.value.value;
                   hasClassName = true;
-                } else if (propsMap[attr.name.name]) {
-                  attr.name.name = propsMap[attr.name.name];
+                }
+                if (propsMap[attrName] && attrName !== 'className') {
+                  attr.name.name = propsMap[attrName];
                 }
               }
             });
