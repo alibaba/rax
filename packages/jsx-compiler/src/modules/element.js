@@ -595,6 +595,13 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
         dynamicBinding,
         isDirective,
       );
+    } else if (t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
+      propertyReplaceNode = transformIdentifier(
+        property,
+        dynamicBinding,
+        isDirective,
+      );
+      propertyReplaceNode.__transformed = true;
     }
     if (t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
       propertyReplaceNode = transformIdentifier(

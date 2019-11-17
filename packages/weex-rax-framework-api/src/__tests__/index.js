@@ -230,7 +230,7 @@ describe('frameworkapi', () => {
   });
 
   it('window.URL.searchParams', () => {
-    var params = (new window.URL('https://developer.mozilla.org?hello=world')).searchParams;
+    var params = new window.URL('https://developer.mozilla.org?hello=world').searchParams;
     expect(params.get('hello')).toEqual('world');
   });
 
