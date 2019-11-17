@@ -33,14 +33,15 @@ function getBabelConfig() {
 function getEntry(type, cwd, entryFilePath, options) {
   const entryPath = dirname(entryFilePath);
   const entry = {};
-  const { platform = 'ali', constantDir, mode, disableCopyNpm } = options;
+  const { platform = 'ali', constantDir, mode, disableCopyNpm, turnOffSourceMap } = options;
 
   const loaderParams = JSON.stringify({
     platform: platformConfig[platform],
     entryPath: entryFilePath,
     constantDir,
     mode,
-    disableCopyNpm
+    disableCopyNpm,
+    turnOffSourceMap
   });
 
   if (type === 'project') {
@@ -52,7 +53,7 @@ function getEntry(type, cwd, entryFilePath, options) {
       console.error('Can not found app.json in current work directory, please check.');
       process.exit(1);
     }
-    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode, disableCopyNpm }) + '!./' + join(entryPath, 'app.js');
+    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode, disableCopyNpm, turnOffSourceMap }) + '!./' + join(entryPath, 'app.js');
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.filter(({ targets }) => {
         return !Array.isArray(targets) || targets.indexOf('miniapp') > -1;
@@ -89,7 +90,7 @@ function getDepPath(path, rootContext) {
 const cwd = process.cwd();
 
 module.exports = (options = {}) => {
-  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, disableCopyNpm } = options;
+  let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, constantDir, disableCopyNpm, turnOffSourceMap } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
   entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
@@ -113,7 +114,9 @@ module.exports = (options = {}) => {
                 mode: options.mode,
                 entryPath: relativeEntryFilePath,
                 platform: platformConfig[platform],
-                disableCopyNpm: options.disableCopyNpm
+                constantDir,
+                disableCopyNpm,
+                turnOffSourceMap
               },
             },
             {
@@ -158,7 +161,7 @@ module.exports = (options = {}) => {
       new webpack.ProgressPlugin( (percentage, message) => {
         if (percentage === 0) {
           buildStartTime = Date.now();
-          spinner.start('Compiling...');
+          spinner.start(`[Miniapp ${platform}] Compiling...`);
         } else if (percentage === 1) {
           const endTime = Date.now();
           spinner.succeed(`${chalk.green('Successfully compiled!')}\n\nCost: [${endTime - buildStartTime}ms]`);

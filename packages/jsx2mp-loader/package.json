@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-loader",
-  "version": "0.2.7",
+  "version": "0.2.9",
   "description": "",
   "main": "src/app-loader.js",
   "scripts": {
@@ -24,6 +24,7 @@
     "less": "^3.10.3",
     "loader-utils": "^1.2.3",
     "pretty-data": "^0.40.0",
+    "pretty-error": "^2.1.1",
     "sass": "^1.23.2",
     "stylesheet-loader": "^0.6.8",
     "stylus": "^0.54.7",

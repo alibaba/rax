@@ -23,6 +23,7 @@ import {
   COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
 import { cycles as pageCycles } from './page';
+import getId from './getId';
 
 export default class Component {
   constructor() {
@@ -96,8 +97,8 @@ export default class Component {
     Object.assign(this._methods, methods);
   }
 
-  _updateChildProps(instanceId, props) {
-    const chlidInstanceId = this.props.__parentId ? this.props.__parentId + '-' + instanceId : instanceId;
+  _updateChildProps(tagId, props) {
+    const chlidInstanceId = `${this.props.__tagId}-${tagId}`;
     updateChildProps(this, chlidInstanceId, props);
   }
 
@@ -255,7 +256,7 @@ export default class Component {
     this._internal.instance = null;
     this._internal = null;
     this.__mounted = false;
-    removeComponentProps(this.props.__tagId);
+    removeComponentProps(this.instanceId);
   }
 
   /**
@@ -319,8 +320,13 @@ export default class Component {
    */
   _setInternal(internal) {
     this._internal = internal;
-    const props = internal[PROPS];
-    this.props = Object.assign({}, props, getComponentProps(props.__tagId));
+    const parentId = getId('parent', internal);
+    const tagId = getId('tag', internal);
+    this.instanceId = `${parentId}-${tagId}`;
+    this.props = Object.assign({}, internal[PROPS], {
+      __tagId: tagId,
+      __parentId: parentId
+    }, getComponentProps(this.instanceId));
     if (!this.state) this.state = {};
     Object.assign(this.state, internal.data);
   }
@@ -379,7 +385,7 @@ function diffData(prevData, nextData) {
     const nextKeys = Object.keys(nextData);
     if (prevKeys.length !== nextKeys.length) return true;
     if (prevKeys.length === 0) return false;
-    return !prevKeys.some(key => prevData[key] === nextData[key] );
+    return !prevKeys.every(key => prevData[key] === nextData[key] );
   } else {
     return prevData !== nextData;
   }

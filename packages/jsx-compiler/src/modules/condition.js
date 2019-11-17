@@ -28,7 +28,10 @@ function transformRenderFunction(ast, adapter) {
             case 'ObjectPattern':
               if (Array.isArray(id.properties)) {
                 id.properties.forEach(objProperty => {
-                  templateVariables[objProperty.value.name] = {
+                  templateVariables[t.isRestElement(objProperty) ?
+                    objProperty.argument.name :
+                    objProperty.value.name
+                  ] = {
                     source: t.isMemberExpression(init)
                       ? init.property.name
                       : init.name,

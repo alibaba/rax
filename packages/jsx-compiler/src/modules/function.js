@@ -15,7 +15,6 @@ function transformFunction(ast) {
           path.replaceWith(t.nullLiteral());
         }
       }
-      path.stop();
     }
   });
 }

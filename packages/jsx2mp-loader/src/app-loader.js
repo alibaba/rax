@@ -2,6 +2,8 @@ const { readJSONSync, readFileSync, existsSync, mkdirSync } = require('fs-extra'
 const { join } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
+const chalk = require('chalk');
+const PrettyError = require('pretty-error');
 const moduleResolve = require('./utils/moduleResolve');
 const { removeExt } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
@@ -9,6 +11,7 @@ const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 
+const pe = new PrettyError();
 
 function createImportStatement(req) {
   return `import '${req}';`;
@@ -35,7 +38,7 @@ function getRelativePath(filePath) {
 
 module.exports = async function appLoader(content) {
   const loaderOptions = getOptions(this);
-  const { entryPath, platform, mode, disableCopyNpm } = loaderOptions;
+  const { entryPath, platform, mode, disableCopyNpm, turnOffSourceMap } = loaderOptions;
   const appConfigPath = removeExt(this.resourcePath) + '.json';
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const config = readJSONSync(appConfigPath);
@@ -52,10 +55,19 @@ module.exports = async function appLoader(content) {
     platform,
     type: 'app',
     sourceFileName: this.resourcePath,
-    disableCopyNpm
+    disableCopyNpm,
+    turnOffSourceMap
   });
   const rawContentAfterDCE = eliminateDeadCode(rawContent);
-  const transformed = compiler(rawContentAfterDCE, compilerOptions);
+
+  let transformed;
+  try {
+    transformed = compiler(rawContentAfterDCE, compilerOptions);
+  } catch (e) {
+    console.log(chalk.red(`\n[Miniapp ${platform.type}] Error occured when handling App ${this.resourcePath}`));
+    console.log(pe.render(e));
+    return '';
+  }
 
   const { style, assets } = await processCSS(transformed.cssFiles, sourcePath);
   transformed.style = style;

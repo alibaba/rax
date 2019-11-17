@@ -35,7 +35,8 @@ module.exports = function visitor({ types: t }, options) {
   // In WeChat miniapp, `require` can't get index file if index is omitted
   const ensureIndexInPath = (value, resourcePath) => {
     const target = require.resolve(resolve(dirname(resourcePath), value));
-    return './' + relative(dirname(resourcePath), target);
+    const result = relative(dirname(resourcePath), target);
+    return result[0] === '.' ? result : './' + result;
   };
 
   return {
