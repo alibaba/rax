@@ -1,8 +1,9 @@
 import Host from './host';
 import Component from './component';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
-import { invokeMinifiedError } from '../error';
+import { throwMinifiedError } from '../error';
 import { INTERNAL } from '../constant';
+import { EMPTY_OBJECT } from '../types';
 
 const RE_RENDER_LIMIT = 24;
 /**
@@ -29,7 +30,7 @@ export default class ReactiveComponent extends Component {
     this.didUpdate = [];
     this.willUnmount = [];
 
-    this.state = {};
+    this.state = EMPTY_OBJECT;
 
     if (pureRender._forwardRef) {
       this.__prevForwardRef = this._forwardRef = ref;
@@ -110,7 +111,7 @@ export default class ReactiveComponent extends Component {
 
   __update() {
     this[INTERNAL].__isPendingForceUpdate = true;
-    this.setState({});
+    this.setState(EMPTY_OBJECT);
   }
 
   render() {
@@ -129,7 +130,7 @@ export default class ReactiveComponent extends Component {
         if (process.env.NODE_ENV !== 'production') {
           throw new Error('Too many re-renders, the number of renders is limited to prevent an infinite loop.');
         } else {
-          invokeMinifiedError(4);
+          throwMinifiedError(4);
         }
       }
 

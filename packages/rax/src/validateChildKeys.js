@@ -1,7 +1,6 @@
 import Host from './vdom/host';
-import warning from './warning';
-import {isArray, isObject} from './types';
-import getRenderErrorInfo from './getRenderErrorInfo';
+import { warning } from './error';
+import { isArray } from './types';
 
 /**
  * Warn if there's no key explicitly set on dynamic arrays of children or
@@ -11,7 +10,15 @@ import getRenderErrorInfo from './getRenderErrorInfo';
 const ownerHasKeyUseWarning = {};
 
 function getCurrentComponentErrorInfo(parentType) {
-  let info = getRenderErrorInfo();
+  let info = '';
+
+  const ownerComponent = Host.owner;
+  if (ownerComponent) {
+    const name = ownerComponent.__getName();
+    if (name) {
+      info = ` Check the render method of <${name}>.`;
+    }
+  }
 
   if (!info) {
     const parentName =
@@ -19,7 +26,7 @@ function getCurrentComponentErrorInfo(parentType) {
         ? parentType
         : parentType.displayName || parentType.name;
     if (parentName) {
-      info = `\n\nCheck the top-level render call using <${parentName}>.`;
+      info = ` Check the top-level render call using <${parentName}>.`;
     }
   }
   return info;
@@ -52,7 +59,7 @@ function validateExplicitKey(element, parentType) {
     element._owner !== Host.owner
   ) {
     // Give the component that originally created this child.
-    childOwner = ` It was passed a child from ${element._owner.__getName()}.`;
+    childOwner = ` It was passed a child from <${element._owner.__getName()}>.`;
   }
 
   warning(
@@ -63,7 +70,8 @@ function validateExplicitKey(element, parentType) {
 }
 
 export default function validateChildKeys(node, parentType) {
-  if (!isObject(node)) {
+  // Only array or element object is valid child
+  if (typeof node !== 'object') {
     return;
   }
 
@@ -77,6 +85,6 @@ export default function validateChildKeys(node, parentType) {
   } else if (isValidElement(node)) {
     node.__validated = true;
   }
-  // rax isn't support iterator object as element children
+  // Rax don't support iterator object as element children
   // TODO: add validate when rax support iterator object as element.
 }

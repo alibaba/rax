@@ -2,9 +2,8 @@ import Host from './vdom/host';
 import { scheduleEffect, flushEffect } from './vdom/scheduler';
 import { is } from './vdom/shallowEqual';
 import { isArray, isFunction, isNull } from './types';
-import { invokeMinifiedError } from './error';
+import { warning, throwError, throwMinifiedError } from './error';
 import { INSTANCE } from './constant';
-import warning from './warning';
 
 function getCurrentInstance() {
   return Host.owner && Host.owner[INSTANCE];
@@ -15,10 +14,10 @@ function getCurrentRenderingInstance() {
   if (currentInstance) {
     return currentInstance;
   } else {
-    if (process.env.NODE_ENV === 'production') {
-      invokeMinifiedError(1);
+    if (process.env.NODE_ENV !== 'production') {
+      throwError('Hooks called outside a component, or multiple version of Rax are used.');
     } else {
-      throw new Error('Hooks can only be called inside a component.');
+      throwMinifiedError(1);
     }
   }
 }
@@ -118,7 +117,7 @@ function useEffectImpl(effect, inputs, defered) {
         __destory.current = current();
         __create.current = null;
 
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV !== 'production') {
           const currentDestory = __destory.current;
           if (currentDestory !== undefined && typeof currentDestory !== 'function') {
             let msg;

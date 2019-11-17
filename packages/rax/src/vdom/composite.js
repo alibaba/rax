@@ -2,12 +2,12 @@ import ReactiveComponent from './reactive';
 import updater from './updater';
 import Host from './host';
 import { attachRef, updateRef, detachRef } from './ref';
-import instantiateComponent, { throwInvalidComponentError } from './instantiateComponent';
+import instantiateComponent from './instantiateComponent';
 import shouldUpdateComponent from './shouldUpdateComponent';
 import shallowEqual from './shallowEqual';
 import BaseComponent from './base';
 import getPrevSiblingNativeNode from './getPrevSiblingNativeNode';
-import performInSandbox, { handleError } from './performInSandbox';
+import performInSandbox from './performInSandbox';
 import toArray from '../toArray';
 import { scheduleLayout } from './scheduler';
 import { isFunction, isArray } from '../types';
@@ -15,6 +15,7 @@ import assign from '../assign';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import invokeFunctionsWithContext from '../invokeFunctionsWithContext';
 import validateChildKeys from '../validateChildKeys';
+import { throwError, throwMinifiedError } from '../error';
 
 let measureLifeCycle;
 if (process.env.NODE_ENV !== 'production') {
@@ -72,7 +73,11 @@ class CompositeComponent extends BaseComponent {
         // Functional reactive component with hooks
         instance = new ReactiveComponent(Component, ref);
       } else {
-        throwInvalidComponentError(Component);
+        if (process.env.NODE_ENV !== 'production') {
+          throwError('Invalid component type, expected a class or function component.', Component);
+        } else {
+          throwMinifiedError(6, Component);
+        }
       }
     }, parentInstance);
 

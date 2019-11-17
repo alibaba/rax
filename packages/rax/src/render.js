@@ -1,6 +1,6 @@
 import inject from './vdom/inject';
 import Instance from './vdom/instance';
-import { isFunction } from './types';
+import { isFunction, EMPTY_OBJECT } from './types';
 
 function render(element, container, options, callback) {
   // Compatible with `render(element, container, callback)`
@@ -9,7 +9,7 @@ function render(element, container, options, callback) {
     options = null;
   }
 
-  options = options || {};
+  options = options || EMPTY_OBJECT;
   // Init inject
   inject(options);
 

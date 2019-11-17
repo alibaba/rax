@@ -1,6 +1,7 @@
 /**
  * Driver for Web DOM
  **/
+
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 
 // opacity -> opa
@@ -97,7 +98,7 @@ function calcRpxToVw(value) {
 }
 
 function isRpx(str) {
-  return typeof str === 'string' && str.slice(0, -3) === 'rpx';
+  return RPX_REG.test(str);
 }
 
 // Cache the convert fn.

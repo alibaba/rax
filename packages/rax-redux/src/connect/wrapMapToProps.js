@@ -20,7 +20,8 @@ export function wrapMapToPropsConstant(getConstant) {
 // A length of zero is assumed to mean mapToProps is getting args via arguments or ...args and
 // therefore not reporting its length accurately..
 export function getDependsOnOwnProps(mapToProps) {
-  return mapToProps.dependsOnOwnProps !== null && mapToProps.dependsOnOwnProps !== undefined
+  return mapToProps.dependsOnOwnProps !== null &&
+    mapToProps.dependsOnOwnProps !== undefined
     ? Boolean(mapToProps.dependsOnOwnProps)
     : mapToProps.length !== 1;
 }
@@ -48,7 +49,10 @@ export function wrapMapToPropsFunc(mapToProps, methodName) {
     // allow detectFactoryAndVerify to get ownProps
     proxy.dependsOnOwnProps = true;
 
-    proxy.mapToProps = function detectFactoryAndVerify(stateOrDispatch, ownProps) {
+    proxy.mapToProps = function detectFactoryAndVerify(
+      stateOrDispatch,
+      ownProps
+    ) {
       proxy.mapToProps = mapToProps;
       proxy.dependsOnOwnProps = getDependsOnOwnProps(mapToProps);
       let props = proxy(stateOrDispatch, ownProps);

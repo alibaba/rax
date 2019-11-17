@@ -1,3 +1,5 @@
+import { getBatch } from './batch';
+
 // encapsulates the subscription logic for connecting a component to the redux store, as
 // well as nesting subscriptions of descendant components, so that we can ensure the
 // ancestor components re-render before descendants
@@ -6,6 +8,7 @@ const CLEARED = null;
 const nullListeners = { notify() {} };
 
 function createListenerCollection() {
+  const batch = getBatch();
   // the current/next pattern is copied from redux's createStore code.
   // TODO: refactor+expose that code to be reusable here?
   let current = [];
@@ -19,9 +22,11 @@ function createListenerCollection() {
 
     notify() {
       const listeners = current = next;
-      for (let i = 0; i < listeners.length; i++) {
-        listeners[i]();
-      }
+      batch(() => {
+        for (let i = 0; i < listeners.length; i++) {
+          listeners[i]();
+        }
+      });
     },
 
     get() {
@@ -45,12 +50,13 @@ function createListenerCollection() {
 }
 
 export default class Subscription {
-  constructor(store, parentSub, onStateChange) {
+  constructor(store, parentSub) {
     this.store = store;
     this.parentSub = parentSub;
-    this.onStateChange = onStateChange;
     this.unsubscribe = null;
     this.listeners = nullListeners;
+
+    this.handleChangeWrapper = this.handleChangeWrapper.bind(this);
   }
 
   addNestedSub(listener) {
@@ -62,6 +68,12 @@ export default class Subscription {
     this.listeners.notify();
   }
 
+  handleChangeWrapper() {
+    if (this.onStateChange) {
+      this.onStateChange();
+    }
+  }
+
   isSubscribed() {
     return Boolean(this.unsubscribe);
   }
@@ -69,8 +81,8 @@ export default class Subscription {
   trySubscribe() {
     if (!this.unsubscribe) {
       this.unsubscribe = this.parentSub
-        ? this.parentSub.addNestedSub(this.onStateChange)
-        : this.store.subscribe(this.onStateChange);
+        ? this.parentSub.addNestedSub(this.handleChangeWrapper)
+        : this.store.subscribe(this.handleChangeWrapper);
 
       this.listeners = createListenerCollection();
     }

@@ -1,6 +1,6 @@
-import {isNull, isObject} from '../types';
+import { isNull, isObject, EMPTY_OBJECT } from '../types';
 
-const hasOwnProperty = {}.hasOwnProperty;
+const hasOwnProperty = EMPTY_OBJECT.hasOwnProperty;
 
 /**
  * inlined Object.is polyfill to avoid requiring consumers ship their own
