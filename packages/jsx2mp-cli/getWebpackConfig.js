@@ -35,14 +35,14 @@ function getEntry(type, cwd, entryFilePath, options) {
   const entry = {};
   const { platform = 'ali', constantDir, mode, disableCopyNpm, turnOffSourceMap } = options;
 
-  const loaderParams = JSON.stringify({
+  const loaderParams = {
     platform: platformConfig[platform],
     entryPath: entryFilePath,
     constantDir,
     mode,
     disableCopyNpm,
     turnOffSourceMap
-  });
+  };
 
   if (type === 'project') {
     let appConfig = null;
@@ -57,19 +57,19 @@ function getEntry(type, cwd, entryFilePath, options) {
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.filter(({ targets }) => {
         return !Array.isArray(targets) || targets.indexOf('miniapp') > -1;
-      }).forEach(({ source, component }) => {
+      }).forEach(({ source, component, window = {} }) => {
         component = source || component;
-        entry['page@' + component] = PageLoader + '?' + loaderParams + '!' + getDepPath(component, entryPath);
+        entry['page@' + component] = PageLoader + '?' + JSON.stringify(Object.assign({ pageConfig: window },loaderParams)) + '!' + getDepPath(component, entryPath);
       });
     } else if (Array.isArray(appConfig.pages)) {
       // Compatible with pages.
       appConfig.pages.forEach((pagePath) => {
-        entry['page@' + pagePath] = PageLoader + '?' + loaderParams + '!' + getDepPath(pagePath, entryPath);
+        entry['page@' + pagePath] = PageLoader + '?' + JSON.stringify(loaderParams) + '!' + getDepPath(pagePath, entryPath);
       });
     }
   }
   if (type === 'component') {
-    entry.component = ComponentLoader + '?' + loaderParams + '!' + entryFilePath;
+    entry.component = ComponentLoader + '?' + JSON.stringify(loaderParams) + '!' + entryFilePath;
   }
   return entry;
 }
