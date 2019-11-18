@@ -59,7 +59,7 @@ function getEntry(type, cwd, entryFilePath, options) {
         return !Array.isArray(targets) || targets.indexOf('miniapp') > -1;
       }).forEach(({ source, component, window = {} }) => {
         component = source || component;
-        entry['page@' + component] = PageLoader + '?' + JSON.stringify(Object.assign({ pageConfig: window },loaderParams)) + '!' + getDepPath(component, entryPath);
+        entry['page@' + component] = PageLoader + '?' + JSON.stringify(Object.assign({ pageConfig: window }, loaderParams)) + '!' + getDepPath(component, entryPath);
       });
     } else if (Array.isArray(appConfig.pages)) {
       // Compatible with pages.
