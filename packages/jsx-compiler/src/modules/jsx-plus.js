@@ -279,6 +279,33 @@ function transformComponentFragment(ast) {
   return null;
 }
 
+function transformSlotDirective(ast, adapter) {
+  traverse(ast, {
+    JSXAttribute(path) {
+      const { node } = path;
+      if (t.isJSXNamespacedName(node.name) && t.isJSXIdentifier(node.name.namespace, { name: 'x-slot'})) {
+        const slotName = node.name.name;
+        const slotScopeName = node.value;
+        if (slotScopeName) {
+          const parentJSXOpeningEl = path.parentPath.node;
+          if (adapter.slotScope) {
+            parentJSXOpeningEl.attributes.push(t.jsxAttribute(t.jsxIdentifier('slot-scope'), slotScopeName));
+          }
+          const parentJSXElPath = path.parentPath.parentPath;
+          parentJSXElPath.traverse({
+            Identifier(innerPath) {
+              if (innerPath.node.name === slotScopeName.value) {
+                innerPath.node.__slotScope = true;
+              }
+            }
+          });
+        }
+        path.replaceWith(t.jsxAttribute(t.jsxIdentifier('slot'), t.stringLiteral(slotName.name)));
+      }
+    }
+  });
+}
+
 function transformListJSXElement(path, adapter) {
   const { node } = path;
   const { attributes } = node.openingElement;
@@ -345,6 +372,7 @@ function transformListJSXElement(path, adapter) {
     node.__jsxlist.generated = true;
   }
 }
+
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
@@ -352,10 +380,12 @@ module.exports = {
       transformDirectiveCondition(parsed.templateAST, options.adapter);
       transformDirectiveList(parsed.templateAST, code, options.adapter);
       transformComponentFragment(parsed.templateAST);
+      transformSlotDirective(parsed.templateAST, options.adapter);
     }
   },
   _transformList: transformDirectiveList,
   _transformClass: transformDirectiveClass,
   _transformCondition: transformDirectiveCondition,
   _transformFragment: transformComponentFragment,
+  _transformSlotDirective: transformSlotDirective
 };

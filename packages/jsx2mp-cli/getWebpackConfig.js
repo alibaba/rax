@@ -21,7 +21,9 @@ function getBabelConfig() {
   return {
     presets: [
       require.resolve('@babel/preset-env'),
-      require.resolve('@babel/preset-react'),
+      ['@babel/preset-react', {
+        'throwIfNamespace': false
+      }]
     ],
     plugins: [
       require.resolve('@babel/plugin-proposal-export-default-from'),
