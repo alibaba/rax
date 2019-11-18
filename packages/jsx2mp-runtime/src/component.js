@@ -200,10 +200,11 @@ export default class Component {
     if (!this.__mounted) return;
     // Step1: propTypes check, now skipped.
     // Step2: make props to prevProps, and trigger willReceiveProps
-    const nextProps = this.props; // actually this is nextProps
+    const nextProps = this.nextProps || this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
+
     if (diffProps(prevProps, nextProps)) {
-      this._trigger(COMPONENT_WILL_RECEIVE_PROPS, this.props);
+      this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
     }
 
     // Step3: collect pending state

@@ -43,7 +43,7 @@ export function updateChildProps(trigger, instanceId, nextProps) {
         nextProps,
       );
       nextTick(() => {
-        targetComponent.props = propsMap[instanceId];
+        targetComponent.nextProps = propsMap[instanceId];
         enqueueRender(targetComponent);
       });
     } else {
