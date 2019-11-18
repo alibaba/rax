@@ -23,6 +23,7 @@ const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 const USE_CONTEXT = 'useContext';
 const USE_REF = 'useRef';
+const USE_REDUCER = 'useReducer';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
@@ -34,7 +35,7 @@ const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 const isRelativeImport = (mod) => mod[0] === '.';
 
-const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF].includes(node.name);
+const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, USE_REDUCER].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
