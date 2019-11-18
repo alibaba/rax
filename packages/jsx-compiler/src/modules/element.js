@@ -558,7 +558,8 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
     });
     return t.identifier(name);
   }
-  const { object, property, computed } = expression;
+  const { object, property } = expression;
+  let { computed } = expression;
   let objectReplaceNode = object;
   let propertyReplaceNode = property;
   if (!object.__transformed) {
@@ -602,6 +603,15 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
         dynamicBinding,
         isDirective,
       );
+      propertyReplaceNode.__transformed = true;
+    }
+    if (t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
+      propertyReplaceNode = transformIdentifier(
+        property,
+        dynamicBinding,
+        isDirective,
+      );
+      computed = true;
       propertyReplaceNode.__transformed = true;
     }
   }
