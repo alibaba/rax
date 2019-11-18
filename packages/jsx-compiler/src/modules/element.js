@@ -8,6 +8,7 @@ const DynamicBinding = require('../utils/DynamicBinding');
 const compiledComponents = require('../compiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
+const { parseExpression } = require('../parser/index');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -49,7 +50,7 @@ function transformTemplate(
     if (type === ATTR) {
       attributeName = parentPath.node.name.name;
       isDirective = isDirectiveAttr(attributeName);
-      collectComponentDependentProps(parentPath, expression, componentDependentProps);
+      collectComponentDependentProps(parentPath, expression, path.get('expression'), componentDependentProps);
     } else {
       isDirective = isDirectiveAttr(attributeName);
     }
@@ -455,7 +456,7 @@ function transformTemplate(
           clearBindAttrValue = dynamicValue[originalAttrValue.value.replace(BINDING_REG, '')];
         }
         const attrValue = clearBindAttrValue || originalAttrValue;
-        collectComponentDependentProps(path, attrValue, componentDependentProps);
+        collectComponentDependentProps(path, attrValue, null, componentDependentProps);
       }
     },
     JSXExpressionContainer: handleJSXExpressionContainer,
@@ -728,7 +729,7 @@ function checkMemberHasThis(expression) {
 /**
  * JSXAttribute path
  * */
-function collectComponentDependentProps(path, attrValue, componentDependentProps) {
+function collectComponentDependentProps(path, attrValue, attrPath, componentDependentProps) {
   const { node } = path;
   const attrName = node.name.name;
   const jsxEl = path.findParent(p => p.isJSXElement()).node;
@@ -738,6 +739,9 @@ function collectComponentDependentProps(path, attrValue, componentDependentProps
     && attrValue.type
     && jsxEl.__tagId
   ) {
+    if (attrPath) {
+      attrValue = parseExpression('(' + attrPath.toString() + ')'); // deep clone
+    }
     componentDependentProps[jsxEl.__tagId].props =
       componentDependentProps[jsxEl.__tagId].props || {};
     componentDependentProps[jsxEl.__tagId].props[
