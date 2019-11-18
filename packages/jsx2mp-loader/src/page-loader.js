@@ -17,7 +17,7 @@ const pe = new PrettyError();
 
 module.exports = async function pageLoader(content) {
   const loaderOptions = getOptions(this);
-  const { platform, entryPath, mode, disableCopyNpm, constantDir, turnOffSourceMap } = loaderOptions;
+  const { platform, entryPath, mode, disableCopyNpm, constantDir, turnOffSourceMap, pageConfig = {} } = loaderOptions;
   const rawContent = readFileSync(this.resourcePath, 'utf-8');
   const resourcePath = this.resourcePath;
   const rootContext = this.rootContext;
@@ -61,7 +61,7 @@ module.exports = async function pageLoader(content) {
 
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
 
-  const config = Object.assign({}, transformed.config);
+  const config = Object.assign(pageConfig, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
     transformed.dependencies.forEach(dep => {
       this.addDependency(dep);
