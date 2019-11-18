@@ -21,7 +21,8 @@ const parserAdapters = {
     // Need transform style & class keyword
     styleKeyword: false,
     // Need transform onClick -> bindonclick
-    needTransformEvent: false
+    needTransformEvent: false,
+    slotScope: true
   },
   'wechat': {
     if: 'wx:if',
@@ -43,7 +44,8 @@ const parserAdapters = {
       className: '__rax-view'
     },
     styleKeyword: true,
-    needTransformEvent: true
+    needTransformEvent: true,
+    slotScope: false
   },
 };
 

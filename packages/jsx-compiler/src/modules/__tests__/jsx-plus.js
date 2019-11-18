@@ -3,6 +3,7 @@ const {
   _transformList,
   _transformClass,
   _transformFragment,
+  _transformSlotDirective
 } = require('../jsx-plus');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
@@ -95,6 +96,15 @@ describe('Directives', () => {
       `);
       _transformClass(ast, adapter);
       expect(genExpression(ast)).toEqual('<View className={"home" + " " + __classnames__(classNames)}></View>');
+    });
+  });
+
+  describe('slot', () => {
+    it('should transform ali slot', () => {
+      const code = '<View x-slot:item="props">{props.text}</View>';
+      const ast = parseExpression(code);
+      _transformSlotDirective(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View slot="item" slot-scope="props">{props.text}</View>');
     });
   });
 });

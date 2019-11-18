@@ -628,6 +628,7 @@ function transformIdentifier(expression, dynamicBinding, isDirective) {
   if (
     expression.__listItem && !expression.__listItem.item
     || expression.__templateVar
+    || expression.__slotScope
   ) {
     // The identifier is x-for args or template variable or map's index
     replaceNode = expression;
