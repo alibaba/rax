@@ -26,6 +26,7 @@ module.exports = async function componentLoader(content) {
   const sourcePath = join(rootContext, dirname(entryPath));
 
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
+  const srcFileWithoutExt = removeExt(join(sourcePath, relativeSourcePath));
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
 
   const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
@@ -94,6 +95,7 @@ module.exports = async function componentLoader(content) {
     outputPath: {
       code: distFileWithoutExt + '.js',
       json: distFileWithoutExt + '.json',
+      srcJson: srcFileWithoutExt + '.json',
       css: distFileWithoutExt + platform.extension.css,
       template: distFileWithoutExt + platform.extension.xml,
       assets: outputPath

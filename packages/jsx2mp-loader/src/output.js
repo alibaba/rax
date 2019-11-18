@@ -88,6 +88,9 @@ function output(content, raw, options) {
   // Write file
   writeFileSync(outputPath.code, code);
   if (json) {
+    if (existsSync(outputPath.srcJson)) {
+      json = Object.assign(require(outputPath.srcJson), json);
+    }
     writeJSONSync(outputPath.json, json, { spaces: 2});
   }
   if (template) {

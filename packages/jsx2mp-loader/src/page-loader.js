@@ -59,6 +59,7 @@ module.exports = async function pageLoader(content) {
   const pageDistDir = dirname(targetFilePath);
   if (!existsSync(pageDistDir)) mkdirpSync(pageDistDir);
 
+  const srcFileWithoutExt = removeExt(join(sourcePath, relativeSourcePath));
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
 
   const config = Object.assign({}, transformed.config);
@@ -95,6 +96,7 @@ module.exports = async function pageLoader(content) {
     outputPath: {
       code: distFileWithoutExt + '.js',
       json: distFileWithoutExt + '.json',
+      srcJson: srcFileWithoutExt + '.json',
       css: distFileWithoutExt + platform.extension.css,
       template: distFileWithoutExt + platform.extension.xml,
       assets: outputPath
