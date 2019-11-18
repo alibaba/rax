@@ -740,7 +740,7 @@ function collectComponentDependentProps(path, attrValue, attrPath, componentDepe
     && jsxEl.__tagId
   ) {
     if (attrPath) {
-      attrValue = parseExpression('(' + path.toString() + ')'); // deep clone
+      attrValue = parseExpression('(' + attrPath.toString() + ')'); // deep clone
     }
     componentDependentProps[jsxEl.__tagId].props =
       componentDependentProps[jsxEl.__tagId].props || {};
