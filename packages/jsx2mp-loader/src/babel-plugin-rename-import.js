@@ -57,6 +57,7 @@ module.exports = function visitor({ types: t }, options) {
               runtimePath = './' + join(rootNpmRelativePath, RUNTIME);
             }
             path.node.source = t.stringLiteral(runtimePath);
+            transformPathMap[runtimePath] = true;
             return;
           }
 
