@@ -203,7 +203,6 @@ export default class Component {
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.nextProps || this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
-
     if (diffProps(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
     }

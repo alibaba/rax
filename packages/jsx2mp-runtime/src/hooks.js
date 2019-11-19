@@ -64,13 +64,7 @@ export function useState(initialState) {
         // Current instance is in render update phase.
         // After this one render finish, will continue run.
         hook[2] = newState;
-
-        if (getCurrentInstance() === currentInstance) {
-          // Marked as is scheduled that could finish hooks.
-          enqueueRender(currentInstance);
-        } else {
-          currentInstance._updateComponent();
-        }
+        enqueueRender(currentInstance);
       }
     };
 
@@ -238,11 +232,7 @@ export function useReducer(reducer, initialArg, init) {
       }
       queue.actions.push(action);
       queue.eagerState = eagerState;
-      if (getCurrentInstance() === currentInstance) {
-        enqueueRender(currentInstance);
-      } else {
-        currentInstance._updateComponent();
-      }
+      enqueueRender(currentInstance);
     };
 
     return hooks[hookID] = [
