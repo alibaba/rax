@@ -229,6 +229,8 @@ export default class Component {
       && this.shouldComponentUpdate(nextProps, nextState) === false
     ) {
       this.__shouldUpdate = false;
+    } else {
+      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
     }
 
     this.props = nextProps;
@@ -237,7 +239,6 @@ export default class Component {
 
     // Step8: trigger render
     if (this.__shouldUpdate) {
-      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
     }
