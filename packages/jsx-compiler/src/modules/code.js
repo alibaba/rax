@@ -12,6 +12,7 @@ const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
 const CREATE_STYLE = 'createStyle';
 const CLASSNAMES = 'classnames';
+const CREATE_CONTEXT = 'createContext';
 
 const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
@@ -28,14 +29,14 @@ const USE_REDUCER = 'useReducer';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
-const coreMethodList = ['createContext'];
+const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, USE_REDUCER, CREATE_CONTEXT];
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 const isRelativeImport = (mod) => mod[0] === '.';
 
-const isCoreHooksAPI = (node) => [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, USE_REDUCER].includes(node.name);
+const isCoreHooksAPI = (node) => [].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -95,8 +96,7 @@ module.exports = {
         );
       }
     }
-    const exportedVariables = [...collectHooks(parsed.renderFunctionPath),
-      ...collectCoreMethods(parsed.imported[RAX_PACKAGE] || [])];
+    const exportedVariables = collectCoreMethods(parsed.imported[RAX_PACKAGE] || []);
     const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
     const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
     removeRaxImports(parsed.ast);
@@ -430,20 +430,6 @@ function getReplacer(defaultExportedPath) {
   } else {
     return null;
   }
-}
-
-function collectHooks(root) {
-  let ret = {};
-  traverse(root, {
-    CallExpression(path) {
-      const { node } = path;
-      if (t.isIdentifier(node.callee) && isCoreHooksAPI(node.callee)) {
-        ret[node.callee.name] = true;
-      }
-    }
-  });
-
-  return Object.keys(ret);
 }
 
 /**
