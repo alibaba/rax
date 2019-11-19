@@ -230,6 +230,7 @@ export default class Component {
     ) {
       this.__shouldUpdate = false;
     } else {
+      // Step6: trigger will update
       this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
     }
 
