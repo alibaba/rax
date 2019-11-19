@@ -203,7 +203,6 @@ export default class Component {
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.nextProps || this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
-
     if (diffProps(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
     }
@@ -230,9 +229,6 @@ export default class Component {
       && this.shouldComponentUpdate(nextProps, nextState) === false
     ) {
       this.__shouldUpdate = false;
-    } else {
-      // Step6: trigger will update
-      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
     }
 
     this.props = nextProps;
@@ -241,6 +237,7 @@ export default class Component {
 
     // Step8: trigger render
     if (this.__shouldUpdate) {
+      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
     }
