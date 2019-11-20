@@ -15,8 +15,8 @@
   "engines": {
     "npm": ">=3.0.0"
   },
-  "peerDependencies": {
-    "rax": "^1.0.0"
+  "dependencies": {
+    "rax-get-element-by-id": "^1.0.0"
   },
   "devDependencies": {
     "rax": "^1.0.0",
