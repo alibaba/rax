@@ -18,7 +18,7 @@ export function getHistory() {
 }
 
 function App(props) {
-  const { appConfig, history, routes, InitialComponent } = props;
+  const { appConfig, history, routes, pageProps, InitialComponent } = props;
   const { component } = useRouter(() => ({ history, routes, InitialComponent }));
 
   if (isNullableComponent(component)) {
@@ -63,7 +63,8 @@ function App(props) {
         Navigation,
         Object.assign(
           { appConfig, component, history, routes, InitialComponent },
-          pageInitialProps[component.__path]
+          pageInitialProps[component.__path],
+          pageProps
         )
       );
     }
@@ -71,7 +72,7 @@ function App(props) {
     return createElement(
       Fragment,
       {},
-      createElement(component, Object.assign({ history, routes, InitialComponent }, pageInitialProps[component.__path])),
+      createElement(component, Object.assign({ history, routes, InitialComponent }, pageInitialProps[component.__path], pageProps)),
       createElement(TabBar, { history, config: appConfig.tabBar })
     );
   }
@@ -81,8 +82,11 @@ function isNullableComponent(component) {
   return !component || Array.isArray(component) && component.length === 0;
 }
 
-export default function runApp(appConfig) {
+export default function runApp(appConfig, pageProps = {}) {
   if (launched) throw new Error('Error: runApp can only be called once.');
+  if (pageProps && Object.prototype.toString.call(pageProps) !== '[object Object]') {
+    throw new Error('Error: pageProps can only be Object.');
+  }
   launched = true;
   const { hydrate = false, routes, shell } = appConfig;
 
@@ -104,6 +108,7 @@ export default function runApp(appConfig) {
         appConfig,
         history,
         routes,
+        pageProps,
         InitialComponent: _initialComponent
       });
 
