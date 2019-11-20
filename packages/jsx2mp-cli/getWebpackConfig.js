@@ -21,7 +21,7 @@ function getBabelConfig() {
   return {
     presets: [
       require.resolve('@babel/preset-env'),
-      ['@babel/preset-react', {
+      [require.resolve('@babel/preset-react'), {
         'throwIfNamespace': false
       }]
     ],
