@@ -10,6 +10,7 @@ import getId from './getId';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
+let _pageConfig = {};
 
 /**
  * Reference relationship.
@@ -25,7 +26,7 @@ function getPageCycles(Klass) {
     onLoad(options) {
       // Ensure page has loaded
       const history = createMiniAppHistory();
-      this.instance = new Klass(this[PROPS]);
+      this.instance = new Klass(Object.assign(this[PROPS], _pageConfig));
       // Reverse sync from state to data.
       this.instance._setInternal(this);
       // Add route information for page.
@@ -177,14 +178,15 @@ function createConfig(component, options) {
 /**
  * Bridge App definition.
  * @param appConfig
+ * @param pageConfig
  */
-export function runApp(appConfig) {
+export function runApp(appConfig, pageConfig = {}) {
   if (_appConfig) {
     throw new Error('runApp can only be called once.');
   }
 
   _appConfig = appConfig; // Store raw app config to parse router.
-
+  _pageConfig = pageConfig; // Store raw page config to inject to page props
   __updateRouterMap(appConfig);
 
   const appOptions = {
