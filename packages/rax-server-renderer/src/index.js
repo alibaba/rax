@@ -390,8 +390,9 @@ function renderElementToString(element, context, options) {
         html = html + '>';
       } else {
         html = html + '>';
-        var children = props.children;
-        if (children != null) {
+        // When child is null or undefined, it should be render as <!-- _ -->
+        if (props.hasOwnProperty('children')) {
+          const children = props.children;
           if (Array.isArray(children)) {
             for (var i = 0, l = children.length; i < l; i++) {
               var child = children[i];
@@ -400,7 +401,7 @@ function renderElementToString(element, context, options) {
           } else {
             html = html + renderElementToString(children, context, options);
           }
-        } else if (innerHTML) {
+        } else if (innerHTML != null) { // When dangerouslySetInnerHTML is 0, it should be render as 0
           html = html + innerHTML;
         }
 
@@ -408,13 +409,26 @@ function renderElementToString(element, context, options) {
       }
 
       return html;
+    } else {
+      throwInValidElementError(element);
     }
   } else {
-    console.error(`renderToString: received an element that is not valid. (keys: ${Object.keys(element)})`);
+    throwInValidElementError(element);
   }
 }
 
-export function renderToString(element, options = {}) {
+function throwInValidElementError(element) {
+  let typeInfo = element === undefined ? '' :
+    '(found: ' + (isPlainObject(element) ? `object with keys {${Object.keys(element)}}` : element) + ')';
+
+  console.error(`Invalid element type, expected types: Element instance, string, boolean, array, null, undefined. ${typeInfo}`);
+}
+
+function isPlainObject(obj) {
+  return EMPTY_OBJECT.toString.call(obj) === '[object Object]';
+}
+
+export function renderToString(element, options) {
   return renderElementToString(element, EMPTY_OBJECT, Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
 }
 
