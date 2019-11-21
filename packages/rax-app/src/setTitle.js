@@ -49,7 +49,7 @@ export default function setTitle(history, appConfig) {
       } else if (isWeex) {
         // It depends on the API provided by the client WEEX.
         // If `navigationBar` API is not available, the client must implement it.
-        const navigationBar = weex.requireModule('navigationBar');
+        const navigationBar = weex.requireModule('navigationBar'); // eslint-disable-line
         const emptyFn = () => { };
         navigationBar.setTitle({ title }, emptyFn, emptyFn);
       }
