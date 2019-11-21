@@ -1,0 +1,23 @@
+{
+  "name": "rax-document",
+  "version": "0.1.0",
+  "description": "Rax Document",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  }
+}
