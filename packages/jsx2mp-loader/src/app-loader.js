@@ -10,6 +10,7 @@ const eliminateDeadCode = require('./utils/dce');
 const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
+const adaptAppConfig = require('./adaptAppConfig');
 
 const pe = new PrettyError();
 
@@ -75,7 +76,7 @@ module.exports = async function appLoader(content) {
 
   this.addDependency(appConfigPath);
 
-  const transformedAppConfig = transformAppConfig(entryPath, config);
+  const transformedAppConfig = transformAppConfig(entryPath, config, platform.type);
 
   const outputContent = {
     code: transformed.code,
@@ -102,7 +103,7 @@ module.exports = async function appLoader(content) {
   ].join('\n');
 };
 
-function transformAppConfig(entryPath, originalConfig) {
+function transformAppConfig(entryPath, originalConfig, platform) {
   const config = {};
   for (let key in originalConfig) {
     const value = originalConfig[key];
@@ -124,7 +125,17 @@ function transformAppConfig(entryPath, originalConfig) {
         }
         config.pages = pages;
         break;
-
+      case 'window':
+        adaptAppConfig(value, 'window', platform);
+        config[key] = value;
+        break;
+      case 'tabBar':
+        if (value.items) {
+          adaptAppConfig(value, 'items', platform);
+        }
+        adaptAppConfig(value, 'tabBar', platform);
+        config[key] = value;
+        break;
       default:
         config[key] = value;
         break;
