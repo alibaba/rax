@@ -6,7 +6,7 @@ const driver = Object.assign({}, DriverWeex, {
     // Turn off batched updates
     document.open();
     // Init rem unit
-    setRpx( 1 );
+    setRpx(1);
   },
   createElement(type, props = {}) {
     const style = {};
@@ -18,6 +18,13 @@ const driver = Object.assign({}, DriverWeex, {
     }
     return DriverWeex.createElement(type, Object.assign({}, props, { style }));
   },
+  setStyle(node, style) {
+    for (let prop in style) {
+      // translate 'rpx' to px
+      style[prop] = convertUnit(style[prop], prop);
+    }
+    node.setStyles(style);
+  }
 });
 
 export default driver;
