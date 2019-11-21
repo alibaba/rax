@@ -20,7 +20,9 @@ function transformAttribute(ast, code, adapter) {
             if (isNativeComponent(path)) {
               node.name.name = 'class';
             } else {
-              path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'), node.value));
+              // Object.assign for shallow copy, avoid self tag is same reference
+              path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'),
+                Object.assign({}, node.value)));
             }
           } else if (isNativeComponent(path)) {
             node.name.name = 'class';

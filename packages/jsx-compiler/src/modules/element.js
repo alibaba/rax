@@ -46,7 +46,6 @@ function transformTemplate(
     let { expression } = node;
     let attributeName = null;
     let isDirective;
-
     if (type === ATTR) {
       attributeName = parentPath.node.name.name;
       isDirective = isDirectiveAttr(attributeName);
@@ -598,21 +597,13 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
         dynamicBinding,
         isDirective,
       );
-    } else if (t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
-      propertyReplaceNode = transformIdentifier(
-        property,
-        dynamicBinding,
-        isDirective,
-      );
-      propertyReplaceNode.__transformed = true;
     }
-    if (t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
+    if (computed && t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
       propertyReplaceNode = transformIdentifier(
         property,
         dynamicBinding,
         isDirective,
       );
-      computed = true;
       propertyReplaceNode.__transformed = true;
     }
   }
