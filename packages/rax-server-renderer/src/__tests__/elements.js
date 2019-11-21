@@ -1,8 +1,7 @@
 /* @jsx createElement */
 
-import {createElement, createContext, Component, Fragment} from 'rax';
+import {createElement, Component} from 'rax';
 import {renderToString} from '../index';
-import { exec } from 'child_process';
 
 describe('elements and children', () => {
   describe('text children', function() {
