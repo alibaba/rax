@@ -5,6 +5,7 @@ import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
 import UniversalDriver from 'driver-universal';
 import pathRedirect from './pathRedirect';
+import setTitle from './setTitle';
 import { emit } from './app';
 
 const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
@@ -21,6 +22,9 @@ export function getHistory() {
 function App(props) {
   const { appConfig, history, routes, pageProps, InitialComponent } = props;
   const { component } = useRouter(() => ({ history, routes, InitialComponent }));
+
+  //
+  setTitle(history, appConfig);
 
   if (isNullableComponent(component)) {
     // Return null directly if not matched.

@@ -30,17 +30,17 @@ export default function pathRedirect(history, routes) {
     targetQuery = history.location.search.match(TARGET_PATH_REG);
   }
 
-  let isConformity = false;
+  let isConformed = false;
   targetPath = targetQuery ? targetQuery[1] : '';
 
   for (let i = 0, l = routes.length; i < l; i++) {
     if (targetPath === routes[i].path) {
-      isConformity = true;
+      isConformed = true;
       break;
     }
   }
 
-  if (targetPath && !isConformity) {
+  if (targetPath && !isConformed) {
     console.warn('Waring: url query `_path` should be an exits path in app.json, see: https://rax.js.org/docs/guide/routes ');
     return false;
   }
