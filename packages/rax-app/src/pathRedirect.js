@@ -11,7 +11,7 @@ import { isWeex, isWeb } from 'universal-env';
 // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
 const TARGET_PATH_REG = /[?&]_path=([^&#]+)/i;
 
-export default function redirect(history) {
+export default function pathRedirect(history, routes) {
   let targetPath = '';
   let targetQuery = null;
 
@@ -29,7 +29,21 @@ export default function redirect(history) {
   if (!targetQuery && TARGET_PATH_REG.test(history.location.search)) {
     targetQuery = history.location.search.match(TARGET_PATH_REG);
   }
+
+  let isConformity = false;
   targetPath = targetQuery ? targetQuery[1] : '';
+
+  for (let i = 0, l = routes.length; i < l; i++) {
+    if (targetPath === routes[i].path) {
+      isConformity = true;
+      break;
+    }
+  }
+
+  if (targetPath && !isConformity) {
+    console.warn('Waring: url query `_path` should be an exits path in app.json, see: https://rax.js.org/docs/guide/routes ');
+    return false;
+  }
 
   // If `targetPath` exists, jump to a specific route.
   if (targetPath) {

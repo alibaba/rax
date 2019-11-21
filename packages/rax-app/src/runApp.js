@@ -4,7 +4,7 @@ import { isWeex, isWeb } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
 import UniversalDriver from 'driver-universal';
-import redirect from './redirect';
+import pathRedirect from './pathRedirect';
 import { emit } from './app';
 
 const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
@@ -102,7 +102,7 @@ export default function runApp(appConfig, pageProps = {}) {
   }
 
   // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
-  redirect(history);
+  pathRedirect(history, routes);
 
   let _initialComponent;
   return matchInitialComponent(history.location.pathname, routes)
