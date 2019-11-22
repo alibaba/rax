@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, createContext, Component, Fragment} from 'rax';
+import {createElement, createContext, Component, Fragment, useContext} from 'rax';
 import PropTypes from 'prop-types';
 import {renderToString} from '../index';
 
@@ -220,6 +220,32 @@ describe('context', () => {
       const str = renderToString(<App />);
 
       expect(str).toBe('<div><div id="theme1">dark</div><div id="theme2">light</div><!-- _ --><div id="language1">chinese</div><div id="theme3">blue</div><div id="language2">sanskrit</div><div id="language3">french</div></div>');
+    });
+
+    it('function context', () => {
+      let Ctx = createContext();
+
+      function Provider() {
+        return (
+          <Ctx.Provider value={this.props.value}>
+            {this.props.children}
+          </Ctx.Provider>
+        );
+      }
+
+      function FnConsumer() {
+        return useContext(Ctx);
+      }
+
+      const str = renderToString(
+        <Provider value="a">
+          <span>
+            <FnConsumer />
+          </span>
+        </Provider>
+      );
+
+      expect(str).toBe('<span>a</span>');
     });
   });
 
