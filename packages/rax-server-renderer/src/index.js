@@ -408,4 +408,7 @@ export function renderToString(element, options) {
   return renderElementToString(element, EMPTY_OBJECT, Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
 }
 
-export default { renderToString };
+export default {
+  renderToString
+};
+
