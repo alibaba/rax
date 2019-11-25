@@ -1,7 +1,7 @@
 // In a Single-Page Application, sometimes we need to jump to a specific route.
 // It is very simple in the Web application, url like #/xxx can jump to the corresponding page.
 
-// Things seem to be very complicated in Weex, because using `MemoryHistory`
+// Things seem to be very complicated in Weex, because using `MemoryHistory`,
 // which is used as a reference implementation and may also be used in non-DOM environments.
 // We cannot jump directly through url.
 
