@@ -109,4 +109,54 @@ describe('form', () => {
       expect(str).toBe('<input value="0" readOnly>');
     });
   });
+
+  describe('select', function() {
+    let options;
+    beforeEach(() => {
+      options = [
+        <option key={1} value="foo" id="foo">
+          Foo
+        </option>,
+        <option key={2} value="bar" id="bar">
+          Bar
+        </option>
+      ];
+    });
+
+    it('a select with a value and an onChange', () => {
+      const str = renderToString(
+        <select value="bar" onChange={() => {}}>
+          {options}
+        </select>
+      );
+      expect(str).toBe('<select value="bar"><option value="foo" id="foo">Foo</option><option value="bar" id="bar">Bar</option></select>');
+    });
+
+    it('a select with a multiple values and an onChange', () => {
+      const str = renderToString(
+        <select value={['bar', 'baz']} multiple={true} onChange={() => {}}>
+          {options}
+        </select>
+      );
+      expect(str).toBe('<select value="bar" readOnly><option value="foo" id="foo">Foo</option><option value="bar" id="bar">Bar</option></select>');
+    });
+
+    it('a select value overriding defaultValue', () => {
+      const str = renderToString(
+        <select value="bar" defaultValue="baz" readOnly={true}>
+          {options}
+        </select>
+      );
+      expect(str).toBe('<select value="bar" readOnly><option value="foo" id="foo">Foo</option><option value="bar" id="bar">Bar</option></select>');
+    });
+
+    it('a select option with flattened children', () => {
+      const str = renderToString(
+        <select value="bar">
+          <option value="bar">A {'B'}</option>
+        </select>
+      );
+      expect(str).toBe('<select value="bar"><option value="bar">A B</option></select>');
+    });
+  });
 });
