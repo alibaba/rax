@@ -1,36 +1,8 @@
 import { shared } from 'rax';
 import { BOOLEAN, BOOLEANISH_STRING, OVERLOADED_BOOLEAN, shouldRemoveAttribute, getPropertyInfo } from './attribute';
+import { UNITLESS_NUMBER_PROPS } from './CSSProperty';
 
 const EMPTY_OBJECT = {};
-const TRUE = true;
-const UNITLESS_NUMBER_PROPS = {
-  animationIterationCount: TRUE,
-  borderImageOutset: TRUE,
-  borderImageSlice: TRUE,
-  borderImageWidth: TRUE,
-  boxFlex: TRUE,
-  boxFlexGroup: TRUE,
-  boxOrdinalGroup: TRUE,
-  columnCount: TRUE,
-  flex: TRUE,
-  flexGrow: TRUE,
-  flexPositive: TRUE,
-  flexShrink: TRUE,
-  flexNegative: TRUE,
-  flexOrder: TRUE,
-  gridRow: TRUE,
-  gridColumn: TRUE,
-  fontWeight: TRUE,
-  lineClamp: TRUE,
-  lineHeight: TRUE,
-  opacity: TRUE,
-  order: TRUE,
-  orphans: TRUE,
-  tabSize: TRUE,
-  widows: TRUE,
-  zIndex: TRUE,
-  zoom: TRUE
-};
 
 const VOID_ELEMENTS = {
   'area': true,
@@ -103,6 +75,10 @@ function styleToCSS(style, options = {}) {
   for (var prop in style) {
     let val = style[prop];
     let unit = '';
+
+    if (val == null) {
+      continue;
+    }
 
     if (typeof val === 'number' && UNITLESS_NUMBER_PROPS[prop]) {
       // Noop
@@ -435,4 +411,3 @@ export function renderToString(element, options) {
 export default {
   renderToString
 };
-

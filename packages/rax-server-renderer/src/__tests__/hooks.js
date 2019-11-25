@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, Component, useState, useReducer, useMemo, forwardRef, createRef, useRef, useEffect, useCallback, useImperativeHandle, useLayoutEffect} from 'rax';
+import {createElement, Component, useState, useReducer, useMemo, forwardRef, createRef, useRef, useEffect, useCallback, useImperativeHandle, useLayoutEffect, createContext, useContext} from 'rax';
 import {renderToString} from '../index';
 
 function Text(props) {
@@ -205,6 +205,58 @@ describe('hooks', () => {
 
       let str = renderToString(<Counter />);
       expect(str).toBe('<span>Count: 0</span>');
+    });
+  });
+
+  describe('useContext', () => {
+    it('can use the same context multiple times in the same function', () => {
+      const Context = createContext({foo: 0, bar: 0, baz: 0});
+
+      function Provider(props) {
+        return (
+          <Context.Provider
+            value={{foo: props.foo, bar: props.bar, baz: props.baz}}>
+            {props.children}
+          </Context.Provider>
+        );
+      }
+
+      function FooAndBar() {
+        const {foo} = useContext(Context);
+        const {bar} = useContext(Context);
+        return <Text text={`Foo: ${foo}, Bar: ${bar}`} />;
+      }
+
+      function Baz() {
+        const {baz} = useContext(Context);
+        return <Text text={'Baz: ' + baz} />;
+      }
+
+      class Indirection extends Component {
+        render() {
+          return this.props.children;
+        }
+      }
+
+      function App(props) {
+        return (
+          <div>
+            <Provider foo={props.foo} bar={props.bar} baz={props.baz}>
+              <Indirection>
+                <Indirection>
+                  <FooAndBar />
+                </Indirection>
+                <Indirection>
+                  <Baz />
+                </Indirection>
+              </Indirection>
+            </Provider>
+          </div>
+        );
+      }
+
+      let str = renderToString(<App foo={1} bar={3} baz={5} />);
+      expect(str).toBe('<div><span>Foo: 1, Bar: 3</span><span>Baz: 5</span></div>');
     });
   });
 });
