@@ -23,7 +23,7 @@ const driver = Object.assign({}, DriverWeex, {
       // translate 'rpx' to px
       style[prop] = convertUnit(style[prop], prop);
     }
-    node.setStyles(style);
+    DriverWeex.setStyle(node, style);
   }
 });
 
