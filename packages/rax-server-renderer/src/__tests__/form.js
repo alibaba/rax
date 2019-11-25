@@ -132,15 +132,6 @@ describe('form', () => {
       expect(str).toBe('<select value="bar"><option value="foo" id="foo">Foo</option><option value="bar" id="bar">Bar</option></select>');
     });
 
-    it('a select with a multiple values and an onChange', () => {
-      const str = renderToString(
-        <select value={['bar', 'baz']} multiple={true} onChange={() => {}}>
-          {options}
-        </select>
-      );
-      expect(str).toBe('<select value="bar" readOnly><option value="foo" id="foo">Foo</option><option value="bar" id="bar">Bar</option></select>');
-    });
-
     it('a select value overriding defaultValue', () => {
       const str = renderToString(
         <select value="bar" defaultValue="baz" readOnly={true}>
@@ -172,7 +163,7 @@ describe('form', () => {
       const str = renderToString(
         <textarea readOnly={true} />
       );
-      expect(str).toBe('<textarea readOnly="true"></textarea>');
+      expect(str).toBe('<textarea readOnly></textarea>');
     });
 
     it('a textarea with a value and no onChange/readOnly', () => {
@@ -180,6 +171,22 @@ describe('form', () => {
         <textarea />
       );
       expect(str).toBe('<textarea></textarea>');
+    });
+  });
+
+  describe('progress', function() {
+    it('prop with null value', () => {
+      const str = renderToString(
+        <progress value={null} />
+      );
+      expect(str).toBe('<progress></progress>');
+    });
+
+    it('prop with number value', () => {
+      const str = renderToString(
+        <progress value={50} />
+      );
+      expect(str).toBe('<progress value="50"></progress>');
     });
   });
 });
