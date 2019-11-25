@@ -86,18 +86,19 @@ function output(content, raw, options) {
   }
 
   // Write file
-  writeFileSync(outputPath.code, code);
+  writeFileWithDirCheck(outputPath.code, code);
+
   if (json) {
-    writeJSONSync(outputPath.json, json, { spaces: 2});
+    writeFileWithDirCheck(outputPath.json, json, 'json');
   }
   if (template) {
-    writeFileSync(outputPath.template, template);
+    writeFileWithDirCheck(outputPath.template, template);
   }
   if (css) {
-    writeFileSync(outputPath.css, css);
+    writeFileWithDirCheck(outputPath.css, css);
   }
   if (config) {
-    writeFileSync(outputPath.config, config);
+    writeFileWithDirCheck(outputPath.config, config);
   }
 
   // Write extra assets
@@ -109,12 +110,27 @@ function output(content, raw, options) {
         content = minify(content, ext);
       }
       const assetsOutputPath = join(outputPath.assets, asset);
-      const assetDirectory = dirname(assetsOutputPath);
-      if (!existsSync(assetDirectory)) {
-        mkdirpSync(assetDirectory);
-      }
-      writeFileSync(assetsOutputPath, content);
+      writeFileWithDirCheck(assetsOutputPath, content);
     });
+  }
+}
+
+
+/**
+ * mkdir before write file if dir does not exist
+ * @param {string} filePath
+ * @param {string|Buffer|TypedArray|DataView} content
+ * @param {string}  [type=file] 'file' or 'json'
+ */
+function writeFileWithDirCheck(filePath, content, type = 'file') {
+  const dirPath = dirname(filePath);
+  if (!existsSync(dirPath)) {
+    mkdirpSync(dirPath);
+  }
+  if (type === 'file') {
+    writeFileSync(filePath, content);
+  } else if (type === 'json') {
+    writeJSONSync(filePath, content, { spaces: 2 });
   }
 }
 

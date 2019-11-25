@@ -3,6 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
 const compiledComponents = require('../compiledComponents');
+const basedComponents = require('../baseComponents');
 
 function transformAttribute(ast, code, adapter) {
   const refs = [];
@@ -15,16 +16,21 @@ function transformAttribute(ast, code, adapter) {
           node.name.name = adapter.key;
           break;
         case 'className':
-          if (!adapter.styleKeyword || isNativeComponent(path)) {
+          if (!adapter.styleKeyword) {
+            if (isNativeComponent(path)) {
+              node.name.name = 'class';
+            } else {
+              // Object.assign for shallow copy, avoid self tag is same reference
+              path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'),
+                Object.assign({}, node.value)));
+            }
+          } else if (isNativeComponent(path)) {
             node.name.name = 'class';
-          } else {
-            path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'), node.value));
           }
           break;
         case 'style':
           if (adapter.styleKeyword && !isNativeComponent(path)) {
             node.name.name = 'styleSheet';
-            path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('style'), node.value));
           }
           break;
         case 'ref':

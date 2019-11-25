@@ -10,6 +10,7 @@ import getId from './getId';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
+let _pageProps = {};
 
 /**
  * Reference relationship.
@@ -25,7 +26,7 @@ function getPageCycles(Klass) {
     onLoad(options) {
       // Ensure page has loaded
       const history = createMiniAppHistory();
-      this.instance = new Klass(this[PROPS]);
+      this.instance = new Klass(Object.assign(this[PROPS], _pageProps));
       // Reverse sync from state to data.
       this.instance._setInternal(this);
       // Add route information for page.
@@ -98,7 +99,7 @@ function createProxyMethods(events) {
         const event = args[0];
         let context = this.instance; // Context default to Rax component instance.
 
-        const dataset = event && event.target ? event.target.dataset : {};
+        const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
         const datasetArgs = [];
         // Universal event args
         const datasetKeys = Object.keys(dataset);
@@ -177,14 +178,15 @@ function createConfig(component, options) {
 /**
  * Bridge App definition.
  * @param appConfig
+ * @param pageProps
  */
-export function runApp(appConfig) {
+export function runApp(appConfig, pageProps = {}) {
   if (_appConfig) {
     throw new Error('runApp can only be called once.');
   }
 
   _appConfig = appConfig; // Store raw app config to parse router.
-
+  _pageProps = pageProps; // Store global page props to inject to every page props
   __updateRouterMap(appConfig);
 
   const appOptions = {
@@ -223,7 +225,7 @@ function isDatasetKebabArg(str) {
   return DATASET_KEBAB_ARG_REG.test(str);
 }
 
-const DATASET_ARG_REG = /\w+?-[aA]rg?-?(\d+)/;
+const DATASET_ARG_REG = /\w+-?[aA]rg?-?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);

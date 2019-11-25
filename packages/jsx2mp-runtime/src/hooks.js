@@ -64,13 +64,7 @@ export function useState(initialState) {
         // Current instance is in render update phase.
         // After this one render finish, will continue run.
         hook[2] = newState;
-
-        if (getCurrentInstance() === currentInstance) {
-          // Marked as is scheduled that could finish hooks.
-          enqueueRender(currentInstance);
-        } else {
-          currentInstance._updateComponent();
-        }
+        enqueueRender(currentInstance);
       }
     };
 
@@ -136,7 +130,6 @@ function useEffectImpl(effect, inputs, defered) {
       prevInputs: inputs,
       inputs
     };
-
     currentInstance._registerLifeCycle(COMPONENT_DID_MOUNT, create);
     currentInstance._registerLifeCycle(COMPONENT_WILL_UNMOUNT, destory);
     currentInstance._registerLifeCycle(COMPONENT_DID_UPDATE, () => {
@@ -231,21 +224,15 @@ export function useReducer(reducer, initialArg, init) {
       // Reducer will update in the next render, before that we add all
       // actions to the queue
       const queue = hook[2];
-
-      if (getCurrentInstance() === currentInstance) {
-        queue.actions.push(action);
-        currentInstance.isScheduled = true;
-      } else {
-        const currentState = queue.eagerState;
-        const eagerReducer = queue.eagerReducer;
-        const eagerState = eagerReducer(currentState, action);
-        if (sameValue(eagerState, currentState)) {
-          return;
-        }
-        queue.eagerState = eagerState;
-        queue.actions.push(action);
-        currentInstance.update();
+      const currentState = queue.eagerState;
+      const eagerReducer = queue.eagerReducer;
+      const eagerState = eagerReducer(currentState, action);
+      if (sameValue(eagerState, currentState)) {
+        return;
       }
+      queue.actions.push(action);
+      queue.eagerState = eagerState;
+      enqueueRender(currentInstance);
     };
 
     return hooks[hookID] = [

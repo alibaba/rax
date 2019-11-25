@@ -8,6 +8,7 @@ const DynamicBinding = require('../utils/DynamicBinding');
 const compiledComponents = require('../compiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
+const { parseExpression } = require('../parser/index');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -45,11 +46,10 @@ function transformTemplate(
     let { expression } = node;
     let attributeName = null;
     let isDirective;
-
     if (type === ATTR) {
       attributeName = parentPath.node.name.name;
       isDirective = isDirectiveAttr(attributeName);
-      collectComponentDependentProps(parentPath, expression, componentDependentProps);
+      collectComponentDependentProps(parentPath, expression, path.get('expression'), componentDependentProps);
     } else {
       isDirective = isDirectiveAttr(attributeName);
     }
@@ -455,7 +455,7 @@ function transformTemplate(
           clearBindAttrValue = dynamicValue[originalAttrValue.value.replace(BINDING_REG, '')];
         }
         const attrValue = clearBindAttrValue || originalAttrValue;
-        collectComponentDependentProps(path, attrValue, componentDependentProps);
+        collectComponentDependentProps(path, attrValue, null, componentDependentProps);
       }
     },
     JSXExpressionContainer: handleJSXExpressionContainer,
@@ -473,11 +473,13 @@ function transformTemplate(
             let hasClassName = false;
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
-                if (attr.name.name === 'class') {
+                const attrName = attr.name.name;
+                if (attrName === 'class') {
                   attr.value.value = propsMap.className + ' ' + attr.value.value;
                   hasClassName = true;
-                } else if (propsMap[attr.name.name]) {
-                  attr.name.name = propsMap[attr.name.name];
+                }
+                if (propsMap[attrName] && attrName !== 'className') {
+                  attr.name.name = propsMap[attrName];
                 }
               }
             });
@@ -556,7 +558,8 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
     });
     return t.identifier(name);
   }
-  const { object, property, computed } = expression;
+  const { object, property } = expression;
+  let { computed } = expression;
   let objectReplaceNode = object;
   let propertyReplaceNode = property;
   if (!object.__transformed) {
@@ -594,7 +597,8 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
         dynamicBinding,
         isDirective,
       );
-    } else if (t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
+    }
+    if (computed && t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
       propertyReplaceNode = transformIdentifier(
         property,
         dynamicBinding,
@@ -615,6 +619,7 @@ function transformIdentifier(expression, dynamicBinding, isDirective) {
   if (
     expression.__listItem && !expression.__listItem.item
     || expression.__templateVar
+    || expression.__slotScope
   ) {
     // The identifier is x-for args or template variable or map's index
     replaceNode = expression;
@@ -716,7 +721,7 @@ function checkMemberHasThis(expression) {
 /**
  * JSXAttribute path
  * */
-function collectComponentDependentProps(path, attrValue, componentDependentProps) {
+function collectComponentDependentProps(path, attrValue, attrPath, componentDependentProps) {
   const { node } = path;
   const attrName = node.name.name;
   const jsxEl = path.findParent(p => p.isJSXElement()).node;
@@ -726,6 +731,9 @@ function collectComponentDependentProps(path, attrValue, componentDependentProps
     && attrValue.type
     && jsxEl.__tagId
   ) {
+    if (attrPath) {
+      attrValue = parseExpression('(' + attrPath.toString() + ')'); // deep clone
+    }
     componentDependentProps[jsxEl.__tagId].props =
       componentDependentProps[jsxEl.__tagId].props || {};
     componentDependentProps[jsxEl.__tagId].props[

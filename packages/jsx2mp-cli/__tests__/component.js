@@ -33,12 +33,12 @@ describe('Component compiled result', () => {
     expect(axmlContent).toEqual(
       `<block a:if="{{$ready}}"><view class="__rax-view">
       Hello World!
-      <rax-image source="{{ uri: _d0 }}" __tagId="0" /></view></block>`);
+      <rax-image source="{{ uri: _d0 }}" c="{{_d1 && _d2}}" d="{{_d0 ? _d1 : _d2}}" __tagId="0" /></view></block>`);
   });
 
   it('should return correct js', () => {
     expect(jsContent).toEqual(
-      '\"use strict\";var _jsx2mpRuntime=require(\"./npm/jsx2mp-runtime\"),img=\"./assets/rax.png\",__def__=function(){this._updateChildProps(\"0\",{source:{uri:img}}),this._updateData({_d0:img}),this._updateMethods({})};Component((0,_jsx2mpRuntime.createComponent)(__def__));'
+      '\"use strict\";var _jsx2mpRuntime=require(\"./npm/jsx2mp-runtime\"),img=\"./assets/rax.png\",a=0,b=1,__def__=function(){this._updateChildProps(\"0\",{source:{uri:img},c:a&&b,d:img?a:b}),this._updateData({_d0:img,_d1:a,_d2:b}),this._updateMethods({})};Component((0,_jsx2mpRuntime.createComponent)(__def__));'
     );
   });
 

@@ -8,6 +8,8 @@ const RUNTIME = 'jsx2mp-runtime';
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 
+const getRuntimeRelativePath = (distSourcePath, outputPath) => './' + join(relative(dirname(distSourcePath), join(outputPath, 'npm')), RUNTIME);
+
 const defaultOptions = {
   normalizeNpmFileName: (s) => s,
 };
@@ -51,12 +53,9 @@ module.exports = function visitor({ types: t }, options) {
           }
 
           if (isRaxModule(value)) {
-            let runtimePath = getRuntimeByPlatform(platform.type);
-            if (!disableCopyNpm) {
-              const rootNpmRelativePath = relative(dirname(distSourcePath), join(outputPath, 'npm'));
-              runtimePath = './' + join(rootNpmRelativePath, RUNTIME);
-            }
+            const runtimePath = disableCopyNpm ? getRuntimeByPlatform(platform.type) : getRuntimeRelativePath(distSourcePath, outputPath);
             path.node.source = t.stringLiteral(runtimePath);
+            transformPathMap[runtimePath] = true;
             return;
           }
 
@@ -89,12 +88,9 @@ module.exports = function visitor({ types: t }, options) {
               }
 
               if (isRaxModule(moduleName)) {
-                let runtimePath = t.stringLiteral(getRuntimeByPlatform(platform.type));
-                if (!disableCopyNpm) {
-                  runtimePath = source(moduleName, nodeModulesPathList, state.cwd);
-                }
+                const runtimePath = disableCopyNpm ? getRuntimeByPlatform(platform.type) : getRuntimeRelativePath(distSourcePath, outputPath);
                 path.node.arguments = [
-                  runtimePath
+                  t.stringLiteral(runtimePath)
                 ];
                 return;
               }

@@ -16,6 +16,7 @@ import {
   ON_PULL_DOWN_REFRESH,
   ON_SHARE_APP_MESSAGE,
   ON_TAB_ITEM_TAP,
+  ON_TITLE_CLICK,
   COMPONENT_DID_MOUNT,
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
@@ -200,10 +201,10 @@ export default class Component {
     if (!this.__mounted) return;
     // Step1: propTypes check, now skipped.
     // Step2: make props to prevProps, and trigger willReceiveProps
-    const nextProps = this.props; // actually this is nextProps
+    const nextProps = this.nextProps || this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
     if (diffProps(prevProps, nextProps)) {
-      this._trigger(COMPONENT_WILL_RECEIVE_PROPS, this.props);
+      this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
     }
 
     // Step3: collect pending state
@@ -279,6 +280,7 @@ export default class Component {
       case ON_PAGE_SCROLL:
       case ON_REACH_BOTTOM:
       case ON_TAB_ITEM_TAP:
+      case ON_TITLE_CLICK:
       case ON_PULL_DOWN_REFRESH:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
