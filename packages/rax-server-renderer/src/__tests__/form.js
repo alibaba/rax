@@ -159,4 +159,27 @@ describe('form', () => {
       expect(str).toBe('<select value="bar"><option value="bar">A B</option></select>');
     });
   });
+
+  describe('textarea', function() {
+    it('a textarea with an onChange', () => {
+      const str = renderToString(
+        <textarea onChange={() => {}} />
+      );
+      expect(str).toBe('<textarea></textarea>');
+    });
+
+    it('a textarea with and readOnly', () => {
+      const str = renderToString(
+        <textarea readOnly={true} />
+      );
+      expect(str).toBe('<textarea readOnly="true"></textarea>');
+    });
+
+    it('a textarea with a value and no onChange/readOnly', () => {
+      const str = renderToString(
+        <textarea />
+      );
+      expect(str).toBe('<textarea></textarea>');
+    });
+  });
 });
