@@ -3,6 +3,7 @@ const babelParser = require('@babel/parser');
 const invokeModules = require('../utils/invokeModules');
 const traverse = require('../utils/traverseNodePath');
 const getDefaultExportedPath = require('../utils/getDefaultExportedPath');
+const getProgramPath = require('../utils/getProgramPath');
 const parserOption = require('./option');
 const md5 = require('md5');
 
@@ -111,6 +112,7 @@ function parse(code, options) {
   const ast = parseCode(code);
   const imported = getImported(ast);
   const exported = getExported(ast);
+  const programPath = getProgramPath(ast);
   const defaultExportedPath = getDefaultExportedPath(ast);
 
   const ret = {
@@ -118,6 +120,7 @@ function parse(code, options) {
     imported,
     exported,
     defaultExportedPath,
+    programPath,
     assets: {},
   };
 

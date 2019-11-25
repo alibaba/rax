@@ -1,7 +1,7 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
+const { isWeexModule } = require('../utils/checkModule');
 
-const WEEX_MODULE_REG = /^@weex(-module)?\//;
 function transformFunction(ast) {
   traverse(ast, {
     CallExpression(path) {
@@ -11,7 +11,7 @@ function transformFunction(ast) {
         node.arguments.length === 1 &&
       t.isStringLiteral(node.arguments[0])) {
         const moduleName = node.arguments[0].value;
-        if (WEEX_MODULE_REG.test(moduleName)) {
+        if (isWeexModule(moduleName)) {
           path.replaceWith(t.nullLiteral());
         }
       }
