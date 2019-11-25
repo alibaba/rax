@@ -58,4 +58,55 @@ describe('form', () => {
       expect(str).toBe('<input type="checkbox" checked disabled>');
     });
   });
+
+  describe('input', function() {
+    it('an input with a value and an onChange', () => {
+      const str = renderToString(
+        <input value="foo" onChange={() => {}} />
+      );
+      expect(str).toBe('<input value="foo">');
+    });
+
+    it('an input with a value and readOnly', () => {
+      const str = renderToString(
+        <input value="foo" readOnly={true} />
+      );
+      expect(str).toBe('<input value="foo" readOnly>');
+    });
+
+    it('an input with a value and no onChange/readOnly', () => {
+      const str = renderToString(
+        <input value="foo" />
+      );
+      expect(str).toBe('<input value="foo">');
+    });
+
+    it('an input with a defaultValue', () => {
+      const str = renderToString(
+        <input defaultValue="foo" />
+      );
+      expect(str).toBe('<input value="foo">');
+    });
+
+    it('an input value overriding defaultValue', () => {
+      const str = renderToString(
+        <input value="foo" defaultValue="bar" readOnly={true} />
+      );
+      expect(str).toBe('<input value="foo" readOnly>');
+    });
+
+    it('an input value overriding defaultValue no matter the prop order', () => {
+      const str = renderToString(
+        <input defaultValue="bar" value="foo" readOnly={true} />
+      );
+      expect(str).toBe('<input value="foo" readOnly>');
+    });
+
+    it('an zero input value overriding defaultValue', () => {
+      const str = renderToString(
+        <input defaultValue={9} value={0} readOnly={true} />
+      );
+      expect(str).toBe('<input value="0" readOnly>');
+    });
+  });
 });
