@@ -15,9 +15,11 @@
   "engines": {
     "npm": ">=3.0.0"
   },
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  },
   "dependencies": {
     "universal-env": "^1.0.0",
-    "style-unit": "^1.0.0",
-    "rax": "^1.0.0"
+    "style-unit": "^1.0.0"
   }
 }
