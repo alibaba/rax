@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, createRef, forwardRef} from 'rax';
+import {createElement} from 'rax';
 import {renderToString} from '../index';
 
 describe('refs', () => {
