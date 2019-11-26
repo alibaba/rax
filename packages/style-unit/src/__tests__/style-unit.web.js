@@ -1,4 +1,4 @@
-import { convertUnit, setDecimalPixelTransformer, getRpx, setRpx } from '..';
+import { convertUnit, getViewportWidth, setViewportWidth } from '..';
 
 jest.mock('universal-env', () => {
   return {
@@ -10,6 +10,7 @@ jest.mock('universal-env', () => {
 
 describe('Web style-unit', () => {
   describe('convertUnit', () => {
+    setViewportWidth(375);
     it('should recognize number', () => {
       expect(convertUnit(500, 'width')).toEqual('500');
     });
@@ -27,7 +28,7 @@ describe('Web style-unit', () => {
     });
 
     it('should recognize rpx', () => {
-      expect(convertUnit('375rpx', 'width')).toEqual('50vw');
+      expect(convertUnit('375rpx', 'width')).toEqual('100vw');
     });
 
     it('should recognize vh', () => {
@@ -40,8 +41,15 @@ describe('Web style-unit', () => {
     });
 
     it('should recognize transform', () => {
-      expect(convertUnit('375rpx 20px 375rpx', 'margin')).toEqual('50vw 20px 50vw');
-      expect(convertUnit('translateX(375rpx) translateY(375rpx)', 'transform')).toEqual('translateX(50vw) translateY(50vw)');
+      expect(convertUnit('375rpx 20px 375rpx', 'margin')).toEqual('100vw 20px 100vw');
+      expect(convertUnit('translateX(375rpx) translateY(375rpx)', 'transform')).toEqual('translateX(100vw) translateY(100vw)');
+    });
+  });
+
+  describe('exported API', () => {
+    it('get and set viewportWidth', () => {
+      setViewportWidth(500);
+      expect(getViewportWidth()).toEqual(500);
     });
   });
 });
