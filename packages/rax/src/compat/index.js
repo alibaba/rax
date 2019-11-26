@@ -8,6 +8,7 @@ Rax.Children = Children;
 Rax.isValidElement = isValidElement;
 Rax.createFactory = createFactory;
 Rax.cloneElement = cloneElement;
+Rax.Component.prototype.isReactComponent = {};
 
 export * from '../../index';
 export {
