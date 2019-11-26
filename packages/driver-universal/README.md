@@ -32,5 +32,5 @@ render(<Example />, null, {
 | driver | append unit to relevant styles | 'rpx' translate | Compatible with flex | Compatible with event |
 | ------ | ------------------------------ | --------------- | -------------------- | --------------------- |
 | driver-dom | Append 'px' | Translate to 'vw' | Do nothing | Do nothing  |
-| driver-weex | Append 'px' that relative to the width of the screen. | Translate to 'px' that relative to the width of the screen. | Do nothing | Do nothing |
-| driver-universal | Append 'rpx' | Do nothing | Support parsing array like display: ["-webkit-box", "-webkit-flex", "flex"] | Support input doubleclick |
+| driver-weex | Use 'px' that relative to the width of the screen. |  Do nothing | Do nothing | Do nothing |
+| driver-universal | Append 'rpx' | Use 'px' that relative to the width of the screen, In weex | Support parsing array like display: ["-webkit-box", "-webkit-flex", "flex"] | Support input doubleclick |
