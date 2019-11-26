@@ -10,6 +10,7 @@ const global =
       ? global
       : {};
 
+// Init toFixed method
 const unitPrecision = 4;
 const toFixed = (number, precision) => {
   const multiplier = Math.pow(10, precision + 1);
@@ -29,7 +30,7 @@ if (getRpx() === undefined) {
   setRpx(1);
 }
 
-// Set default viewport width
+// Viewport width, default to 750.
 if (getViewportWidth() === undefined) {
   setViewportWidth(750);
 }
@@ -50,7 +51,13 @@ export function isRpx(str) {
  * @returns {String}
  */
 export function calcRpx(str) {
-  return str.replace(RPX_REG, isWeb ? decimalVWTransformer : decimalPixelTransformer);
+  if (isWeb) {
+    // In Web convert rpx to 'vw', same as driver-dom and driver-universal
+    return str.replace(RPX_REG, decimalVWTransformer);
+  } else {
+    // In WEEX and miniApp convert rpx to 'px'
+    return str.replace(RPX_REG, decimalPixelTransformer);
+  }
 }
 
 export function getRpx() {
