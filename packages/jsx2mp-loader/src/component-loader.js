@@ -127,7 +127,25 @@ module.exports = async function componentLoader(content) {
         options: loaderOptions
       });
     } else {
-      denpendencies.push({ name });
+      const importedArray = transformed.imported[name];
+      let entirePush = false;
+      importedArray.forEach(importedContent => {
+        // Component library
+        if (importedContent.isFromComponentLibrary) {
+          denpendencies.push({
+            name,
+            loader: ScriptLoader,
+            options: Object.assign({}, loaderOptions, {
+              importedComponent: importedContent.local
+            })
+          });
+        } else {
+          if (!entirePush) {
+            denpendencies.push({ name });
+            entirePush = true;
+          }
+        }
+      });
     }
   });
 
