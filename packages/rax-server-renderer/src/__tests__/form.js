@@ -1,7 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, createContext, Component, Fragment} from 'rax';
-import PropTypes from 'prop-types';
+import {createElement} from 'rax';
 import {renderToString} from '../index';
 
 describe('form', () => {
