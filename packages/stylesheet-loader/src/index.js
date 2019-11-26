@@ -10,7 +10,7 @@ const FONT_FACE_RULE = 'font-face';
 const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
 
-module.exports = function (source) {
+module.exports = function(source) {
   this.cacheable && this.cacheable();
 
   const stylesheet = css.parse(source).stylesheet;
@@ -38,7 +38,7 @@ const parse = (parsedQuery, stylesheet) => {
   let mediaRules = [];
   const transformDescendantCombinator = parsedQuery.transformDescendantCombinator;
 
-  stylesheet.rules.forEach(function (rule) {
+  stylesheet.rules.forEach(function(rule) {
     let style = {};
 
     // normal rule
