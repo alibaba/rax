@@ -14,6 +14,7 @@ describe('Component', () => {
     let foo = new Foo();
     expect(foo.setState).toBeDefined();
     expect(foo.forceUpdate).toBeDefined();
+    expect(foo.isReactComponent).toBeDefined();
   });
 
   it('create a component with prop', () => {
