@@ -31,7 +31,8 @@ class Location {
     this.hash = '';
   }
 
-  __updatePageOption(pageOptions) {
+  __updatePageOption(pageId, pageOptions) {
+    this._pageId = pageId;
     this._currentPageOptions = pageOptions;
   }
 
