@@ -3,7 +3,7 @@
 import css from 'css';
 import transformer from './transformer';
 import loaderUtils from 'loader-utils';
-import {getErrorMessages, getWarnMessages, resetMessage} from './promptMessage';
+import { getErrorMessages, getWarnMessages, resetMessage } from './promptMessage';
 
 const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
@@ -19,9 +19,13 @@ module.exports = function(source) {
     throw new Error('StyleSheet Parsing Error occured.');
   }
 
-  const parsedQuery = loaderUtils.parseQuery(this.query);
+  // getOptions can return null if no query passed.
+  const parsedQuery = loaderUtils.getOptions(this) || {};
 
-  parsedQuery.log = parsedQuery.log === 'true';
+  // Compatible with string true.
+  if (parsedQuery.log === 'true') {
+    parsedQuery.log = true;
+  }
 
   const parsedData = parse(parsedQuery, stylesheet);
 
@@ -90,7 +94,7 @@ const parse = (parsedQuery, stylesheet) => {
 };
 
 const genStyleContent = (parsedData, parsedQuery) => {
-  const {styles, fontFaceRules, mediaRules} = parsedData;
+  const { styles, fontFaceRules, mediaRules } = parsedData;
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
