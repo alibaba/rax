@@ -1,6 +1,14 @@
 import { convertUnit, setDecimalPixelTransformer, getRpx, setRpx } from '..';
 
-describe('style-unit', () => {
+jest.mock('universal-env', () => {
+  return {
+    isMiniApp: false,
+    isWeb: false,
+    isWeex: true
+  };
+});
+
+describe('Weex style-unit', () => {
   describe('convertUnit', () => {
     setRpx(414 / 750);
 

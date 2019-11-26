@@ -1,4 +1,4 @@
-import { isWeb } from 'universal-env';
+import { isWeb, isWeex, isMiniApp } from 'universal-env';
 
 const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
 const GLOBAL_RPX_UNIT = '__rpx_coefficient__';
@@ -23,7 +23,7 @@ const toFixed = (number, precision) => {
 let decimalPixelTransformer = (rpx) => parseFloat(rpx) * getRpx() + 'px';
 
 // Default decimal vw transformer.
-let decimalVWTransformer = (rpx) => toFixed(parseFloat(rpx) / (getViewportWidth() / 100), unitPrecision) + 'vw';
+const decimalVWTransformer = (rpx) => toFixed(parseFloat(rpx) / (getViewportWidth() / 100), unitPrecision) + 'vw';
 
 // Default 1 rpx to 1 px
 if (getRpx() === undefined) {
@@ -54,9 +54,12 @@ export function calcRpx(str) {
   if (isWeb) {
     // In Web convert rpx to 'vw', same as driver-dom and driver-universal
     return str.replace(RPX_REG, decimalVWTransformer);
-  } else {
-    // In WEEX and miniApp convert rpx to 'px'
+  } else if (isWeex || isMiniApp) {
+    // In Weex and miniApp convert rpx to 'px'
     return str.replace(RPX_REG, decimalPixelTransformer);
+  } else {
+    // Unknown platform return original value
+    return str;
   }
 }
 
