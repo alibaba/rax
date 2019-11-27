@@ -2,13 +2,15 @@ import { isWeb, isWeex } from 'universal-env';
 
 const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
 const GLOBAL_RPX_COEFFICIENT = '__rpx_coefficient__';
-const GLOBAL_VIEWPORT_WIDTH = '__rpx_viewport_width__';
+const GLOBAL_VIEWPORT_WIDTH = '__viewport_width__';
 const global =
   typeof window === 'object'
     ? window
     : typeof global === 'object'
       ? global
       : {};
+// convertUnit method targetPlatform
+let targetPlatform = isWeb ? 'web' : isWeex ? 'weex' : '';
 
 // Init toFixed method
 const unitPrecision = 4;
@@ -17,7 +19,6 @@ const toFixed = (number, precision) => {
   const wholeNumber = Math.floor(number * multiplier);
   return Math.round(wholeNumber / 10) * 10 / multiplier;
 };
-
 
 // Dedault decimal px transformer.
 let decimalPixelTransformer = (rpx) => parseFloat(rpx) * getRpx() + 'px';
@@ -51,11 +52,11 @@ export function isRpx(str) {
  * @returns {String}
  */
 export function calcRpx(str) {
-  if (isWeb) {
+  if (targetPlatform === 'web') {
     // In Web convert rpx to 'vw', same as driver-dom and driver-universal
     // '375rpx' => '50vw'
     return str.replace(RPX_REG, decimalVWTransformer);
-  } else if (isWeex) {
+  } else if (targetPlatform === 'weex') {
     // In Weex convert rpx to 'px'
     // '375rpx' => 375 * rpx
     return str.replace(RPX_REG, decimalPixelTransformer);
@@ -96,11 +97,15 @@ const cache = Object.create(null);
  * Convert rpx.
  * @param value
  * @param prop
+ * @param platform
  * @return {String} Transformed value.
  */
-export function convertUnit(value, prop) {
-  const cacheKey = `${prop}-${value}`;
+export function convertUnit(value, prop, platform) {
+  const cacheKey = `${prop}-${value}-${platform}`;
   const hit = cache[cacheKey];
+  if (platform) {
+    targetPlatform = platform;
+  }
   if (hit) {
     return hit;
   } else {
