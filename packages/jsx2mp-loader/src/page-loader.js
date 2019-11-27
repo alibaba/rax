@@ -121,11 +121,29 @@ module.exports = async function pageLoader(content) {
       const componentPath = resolve(dirname(resourcePath), name);
       denpendencies.push({
         name,
-        loader: isFromConstantDir(componentPath) ? ScriptLoader : ComponentLoader, // Native miniapp component js file will loaded by script-loader
+        loader: isFromConstantDir(componentPath) ? ScriptLoader : ComponentLoader, // Native miniapp component js file will be loaded by script-loader
         options: loaderOptions
       });
     } else {
-      denpendencies.push({ name });
+      const importedArray = transformed.imported[name];
+      let entirePush = false;
+      importedArray.forEach(importedContent => {
+        // Component library
+        if (importedContent.isFromComponentLibrary) {
+          denpendencies.push({
+            name,
+            loader: ScriptLoader,
+            options: Object.assign({}, loaderOptions, {
+              importedComponent: importedContent.local
+            })
+          });
+        } else {
+          if (!entirePush) {
+            denpendencies.push({ name });
+            entirePush = true;
+          }
+        }
+      });
     }
   });
 
