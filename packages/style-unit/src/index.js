@@ -101,9 +101,10 @@ const cache = Object.create(null);
  * @return {String} Transformed value.
  */
 export function convertUnit(value, prop, platform) {
-  const cacheKey = `${prop}-${value}-${platform}`;
+  let cacheKey = `${prop}-${value}`;
   const hit = cache[cacheKey];
   if (platform) {
+    cacheKey += `-${platform}`;
     targetPlatform = platform;
   }
   if (hit) {
