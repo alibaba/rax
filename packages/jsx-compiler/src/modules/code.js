@@ -4,6 +4,8 @@ const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
+const CodeError = require('../utils/CodeError');
+const { isNpmModule, isWeexModule } = require('../utils/checkModule');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
@@ -13,30 +15,33 @@ const CREATE_PAGE = 'createPage';
 const CREATE_STYLE = 'createStyle';
 const CLASSNAMES = 'classnames';
 const CREATE_CONTEXT = 'createContext';
+const FORWARD_REF = 'forwardRef';
 
 const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
 const SAFE_CREATE_PAGE = '__create_page__';
 const SAFE_CREATE_STYLE = '__create_style__';
 const SAFE_CLASSNAMES = '__classnames__';
+const SAFT_DEFAULT_NAME = '__default_name__';
 
 const USE_EFFECT = 'useEffect';
 const USE_STATE = 'useState';
 const USE_CONTEXT = 'useContext';
 const USE_REF = 'useRef';
 const USE_REDUCER = 'useReducer';
+const USE_LAYOUT_EFFECT = 'useLayoutEffect';
+const USE_IMPERATIVEHANDLE = 'useImperativeHandle';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
-const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, USE_REDUCER, CREATE_CONTEXT];
+const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF,
+  USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT];
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
 const isFileModule = (mod) => /\.(png|jpe?g|gif|bmp|webp)$/.test(mod);
 const isRelativeImport = (mod) => mod[0] === '.';
-
-const isCoreHooksAPI = (node) => [].includes(node.name);
 
 function getConstructor(type) {
   switch (type) {
@@ -55,7 +60,9 @@ function getConstructor(type) {
  */
 module.exports = {
   parse(parsed, code, options) {
-    const { defaultExportedPath, eventHandlers = [] } = parsed;
+    const { ast, programPath, defaultExportedPath, renderFunctionPath,
+      useCreateStyle, useClassnames, dynamicValue, dynamicEvents, imported,
+      contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
     const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
     if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
       // Can not found default export, otherwise app.js is excluded.
@@ -65,70 +72,70 @@ module.exports = {
 
     if (type === 'app') {
       userDefineType = 'function';
-    } else if (isFunctionComponent(defaultExportedPath)) { // replace with class def.
-      userDefineType = 'function';
-      const { id, generator, async, body, params } = defaultExportedPath.node;
-      const replacer = getReplacer(defaultExportedPath);
-      if (replacer) {
-        replacer.replaceWith(
-          t.variableDeclaration('const', [
-            t.variableDeclarator(
-              t.identifier(EXPORTED_DEF),
-              t.functionExpression(id, params, body, generator, async)
-            )
-          ])
-        );
+    } else {
+      const exportComponentPath = getExportComponentPath(defaultExportedPath, programPath, code);
+      const replacer = getReplacer(exportComponentPath);
+      let { id, body } = exportComponentPath.node;
+      if (!id) {
+        id = t.identifier(SAFT_DEFAULT_NAME);
       }
-    } else if (isClassComponent(defaultExportedPath)) {
-      userDefineType = 'class';
+      if (isFunctionComponent(exportComponentPath)) { // replace with class def.
+        userDefineType = 'function';
+        const { generator, async, params } = exportComponentPath.node;
+        if (replacer) {
+          replacer.replaceWith(
+            t.functionDeclaration(id, params, body, generator, async)
+          );
+        }
+      } else if (isClassComponent(exportComponentPath)) {
+        userDefineType = 'class';
 
-      const { id, superClass, body, decorators } = defaultExportedPath.node;
-      const replacer = getReplacer(defaultExportedPath);
-      // @NOTE: Remove superClass due to useless of Component base class.
-      if (replacer) {
-        replacer.replaceWith(
-          t.variableDeclaration('const', [
-            t.variableDeclarator(
-              t.identifier(EXPORTED_DEF),
-              t.classExpression(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
-            )
-          ])
-        );
+        const { decorators } = exportComponentPath.node;
+        // @NOTE: Remove superClass due to useless of Component base class.
+        if (replacer) {
+          replacer.replaceWith(
+            t.classDeclaration(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
+          );
+        }
       }
+      replacer.insertAfter(t.variableDeclaration('let', [
+        t.variableDeclarator(
+          t.identifier(EXPORTED_DEF), id)
+      ]));
     }
-    const exportedVariables = collectCoreMethods(parsed.imported[RAX_PACKAGE] || []);
+    const exportedVariables = collectCoreMethods(imported[RAX_PACKAGE] || []);
     const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
     const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
-    removeRaxImports(parsed.ast);
-    ensureIndexPathInImports(parsed.ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
-    renameCoreModule(parsed.ast, runtimePath);
-    renameFileModule(parsed.ast);
-    renameAppConfig(parsed.ast, sourcePath, resourcePath);
+    removeRaxImports(ast);
+    ensureIndexPathInImports(ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
+    renameCoreModule(ast, runtimePath);
+    renameFileModule(ast);
+    renameAppConfig(ast, sourcePath, resourcePath);
 
     if (!disableCopyNpm) {
       const currentNodeModulePath = join(sourcePath, 'npm');
       const npmRelativePath = relative(dirname(resourcePath), currentNodeModulePath);
-      renameNpmModules(parsed.ast, npmRelativePath, resourcePath, cwd);
+      renameNpmModules(ast, npmRelativePath, resourcePath, cwd);
     }
 
     if (type !== 'app') {
-      addDefine(parsed.ast, type, userDefineType, eventHandlers, parsed.useCreateStyle, parsed.useClassnames, exportedVariables, runtimePath);
+      addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath);
     }
 
-    removeDefaultImports(parsed.ast);
+    removeDefaultImports(ast);
 
     /**
      * updateChildProps: collect props dependencies.
      */
-    if (type !== 'app' && parsed.renderFunctionPath) {
-      const fnBody = parsed.renderFunctionPath.node.body.body;
+    if (type !== 'app' && renderFunctionPath) {
+      const fnBody = renderFunctionPath.node.body.body;
       let firstReturnStatementIdx = -1;
       for (let i = 0, l = fnBody.length; i < l; i++) {
         if (t.isReturnStatement(fnBody[i])) firstReturnStatementIdx = i;
       }
 
       const updateProps = t.memberExpression(t.identifier('this'), t.identifier('_updateChildProps'));
-      const componentsDependentProps = parsed.componentDependentProps || {};
+      const componentsDependentProps = componentDependentProps || {};
 
       Object.keys(componentsDependentProps).forEach((tagId) => {
         const { props, tagIdExpression, parentNode } = componentsDependentProps[tagId];
@@ -164,10 +171,10 @@ module.exports = {
           parentNode && parentNode.remove && parentNode.remove();
         }
       });
-      addUpdateData(parsed.dynamicValue, parsed.renderItemFunctions, parsed.renderFunctionPath);
-      addUpdateEvent(parsed.dynamicEvents, parsed.eventHandler, parsed.renderFunctionPath);
-      addProviderIniter(parsed.contextList, parsed.renderFunctionPath);
-      addRegisterRefs(parsed.refs, parsed.renderFunctionPath);
+      addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath);
+      addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
+      addProviderIniter(contextList, renderFunctionPath);
+      addRegisterRefs(refs, renderFunctionPath);
     }
   },
 };
@@ -257,16 +264,6 @@ function ensureIndexPathInImports(ast, resourcePath) {
   });
 }
 
-const WEEX_MODULE_REG = /^@weex(-module)?\//;
-
-function isNpmModule(value) {
-  return !(value[0] === '.' || value[0] === '/');
-}
-
-function isWeexModule(value) {
-  return WEEX_MODULE_REG.test(value);
-}
-
 function getNpmName(value) {
   const isScopedNpm = /^_?@/.test(value);
   return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
@@ -310,7 +307,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath) {
+function addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -323,72 +320,67 @@ function addDefine(ast, type, userDefineType, eventHandlers, useCreateStyle, use
       importedIdentifier = CREATE_COMPONENT;
       break;
   }
+  const localIdentifier = t.identifier(safeCreateInstanceId);
+  // Component(__create_component__(__class_def__));
+  const args = [t.identifier(EXPORTED_DEF)];
 
-  traverse(ast, {
-    Program(path) {
-      const localIdentifier = t.identifier(safeCreateInstanceId);
-      // Component(__create_component__(__class_def__));
-      const args = [t.identifier(EXPORTED_DEF)];
+  // import { createComponent as __create_component__ } from "/__helpers/component";
+  const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
+  if ((type === 'page' || type === 'component') && userDefineType === 'class') {
+    specifiers.push(t.importSpecifier(
+      t.identifier(SAFE_SUPER_COMPONENT),
+      t.identifier(SUPER_COMPONENT)
+    ));
+  }
 
-      // import { createComponent as __create_component__ } from "/__helpers/component";
-      const specifiers = [t.importSpecifier(localIdentifier, t.identifier(importedIdentifier))];
-      if ((type === 'page' || type === 'component') && userDefineType === 'class') {
-        specifiers.push(t.importSpecifier(
-          t.identifier(SAFE_SUPER_COMPONENT),
-          t.identifier(SUPER_COMPONENT)
-        ));
-      }
+  if (Array.isArray(exportedVariables)) {
+    exportedVariables.forEach(id => {
+      specifiers.push(t.importSpecifier(t.identifier(id), t.identifier(id)));
+    });
+  }
+  if (useCreateStyle) {
+    specifiers.push(t.importSpecifier(
+      t.identifier(SAFE_CREATE_STYLE),
+      t.identifier(CREATE_STYLE)
+    ));
+  }
 
-      if (Array.isArray(exportedVariables)) {
-        exportedVariables.forEach(id => {
-          specifiers.push(t.importSpecifier(t.identifier(id), t.identifier(id)));
-        });
-      }
-      if (useCreateStyle) {
-        specifiers.push(t.importSpecifier(
-          t.identifier(SAFE_CREATE_STYLE),
-          t.identifier(CREATE_STYLE)
-        ));
-      }
+  if (useClassnames) {
+    specifiers.push(t.importSpecifier(
+      t.identifier(SAFE_CLASSNAMES),
+      t.identifier(CLASSNAMES)
+    ));
+  }
 
-      if (useClassnames) {
-        specifiers.push(t.importSpecifier(
-          t.identifier(SAFE_CLASSNAMES),
-          t.identifier(CLASSNAMES)
-        ));
-      }
+  programPath.node.body.unshift(
+    t.importDeclaration(
+      specifiers,
+      t.stringLiteral(runtimePath)
+    )
+  );
 
-      path.node.body.unshift(
-        t.importDeclaration(
-          specifiers,
-          t.stringLiteral(runtimePath)
-        )
-      );
+  // __create_component__(__class_def__, { events: ['_e*']})
+  if (eventHandlers.length > 0) {
+    args.push(
+      t.objectExpression([
+        t.objectProperty(t.identifier('events'), t.arrayExpression(eventHandlers.map(e => t.stringLiteral(e))))
+      ])
+    );
+  }
 
-      // __create_component__(__class_def__, { events: ['_e*']})
-      if (eventHandlers.length > 0) {
-        args.push(
-          t.objectExpression([
-            t.objectProperty(t.identifier('events'), t.arrayExpression(eventHandlers.map(e => t.stringLiteral(e))))
-          ])
-        );
-      }
-
-      path.node.body.push(
-        t.expressionStatement(
+  programPath.node.body.push(
+    t.expressionStatement(
+      t.callExpression(
+        t.identifier(getConstructor(type)),
+        [
           t.callExpression(
-            t.identifier(getConstructor(type)),
-            [
-              t.callExpression(
-                t.identifier(safeCreateInstanceId),
-                args
-              )
-            ],
+            t.identifier(safeCreateInstanceId),
+            args
           )
-        )
-      );
-    },
-  });
+        ],
+      )
+    )
+  );
 }
 
 function removeRaxImports(ast) {
@@ -404,31 +396,70 @@ function removeRaxImports(ast) {
 function removeDefaultImports(ast) {
   traverse(ast, {
     ExportDefaultDeclaration(path) {
-      path.remove();
+      const { node: { declaration } } = path;
+      if (/Expression$/.test(declaration.type)) {
+        path.replaceWith(t.assignmentExpression('=', t.identifier(EXPORTED_DEF), declaration));
+      } else {
+        path.remove();
+      }
     },
   });
 }
 
-function getReplacer(defaultExportedPath) {
-  if (defaultExportedPath.parentPath.isExportDefaultDeclaration()) {
+function getReplacer(exportComponentPath) {
+  if (exportComponentPath.parentPath.isExportDefaultDeclaration()) {
     /**
      * export default class {};
      */
-    return defaultExportedPath.parentPath;
-  } else if (defaultExportedPath.parentPath.isProgram()) {
+    return exportComponentPath.parentPath;
+  } else if (exportComponentPath.parentPath.isProgram()) {
     /**
      * class Foo {}
      * export default Foo;
      */
-    return defaultExportedPath;
-  } else if (defaultExportedPath.parentPath.isVariableDeclarator()) {
+    return exportComponentPath;
+  } else if (exportComponentPath.parentPath.isVariableDeclarator()) {
     /**
      * var Foo = class {}
      * export default Foo;
      */
-    return defaultExportedPath.parentPath.parentPath;
+    return exportComponentPath.parentPath.parentPath;
   } else {
     return null;
+  }
+}
+
+/**
+ * @param export default path
+ * @param program path
+ * @param source code
+ * @return should be replaced path
+ * */
+function getExportComponentPath(defaultExportedPath, programPath, code) {
+  const exportedNodeType = defaultExportedPath.node.type;
+  if (['ClassExpression', 'ClassDeclaration', 'FunctionDeclaration',
+    'ArrowFunctionExpression', 'FunctionExpression' ].includes(exportedNodeType)) {
+    return defaultExportedPath;
+  }
+  if (exportedNodeType === 'CallExpression') {
+    let exportComponentPath = defaultExportedPath;
+    // Only first param is component
+    const componentNode = defaultExportedPath.get('arguments')[0].node;
+    if (programPath.scope.hasBinding(componentNode.name)) {
+      programPath.traverse({
+        Declaration(path) {
+          const { node } = path;
+          if (node.id && t.isIdentifier(node.id, {
+            name: componentNode.name
+          })) {
+            exportComponentPath = path;
+          }
+        }
+      });
+    } else {
+      throw new CodeError(code, componentNode, componentNode.loc, 'Exported component is undefined');
+    }
+    return exportComponentPath;
   }
 }
 
