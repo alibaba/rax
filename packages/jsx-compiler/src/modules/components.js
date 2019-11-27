@@ -345,7 +345,10 @@ function removeImport(ast, alias) {
     ImportDeclaration(path) {
       const { node } = path;
       if (t.isStringLiteral(node.source) && node.source.value === alias.from) {
-        path.remove();
+        node.specifiers = (node.specifiers || []).filter(function(s) {
+          return !(s.local && s.local.name === alias.local);
+        });
+        if (!node.specifiers.length) path.remove();
       }
     },
   });
