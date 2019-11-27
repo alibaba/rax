@@ -1,4 +1,4 @@
-const WEEX_MODULE_REG = /^@weex(-module)?\//;
+const WEEX_MODULE_REG = /^@?weex-/;
 
 function isWeexModule(value) {
   return WEEX_MODULE_REG.test(value);
