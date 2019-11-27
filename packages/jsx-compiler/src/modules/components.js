@@ -41,10 +41,16 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     let tagId = '' + tagCount++;
 
     if (parentJSXListEl) {
-      const { args } = parentJSXListEl.node.__jsxlist;
+      const { args, parentList } = parentJSXListEl.node.__jsxlist;
       const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
-      parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
-      tagId += '-{{' + indexValue + '}}';
+      if (parentList) {
+        const parentListIndexValue = parentList.args[1].name;
+        parentPath.node.__tagIdExpression = [tagId, parentListIndexValue, new Expression(indexValue)];
+        tagId += `-{{${parentListIndexValue}}}-{{${indexValue}}}`;
+      } else {
+        parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+        tagId += `-{{${indexValue}}}`;
+      }
     }
     parentPath.node.__tagId = tagId;
     componentDependentProps[tagId] = componentDependentProps[tagId] || {};

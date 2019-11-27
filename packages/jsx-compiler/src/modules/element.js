@@ -628,6 +628,9 @@ function transformIdentifier(expression, dynamicBinding, isDirective) {
     itemNode.__listItem = {
       jsxplus: expression.__listItem.jsxplus,
     };
+    if (expression.name === expression.__listItem.originalIndex) {
+      expression.name = expression.__listItem.index;
+    }
     replaceNode = t.memberExpression(itemNode, expression);
   } else {
     const name = dynamicBinding.add({
