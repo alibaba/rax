@@ -31,7 +31,8 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     componentDependentProps,
   } = parsed;
   // Miniapp template tag name does not support special characters.
-  const componentTag = alias.default ? alias.name.replace(/@|\//g, '_') : `${alias.name.replace(/@|\//g, '_')}-${alias.local.toLowerCase()}`;
+  const aliasName = alias.name.replace(/@|\//g, '_');
+  const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
 
   if (!compiledComponents[componentTag]) {
