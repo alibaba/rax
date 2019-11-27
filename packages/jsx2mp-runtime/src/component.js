@@ -286,12 +286,10 @@ export default class Component {
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
         }
-        if (this.props.location) {
-          const pathname = this.props.location.pathname;
-          if (pageCycles[pathname]) {
-            if (pageCycles[pathname][cycle]) {
-              pageCycles[pathname][cycle].forEach(fn => fn(...args));
-            }
+        const pageId = this.instanceId;
+        if (pageCycles[pageId]) {
+          if (pageCycles[pageId][cycle]) {
+            pageCycles[pageId][cycle].forEach(fn => fn(...args));
           }
         }
         break;

@@ -26,16 +26,16 @@ export function usePageEffect(cycle, callback) {
     case ON_PULL_DOWN_REFRESH:
     case ON_TAB_ITEM_TAP:
     case ON_TITLE_CLICK:
-      const pathname = history && history.location.pathname;
+      const pageId = history && history.location._pageId;
       useEffect(() => {
         if (isFunction(callback)) {
-          if (!cycles[pathname]) {
-            cycles[pathname] = {};
+          if (!cycles[pageId]) {
+            cycles[pageId] = {};
           }
-          if (!cycles[pathname][cycle]) {
-            cycles[pathname][cycle] = [];
+          if (!cycles[pageId][cycle]) {
+            cycles[pageId][cycle] = [];
           }
-          cycles[pathname][cycle].push(callback);
+          cycles[pageId][cycle].push(callback);
         }
       }, []);
       break;
