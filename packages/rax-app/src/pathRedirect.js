@@ -8,7 +8,7 @@
 import { isWeex, isWeb } from 'universal-env';
 
 // We want to control applications on different platforms to jump to specific pages through unified parameters.
-// Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
+// Like https://xxx.com?_path=/page1, use `_path` to jump to the specific route.
 const TARGET_PATH_REG = /[?&]_path=([^&#]+)/i;
 
 export default function pathRedirect(history, routes) {
@@ -30,22 +30,22 @@ export default function pathRedirect(history, routes) {
     targetQuery = history.location.search.match(TARGET_PATH_REG);
   }
 
-  let isConformed = false;
+  let isConfirmed = false;
   targetPath = targetQuery ? targetQuery[1] : '';
 
   for (let i = 0, l = routes.length; i < l; i++) {
     if (targetPath === routes[i].path) {
-      isConformed = true;
+      isConfirmed = true;
       break;
     }
   }
 
-  if (targetPath && !isConformed) {
-    console.warn('Waring: url query `_path` should be an exits path in app.json, see: https://rax.js.org/docs/guide/routes ');
+  if (targetPath && !isConfirmed) {
+    console.warn('Warning: url query `_path` should be an exist path in app.json, see: https://rax.js.org/docs/guide/routes ');
     return false;
   }
 
-  // If `targetPath` exists, jump to a specific route.
+  // If `targetPath` exists, jump to the specific route.
   if (targetPath) {
     history.replace(targetPath + history.location.search);
   }
