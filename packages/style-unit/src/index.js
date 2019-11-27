@@ -1,7 +1,7 @@
-import { isWeb, isWeex, isMiniApp } from 'universal-env';
+import { isWeb, isWeex } from 'universal-env';
 
 const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
-const GLOBAL_RPX_UNIT = '__rpx_coefficient__';
+const GLOBAL_RPX_COEFFICIENT = '__rpx_coefficient__';
 const GLOBAL_VIEWPORT_WIDTH = '__rpx_viewport_width__';
 const global =
   typeof window === 'object'
@@ -46,29 +46,32 @@ export function isRpx(str) {
 }
 
 /**
- * Calculate rpx to pixels: '1.2rpx' => 1.2 * rpx
+ * Calculate rpx
  * @param {String} str
  * @returns {String}
  */
 export function calcRpx(str) {
   if (isWeb) {
     // In Web convert rpx to 'vw', same as driver-dom and driver-universal
+    // '375rpx' => '50vw'
     return str.replace(RPX_REG, decimalVWTransformer);
-  } else if (isWeex || isMiniApp) {
-    // In Weex and miniApp convert rpx to 'px'
+  } else if (isWeex) {
+    // In Weex convert rpx to 'px'
+    // '375rpx' => 375 * rpx
     return str.replace(RPX_REG, decimalPixelTransformer);
   } else {
-    // Unknown platform return original value
+    // Other platform return original value, like Mini-App and WX Mini-Program ...
+    // '375rpx' => '375rpx'
     return str;
   }
 }
 
 export function getRpx() {
-  return global[GLOBAL_RPX_UNIT];
+  return global[GLOBAL_RPX_COEFFICIENT];
 }
 
 export function setRpx(rpx) {
-  global[GLOBAL_RPX_UNIT] = rpx;
+  global[GLOBAL_RPX_COEFFICIENT] = rpx;
 }
 
 export function getViewportWidth() {
