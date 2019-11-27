@@ -1,7 +1,7 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 
-const WEEX_MODULE_REG = /^@weex(-module)?\//;
+const WEEX_MODULE_REG = /^@?weex-/;
 function transformFunction(ast) {
   traverse(ast, {
     CallExpression(path) {
