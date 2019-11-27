@@ -152,7 +152,7 @@ function propsToString(props, options) {
     var value = props[prop];
 
     if (prop === 'defaultValue') {
-      if (!props.checked) {
+      if (props.value == null) {
         prop = 'value';
       } else {
         continue;
