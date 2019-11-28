@@ -19,7 +19,7 @@
     "querystring": "^0.2.0",
     "rax-pwa": "^1.1.0",
     "rax-use-router": "^3.0.0",
-    "universal-env": "^1.0.7"
+    "universal-env": "^3.0.0"
   },
   "peerDependencies": {
     "rax": "^1.0.8"
