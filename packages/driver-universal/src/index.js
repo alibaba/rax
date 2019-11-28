@@ -1,7 +1,7 @@
 import { isWeex, isWeb, isKraken } from 'universal-env';
 import DriverDOM from './dom';
 import DriverWeex from './weex';
-import DriverKraken from './kraken';
+import createDriverKraken from 'driver-kraken';
 
 let DriverUniversal;
 if (isWeex) {
@@ -9,7 +9,7 @@ if (isWeex) {
 } else if (isWeb) {
   DriverUniversal = DriverDOM;
 } else if (isKraken) {
-  DriverUniversal = DriverKraken;
+  DriverUniversal = DcreateDriverKraken();
 } else {
   throw new Error('Your environment not supported by driver-universal.');
 }
