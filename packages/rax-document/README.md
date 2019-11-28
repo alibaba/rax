@@ -1,37 +1,41 @@
 # rax-document
 
-Provide components for build `Document` .
+Provide components for building Document.
 
 ## Usage
 
 ```jsx
 import { createElement } from 'rax';
-import { Root, Data, Styles, Scripts } from 'rax-document';
+import { Document, Root, Data, Styles, Scripts } from 'rax-document';
 
-function Document() {
+export default function(props) {
   return (
-    <html>
-      <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1"/>
-        <title>ssr-document-demo</title>
-        <Styles />
-      </head>
-      <body>
-        {/* root container */}
-        <Root />
-        {/* initial data from server side */}
-        <Data />
-        <Scripts />
-      </body>
-    </html>
+    <Document {...props}>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width,initial-scale=1"/>
+          <title>ssr-document-demo</title>
+          <Styles />
+        </head>
+        <body>
+          {/* root container */}
+          <Root />
+          {/* initial data from server side */}
+          <Data />
+          <Scripts />
+        </body>
+      </html>
+    </Document>
   );
 }
-
-export default Document;
 ```
 
 ## Components
+
+`Document`
+
+Provide context for the following Components.
 
 `Styles`
 
@@ -49,16 +53,16 @@ Root container for page. In normal Web app, it will be an empty node. In SSR pro
 
 Initial data from server side. Required only in SSR project.
 
-`DangerouslyStyle`
+`DangerouslySetInlineStyle`
 
 Component for write inline style.
 
 ```jsx
-<DangerouslyStyle>{`
+<DangerouslySetInlineStyle>{`
   body {
     background: #f00
   }
-`}</DangerouslyStyle>
+`}</DangerouslySetInlineStyle>
 ```
 
 This is a replacement for using `dangerouslySetInnerHTML`. The above code is equivalent to :
@@ -71,14 +75,14 @@ This is a replacement for using `dangerouslySetInnerHTML`. The above code is equ
 `}} />
 ```
 
-`DangerouslyScript`
+`DangerouslySetInlineScript`
 
 Component for write inline script.
 
 ```jsx
-<DangerouslyScript>{`
+<DangerouslySetInlineScript>{`
   alert('hello');
-`}</DangerouslyScript>
+`}</DangerouslySetInlineScript>
 ```
 
 This is an replacement for using `dangerouslySetInnerHTML`. The above code is equivalent to :

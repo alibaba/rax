@@ -1,7 +1,7 @@
 {
   "name": "rax-document",
   "version": "0.1.0",
-  "description": "Rax Document",
+  "description": "Provide components for building Document",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "repository": {
@@ -14,8 +14,6 @@
   "homepage": "https://github.com/alibaba/rax#readme",
   "engines": {
     "npm": ">=3.0.0"
-  },
-  "dependencies": {
   },
   "peerDependencies": {
     "rax": "^1.0.0"

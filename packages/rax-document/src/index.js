@@ -37,28 +37,28 @@ function Data() {
 function Styles() {
   const context = useContext(DocumentContext) || {};
 
-  const { styles = [] } = context;
+  const { publicPath, styles = [] } = context;
 
-  return styles.map((src, index) => <link rel="stylesheet" href={src} key={`style_${index}`} />);
+  return styles.map((src, index) => <link rel="stylesheet" href={`${publicPath}${src}`} key={`style_${index}`} />);
 }
 
 function Scripts() {
   const context = useContext(DocumentContext) || {};
 
-  const { scripts = [] } = context;
+  const { publicPath, scripts = [] } = context;
 
   return scripts.map(
-    (src, index) => <script src={src} key={`script_${index}`}>
+    (src, index) => <script src={`${publicPath}${src}`} key={`script_${index}`}>
       {/* self-closing script element will not work in HTML */}
     </script>
   );
 }
 
-function DangerouslyStyle(props) {
+function DangerouslySetInlineStyle(props) {
   return <style dangerouslySetInnerHTML={{__html: props.children}} />;
 }
 
-function DangerouslyScript(props) {
+function DangerouslySetInlineScript(props) {
   return <script dangerouslySetInnerHTML={{__html: props.children}} />;
 }
 
@@ -68,6 +68,6 @@ export {
   Data,
   Styles,
   Scripts,
-  DangerouslyStyle,
-  DangerouslyScript,
+  DangerouslySetInlineStyle,
+  DangerouslySetInlineScript,
 };
