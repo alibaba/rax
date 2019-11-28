@@ -286,12 +286,10 @@ export default class Component {
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
         }
-        if (this.props.location) {
-          const pathname = this.props.location.pathname;
-          if (pageCycles[pathname]) {
-            if (pageCycles[pathname][cycle]) {
-              pageCycles[pathname][cycle].forEach(fn => fn(...args));
-            }
+        const pageId = this.instanceId;
+        if (pageCycles[pageId]) {
+          if (pageCycles[pageId][cycle]) {
+            pageCycles[pageId][cycle].forEach(fn => fn(...args));
           }
         }
         break;
@@ -382,7 +380,7 @@ function diffData(prevData, nextData) {
   const prevType = typeof prevData;
   const nextType = typeof nextData;
   if (prevType !== nextType) return true;
-  if (prevType === 'object' && prevData !== null) {
+  if (prevType === 'object' && prevData !== null && nextData !== null) {
     const prevKeys = Object.keys(prevData);
     const nextKeys = Object.keys(nextData);
     if (prevKeys.length !== nextKeys.length) return true;

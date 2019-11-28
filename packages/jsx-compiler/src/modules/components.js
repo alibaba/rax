@@ -31,7 +31,8 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     componentDependentProps,
   } = parsed;
   // Miniapp template tag name does not support special characters.
-  const componentTag = alias.name.replace(/@|\//g, '_');
+  const aliasName = alias.name.replace(/@|\//g, '_');
+  const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
 
   if (!compiledComponents[componentTag]) {
@@ -40,10 +41,16 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     let tagId = '' + tagCount++;
 
     if (parentJSXListEl) {
-      const { args } = parentJSXListEl.node.__jsxlist;
+      const { args, parentList } = parentJSXListEl.node.__jsxlist;
       const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
-      parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
-      tagId += '-{{' + indexValue + '}}';
+      if (parentList) {
+        const parentListIndexValue = parentList.args[1].name;
+        parentPath.node.__tagIdExpression = [tagId, parentListIndexValue, new Expression(indexValue)];
+        tagId += `-{{${parentListIndexValue}}}-{{${indexValue}}}`;
+      } else {
+        parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+        tagId += `-{{${indexValue}}}`;
+      }
     }
     parentPath.node.__tagId = tagId;
     componentDependentProps[tagId] = componentDependentProps[tagId] || {};
@@ -71,59 +78,64 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     );
 
     /**
-     * Handle with special attrs.
+     * Handle with special attrs &&
+     * Judge whether the component is from component library
      */
     if (!RELATIVE_COMPONENTS_REG.test(alias.from)) {
-      const pkg = getComponentConfig(alias.from, options.resourcePath);
-      if (
-        pkg &&
-        pkg.miniappConfig &&
-        Array.isArray(pkg.miniappConfig.renderSlotProps)
-      ) {
-        path.traverse({
-          JSXAttribute(attrPath) {
-            const { node } = attrPath;
-            if (
-              pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
-            ) {
-              if (t.isJSXExpressionContainer(node.value)) {
-                let fnExp;
-                if (t.isFunction(node.value.expression)) {
-                  fnExp = node.value.expression;
-                } else if (t.isIdentifier(node.value.expression)) {
-                  const binding = attrPath.scope.getBinding(
-                    node.value.expression.name,
-                  );
-                  fnExp = binding.path.node;
-                } else if (t.isMemberExpression(node.value.expression)) {
-                  throw new Error(
-                    `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
-                      node,
-                    )}", please use anonymous function instead.`,
-                  );
-                }
-
-                if (fnExp) {
-                  const { params, body } = fnExp;
-                  let jsxEl = body;
-                  if (t.isBlockStatement(body)) {
-                    const returnEl = body.body.filter(el =>
-                      t.isReturnStatement(el),
-                    )[0];
-                    if (returnEl) jsxEl = returnEl.argument;
+      const pkg = getComponentConfig(alias.default ? alias.from : alias.name, options.resourcePath);
+      if (pkg && pkg.miniappConfig) {
+        if (Array.isArray(pkg.miniappConfig.renderSlotProps)) {
+          path.traverse({
+            JSXAttribute(attrPath) {
+              const { node } = attrPath;
+              if (
+                pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
+              ) {
+                if (t.isJSXExpressionContainer(node.value)) {
+                  let fnExp;
+                  if (t.isFunction(node.value.expression)) {
+                    fnExp = node.value.expression;
+                  } else if (t.isIdentifier(node.value.expression)) {
+                    const binding = attrPath.scope.getBinding(
+                      node.value.expression.name,
+                    );
+                    fnExp = binding.path.node;
+                  } else if (t.isMemberExpression(node.value.expression)) {
+                    throw new Error(
+                      `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
+                        node,
+                      )}", please use anonymous function instead.`,
+                    );
                   }
-                  const {
-                    node: slotComponentNode,
-                    dynamicValue: slotComponentDynamicValue,
-                  } = createSlotComponent(jsxEl, node.name.name, params);
-                  Object.assign(dynamicValue, slotComponentDynamicValue);
-                  path.parentPath.node.children.push(slotComponentNode);
+
+                  if (fnExp) {
+                    const { params, body } = fnExp;
+                    let jsxEl = body;
+                    if (t.isBlockStatement(body)) {
+                      const returnEl = body.body.filter(el =>
+                        t.isReturnStatement(el),
+                      )[0];
+                      if (returnEl) jsxEl = returnEl.argument;
+                    }
+                    const {
+                      node: slotComponentNode,
+                      dynamicValue: slotComponentDynamicValue,
+                    } = createSlotComponent(jsxEl, node.name.name, params);
+                    Object.assign(dynamicValue, slotComponentDynamicValue);
+                    path.parentPath.node.children.push(slotComponentNode);
+                  }
+                  attrPath.remove();
                 }
-                attrPath.remove();
               }
-            }
-          },
-        });
+            },
+          });
+        }
+
+        if (pkg.miniappConfig.subPackages) {
+          parsed.imported[alias.from].forEach(importedComponent => {
+            importedComponent.isFromComponentLibrary = true;
+          });
+        }
       }
     }
     return componentTag;
@@ -306,23 +318,29 @@ function getComponentPath(alias, options) {
     if (options.platform.type !== 'ali') {
       mainName += `:${options.platform.type}`;
     }
-    if (pkg.miniappConfig && pkg.miniappConfig[mainName]) {
+
+    const isSingleComponent = pkg.miniappConfig && pkg.miniappConfig[mainName];
+    const isComponentLibrary = pkg.miniappConfig && pkg.miniappConfig.subPackages;
+    if (!isSingleComponent && !isComponentLibrary) {
+      console.warn(
+        'Can not found compatible rax miniapp component "' + pkg.name + '".',
+      );
+      return;
+    } else {
+      const miniappComponentPath = isSingleComponent ? pkg.miniappConfig[mainName] : pkg.miniappConfig.subPackages[alias.local][mainName];
+
       if (disableCopyNpm) {
-        return join(pkg.name, pkg.miniappConfig[mainName]);
+        return join(pkg.name, miniappComponentPath);
       }
 
       const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
       let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
       npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
 
-      const miniappConfigRelativePath = relative(pkg.main, pkg.miniappConfig[mainName]);
+      const miniappConfigRelativePath = relative(pkg.main, miniappComponentPath);
       const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath);
       const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(pkgName) + pkgName.length);
       return './' + join(npmRelativePath, pkgName.replace(/@/g, '_'), realMiniappRelativePath);
-    } else {
-      console.warn(
-        'Can not found compatible rax miniapp component "' + pkg.name + '".',
-      );
     }
   }
 }
@@ -333,7 +351,10 @@ function removeImport(ast, alias) {
     ImportDeclaration(path) {
       const { node } = path;
       if (t.isStringLiteral(node.source) && node.source.value === alias.from) {
-        path.remove();
+        node.specifiers = (node.specifiers || []).filter(function(s) {
+          return !(s.local && s.local.name === alias.local);
+        });
+        if (!node.specifiers.length) path.remove();
       }
     },
   });

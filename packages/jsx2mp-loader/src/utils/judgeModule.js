@@ -1,4 +1,4 @@
-const WEEX_MODULE_REG = /^@weex(-module)?\//;
+const WEEX_MODULE_REG = /^@?weex-/;
 
 function isNpmModule(value) {
   return !(value[0] === '.' || value[0] === '/');

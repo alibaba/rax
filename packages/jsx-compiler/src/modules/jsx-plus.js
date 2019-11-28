@@ -15,6 +15,8 @@ const conditionTypes = {
   [directiveElse]: 'else',
 };
 
+let listIndexCount = 0;
+
 /**
  * Get condition type, enum of {if|elseif|else|null}
  */
@@ -159,19 +161,19 @@ function transformDirectiveList(ast, code, adapter) {
           throw new CodeError(code, node, node.loc, 'Invalid x-for usage');
         }
         const { expression } = node.value;
+        // params[2] is original index identifier
         let params = [];
         let iterValue;
-
         if (t.isBinaryExpression(expression, { operator: 'in' })) {
           // x-for={(item, index) in value}
           const { left, right } = expression;
           iterValue = right;
           if (t.isSequenceExpression(left)) {
             // x-for={(item, key) in value}
-            params = left.expressions;
+            params = left.expressions.concat(createIndexNode());
           } else if (t.isIdentifier(left)) {
             // x-for={item in value}
-            params = [left, t.identifier('index')];
+            params = [left, createIndexNode(), createIndexNode()];
           } else {
             // x-for={??? in value}
             throw new Error('Stynax error of x-for.');
@@ -179,7 +181,7 @@ function transformDirectiveList(ast, code, adapter) {
         } else {
           // x-for={value}, x-for={callExp()}, ...
           iterValue = expression;
-          params = [t.identifier('item'), t.identifier('index')];
+          params = [t.identifier('item'), createIndexNode(), createIndexNode()];
         }
         const parentJSXEl = path.findParent(p => p.isJSXElement());
         // Transform x-for iterValue to map function
@@ -198,9 +200,16 @@ function transformDirectiveList(ast, code, adapter) {
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
         const listItem = getListItem(iterValue);
+        let parentList;
         if (listItem) {
-          const parentList = listItem.__listItem.parentList;
+          parentList = listItem.__listItem.parentList;
           if (parentList) {
+            // Rename index name
+            if (listItem.__listItem.index === params[1].name) {
+              params[1].name += listIndexCount++;
+            } else {
+              params = params.splice(2);
+            }
             /**
              * Assign an new object to item
              * item: { ...item, info: item.info.map(i => {})
@@ -255,6 +264,7 @@ function transformDirectiveList(ast, code, adapter) {
           args: params,
           iterValue,
           loopFnBody,
+          parentList,
           jsxplus: true
         };
         parentJSXEl.replaceWith(listEl);
@@ -317,9 +327,12 @@ function transformListJSXElement(path, adapter) {
       Identifier(innerPath) {
         const {node: innerNode} = innerPath;
         if (args.find(arg => arg.name === innerNode.name)) {
+          // Rename index node
           innerNode.__listItem = {
             jsxplus: true,
             item: args[0].name,
+            index: args[1].name,
+            originalIndex: args[2] ? args[2].name : args[1].name,
             parentList: node.__jsxlist
           };
           // <View x-for={items} data-item={setDataset(item)}>
@@ -337,6 +350,9 @@ function transformListJSXElement(path, adapter) {
         }
       }
     });
+    if (args.length === 3) {
+      args.splice(2);
+    }
     attributes.push(
       t.jsxAttribute(
         t.jsxIdentifier(adapter.for),
@@ -371,6 +387,10 @@ function transformListJSXElement(path, adapter) {
 
     node.__jsxlist.generated = true;
   }
+}
+
+function createIndexNode() {
+  return t.identifier('index');
 }
 
 module.exports = {

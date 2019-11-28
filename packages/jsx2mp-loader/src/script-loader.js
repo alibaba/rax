@@ -1,9 +1,8 @@
 const { join, dirname, relative } = require('path');
-const { copySync, existsSync, mkdirpSync, writeJSONSync, writeFileSync, readFileSync, readJSONSync } = require('fs-extra');
+const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
-const isMiniappComponent = require('./utils/isMiniappComponent');
 const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
 const { isNpmModule } = require('./utils/judgeModule');
 const output = require('./output');
@@ -16,7 +15,7 @@ const MINIAPP_CONFIG_FIELD = 'miniappConfig';
 
 module.exports = function scriptLoader(content) {
   const loaderOptions = getOptions(this);
-  const { disableCopyNpm, mode, entryPath, platform, constantDir } = loaderOptions;
+  const { disableCopyNpm, mode, entryPath, platform, constantDir, importedComponent = '' } = loaderOptions;
   const rootContext = this.rootContext;
   const absoluteConstantDir = constantDir.map(dir => join(rootContext, dir));
   const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
@@ -55,42 +54,62 @@ module.exports = function scriptLoader(content) {
     const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
 
     // Is miniapp compatible component.
-    // except those old universal api with pkg.miniappConfig
-    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && pkg.miniappConfig.main && isMiniappComponent(join(sourcePackagePath, pkg.miniappConfig.main))) {
-      // Only copy first level directory for miniapp component
-      const firstLevelFolder = pkg.miniappConfig.main.split('/')[0];
-      const source = join(sourcePackagePath, firstLevelFolder);
-      const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), firstLevelFolder));
-      mkdirpSync(target);
-      copySync(source, target, {
-        filter: (filename) => !/__(mocks|tests?)__/.test(filename),
-      });
+    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD)) {
+      const mainName = platform.type === 'ali' ? 'main' : `main:${platform.type}`;
+      // Case 1: Single component except those old universal api with pkg.miniappConfig
+      // Case 2: Component library which exports multiple components
+      const isSingleComponent = !!pkg.miniappConfig[mainName];
+      const isComponentLibrary = !! pkg.miniappConfig.subPackages;
 
-      // Modify referenced component location according to the platform
-      const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), (platform.type === 'ali' ? pkg.miniappConfig.main : pkg.miniappConfig[`main:${platform.type}`]) + '.json'));
+      if (isSingleComponent || isComponentLibrary && pkg.miniappConfig.subPackages[importedComponent]) {
+        const miniappComponentPath = isSingleComponent ? pkg.miniappConfig[mainName] : pkg.miniappConfig.subPackages[importedComponent][mainName];
+        const firstLevelFolder = miniappComponentPath.split('/')[0];
+        const source = join(sourcePackagePath, firstLevelFolder);
+        const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), firstLevelFolder));
+        mkdirpSync(target);
+        copySync(source, target, {
+          filter: (filename) => !/__(mocks|tests?)__/.test(filename),
+        });
 
-      if (existsSync(componentConfigPath)) {
-        const componentConfig = readJSONSync(componentConfigPath);
-        if (componentConfig.usingComponents) {
-          for (let key in componentConfig.usingComponents) {
-            if (componentConfig.usingComponents.hasOwnProperty(key)) {
-              const componentPath = componentConfig.usingComponents[key];
-              if (isNpmModule(componentPath)) {
-                // component from node module
-                const realComponentPath = require.resolve(componentPath, {
-                  paths: [this.resourcePath]
-                });
-                const originalComponentConfigPath = join(sourcePackagePath, pkg.miniappConfig.main);
-                const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
+        // Copy public files or dirs
+        if (isComponentLibrary && pkg.miniappConfig.public) {
+          pkg.miniappConfig.public.forEach(filePath => {
+            const source = join(sourcePackagePath, filePath);
+            const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), filePath));
 
-                componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
+            if (statSync(source).isDirectory()) {
+              mkdirpSync(target);
+            }
+            copySync(source, target);
+          });
+        }
+
+        // Modify referenced component location according to the platform
+        const componentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), miniappComponentPath + '.json'));
+
+        if (existsSync(componentConfigPath)) {
+          const componentConfig = readJSONSync(componentConfigPath);
+          if (componentConfig.usingComponents) {
+            for (let key in componentConfig.usingComponents) {
+              if (componentConfig.usingComponents.hasOwnProperty(key)) {
+                const componentPath = componentConfig.usingComponents[key];
+                if (isNpmModule(componentPath)) {
+                  // component from node module
+                  const realComponentPath = require.resolve(componentPath, {
+                    paths: [this.resourcePath]
+                  });
+                  const originalComponentConfigPath = join(sourcePackagePath, miniappComponentPath);
+                  const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
+
+                  componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
+                }
               }
             }
           }
+          writeJSONSync(componentConfigPath, componentConfig);
+        } else {
+          this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
         }
-        writeJSONSync(componentConfigPath, componentConfig);
-      } else {
-        this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
       }
     } else {
       // Copy file
@@ -167,8 +186,6 @@ function normalizeNpmFileName(filename) {
   return filename.replace(/@/g, '_').replace(/node_modules/g, 'npm');
 }
 
-// root: /Users/chriscindy/Code/Test/myRaxMiniapp5.0
-// current: /Users/chriscindy/Code/Test/myRaxMiniapp5.0/node_modules/rax/lib/vdom/shouldUpdateComponent.js
 function getNearestNodeModulesPath(root, current) {
   const relativePathArray = relative(root, current).split('/');
   let index = root;

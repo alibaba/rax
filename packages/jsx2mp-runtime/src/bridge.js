@@ -30,7 +30,7 @@ function getPageCycles(Klass) {
       // Reverse sync from state to data.
       this.instance._setInternal(this);
       // Add route information for page.
-      history.location.__updatePageOption(options);
+      history.location.__updatePageOption(this.instance.instanceId, options);
       Object.assign(this.instance.props, {
         history,
         location: history.location

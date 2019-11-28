@@ -45,16 +45,16 @@ describe('Directives', () => {
         .toEqual(`<View>
         <block a:for={array.map((item, index) => {
     return {
-      item: item.map((item2, index) => {
+      item: item.map((item2, index0) => {
         return {
           item2: item2,
-          index: index
+          index0: index0
         };
       }),
       index: index
     };
   })} a:for-item="item" a:for-index="index"><View>
-          <block a:for={item} a:for-item="item2" a:for-index="index"><View>{item2}
+          <block a:for={item} a:for-item="item2" a:for-index="index0"><View>{item2}
         </View></block>
       </View></block>
 </View>`);
