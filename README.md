@@ -49,15 +49,15 @@ $ npm run start
 ### Developer Tools
 
 You can inspect and modify the state of your Rax components at runtime using the
-[React Developer Tools](https://github.com/facebook/react-devtools) browser extension.
+[Rax Developer Tools](https://github.com/raxjs/rax-devtools) browser extension.
 
-1. Install the [React Developer Tools](https://github.com/facebook/react-devtools) extension
+1. Install the Chrome [Rax Developer Tools](https://chrome.google.com/webstore/detail/rax-developer-tools/anpeoinhjjligmgoiepbnigjhmijblff) extension
 2. Import the "rax/lib/devtools" module in your app
   ```js
   import 'rax/lib/devtools';
   ```
 3. Set `process.env.NODE_ENV` to 'development'
-4. Reload and go to the 'React' tab in the browser's development tools
+4. Reload and go to the 'Rax' tab in the browser's development tools
 
 ## Contributing
 
