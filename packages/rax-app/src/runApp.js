@@ -12,6 +12,7 @@ const SHELL_DATA = 'shellData';
 
 let history;
 let launched = false;
+let driver = UniversalDriver;
 const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
 
 export function getHistory() {
@@ -91,6 +92,11 @@ export default function runApp(appConfig, pageProps = {}) {
   launched = true;
   const { hydrate = false, routes, shell } = appConfig;
 
+  // Set custom driver
+  if (typeof appConfig.driver !== 'undefined') {
+    driver = appConfig.driver;
+  }
+
   if (isWeex || isKraken) {
     history = createMemoryHistory();
   } else if (initialDataFromSSR) {
@@ -131,7 +137,7 @@ export default function runApp(appConfig, pageProps = {}) {
       return render(
         appInstance,
         rootEl,
-        { driver: UniversalDriver, hydrate }
+        { driver, hydrate }
       );
     })
     .catch((err) => {
