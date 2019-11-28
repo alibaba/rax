@@ -380,7 +380,7 @@ function diffData(prevData, nextData) {
   const prevType = typeof prevData;
   const nextType = typeof nextData;
   if (prevType !== nextType) return true;
-  if (prevType === 'object' && prevData !== null) {
+  if (prevType === 'object' && prevData !== null && nextData !== null) {
     const prevKeys = Object.keys(prevData);
     const nextKeys = Object.keys(nextData);
     if (prevKeys.length !== nextKeys.length) return true;
