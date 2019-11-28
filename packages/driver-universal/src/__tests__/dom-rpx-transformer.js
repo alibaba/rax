@@ -1,5 +1,7 @@
 import { createElement, render } from 'rax';
-import DriverUniversalDOM from '../dom';
+import createDOMDriver from '../dom';
+
+const driver = createDOMDriver();
 
 describe('Transform rpx', () => {
   const CLIENT_WIDTH = 750;
@@ -13,7 +15,7 @@ describe('Transform rpx', () => {
         margin: '75rpx 100vh'
       }} />
     ), container, {
-      driver: DriverUniversalDOM
+      driver,
     });
 
     expect(container.childNodes[0].style.margin).toEqual('10vw 100vh');
@@ -26,7 +28,7 @@ describe('Transform rpx', () => {
         margin: 75
       }} />
     ), container, {
-      driver: DriverUniversalDOM
+      driver,
     });
 
     expect(container.childNodes[0].style.margin).toEqual('10vw');

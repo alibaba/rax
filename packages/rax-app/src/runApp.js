@@ -1,6 +1,6 @@
 import { render, createElement, useState, useEffect, Fragment } from 'rax';
 import { Navigation, TabBar } from 'rax-pwa';
-import { isWeex, isWeb } from 'universal-env';
+import { isWeex, isWeb, isKraken } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
 import UniversalDriver from 'driver-universal';
@@ -97,7 +97,7 @@ export default function runApp(appConfig, pageProps = {}) {
     driver = appConfig.driver;
   }
 
-  if (isWeex) {
+  if (isWeex || isKraken) {
     history = createMemoryHistory();
   } else if (initialDataFromSSR) {
     // If that contains `initialDataFromSSR`, which means SSR is enabled,

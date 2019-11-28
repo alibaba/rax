@@ -1,14 +1,17 @@
-import { isWeex, isWeb } from 'universal-env';
-import DriverDOM from './dom';
-import DriverWeex from './weex';
+import { isWeex, isWeb, isKraken } from 'universal-env';
+import createDOMDriver from './dom';
+import createWeexDriver from './weex';
+import createKrakenDriver from 'driver-kraken';
 
-let DriverUniversal;
+let currentDriver;
 if (isWeex) {
-  DriverUniversal = DriverWeex;
+  currentDriver = createWeexDriver();
 } else if (isWeb) {
-  DriverUniversal = DriverDOM;
+  currentDriver = createDOMDriver();
+} else if (isKraken) {
+  currentDriver = createKrakenDriver();
 } else {
-  throw new Error('Your environment not supported by driver-universal.');
+  throw new Error('Your environment was not supported by driver-universal.');
 }
 
-export default DriverUniversal;
+export default currentDriver;
