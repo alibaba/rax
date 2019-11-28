@@ -19,10 +19,6 @@ export function getHistory() {
   return history;
 }
 
-export function setDriver(customDriver) {
-  driver = customDriver;
-}
-
 function App(props) {
   const { appConfig, history, routes, pageProps, InitialComponent } = props;
   const { component } = useRouter(() => ({ history, routes, InitialComponent }));
@@ -95,6 +91,11 @@ export default function runApp(appConfig, pageProps = {}) {
   }
   launched = true;
   const { hydrate = false, routes, shell } = appConfig;
+
+  // Set custom driver
+  if (typeof appConfig.driver !== 'undefined') {
+    driver = appConfig.driver;
+  }
 
   if (isWeex) {
     history = createMemoryHistory();
