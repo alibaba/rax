@@ -42,7 +42,7 @@ export default function createDOMDriver() {
     return eventName;
   }
 
-  return Object.assign({}, DriverDOM, {
+  const driver = Object.assign({}, DriverDOM, {
     createElement(type, props, component) {
       if (props.hasOwnProperty(STYLE)) {
         const style = props[STYLE];
@@ -85,4 +85,5 @@ export default function createDOMDriver() {
       }
     }
   });
+  return driver;
 }
