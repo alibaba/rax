@@ -143,4 +143,31 @@ describe('Transiform condition render function', () => {
   return vdom;
 }`);
   });
+
+  it('without consequent body', () => {
+    const ast = parseExpression(`(function render(props) {
+        let { a, b, ...c } = props;
+        let vdom;
+        if (a > 0) {
+          vdom = <view>case 1</view>
+        } else {
+          vdom = <view>case 1.1</view>
+        }
+        if (a > 1) vdom = <view>case 2</view>
+        return vdom;
+      })
+    `);
+
+    const tmpVars = _transformRenderFunction(ast, adapter);
+    expect(genExpression(tmpVars.vdom.value)).toEqual('<block><block a:if="{{a > 0}}"><view>case 1</view></block><block a:else><view>case 1.1</view></block><block a:if="{{a > 1}}"><view>case 2</view></block></block>');
+    expect(genExpression(ast)).toEqual(`function render(props) {
+  let {
+    a,
+    b,
+    ...c
+  } = props;
+  let vdom;
+  return vdom;
+}`);
+  });
 });
