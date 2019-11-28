@@ -12,10 +12,15 @@ const SHELL_DATA = 'shellData';
 
 let history;
 let launched = false;
+let driver = UniversalDriver;
 const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
 
 export function getHistory() {
   return history;
+}
+
+export function setDriver(customDriver) {
+  driver = customDriver;
 }
 
 function App(props) {
@@ -131,7 +136,7 @@ export default function runApp(appConfig, pageProps = {}) {
       return render(
         appInstance,
         rootEl,
-        { driver: UniversalDriver, hydrate }
+        { driver, hydrate }
       );
     })
     .catch((err) => {
