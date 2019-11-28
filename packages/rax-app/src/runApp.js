@@ -130,7 +130,7 @@ export default function runApp(appConfig, pageProps = {}) {
       // Emit app launch cycle.
       emit('launch');
 
-      let rootEl = isWeex ? null : document.getElementById('root');
+      let rootEl = isWeex || isKraken ? null : document.getElementById('root');
       if (isWeb && rootEl === null) throw new Error('Error: Can not find #root element, please check which exists in DOM.');
 
       // Async render.
