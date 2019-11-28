@@ -1,7 +1,6 @@
 /**
  * Driver for Web DOM
  **/
-
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 
 // opacity -> opa
@@ -38,7 +37,6 @@ const COMMENT_NODE = 8;
 const EMPTY = '';
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
-const DOCUMENT = document;
 
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
@@ -112,7 +110,7 @@ export function setTagNamePrefix(prefix) {
 }
 
 export function createBody() {
-  return DOCUMENT.body;
+  return document.body;
 }
 
 export function createEmpty(component) {
@@ -126,15 +124,15 @@ export function createEmpty(component) {
       if (hydrationChild.nodeType === COMMENT_NODE) {
         return hydrationChild;
       } else {
-        node = DOCUMENT[CREATE_COMMENT](EMPTY);
+        node = document[CREATE_COMMENT](EMPTY);
         replaceChild(node, hydrationChild, parent);
       }
     } else {
-      node = DOCUMENT[CREATE_COMMENT](EMPTY);
+      node = document[CREATE_COMMENT](EMPTY);
       node[HYDRATION_APPEND] = true;
     }
   } else {
-    node = DOCUMENT[CREATE_COMMENT](EMPTY);
+    node = document[CREATE_COMMENT](EMPTY);
   }
 
   return node;
@@ -154,15 +152,15 @@ export function createText(text, component) {
         }
         return hydrationChild;
       } else {
-        node = DOCUMENT[CREATE_TEXT_NODE](text);
+        node = document[CREATE_TEXT_NODE](text);
         replaceChild(node, hydrationChild, parent);
       }
     } else {
-      node = DOCUMENT[CREATE_TEXT_NODE](text);
+      node = document[CREATE_TEXT_NODE](text);
       node[HYDRATION_APPEND] = true;
     }
   } else {
-    node = DOCUMENT[CREATE_TEXT_NODE](text);
+    node = document[CREATE_TEXT_NODE](text);
   }
 
   return node;
@@ -188,12 +186,12 @@ export function createElement(type, props, component) {
 
   function createNode() {
     if (isSVGMode) {
-      node = DOCUMENT.createElementNS(SVG_NS, type);
+      node = document.createElementNS(SVG_NS, type);
     } else if (tagNamePrefix) {
       let tagNamePrefix = typeof tagNamePrefix === 'function' ? tagNamePrefix(type) : tagNamePrefix;
-      node = DOCUMENT[CREATE_ELEMENT](tagNamePrefix + type);
+      node = document[CREATE_ELEMENT](tagNamePrefix + type);
     } else {
-      node = DOCUMENT[CREATE_ELEMENT](type);
+      node = document[CREATE_ELEMENT](type);
     }
   }
 
