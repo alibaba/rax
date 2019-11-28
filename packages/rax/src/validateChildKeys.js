@@ -62,7 +62,7 @@ function validateExplicitKey(element, parentType) {
     childOwner = ` It was passed a child from <${element._owner.__getName()}>.`;
   }
 
-  warning(`Each child in a list should have a unique "key" prop. ${currentComponentErrorInfo}${childOwner}`);
+  warning(`Each child in a list should have a unique "key" prop.${currentComponentErrorInfo}${childOwner}`);
 }
 
 export default function validateChildKeys(node, parentType) {
