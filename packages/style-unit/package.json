@@ -1,6 +1,6 @@
 {
   "name": "style-unit",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "style-unit",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -14,5 +14,8 @@
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },
-  "homepage": "https://github.com/alibaba/rax#readme"
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "universal-env": "^2.0.0"
+  }
 }
