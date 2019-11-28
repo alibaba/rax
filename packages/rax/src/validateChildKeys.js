@@ -62,11 +62,7 @@ function validateExplicitKey(element, parentType) {
     childOwner = ` It was passed a child from <${element._owner.__getName()}>.`;
   }
 
-  warning(
-    'Each child in a list should have a unique "key" prop.%s%s',
-    currentComponentErrorInfo,
-    childOwner
-  );
+  warning(`Each child in a list should have a unique "key" prop.${currentComponentErrorInfo}${childOwner}`);
 }
 
 export default function validateChildKeys(node, parentType) {
@@ -76,7 +72,7 @@ export default function validateChildKeys(node, parentType) {
   }
 
   if (isArray(node)) {
-    for (let i = 0; i < node.length; i ++) {
+    for (let i = 0; i < node.length; i++) {
       const child = node[i];
       if (isValidElement(child)) {
         validateExplicitKey(child, parentType);
