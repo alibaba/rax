@@ -28,7 +28,7 @@ function Data() {
   const { initialData } = context;
 
   if (initialData) {
-    return <script data-from="server" dangerouslySetInnerHTML={{__html: 'window.__INITIAL_DATA__=' + JSON.stringify(initialData)}} />;
+    return <script data-from="server" dangerouslySetInnerHTML={{__html: 'window.__INITIAL_DATA__=' + initialData}} />;
   }
 
   return null;
