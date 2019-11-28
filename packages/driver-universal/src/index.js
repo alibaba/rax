@@ -9,7 +9,7 @@ if (isWeex) {
 } else if (isWeb) {
   DriverUniversal = DriverDOM;
 } else if (isKraken) {
-  DriverUniversal = DcreateDriverKraken();
+  DriverUniversal = createDriverKraken();
 } else {
   throw new Error('Your environment not supported by driver-universal.');
 }
