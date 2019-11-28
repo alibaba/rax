@@ -69,6 +69,7 @@ export default function createElement(type, config, children) {
   }
 
   // There is no need to validate ref and key in server sider rendering
+  // Child of Element will be precompiled to array of string and component in SSR, which cause a lot of unnecessary warnings
   if (process.env.NODE_ENV !== 'production' && !isNode) {
     if (isString(ref) && !Host.owner) {
       warning(
