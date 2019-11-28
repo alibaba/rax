@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "driver-universal": "^2.0.0",
+    "driver-universal": "^2.2.0",
     "history": "^4.9.0",
     "querystring": "^0.2.0",
     "rax-pwa": "^1.1.0",

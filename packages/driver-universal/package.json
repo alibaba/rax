@@ -1,6 +1,6 @@
 {
   "name": "driver-universal",
-  "version": "2.2.0-0",
+  "version": "2.2.0",
   "description": "Driver for Universal App.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -18,7 +18,7 @@
     "rax": "^1.0.0"
   },
   "dependencies": {
-    "driver-dom": "^2.0.0",
+    "driver-dom": "^2.0.5",
     "driver-kraken": "^0.1.0",
     "driver-weex": "^1.0.0",
     "style-unit": "^2.0.0",
