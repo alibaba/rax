@@ -2,6 +2,14 @@ import { createElement, createContext, useContext } from 'rax';
 
 const DocumentContext = createContext({});
 
+function Document(props) {
+  return (
+    <DocumentContext.Provider value={props}>
+      {this.props.children}
+    </DocumentContext.Provider>
+  );
+}
+
 function Root() {
   const context = useContext(DocumentContext) || {};
 
@@ -55,11 +63,11 @@ function DangerouslyScript(props) {
 }
 
 export {
+  Document,
   Root,
   Data,
   Styles,
   Scripts,
   DangerouslyStyle,
   DangerouslyScript,
-  DocumentContext
 };
