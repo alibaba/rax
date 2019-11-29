@@ -8,13 +8,6 @@ import Host from '../host';
 import render from '../../render';
 import ServerDriver from 'driver-server';
 
-// Do key validation only in non-SSR environment
-jest.mock('../../env', () => {
-  return {
-    isNode: false
-  };
-});
-
 describe('NativeComponent', function() {
   function createNodeElement(tagName) {
     return {
