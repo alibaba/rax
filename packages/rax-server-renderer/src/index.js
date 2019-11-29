@@ -333,7 +333,7 @@ function renderElementToString(element, context, options) {
   }
 
   // pre compiled html
-  if (element.__html) {
+  if (element.__html != null) { // __html may be empty string
     return element.__html;
   }
 
