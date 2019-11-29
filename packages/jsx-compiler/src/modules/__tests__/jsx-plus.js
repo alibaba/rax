@@ -59,6 +59,42 @@ describe('Directives', () => {
       </View></block>
 </View>`);
     });
+
+    it('difficult nested', () => {
+      const code = `
+      <View className="rxpi-coupon">
+        <View
+          x-for={(row, rowIndex) in testList}
+          className="rxpi-coupon-row"
+          key={'test_' + rowIndex}
+        >
+          <View x-for={(col, colIndex) in row} >
+            <Text key={colIndex}>{colIndex}</Text>
+          </View>
+        </View>
+      </View>
+    `;
+      const ast = parseExpression(code);
+      _transformList(ast, code, adapter);
+      expect(genExpression(ast))
+        .toEqual(`<View className="rxpi-coupon">
+        <block key={'test_' + rowIndex} a:for={testList.map((row, rowIndex) => {
+    return {
+      row: row.map((col, colIndex) => {
+        return {
+          col: col,
+          colIndex: colIndex
+        };
+      }),
+      rowIndex: rowIndex
+    };
+  })} a:for-item="row" a:for-index="rowIndex"><View className="rxpi-coupon-row">
+          <block a:for={row} a:for-item="col" a:for-index="colIndex"><View>
+            <Text key={colIndex}>{colIndex}</Text>
+          </View></block>
+        </View></block>
+      </View>`);
+    });
   });
 
   describe('condition', () => {
