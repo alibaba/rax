@@ -10,8 +10,6 @@ const RESERVED_PROPS = {
   ref: true,
 };
 
-const isNode = typeof process !== 'undefined' && !!(process.versions && process.versions.node);
-
 export default function createElement(type, config, children) {
   // Reserved names are extracted
   let props = {};
@@ -68,9 +66,7 @@ export default function createElement(type, config, children) {
     }
   }
 
-  // There is no need to validate ref and key in server sider rendering
-  // Child of Element will be precompiled to array of string and component in SSR, which cause a lot of unnecessary warnings
-  if (process.env.NODE_ENV !== 'production' && !isNode) {
+  if (process.env.NODE_ENV !== 'production') {
     if (isString(ref) && !Host.owner) {
       warning(
         `Adding a string ref "${ref}" that was not created inside render method, or multiple copies of Rax are used.`

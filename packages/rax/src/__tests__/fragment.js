@@ -7,6 +7,13 @@ import ServerDriver from 'driver-server';
 import Fragment from '../fragment';
 import Component from '../vdom/component';
 
+// Do key validation only in non-SSR environment
+jest.mock('../env', () => {
+  return {
+    isNode: false
+  };
+});
+
 describe('Fragment', () => {
   function createNodeElement(tagName) {
     return {

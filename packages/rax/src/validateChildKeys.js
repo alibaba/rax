@@ -1,6 +1,7 @@
 import Host from './vdom/host';
 import { warning } from './error';
 import { isArray } from './types';
+import { isNode } from './env';
 
 /**
  * Warn if there's no key explicitly set on dynamic arrays of children or
@@ -70,6 +71,13 @@ function validateExplicitKey(element, parentType) {
 }
 
 export default function validateChildKeys(node, parentType) {
+  // There is no need to validate key in server sider rendering
+  // Child of Element will be precompiled to array of string and components in SSR,
+  // which cause a lot of unnecessary warnings
+  if (isNode) {
+    return;
+  }
+
   // Only array or element object is valid child
   if (typeof node !== 'object') {
     return;

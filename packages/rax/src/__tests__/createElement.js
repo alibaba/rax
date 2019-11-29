@@ -6,6 +6,13 @@ import render from '../render';
 import ServerDriver from 'driver-server';
 import Component from '../vdom/component';
 
+// Do key validation only in non-SSR environment
+jest.mock('../env', () => {
+  return {
+    isNode: false
+  };
+});
+
 describe('Element', () => {
   function createNodeElement(tagName) {
     return {
