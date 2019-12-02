@@ -80,12 +80,12 @@ function loadNpmModules(module, start, extension) {
 
 /**
 * Resolve node path.
-* @param script
-* @param dependency
-* @param extension
+ * @param {string} script
+ * @param {string} dependency
+* @param {array<string>} extensions
 * @return {*}
 */
-module.exports = function resolve(script, dependency, extensions = ['.js', '.jsx']) {
+module.exports = function resolve(script, dependency, extensions = ['.js', '.jsx', '.ts', '.tsx']) {
   let target;
   if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
     let dependencyPath = join(script, dependency);

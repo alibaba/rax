@@ -74,12 +74,12 @@ function loadNpmModules(module, start, extension) {
 
 /**
  * Resolve node path.
- * @param script
- * @param dependency
- * @param extension
+ * @param {string} script
+ * @param {string} dependency
+ * @param {string} extension
  * @return {*}
  */
-module.exports = function resolve(script, dependency, extension = '.js') {
+function moduleResolve(script, dependency, extension = '.js') {
   let target;
   if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
     let dependencyPath = join(dirname(script), dependency);
@@ -89,3 +89,26 @@ module.exports = function resolve(script, dependency, extension = '.js') {
   }
   return target;
 };
+
+/**
+ *
+ *
+ * @param {string} script
+ * @param {string} dependency
+ * @param {array<string>} [extensions=[]]
+ * @returns
+ */
+function moduleArrayResolve(script, dependency, extensions = []) {
+  for (let extension of extensions) {
+    const target = moduleResolve(script, dependency, extension)
+    if (target) {
+      return target;
+    }
+  }
+  return null;
+}
+
+module.exports = {
+  moduleResolve,
+  moduleArrayResolve
+}
