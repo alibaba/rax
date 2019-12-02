@@ -1,6 +1,5 @@
-/**
- * Weex driver
- */
+import { setRpx, convertUnit } from 'style-unit';
+
 const STYLE = 'style';
 const ID = 'id';
 const TEXT = 'text';
@@ -34,8 +33,8 @@ export function createBody(type, props) {
     return document.body;
   }
 
-  let documentElement = document.documentElement;
-  let body = document.createBody(type, props);
+  const documentElement = document.documentElement;
+  const body = document.createBody(type, props);
   documentElement.appendChild(body);
 
   return body;
@@ -60,8 +59,16 @@ export function updateText(node, text) {
 }
 
 export function createElement(type, props = {}) {
-  let node = document.createElement(type, {
-    style: props[STYLE],
+  const style = {};
+  const originStyle = props.style;
+  if (originStyle) {
+    for (let prop in originStyle) {
+      style[prop] = convertUnit(originStyle[prop], prop);
+    }
+  }
+
+  const node = document.createElement(type, {
+    style
   });
 
   for (let prop in props) {
@@ -173,12 +180,19 @@ export function setAttribute(node, propKey, propValue) {
 }
 
 export function setStyle(node, style) {
+  for (let prop in style) {
+    // Translate `rpx` to weex `px`
+    style[prop] = convertUnit(style[prop], prop);
+  }
   node.setStyles(style);
 }
 
 export function beforeRender() {
   // Turn off batched updates
   document.open();
+
+  // Set `rpx` unit converter
+  setRpx(1);
 }
 
 export function afterRender() {

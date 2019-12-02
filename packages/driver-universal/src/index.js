@@ -1,11 +1,11 @@
 import { isWeex, isWeb, isKraken } from 'universal-env';
 import createDOMDriver from './dom';
-import createWeexDriver from './weex';
+import * as WeexDriver from 'driver-weex';
 import createKrakenDriver from 'driver-kraken';
 
 let currentDriver;
 if (isWeex) {
-  currentDriver = createWeexDriver();
+  currentDriver = WeexDriver;
 } else if (isWeb) {
   currentDriver = createDOMDriver();
 } else if (isKraken) {
