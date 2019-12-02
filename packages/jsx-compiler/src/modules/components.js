@@ -306,7 +306,7 @@ function getComponentPath(alias, options) {
 
     const filename = multipleModuleResolve(options.resourcePath, alias.from, [
       '.jsx', '.js', '.tsx', '.ts'
-    ])
+    ]);
     return filename;
   } else {
     const { disableCopyNpm } = options;

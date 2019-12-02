@@ -100,7 +100,7 @@ function moduleResolve(script, dependency, extension = '.js') {
  */
 function multipleModuleResolve(script, dependency, extensions = []) {
   for (let extension of extensions) {
-    const target = moduleResolve(script, dependency, extension)
+    const target = moduleResolve(script, dependency, extension);
     if (target) {
       return target;
     }
@@ -111,4 +111,4 @@ function multipleModuleResolve(script, dependency, extensions = []) {
 module.exports = {
   moduleResolve,
   multipleModuleResolve
-}
+};
