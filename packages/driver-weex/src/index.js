@@ -181,7 +181,7 @@ export function setAttribute(node, propKey, propValue) {
 
 export function setStyle(node, style) {
   for (let prop in style) {
-    // translate `rpx` to `wx`
+    // Translate `rpx` to weex `px`
     style[prop] = convertUnit(style[prop], prop);
   }
   node.setStyles(style);

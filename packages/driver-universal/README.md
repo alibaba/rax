@@ -32,5 +32,5 @@ render(<Example />, null, {
 | driver | length value without unit | 'rpx' unit |
 | ------ | ------------------------------ | --------------- |
 | driver-dom | Append 'px' unit| Translate to 'vw' |
-| driver-weex | Append 'wx' unit | Translate to 'wx' |
-| driver-universal | Append 'rpx' | Translate to 'vw' in web, and translate to 'wx' in weex | 
+| driver-weex | Append weex 'px' unit | Translate to weex 'px' |
+| driver-universal | Append 'rpx' | Translate to 'vw' in web, and translate to 'px' in weex | 
