@@ -26,6 +26,10 @@ function getBabelConfig() {
       }]
     ],
     plugins: [
+      [require.resolve('@babel/plugin-transform-typescript'), {
+        isTSX: true,
+        jsxPragma: 'Rax'
+      }],
       require.resolve('@babel/plugin-proposal-export-default-from'),
       require.resolve('@babel/plugin-proposal-class-properties'),
     ],
