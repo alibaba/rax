@@ -4,7 +4,7 @@ const { join, relative, dirname } = require('path');
 const chalk = require('chalk');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
 const spinner = require('./utils/spinner');
-const { moduleArrayResolve } = require('./utils/moduleResolve');
+const { multipleModuleResolve } = require('./utils/moduleResolve');
 const platformConfig = require('./utils/platformConfig');
 
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
@@ -94,7 +94,7 @@ const cwd = process.cwd();
 module.exports = (options = {}) => {
   let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, constantDir, disableCopyNpm, turnOffSourceMap } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
-  entryPath = moduleArrayResolve(workDirectory, entryPath, ['.js', '.jsx', '.ts', '.tsx']) || entryPath;
+  entryPath = multipleModuleResolve(workDirectory, entryPath, ['.js', '.jsx', '.ts', '.tsx']) || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
 
   const config = {

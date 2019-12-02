@@ -99,7 +99,7 @@ function moduleResolve(script, dependency, extension = '.js') {
  * @param {array<string>} [extensions=[]]
  * @returns
  */
-function moduleArrayResolve(script, dependency, extensions = []) {
+function multipleModuleResolve(script, dependency, extensions = []) {
   for (let extension of extensions) {
     const target = moduleResolve(script, dependency, extension)
     if (target) {
@@ -111,5 +111,5 @@ function moduleArrayResolve(script, dependency, extensions = []) {
 
 module.exports = {
   moduleResolve,
-  moduleArrayResolve
+  multipleModuleResolve
 }
