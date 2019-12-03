@@ -54,20 +54,10 @@ function Scripts() {
   );
 }
 
-function DangerouslySetInlineStyle(props) {
-  return <style dangerouslySetInnerHTML={{__html: props.children}} />;
-}
-
-function DangerouslySetInlineScript(props) {
-  return <script dangerouslySetInnerHTML={{__html: props.children}} />;
-}
-
 export {
   Document,
   Root,
   Data,
   Styles,
   Scripts,
-  DangerouslySetInlineStyle,
-  DangerouslySetInlineScript,
 };
