@@ -2,11 +2,9 @@
 
 import normalizeColor from './normalizeColor';
 
-const SUFFIX = 'rem';
-
 function convertUnit(val) {
   if (/^\d+$/.test(val)) {
-    return val + SUFFIX;
+    return parseInt(val);
   }
 
   return val;
@@ -139,9 +137,6 @@ export default {
     return measure(value, 'margin');
   },
   lineHeight: (value) => {
-    if (typeof value === 'number') {
-      value += 'rem';
-    }
     return {
       lineHeight: value
     };
