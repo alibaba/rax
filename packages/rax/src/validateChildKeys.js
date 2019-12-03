@@ -1,4 +1,3 @@
-import { isNode } from 'universal-env';
 import Host from './vdom/host';
 import { warning } from './error';
 import { isArray } from './types';
@@ -71,13 +70,6 @@ function validateExplicitKey(element, parentType) {
 }
 
 export default function validateChildKeys(node, parentType) {
-  // There is no need to validate key in server sider rendering
-  // Child of Element will be precompiled to array of string and components in SSR, which cause a lot of unnecessary warnings
-  // When jest is running the code, isNode is also true
-  if (isNode && !process.env.JEST_WORKER_ID) {
-    return;
-  }
-
   // Only array or element object is valid child
   if (typeof node !== 'object') {
     return;
