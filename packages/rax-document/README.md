@@ -6,7 +6,7 @@ Provide components for building Document.
 
 ```jsx
 import { createElement } from 'rax';
-import { Document, Root, Data, Styles, Scripts } from 'rax-document';
+import { Document, Root, Data, Style, Script } from 'rax-document';
 
 export default (props) => {
   return (
@@ -16,14 +16,14 @@ export default (props) => {
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width,initial-scale=1"/>
           <title>ssr-document-demo</title>
-          <Styles />
+          <Style />
         </head>
         <body>
           {/* root container */}
           <Root />
           {/* initial data from server side */}
           <Data />
-          <Scripts />
+          <Script />
         </body>
       </html>
     </Document>
@@ -37,13 +37,13 @@ export default (props) => {
 
 Provide context for the following Components.
 
-`Styles`
+`Style`
 
-Styles for page. Automatic analyzed from your project.
+Style for page. Automatic analyzed from your project.
 
-`Scripts`
+`Script`
 
-Scripts for page. Automatic analyzed from your project.
+Script for page. Automatic analyzed from your project.
 
 `Root`
 

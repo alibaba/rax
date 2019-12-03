@@ -34,7 +34,8 @@ function Data() {
   return null;
 }
 
-function Styles() {
+// Named by role rather than implementationm, so component name are `Style` rather than `Styles`.
+function Style() {
   const context = useContext(DocumentContext) || {};
 
   const { publicPath, styles = [] } = context;
@@ -42,7 +43,7 @@ function Styles() {
   return styles.map((src, index) => <link rel="stylesheet" href={`${publicPath}${src}`} key={`style_${index}`} />);
 }
 
-function Scripts() {
+function Script() {
   const context = useContext(DocumentContext) || {};
 
   const { publicPath, scripts = [] } = context;
@@ -58,6 +59,6 @@ export {
   Document,
   Root,
   Data,
-  Styles,
-  Scripts,
+  Style,
+  Script,
 };
