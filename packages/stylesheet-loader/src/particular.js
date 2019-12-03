@@ -3,8 +3,9 @@
 import normalizeColor from './normalizeColor';
 
 function convertUnit(val) {
-  if (/^\d+$/.test(val)) {
-    return parseInt(val);
+  // 判断数字
+  if (/^[-+]?\d*\.?\d+$/.test(val)) {
+    return parseFloat(val);
   }
 
   return val;
