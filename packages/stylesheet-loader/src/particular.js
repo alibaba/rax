@@ -2,9 +2,10 @@
 
 import normalizeColor from './normalizeColor';
 
+const NUMBER_REG = /^[-+]?\d*\.?\d+$/;
+
 function convertUnit(val) {
-  // 判断数字
-  if (/^[-+]?\d*\.?\d+$/.test(val)) {
+  if (NUMBER_REG.test(val)) {
     return parseFloat(val);
   }
 
