@@ -71,6 +71,19 @@ module.exports = function scriptLoader(content) {
           loader: ScriptLoader, // Native miniapp component js file will loaded by script-loader
           options: loaderOptions
         });
+
+        // Handle subComponents
+        if (isComponentLibrary && pkg.miniappConfig.subPackages[importedComponent] && pkg.miniappConfig.subPackages[importedComponent].subComponents) {
+          const subComponents = pkg.miniappConfig.subPackages[importedComponent].subComponents;
+          Object.keys(subComponents).forEach(subComponentName => {
+            const subComponentScriptFile = join(sourcePackagePath, subComponents[subComponentName][mainName]);
+            dependencies.push({
+              name: subComponentScriptFile,
+              loader: ScriptLoader,
+              opetions: loaderOptions
+            });
+          });
+        }
         const miniappComponentDir = miniappComponentPath.slice(0, miniappComponentPath.lastIndexOf('/'));
         const source = join(sourcePackagePath, miniappComponentDir);
         if (existsSync(source)) {
