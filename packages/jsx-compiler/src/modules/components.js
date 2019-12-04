@@ -5,7 +5,7 @@ const t = require('@babel/types');
 const { _transform: transformTemplate } = require('./element');
 const genExpression = require('../codegen/genExpression');
 const traverse = require('../utils/traverseNodePath');
-const moduleResolve = require('../utils/moduleResolve');
+const { moduleResolve, multipleModuleResolve } = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
 const Expression = require('../utils/Expression');
 const compiledComponents = require('../compiledComponents');
@@ -312,9 +312,9 @@ function getComponentPath(alias, options) {
       throw new Error('`resourcePath` must be passed to calc dependency path.');
     }
 
-    const filename =
-      moduleResolve(options.resourcePath, alias.from, '.jsx') ||
-      moduleResolve(options.resourcePath, alias.from, '.js');
+    const filename = multipleModuleResolve(options.resourcePath, alias.from, [
+      '.jsx', '.js', '.tsx', '.ts'
+    ]);
     return filename;
   } else {
     const { disableCopyNpm } = options;

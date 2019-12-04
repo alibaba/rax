@@ -160,7 +160,9 @@ function copyConstantDir(dirs, distDirectory) {
     if (!existsSync(dir)) {
       mkdirSync(dir);
     }
-    copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')));
+    copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')), {
+      filter: (filename) => !/\.ts$/.test(filename),
+    });
   });
 }
 

@@ -1,8 +1,9 @@
-const { join, dirname, relative, resolve } = require('path');
+const { join, dirname, relative, resolve, extname } = require('path');
+
 const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, replaceExtension } = require('./utils/pathHelper');
 const { isNpmModule } = require('./utils/judgeModule');
 const output = require('./output');
 
@@ -196,6 +197,11 @@ module.exports = function scriptLoader(content) {
       ]
     };
 
+    // If typescript
+    if (extname(this.resourcePath) === '.ts') {
+      outputOption.externalPlugins.unshift(require('@babel/plugin-transform-typescript'));
+      outputOption.outputPath.code = replaceExtension(outputOption.outputPath.code, '.js');
+    }
     output(outputContent, null, outputOption);
   }
 

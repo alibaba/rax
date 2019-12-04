@@ -6,8 +6,7 @@ module.exports = {
   plugins: [
     'classProperties',
     'jsx',
-    'flow',
-    'flowComment',
+    'typescript',
     'trailingFunctionCommas',
     'asyncFunctions',
     'exponentiationOperator',

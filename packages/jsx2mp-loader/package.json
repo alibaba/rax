@@ -12,6 +12,7 @@
     "@babel/core": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-export-default-from": "^7.5.2",
+    "@babel/plugin-transform-typescript": "^7.7.4",
     "@babel/preset-env": "^7.5.5",
     "babel-plugin-danger-remove-unused-import": "^2.0.0",
     "babel-plugin-minify-dead-code-elimination": "^0.5.1",
