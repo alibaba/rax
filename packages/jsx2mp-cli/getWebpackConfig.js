@@ -4,7 +4,7 @@ const { join, relative, dirname } = require('path');
 const chalk = require('chalk');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
 const spinner = require('./utils/spinner');
-const moduleResolve = require('./utils/moduleResolve');
+const { multipleModuleResolve } = require('./utils/moduleResolve');
 const platformConfig = require('./utils/platformConfig');
 
 const AppLoader = require.resolve('jsx2mp-loader/src/app-loader');
@@ -26,6 +26,10 @@ function getBabelConfig() {
       }]
     ],
     plugins: [
+      [require.resolve('@babel/plugin-transform-typescript'), {
+        isTSX: true,
+        jsxPragma: 'Rax'
+      }],
       require.resolve('@babel/plugin-proposal-export-default-from'),
       require.resolve('@babel/plugin-proposal-class-properties'),
     ],
@@ -55,7 +59,7 @@ function getEntry(type, cwd, entryFilePath, options) {
       console.error('Can not found app.json in current work directory, please check.');
       process.exit(1);
     }
-    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode, disableCopyNpm, turnOffSourceMap }) + '!./' + join(entryPath, 'app.js');
+    entry.app = AppLoader + '?' + JSON.stringify({ entryPath, platform: platformConfig[platform], mode, disableCopyNpm, turnOffSourceMap }) + '!./' + entryFilePath;
     if (Array.isArray(appConfig.routes)) {
       appConfig.routes.filter(({ targets }) => {
         return !Array.isArray(targets) || targets.indexOf('miniapp') > -1;
@@ -94,7 +98,7 @@ const cwd = process.cwd();
 module.exports = (options = {}) => {
   let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, constantDir, disableCopyNpm, turnOffSourceMap } = options;
   if (entryPath[0] !== '.') entryPath = './' + entryPath;
-  entryPath = moduleResolve(workDirectory, entryPath, '.js') || moduleResolve(workDirectory, entryPath, '.jsx') || entryPath;
+  entryPath = multipleModuleResolve(workDirectory, entryPath, ['.js', '.jsx', '.ts', '.tsx']) || entryPath;
   const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
 
   const config = {
@@ -108,7 +112,7 @@ module.exports = (options = {}) => {
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
+          test: /\.t|jsx?$/,
           use: [
             {
               loader: ScriptLoader,
@@ -137,7 +141,7 @@ module.exports = (options = {}) => {
       ],
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.json'],
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       mainFields: ['main', 'module']
     },
     externals: [
