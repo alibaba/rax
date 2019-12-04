@@ -184,14 +184,11 @@ function transformComponents(parsed, options) {
             removeImport(parsed.ast, alias);
             if (alias) {
               const pkg = getComponentConfig(alias.from, options.resourcePath);
-              if (
-                pkg &&
-                pkg.miniappConfig &&
-                pkg.miniappConfig.subComponents &&
-                pkg.miniappConfig.subComponents[property.name]
-              ) {
-                let subComponent =
-                  pkg.miniappConfig.subComponents[property.name];
+              const isSingleComponent = pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name];
+              const isComponentLibrary = pkg.miniappConfig && pkg.miniappConfig.subPackages && pkg.miniappConfig.subPackages[alias.local] && pkg.miniappConfig.subPackages[alias.local].subComponents && pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+
+              if (isSingleComponent) {
+                let subComponent = pkg.miniappConfig.subComponents[property.name];
                 replaceComponentTagName(
                   path,
                   t.jsxIdentifier(subComponent.tagNameMap),
@@ -205,6 +202,17 @@ function transformComponents(parsed, options) {
                     ),
                   );
                 }
+              } else if (isComponentLibrary) {
+                let subComponent = pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+                const componentTag = subComponent.tagNameMap || `${alias.name}-${object.name}-${property.name}`.toLowerCase().replace(/@|\//g, '_');
+                replaceComponentTagName(
+                  path,
+                  t.jsxIdentifier(componentTag)
+                );
+                componentsAlias[componentTag] = Object.assign({
+                  isSubComponent: true,
+                  subComponentName: property.name
+                }, alias);
               }
             }
           }
@@ -327,7 +335,11 @@ function getComponentPath(alias, options) {
       );
       return;
     } else {
-      const miniappComponentPath = isSingleComponent ? pkg.miniappConfig[mainName] : pkg.miniappConfig.subPackages[alias.local][mainName];
+      const miniappComponentPath = isSingleComponent ?
+        pkg.miniappConfig[mainName] :
+        alias.isSubComponent ?
+          pkg.miniappConfig.subPackages[alias.local].subComponents[alias.subComponentName][mainName] :
+          pkg.miniappConfig.subPackages[alias.local][mainName];
 
       if (disableCopyNpm) {
         return join(pkg.name, miniappComponentPath);
