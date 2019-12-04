@@ -81,7 +81,7 @@ module.exports = function scriptLoader(content) {
             dependencies.push({
               name: subComponentScriptFile,
               loader: ScriptLoader,
-              opetions: loaderOptions
+              options: loaderOptions
             });
           });
         }
