@@ -304,6 +304,39 @@ describe('context', () => {
 
         expect(str).toBe('<div>purple</div>');
       }).toWarnDev(Warning + '(Current: Parent)', {withoutStack: true});
+
+      it('can not filter context with contextTypes on the server', () => {
+        expect(() => {
+          function FunctionChildWithContext(props, context) {
+            return <div>{context.text}</div>;
+          }
+          FunctionChildWithContext.contextTypes = {value: PropTypes.string};
+
+          const str = renderToString(
+            <PurpleContext>
+              <FunctionChildWithContext />
+            </PurpleContext>
+          );
+
+          expect(str).toBe('<div><!-- _ --></div>');
+        }).toWarnDev(Warning + '(Current: FunctionChildWithContext)', {withoutStack: true});
+      });
+
+      it('can not prevent context be passed to child without contextTypes on the server', () => {
+        expect(() => {
+          function FunctionChildWithContext(props, context) {
+            return <div>{context.text}</div>;
+          }
+
+          const str = renderToString(
+            <PurpleContext>
+              <FunctionChildWithContext />
+            </PurpleContext>
+          );
+
+          expect(str).toBe('<div><!-- _ --></div>');
+        }).toWarnDev(Warning + '(Current: FunctionChildWithContext)', {withoutStack: true});
+      });
     });
   });
 });
