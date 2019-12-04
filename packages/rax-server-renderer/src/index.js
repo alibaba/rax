@@ -182,6 +182,9 @@ function rpx2vw(val, opts) {
 }
 
 function checkContext(element) {
+  // Filter context by `contextTypes` or prevent pass context to child without `contextTypes`,
+  // need to distinguish context for passing to child and render, which will cause `Consumer` can not work correctly.
+  // The best way to get context is from the nearest parent provider, but it will increase the complexity of SSR.
   if (element.contextTypes || element.childContextTypes) {
     console.error(
       'Warning: ' +
@@ -309,7 +312,7 @@ function renderElementToString(element, context, options) {
   }
 
   // pre compiled html
-  if (element.__html) {
+  if (element.__html != null) { // __html may be empty string
     return element.__html;
   }
 
