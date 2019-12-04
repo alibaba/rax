@@ -8,7 +8,7 @@ Provide components for building Document.
 import { createElement } from 'rax';
 import { Root, Data, Style, Script } from 'rax-document';
 
-export default (props) => {
+export default () => {
   return (
     <html>
       <head>
