@@ -31,10 +31,6 @@ export default () => {
 
 ## Components
 
-`Document`
-
-Provide context for the following Components.
-
 `Style`
 
 Styles for page. Automatic analyzed from your project.
