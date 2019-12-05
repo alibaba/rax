@@ -7,7 +7,7 @@ import unmountComponentAtNode from 'rax-unmount-component-at-node';
 
 const { Host } = shared;
 jest.mock('rax-get-element-by-id', () => ({
-  __esModule: true, 
+  __esModule: true,
   default: (id) => {
     const { shared } = require('rax');
     const { Host } = shared;
