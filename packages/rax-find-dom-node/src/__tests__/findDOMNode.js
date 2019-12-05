@@ -6,6 +6,9 @@ import ServerDriver from 'driver-server';
 import unmountComponentAtNode from 'rax-unmount-component-at-node';
 
 const { Host } = shared;
+jest.mock('rax-get-element-by-id', () => {
+  return Host.driver && Host.driver.getElementById();
+});
 
 describe('findDOMNode', () => {
   function createNodeElement(tagName) {
@@ -37,7 +40,7 @@ describe('findDOMNode', () => {
     Host.driver = {
       getElementById: mockFn
     };
-    let node = findDOMNode('id');
+    findDOMNode('id');
     expect(mockFn).toBeCalledWith('id');
   });
 
