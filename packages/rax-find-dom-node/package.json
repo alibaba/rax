@@ -1,6 +1,6 @@
 {
   "name": "rax-find-dom-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rax findDOMNode",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
