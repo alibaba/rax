@@ -60,11 +60,11 @@ module.exports = function scriptLoader(content) {
       // Case 1: Single component except those old universal api with pkg.miniappConfig
       // Case 2: Component library which exports multiple components
       const isSingleComponent = !!pkg.miniappConfig[mainName];
-      const isComponentLibrary = !! pkg.miniappConfig.subPackages;
+      const isComponentLibrary = pkg.miniappConfig.subPackages && pkg.miniappConfig.subPackages[importedComponent];
 
       const dependencies = [];
 
-      if (isSingleComponent || isComponentLibrary && pkg.miniappConfig.subPackages[importedComponent] || isRelativeMiniappComponent) {
+      if (isSingleComponent || isComponentLibrary || isRelativeMiniappComponent) {
         const miniappComponentPath = isRelativeMiniappComponent ? relative(sourcePackagePath, this.resourcePath) : isSingleComponent ? pkg.miniappConfig[mainName] : pkg.miniappConfig.subPackages[importedComponent][mainName];
         const sourceNativeMiniappScriptFile = join(sourcePackagePath, miniappComponentPath);
         dependencies.push({
@@ -74,7 +74,7 @@ module.exports = function scriptLoader(content) {
         });
 
         // Handle subComponents
-        if (isComponentLibrary && pkg.miniappConfig.subPackages[importedComponent] && pkg.miniappConfig.subPackages[importedComponent].subComponents) {
+        if (isComponentLibrary && pkg.miniappConfig.subPackages[importedComponent].subComponents) {
           const subComponents = pkg.miniappConfig.subPackages[importedComponent].subComponents;
           Object.keys(subComponents).forEach(subComponentName => {
             const subComponentScriptFile = join(sourcePackagePath, subComponents[subComponentName][mainName]);
@@ -114,7 +114,7 @@ module.exports = function scriptLoader(content) {
                   const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
 
                   componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
-                } else if (componentPath.indexOf('npm') === -1) {
+                } else if (componentPath.indexOf('/npm/') === -1) { // Exclude the path that has been modified by jsx-compiler
                   const absComponentPath = resolve(dirname(sourceNativeMiniappScriptFile), componentPath);
                   dependencies.push({
                     name: absComponentPath,
