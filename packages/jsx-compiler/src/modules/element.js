@@ -502,7 +502,7 @@ function transformTemplate(
           }
         }
       },
-    },
+    }
   });
 
   return {
@@ -515,7 +515,6 @@ function hasComplexExpression(path) {
   let complex = false;
   if (path.isCallExpression()) return true;
   if (path.isTemplateLiteral()) return true;
-  if (path.isUnaryExpression()) return true;
   function isComplex(p) {
     complex = true;
     p.stop();
@@ -523,7 +522,6 @@ function hasComplexExpression(path) {
   traverse(path, {
     NewExpression: isComplex,
     CallExpression: isComplex,
-    UnaryExpression: isComplex,
     TemplateLiteral: isComplex,
     // It's hard to process objectExpression nested, same as arrayExp.
     ObjectExpression(innerPath) {

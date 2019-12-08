@@ -4,6 +4,10 @@ import { enqueueRender } from './enqueueRender';
 const propsMap = {
   // instanceId -> props
 };
+
+const nextPropsMap = {
+  // instanceId -> props
+};
 const componentIntances = {};
 
 const updateChildPropsCallbacks = {};
@@ -15,6 +19,12 @@ export function setComponentInstance(instance) {
   if (updateChildPropsCallbacks[instanceId]) {
     updateChildPropsCallbacks[instanceId]();
     updateChildPropsCallbacks[instanceId] = null;
+  }
+}
+
+export function setComponentProps(instanceId) {
+  if (nextPropsMap.hasOwnProperty(instanceId)) {
+    propsMap[instanceId] = nextPropsMap[instanceId];
   }
 }
 
@@ -31,10 +41,11 @@ export function removeComponentProps(instanceId) {
 
 export function updateChildProps(trigger, instanceId, nextProps) {
   if (trigger) {
-    const targetComponent = componentIntances[instanceId];
     // Create a new object reference.
+    const targetComponent = componentIntances[instanceId];
+    // Ensure component __mountComponent method has been called.
     if (targetComponent) {
-      propsMap[instanceId] = Object.assign(
+      targetComponent.nextProps = nextProps[instanceId] = Object.assign(
         {
           __parentId: trigger.props.__tagId,
           __tagId: instanceId
@@ -42,10 +53,7 @@ export function updateChildProps(trigger, instanceId, nextProps) {
         targetComponent.props,
         nextProps,
       );
-      nextTick(() => {
-        targetComponent.nextProps = propsMap[instanceId];
-        enqueueRender(targetComponent);
-      });
+      enqueueRender(targetComponent);
     } else {
       /**
        * updateChildProps may execute  before setComponentInstance
