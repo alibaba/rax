@@ -182,7 +182,7 @@ export default class Component {
     // Step 2: trigger will mount.
     this._trigger(COMPONENT_WILL_MOUNT);
 
-    // Step3: check component is quequed.
+    // Step3: trigger render.
     this._trigger(RENDER);
 
     // Step4: mark __mounted = true
@@ -203,6 +203,7 @@ export default class Component {
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.nextProps || this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
+
     if (diffProps(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
     }
@@ -222,7 +223,8 @@ export default class Component {
     if (stateFromProps !== undefined) nextState = stateFromProps;
 
     // Step5: judge shouldComponentUpdate
-    this.__shouldUpdate = this.__forceUpdate || this.shouldComponentUpdate && this.shouldComponentUpdate(nextProps, nextState);
+    this.__shouldUpdate = this.__forceUpdate
+      || this.shouldComponentUpdate ? this.shouldComponentUpdate(nextProps, nextState) : true;
 
     // Step8: trigger render
     if (this.__shouldUpdate) {

@@ -39,21 +39,25 @@ export function removeComponentProps(instanceId) {
   }
 }
 
-export function updateChildProps(trigger, instanceId, nextProps) {
+export function updateChildProps(trigger, instanceId, nextUpdateProps) {
   if (trigger) {
     // Create a new object reference.
     const targetComponent = componentIntances[instanceId];
-    // Ensure component __mountComponent method has been called.
     if (targetComponent) {
-      targetComponent.nextProps = nextProps[instanceId] = Object.assign(
+      const nextProps = Object.assign(
         {
           __parentId: trigger.props.__tagId,
           __tagId: instanceId
         },
         targetComponent.props,
-        nextProps,
+        nextUpdateProps,
       );
-      enqueueRender(targetComponent);
+      if (targetComponent.__mounted) {
+        targetComponent.nextProps = nextPropsMap[instanceId] = nextProps;
+        enqueueRender(targetComponent);
+      } else {
+        targetComponent.props = propsMap[instanceId] = nextProps;
+      }
     } else {
       /**
        * updateChildProps may execute  before setComponentInstance
@@ -62,7 +66,7 @@ export function updateChildProps(trigger, instanceId, nextProps) {
         null,
         trigger,
         instanceId,
-        nextProps,
+        nextUpdateProps,
       );
     }
   }
