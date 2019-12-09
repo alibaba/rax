@@ -44,6 +44,7 @@ function transformTemplate(
       ? ATTR // <View foo={bar} />
       : ELE; // <View>{xxx}</View>
     let { expression } = node;
+    console.log('expression', expression);
     let attributeName = null;
     let isDirective;
     if (type === ATTR) {
@@ -502,7 +503,7 @@ function transformTemplate(
           }
         }
       },
-    }
+    },
   });
 
   return {
@@ -515,6 +516,8 @@ function hasComplexExpression(path) {
   let complex = false;
   if (path.isCallExpression()) return true;
   if (path.isTemplateLiteral()) return true;
+  if (path.isUnaryExpression() && path.node.operator !== '!') return true;
+
   function isComplex(p) {
     complex = true;
     p.stop();
@@ -524,6 +527,11 @@ function hasComplexExpression(path) {
     CallExpression: isComplex,
     TemplateLiteral: isComplex,
     // It's hard to process objectExpression nested, same as arrayExp.
+    UnaryExpression(innerPath) {
+      if (innerPath.node.operator !== '!') {
+        isComplex(innerPath);
+      }
+    },
     ObjectExpression(innerPath) {
       const { properties } = innerPath.node;
       const checkNested = properties.some(property => {
