@@ -110,7 +110,10 @@ function watch(options = {}) {
   spinner.shouldClear = !skipClearStdout;
 
   const compiler = webpack(config);
-  const watchOpts = {};
+  const watchOpts = {
+    aggregateTimeout: 600,
+    ignored: /node_modules/
+  };
   compiler.outputFileSystem = new MemFs();
   compiler.watch(watchOpts, (err, stats) => {
     handleCompiled(err, stats, { skipClearStdout });

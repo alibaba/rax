@@ -1,6 +1,6 @@
-const { join, dirname, relative, extname } = require('path');
+const { join, dirname, relative, resolve, extname } = require('path');
+
 const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
-const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const { removeExt, isFromTargetDirs, replaceExtension } = require('./utils/pathHelper');
@@ -10,12 +10,13 @@ const output = require('./output');
 const AppLoader = require.resolve('./app-loader');
 const PageLoader = require.resolve('./page-loader');
 const ComponentLoader = require.resolve('./component-loader');
+const ScriptLoader = __filename;
 
 const MINIAPP_CONFIG_FIELD = 'miniappConfig';
 
 module.exports = function scriptLoader(content) {
   const loaderOptions = getOptions(this);
-  const { disableCopyNpm, mode, entryPath, platform, constantDir, importedComponent = '' } = loaderOptions;
+  const { disableCopyNpm, mode, entryPath, platform, constantDir, importedComponent = '', isRelativeMiniappComponent = false } = loaderOptions;
   const rootContext = this.rootContext;
   const absoluteConstantDir = constantDir.map(dir => join(rootContext, dir));
   const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
@@ -30,7 +31,6 @@ module.exports = function scriptLoader(content) {
   const currentNodeModulePath = nodeModulesPathList[nodeModulesPathList.length - 1];
   const rootNodeModulePath = join(rootContext, 'node_modules');
   const outputPath = this._compiler.outputPath;
-  const relativeResourcePath = relative(rootContext, this.resourcePath);
 
   const isFromNodeModule = cached(function isFromNodeModule(path) {
     return path.indexOf(rootNodeModulePath) === 0;
@@ -43,7 +43,7 @@ module.exports = function scriptLoader(content) {
 
   if (isFromNodeModule(this.resourcePath)) {
     if (disableCopyNpm) {
-      return '';
+      return content;
     }
     const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
     const npmFolderName = getNpmFolderName(relativeNpmPath);
@@ -52,35 +52,47 @@ module.exports = function scriptLoader(content) {
 
     const pkg = readJSONSync(sourcePackageJSONPath);
     const npmName = pkg.name; // Update to real npm name, for that tnpm will create like `_rax-view@1.0.2@rax-view` folders.
+    const npmMainPath = join(sourcePackagePath, pkg.main || '');
 
     // Is miniapp compatible component.
-    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD)) {
+    if (pkg.hasOwnProperty(MINIAPP_CONFIG_FIELD) && this.resourcePath === npmMainPath || isRelativeMiniappComponent) {
       const mainName = platform.type === 'ali' ? 'main' : `main:${platform.type}`;
       // Case 1: Single component except those old universal api with pkg.miniappConfig
       // Case 2: Component library which exports multiple components
       const isSingleComponent = !!pkg.miniappConfig[mainName];
-      const isComponentLibrary = !! pkg.miniappConfig.subPackages;
+      const isComponentLibrary = pkg.miniappConfig.subPackages && pkg.miniappConfig.subPackages[importedComponent];
 
-      if (isSingleComponent || isComponentLibrary && pkg.miniappConfig.subPackages[importedComponent]) {
-        const miniappComponentPath = isSingleComponent ? pkg.miniappConfig[mainName] : pkg.miniappConfig.subPackages[importedComponent][mainName];
-        const firstLevelFolder = miniappComponentPath.split('/')[0];
-        const source = join(sourcePackagePath, firstLevelFolder);
-        const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), firstLevelFolder));
-        mkdirpSync(target);
-        copySync(source, target, {
-          filter: (filename) => !/__(mocks|tests?)__/.test(filename),
+      const dependencies = [];
+
+      if (isSingleComponent || isComponentLibrary || isRelativeMiniappComponent) {
+        const miniappComponentPath = isRelativeMiniappComponent ? relative(sourcePackagePath, this.resourcePath) : isSingleComponent ? pkg.miniappConfig[mainName] : pkg.miniappConfig.subPackages[importedComponent][mainName];
+        const sourceNativeMiniappScriptFile = join(sourcePackagePath, miniappComponentPath);
+        dependencies.push({
+          name: sourceNativeMiniappScriptFile,
+          loader: ScriptLoader, // Native miniapp component js file will loaded by script-loader
+          options: loaderOptions
         });
 
-        // Copy public files or dirs
-        if (isComponentLibrary && pkg.miniappConfig.public) {
-          pkg.miniappConfig.public.forEach(filePath => {
-            const source = join(sourcePackagePath, filePath);
-            const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), filePath));
-
-            if (statSync(source).isDirectory()) {
-              mkdirpSync(target);
-            }
-            copySync(source, target);
+        // Handle subComponents
+        if (isComponentLibrary && pkg.miniappConfig.subPackages[importedComponent].subComponents) {
+          const subComponents = pkg.miniappConfig.subPackages[importedComponent].subComponents;
+          Object.keys(subComponents).forEach(subComponentName => {
+            const subComponentScriptFile = join(sourcePackagePath, subComponents[subComponentName][mainName]);
+            dependencies.push({
+              name: subComponentScriptFile,
+              loader: ScriptLoader,
+              options: loaderOptions
+            });
+          });
+        }
+        const miniappComponentDir = miniappComponentPath.slice(0, miniappComponentPath.lastIndexOf('/'));
+        const source = join(sourcePackagePath, miniappComponentDir);
+        if (existsSync(source)) {
+          const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), miniappComponentDir));
+          mkdirpSync(target);
+          copySync(source, target, {
+            overwrite: false,
+            filter: filename => !/__(mocks|tests?)__/.test(filename)
           });
         }
 
@@ -102,6 +114,13 @@ module.exports = function scriptLoader(content) {
                   const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(originalComponentConfigPath), realComponentPath));
 
                   componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
+                } else if (componentPath.indexOf('/npm/') === -1) { // Exclude the path that has been modified by jsx-compiler
+                  const absComponentPath = resolve(dirname(sourceNativeMiniappScriptFile), componentPath);
+                  dependencies.push({
+                    name: absComponentPath,
+                    loader: ScriptLoader, // Native miniapp component js file will loaded by script-loader
+                    options: Object.assign({ isRelativeMiniappComponent: true }, loaderOptions)
+                  });
                 }
               }
             }
@@ -110,6 +129,11 @@ module.exports = function scriptLoader(content) {
         } else {
           this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
         }
+        return [
+          `/* Generated by JSX2MP ScriptLoader, sourceFile: ${this.resourcePath}. */`,
+          generateDependencies(dependencies),
+          content
+        ].join('\n');
       }
     } else {
       // Copy file
@@ -203,4 +227,18 @@ function getNearestNodeModulesPath(root, current) {
     index = join(index, relativePathArray.shift());
   }
   return result;
+}
+
+function generateDependencies(dependencies) {
+  return dependencies
+    .map(({ name, loader, options }) => {
+      let mod = name;
+      if (loader) mod = loader + '?' + JSON.stringify(options) + '!' + mod;
+      return createImportStatement(mod);
+    })
+    .join('\n');
+}
+
+function createImportStatement(req) {
+  return `import '${req}';`;
 }
