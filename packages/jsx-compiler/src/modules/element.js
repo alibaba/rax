@@ -44,7 +44,6 @@ function transformTemplate(
       ? ATTR // <View foo={bar} />
       : ELE; // <View>{xxx}</View>
     let { expression } = node;
-    console.log('expression', expression);
     let attributeName = null;
     let isDirective;
     if (type === ATTR) {
