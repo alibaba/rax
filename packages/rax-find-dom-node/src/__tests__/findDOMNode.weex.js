@@ -33,7 +33,6 @@ describe('findDOMNode', () => {
     Host.driver = {
       getElementById: mockFn
     };
-    
     findDOMNode('id');
     expect(mockFn).toBeCalledWith('id');
   });

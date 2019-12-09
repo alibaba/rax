@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "rax": "^1.0.0",
+    "universal-env": "^3.0.0",
     "driver-server": "^1.0.0",
     "rax-unmount-component-at-node": "^1.0.0"
   }
