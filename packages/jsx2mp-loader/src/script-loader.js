@@ -1,5 +1,4 @@
-const { join, dirname, relative } = require('path');
-const os = require('os');
+const { join, dirname, relative, sep } = require('path');
 const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
@@ -39,11 +38,7 @@ module.exports = function scriptLoader(content) {
 
   const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
     const isScopedNpm = /^_?@/.test(relativeNpmPath);
-    let spacer = '/';
-    if (/^win/.test(os.platform())) {
-      spacer = '\\';
-    }
-    return relativeNpmPath.split(spacer).slice(0, isScopedNpm ? 2 : 1).join(spacer);
+    return relativeNpmPath.split(sep).slice(0, isScopedNpm ? 2 : 1).join(sep);
   });
 
   if (isFromNodeModule(this.resourcePath)) {
