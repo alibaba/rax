@@ -1,4 +1,5 @@
 const { join, dirname, relative } = require('path');
+const os = require('os');
 const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
 const { transformSync } = require('@babel/core');
 const { getOptions } = require('loader-utils');
@@ -38,7 +39,11 @@ module.exports = function scriptLoader(content) {
 
   const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
     const isScopedNpm = /^_?@/.test(relativeNpmPath);
-    return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
+    let spacer = '/';
+    if (/^win/.test(os.platform())) {
+      spacer = '\\';
+    }
+    return relativeNpmPath.split(spacer).slice(0, isScopedNpm ? 2 : 1).join(spacer);
   });
 
   if (isFromNodeModule(this.resourcePath)) {
