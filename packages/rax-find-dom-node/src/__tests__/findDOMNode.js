@@ -6,14 +6,6 @@ import ServerDriver from 'driver-server';
 import unmountComponentAtNode from 'rax-unmount-component-at-node';
 
 const { Host } = shared;
-jest.mock('rax-get-element-by-id', () => ({
-  __esModule: true,
-  default: (id) => {
-    const { shared } = require('rax');
-    const { Host } = shared;
-    return Host.driver && Host.driver.getElementById(id);
-  }
-}));
 
 describe('findDOMNode', () => {
   function createNodeElement(tagName) {
@@ -38,15 +30,6 @@ describe('findDOMNode', () => {
   it('findDOMNode with null', () => {
     let node = findDOMNode(null);
     expect(node).toBeNull();
-  });
-
-  it('findDOMNode with id', () => {
-    let mockFn = jest.fn();
-    Host.driver = {
-      getElementById: mockFn
-    };
-    findDOMNode('id');
-    expect(mockFn).toBeCalledWith('id');
   });
 
   it('findDOMNode with node', () => {
