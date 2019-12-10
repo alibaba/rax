@@ -1,10 +1,9 @@
 {
-  "name": "driver-dom",
-  "version": "2.0.6",
-  "description": "DOM driver for Rax",
+  "name": "rax-document",
+  "version": "0.1.0",
+  "description": "Provide components for building Document",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
-  "module": "es/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
@@ -13,7 +12,10 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
-  "devDependencies": {
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "peerDependencies": {
     "rax": "^1.0.0"
   }
 }

@@ -10,7 +10,7 @@ convertUnit(value, prop, platform);
 | -------- | ------------- | -------- | ------------------------------------------------------------ |
 | value    | string/number | true     |                                                              |
 | prop     | string        | true     |                                                              |
-| platform | string        | false    | Different platforms have different rpx conversion. Details are as follows. |
+| platform | string        | false    | Auto assignment with [universal-env](https://www.npmjs.com/package/universal-env), different platforms have different rpx conversion. Details are as follows. |
 
 ## Web 
 
@@ -29,7 +29,7 @@ setViewportWidth(1500);
 
 ## Weex 
 
-In Web, Calculate rpx to px (viewport width is 750). 
+In Weex, Calculate rpx to px (viewport width is 750). 
 
 750rpx -> 750px
 

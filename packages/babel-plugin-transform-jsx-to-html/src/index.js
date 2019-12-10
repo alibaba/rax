@@ -3,8 +3,11 @@ const t = require('@babel/types');
 
 const KEY_FOR_HTML = '__html';
 const KEY_FOR_ATTRS = '__attrs';
+const TEMP_KEY_PREFIX = '__key_';
 
 module.exports = function() {
+  let keyIndex = 0;
+
   return {
     visitor: {
       JSXElement: {
@@ -14,6 +17,13 @@ module.exports = function() {
           const tagName = tag.name;
 
           if (!t.react.isCompatTag(tagName)) {
+            // This plugin may transform a normal child to be an array, which cause key validation in createElement failed.
+            // So add a key for each child in non production env, to prevent key validation warning.
+            if (process.env.NODE_ENV !== 'production') {
+              const keyAttr = t.jsxAttribute(t.jsxIdentifier('key'), t.stringLiteral(TEMP_KEY_PREFIX + keyIndex ++));
+              openingPath.node.attributes.unshift(keyAttr);
+            }
+
             return;
           }
 

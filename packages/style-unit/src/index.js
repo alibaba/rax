@@ -58,7 +58,7 @@ export function calcRpx(str) {
     return str.replace(RPX_REG, decimalVWTransformer);
   } else if (targetPlatform === 'weex') {
     // In Weex convert rpx to 'px'
-    // '375rpx' => 375 * rpx
+    // '375rpx' => 375 * px
     return str.replace(RPX_REG, decimalPixelTransformer);
   } else {
     // Other platform return original value, like Mini-App and WX Mini-Program ...

@@ -19,10 +19,10 @@
   "dependencies": {
     "@babel/runtime": "^7.2.0",
     "driver-server": "^1.0.0",
+    "prop-types": "^15.7.2",
     "rax-children": "^1.0.0",
     "rax-clone-element": "^1.0.0",
     "rax-create-factory": "^1.0.0",
-    "rax-is-valid-element": "^1.0.0",
-    "prop-types": "^15.7.2"
+    "rax-is-valid-element": "^1.0.0"
   }
 }

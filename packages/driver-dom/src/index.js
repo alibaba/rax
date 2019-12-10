@@ -178,7 +178,7 @@ function findHydrationChild(parent) {
   return parent.childNodes[parent[HYDRATION_INDEX]++];
 }
 
-export function createElement(type, props, component) {
+export function createElement(type, props, component, __shouldConvertUnitlessToRpx) {
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
   let node;
@@ -247,7 +247,7 @@ export function createElement(type, props, component) {
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyle(node, value);
+        setStyle(node, value, __shouldConvertUnitlessToRpx);
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
@@ -341,12 +341,12 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
-export function setStyle(node, style) {
+export function setStyle(node, style, __shouldConvertUnitlessToRpx) {
   for (let prop in style) {
     const value = style[prop];
     let convertedValue;
     if (typeof value === 'number' && isDimensionalProp(prop)) {
-      convertedValue = value + 'px';
+      convertedValue = __shouldConvertUnitlessToRpx ? convertUnit(value + 'rpx') : value + 'px';
     } else {
       convertedValue = convertUnit(value);
     }

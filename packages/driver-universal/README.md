@@ -28,9 +28,9 @@ render(<Example />, null, {
 });
 ```
 
-## Compare
-| driver | append unit to relevant styles | 'rpx' translate | Compatible with flex | Compatible with event |
-| ------ | ------------------------------ | --------------- | -------------------- | --------------------- |
-| driver-dom | Append 'px' | Translate to 'vw' | Do nothing | Do nothing  |
-| driver-weex | Use 'px' that relative to the width of the screen. |  Do nothing | Do nothing | Do nothing |
-| driver-universal | Append 'rpx' | Use 'px' that relative to the width of the screen, In weex | Support parsing array like display: ["-webkit-box", "-webkit-flex", "flex"] | Support input doubleclick |
+## Driver `unit` difference
+| driver | length value without unit | 'rpx' unit |
+| ------ | ------------------------------ | --------------- |
+| driver-dom | Append 'px' unit| Translate to 'vw' |
+| driver-weex | Append weex 'px' unit | Translate to weex 'px' |
+| driver-universal | Append 'rpx' | Translate to 'vw' in web, and translate to 'px' in weex | 

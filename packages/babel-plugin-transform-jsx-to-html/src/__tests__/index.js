@@ -41,7 +41,25 @@ describe('transform jsx to html', () => {
 </div>
     `)).toBe(`[{
   __html: "<div>"
-}, createElement(View, null), {
+}, createElement(View, {
+  key: "__key_0"
+}), {
+  __html: "</div>"
+}];`);
+  });
+
+  it('tansform with component already have key', () => {
+    expect(getTransfromCode(`
+<div>
+  <View key="view_1" />
+</div>
+    `)).toBe(`var _createElement;
+
+[{
+  __html: "<div>"
+}, createElement(View, (_createElement = {
+  key: "__key_0"
+}, _createElement["key"] = "view_1", _createElement)), {
   __html: "</div>"
 }];`);
   });
@@ -52,7 +70,9 @@ describe('transform jsx to html', () => {
   <div>a</div>
   <div>b</div>
 </View>
-    `)).toBe(`createElement(View, null, [{
+    `)).toBe(`createElement(View, {
+  key: "__key_0"
+}, [{
   __html: "<div>a</div>"
 }], [{
   __html: "<div>b</div>"
