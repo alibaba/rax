@@ -2,36 +2,37 @@
 
 import {shared} from 'rax';
 import ServerDriver from 'driver-server';
+import findDOMNode from '../';
 import getElementById from 'rax-get-element-by-id';
-import {isWeex, isWeb} from 'universal-env';
-import findDOMNode from '../../lib/';
+
+// mock weex env
+jest.mock('rax-get-element-by-id', () => ({
+  __esModule: true,
+  default: (id) => {
+    const { shared } = require('rax');
+    const { Host } = shared;
+    return Host.driver && Host.driver.getElementById(id);
+  }
+}));
 
 const { Host } = shared;
-
-jest.mock('universal-env', () => {
-  return {
-    isMiniApp: false,
-    isNode: false,
-    isWeChatMiniprogram: false,
-    isWeb: false,
-    isWeex: true
-  };
-});
+Host.driver = ServerDriver;
 
 describe('findDOMNode', () => {
 
-  beforeEach(function() {
-    Host.driver = ServerDriver;
-  });
-
-  afterEach(function() {
-    Host.driver = null;
+  it('getElementById with id', () => {
+    let mockFn = jest.fn();
+    Host.driver = {
+      getElementById: mockFn,
+    };
+    getElementById('id');
+    expect(mockFn).toBeCalledWith('id');
   });
 
   it('findDOMNode with id', () => {
     let mockFn = jest.fn();
     Host.driver = {
-      getElementById: mockFn
+      getElementById: mockFn,
     };
     findDOMNode('id');
     expect(mockFn).toBeCalledWith('id');
