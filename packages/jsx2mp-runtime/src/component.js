@@ -188,11 +188,8 @@ export default class Component {
     // Step4: mark __mounted = true
     if (!this.__mounted) {
       this.__mounted = true;
-      // Step5: trigger did mount
-      this._trigger(COMPONENT_DID_MOUNT);
     }
-
-    // Step6: create prevProps and prevState reference
+    // Step5: create prevProps and prevState reference
     this.prevProps = this.props;
     this.prevState = this.state;
   }
@@ -329,6 +326,8 @@ export default class Component {
    * @param data {Object}
    * */
   _setData(data) {
+    const setDataTask = [];
+    let $ready = false;
     // In alibaba miniapp can use $spliceData optimize long list
     if (this._internal.$spliceData) {
       const useSpliceData = {};
@@ -343,14 +342,32 @@ export default class Component {
         }
       }
       if (!isEmptyObj(useSetData)) {
-        this._internal.setData(useSetData);
+        $ready = useSetData.$ready;
+        setDataTask.push(new Promise(resolve => {
+          this._internal.setData(useSetData, resolve);
+        }));
       }
       if (!isEmptyObj(useSpliceData)) {
-        this._internal.$spliceData(useSpliceData);
+        setDataTask.push(new Promise(resolve => {
+          this._internal.$spliceData(useSpliceData, resolve);
+        }));
       }
     } else {
-      this._internal.setData(data);
+      setDataTask.push(new Promise(resolve => {
+        $ready = data.$ready;
+        this._internal.setData(data, resolve);
+      }));
     }
+    Promise.all(setDataTask).then(() => {
+      if ($ready) {
+        // trigger did mount
+        this._trigger(COMPONENT_DID_MOUNT);
+      }
+      let callback;
+      while (callback = this._pendingCallbacks.pop()) {
+        callback();
+      }
+    });
     Object.assign(this.state, data);
   }
 }
