@@ -1,4 +1,4 @@
-const { join, dirname, relative, resolve, extname } = require('path');
+const { join, dirname, relative, resolve, extname, sep } = require('path');
 
 const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
 const { getOptions } = require('loader-utils');
@@ -38,7 +38,7 @@ module.exports = function scriptLoader(content) {
 
   const getNpmFolderName = cached(function getNpmName(relativeNpmPath) {
     const isScopedNpm = /^_?@/.test(relativeNpmPath);
-    return relativeNpmPath.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
+    return relativeNpmPath.split(sep).slice(0, isScopedNpm ? 2 : 1).join(sep);
   });
 
   if (isFromNodeModule(this.resourcePath)) {
