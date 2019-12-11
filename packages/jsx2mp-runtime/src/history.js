@@ -15,7 +15,6 @@ export function getMiniAppHistory() {
 class MiniAppHistory {
   constructor() {
     this.location = new Location();
-
     // Apply actions for history.
     Object.assign(this, { push, replace, goBack, go, canGo, goForward });
   }

@@ -3,7 +3,7 @@
  * Base Component class definition.
  */
 import Host from './host';
-import {updateChildProps, removeComponentProps, getComponentProps} from './updater';
+import {updateChildProps, removeComponentProps, getComponentProps, setComponentProps} from './updater';
 import {enqueueRender} from './enqueueRender';
 import isFunction from './isFunction';
 import sameValue from './sameValue';
@@ -203,6 +203,7 @@ export default class Component {
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.nextProps || this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
+
     if (diffProps(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
     }
@@ -222,24 +223,17 @@ export default class Component {
     if (stateFromProps !== undefined) nextState = stateFromProps;
 
     // Step5: judge shouldComponentUpdate
-    this.__shouldUpdate = true;
-    if (
-      !this.__forceUpdate
-      && this.shouldComponentUpdate
-      && this.shouldComponentUpdate(nextProps, nextState) === false
-    ) {
-      this.__shouldUpdate = false;
-    } else {
-      // Step6: trigger will update
-      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
-    }
-
-    this.props = nextProps;
-    this.state = nextState;
-    this.__forceUpdate = false;
+    this.__shouldUpdate = this.__forceUpdate
+      || this.shouldComponentUpdate ? this.shouldComponentUpdate(nextProps, nextState) : true;
 
     // Step8: trigger render
     if (this.__shouldUpdate) {
+      this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
+      // Update propsMap
+      setComponentProps(this.instanceId);
+      this.props = nextProps;
+      this.state = nextState;
+      this.__forceUpdate = false;
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
     }

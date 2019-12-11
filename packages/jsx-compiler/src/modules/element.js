@@ -515,7 +515,8 @@ function hasComplexExpression(path) {
   let complex = false;
   if (path.isCallExpression()) return true;
   if (path.isTemplateLiteral()) return true;
-  if (path.isUnaryExpression()) return true;
+  if (path.isUnaryExpression() && path.node.operator !== '!') return true;
+
   function isComplex(p) {
     complex = true;
     p.stop();
@@ -523,9 +524,13 @@ function hasComplexExpression(path) {
   traverse(path, {
     NewExpression: isComplex,
     CallExpression: isComplex,
-    UnaryExpression: isComplex,
     TemplateLiteral: isComplex,
     // It's hard to process objectExpression nested, same as arrayExp.
+    UnaryExpression(innerPath) {
+      if (innerPath.node.operator !== '!') {
+        isComplex(innerPath);
+      }
+    },
     ObjectExpression(innerPath) {
       const { properties } = innerPath.node;
       const checkNested = properties.some(property => {

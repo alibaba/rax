@@ -1,6 +1,6 @@
 const t = require('@babel/types');
 const { readFileSync } = require('fs-extra');
-const moduleResolve = require('../utils/moduleResolve');
+const { moduleResolve } = require('../utils/moduleResolve');
 const traverse = require('../utils/traverseNodePath');
 
 /**

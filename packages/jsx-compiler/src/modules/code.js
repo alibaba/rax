@@ -1,5 +1,6 @@
 const t = require('@babel/types');
 const { join, relative, dirname, resolve, extname } = require('path');
+const resolveModule = require('resolve');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
@@ -590,14 +591,16 @@ function normalizeFileName(filename) {
  * @returns
  */
 function ensureIndexInPath(value, resourcePath) {
-  const target = require.resolve(resolve(dirname(resourcePath), value));
+  const target = resolveModule.sync(resolve(dirname(resourcePath), value), {
+    extensions: ['.js', '.ts']
+  });
   const result = relative(dirname(resourcePath), target);
   return removeJSExtension(result[0] === '.' ? result : './' + result);
 };
 
 function removeJSExtension(filePath) {
   const ext = extname(filePath);
-  if (ext === '.js') {
+  if (ext === '.js' || ext === '.ts') {
     return filePath.slice(0, filePath.length - ext.length);
   }
   return filePath;
