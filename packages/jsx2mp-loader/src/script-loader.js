@@ -142,9 +142,6 @@ module.exports = function scriptLoader(content) {
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       const distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
 
-      const distSourceDirPath = dirname(distSourcePath);
-      if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
-
       const outputContent = { code: rawContent };
       const outputOption = {
         outputPath: {
@@ -173,9 +170,7 @@ module.exports = function scriptLoader(content) {
       this.resourcePath
     );
     const distSourcePath = join(outputPath, relativeFilePath);
-    const distSourceDirPath = dirname(distSourcePath);
 
-    if (!existsSync(distSourceDirPath)) mkdirpSync(distSourceDirPath);
     const outputContent = { code: rawContent };
     const outputOption = {
       outputPath: {
