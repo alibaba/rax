@@ -107,8 +107,8 @@ module.exports = function scriptLoader(content) {
             if (isNpmModule(componentPath)) {
               // component from node module
               const realComponentPath = require.resolve(componentPath, {
-                  paths: [this.resourcePath]
-                });
+                paths: [this.resourcePath]
+              });
               const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(sourceNativeMiniappScriptFile), realComponentPath));
               componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
               dependencies.push({
@@ -131,7 +131,7 @@ module.exports = function scriptLoader(content) {
     } else {
       this.emitWarning('Cannot found miniappConfig component for: ' + npmName);
     }
-  }
+  };
 
   if (isFromNodeModule(this.resourcePath)) {
     if (disableCopyNpm) {
@@ -196,7 +196,7 @@ module.exports = function scriptLoader(content) {
         outputFile(rawContent);
 
         const originalComponentConfigPath = removeExt(this.resourcePath) + '.json';
-        const distComponentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, removeExt(this.resourcePath) + '.json')))
+        const distComponentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, removeExt(this.resourcePath) + '.json')));
         checkUsingComponents(dependencies, originalComponentConfigPath, distComponentConfigPath, this.resourcePath, npmName);
       }
 
