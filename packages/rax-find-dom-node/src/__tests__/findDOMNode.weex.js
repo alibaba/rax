@@ -19,7 +19,6 @@ const { Host } = shared;
 Host.driver = ServerDriver;
 
 describe('findDOMNode', () => {
-
   it('getElementById with id', () => {
     let mockFn = jest.fn();
     Host.driver = {
@@ -37,5 +36,4 @@ describe('findDOMNode', () => {
     findDOMNode('id');
     expect(mockFn).toBeCalledWith('id');
   });
-
 });
