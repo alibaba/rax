@@ -7,6 +7,7 @@ const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 const CodeError = require('../utils/CodeError');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
+const { getNpmName, normalizeFileName } = require('../utils/pathHelper');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
@@ -265,11 +266,6 @@ function ensureIndexPathInImports(ast, resourcePath) {
   });
 }
 
-function getNpmName(value) {
-  const isScopedNpm = /^_?@/.test(value);
-  return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
-}
-
 function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   const source = (value, prefix, filename, rootContext) => {
     const npmName = getNpmName(value);
@@ -293,7 +289,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     if (npmName === value) {
       ret = join(prefix, realNpmName, modulePathSuffix);
     } else {
-      ret = join(prefix, value);
+      ret = join(prefix, value.replace(npmName, realNpmName));
     }
     if (ret[0] !== '.') ret = './' + ret;
     // ret => '../npm/_ali/universal-toast/lib/index.js
@@ -579,13 +575,6 @@ function addRegisterRefs(refs, renderFunctionPath) {
       }))
     ])));
   }
-}
-
-/**
- * For that alipay build folder can not contain `@`, escape to `_`.
- */
-function normalizeFileName(filename) {
-  return filename.replace(/@/g, '_');
 }
 
 /**
