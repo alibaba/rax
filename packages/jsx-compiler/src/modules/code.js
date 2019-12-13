@@ -5,7 +5,6 @@ const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
-const CodeError = require('../utils/CodeError');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
 
 const RAX_PACKAGE = 'rax';
@@ -61,7 +60,7 @@ function getConstructor(type) {
  */
 module.exports = {
   parse(parsed, code, options) {
-    const { ast, programPath, defaultExportedPath, renderFunctionPath,
+    const { ast, programPath, defaultExportedPath, exportComponentPath, renderFunctionPath,
       useCreateStyle, useClassnames, dynamicValue, dynamicEvents, imported,
       contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
     const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
@@ -74,11 +73,16 @@ module.exports = {
     if (type === 'app') {
       userDefineType = 'function';
     } else {
-      const exportComponentPath = getExportComponentPath(defaultExportedPath, programPath, code);
       const replacer = getReplacer(exportComponentPath);
       let { id, body } = exportComponentPath.node;
       if (!id) {
-        id = t.identifier(SAFT_DEFAULT_NAME);
+        // Check fn is anonymity
+        if (exportComponentPath.isArrowFunctionExpression()
+          && exportComponentPath.parentPath.isVariableDeclarator()) {
+          id = exportComponentPath.parent.id;
+        } else {
+          id = t.identifier(SAFT_DEFAULT_NAME);
+        }
       }
       if (isFunctionComponent(exportComponentPath)) { // replace with class def.
         userDefineType = 'function';
@@ -427,40 +431,6 @@ function getReplacer(exportComponentPath) {
     return exportComponentPath.parentPath.parentPath;
   } else {
     return null;
-  }
-}
-
-/**
- * @param export default path
- * @param program path
- * @param source code
- * @return should be replaced path
- * */
-function getExportComponentPath(defaultExportedPath, programPath, code) {
-  const exportedNodeType = defaultExportedPath.node.type;
-  if (['ClassExpression', 'ClassDeclaration', 'FunctionDeclaration',
-    'ArrowFunctionExpression', 'FunctionExpression' ].includes(exportedNodeType)) {
-    return defaultExportedPath;
-  }
-  if (exportedNodeType === 'CallExpression') {
-    let exportComponentPath = defaultExportedPath;
-    // Only first param is component
-    const componentNode = defaultExportedPath.get('arguments')[0].node;
-    if (programPath.scope.hasBinding(componentNode.name)) {
-      programPath.traverse({
-        Declaration(path) {
-          const { node } = path;
-          if (node.id && t.isIdentifier(node.id, {
-            name: componentNode.name
-          })) {
-            exportComponentPath = path;
-          }
-        }
-      });
-    } else {
-      throw new CodeError(code, componentNode, componentNode.loc, 'Exported component is undefined');
-    }
-    return exportComponentPath;
   }
 }
 
