@@ -1,10 +1,13 @@
 const {
   existsSync
 } = require('fs-extra');
+const { removeExt } = require('./pathHelper');
 
-const suffix = ['.js', '.json', '.axml'];
-
+const suffix = {
+  ali: ['.js', '.json', '.axml'],
+  wechat: ['.js', '.json', '.wxml']
+};
 // e.g file:   /root/lib/miniapp/index
-module.exports = function(filename) {
-  return suffix.every(s => existsSync(filename + s));
+module.exports = function(filename, platform = 'ali') {
+  return suffix[platform].every(s => existsSync(removeExt(filename) + s));
 };
