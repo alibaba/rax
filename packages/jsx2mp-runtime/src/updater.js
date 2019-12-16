@@ -54,7 +54,10 @@ export function updateChildProps(trigger, instanceId, nextUpdateProps) {
       );
       if (targetComponent.__mounted) {
         targetComponent.nextProps = nextPropsMap[instanceId] = nextProps;
-        enqueueRender(targetComponent);
+        // Ensure parent component did update.
+        trigger._pendingCallbacks.push(() => {
+          enqueueRender(targetComponent);
+        });
       } else {
         targetComponent.props = propsMap[instanceId] = nextProps;
       }
