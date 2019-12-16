@@ -5,12 +5,13 @@ const t = require('@babel/types');
 const { _transform: transformTemplate } = require('./element');
 const genExpression = require('../codegen/genExpression');
 const traverse = require('../utils/traverseNodePath');
-const moduleResolve = require('../utils/moduleResolve');
+const { moduleResolve, multipleModuleResolve } = require('../utils/moduleResolve');
 const createJSX = require('../utils/createJSX');
 const Expression = require('../utils/Expression');
 const compiledComponents = require('../compiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
+const { getNpmName, normalizeFileName } = require('../utils/pathHelper');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 const PKG_NAME_REG = /^.*\/node_modules\/([^\/]*).*$/;
@@ -82,59 +83,62 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
      * Judge whether the component is from component library
      */
     if (!RELATIVE_COMPONENTS_REG.test(alias.from)) {
-      const pkg = getComponentConfig(alias.default ? alias.from : alias.name, options.resourcePath);
-      if (pkg && pkg.miniappConfig) {
-        if (Array.isArray(pkg.miniappConfig.renderSlotProps)) {
-          path.traverse({
-            JSXAttribute(attrPath) {
-              const { node } = attrPath;
-              if (
-                pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
-              ) {
-                if (t.isJSXExpressionContainer(node.value)) {
-                  let fnExp;
-                  if (t.isFunction(node.value.expression)) {
-                    fnExp = node.value.expression;
-                  } else if (t.isIdentifier(node.value.expression)) {
-                    const binding = attrPath.scope.getBinding(
-                      node.value.expression.name,
-                    );
-                    fnExp = binding.path.node;
-                  } else if (t.isMemberExpression(node.value.expression)) {
-                    throw new Error(
-                      `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
-                        node,
-                      )}", please use anonymous function instead.`,
-                    );
-                  }
-
-                  if (fnExp) {
-                    const { params, body } = fnExp;
-                    let jsxEl = body;
-                    if (t.isBlockStatement(body)) {
-                      const returnEl = body.body.filter(el =>
-                        t.isReturnStatement(el),
-                      )[0];
-                      if (returnEl) jsxEl = returnEl.argument;
+      const packageName = getNpmName(alias.from);
+      if (packageName === alias.from) {
+        const pkg = getComponentConfig(alias.default ? alias.from : alias.name, options.resourcePath);
+        if (pkg && pkg.miniappConfig) {
+          if (Array.isArray(pkg.miniappConfig.renderSlotProps)) {
+            path.traverse({
+              JSXAttribute(attrPath) {
+                const { node } = attrPath;
+                if (
+                  pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
+                ) {
+                  if (t.isJSXExpressionContainer(node.value)) {
+                    let fnExp;
+                    if (t.isFunction(node.value.expression)) {
+                      fnExp = node.value.expression;
+                    } else if (t.isIdentifier(node.value.expression)) {
+                      const binding = attrPath.scope.getBinding(
+                        node.value.expression.name,
+                      );
+                      fnExp = binding.path.node;
+                    } else if (t.isMemberExpression(node.value.expression)) {
+                      throw new Error(
+                        `NOT_SUPPORTED: Not support MemberExpression at render function: "${genExpression(
+                          node,
+                        )}", please use anonymous function instead.`,
+                      );
                     }
-                    const {
-                      node: slotComponentNode,
-                      dynamicValue: slotComponentDynamicValue,
-                    } = createSlotComponent(jsxEl, node.name.name, params);
-                    Object.assign(dynamicValue, slotComponentDynamicValue);
-                    path.parentPath.node.children.push(slotComponentNode);
-                  }
-                  attrPath.remove();
-                }
-              }
-            },
-          });
-        }
 
-        if (pkg.miniappConfig.subPackages) {
-          parsed.imported[alias.from].forEach(importedComponent => {
-            importedComponent.isFromComponentLibrary = true;
-          });
+                    if (fnExp) {
+                      const { params, body } = fnExp;
+                      let jsxEl = body;
+                      if (t.isBlockStatement(body)) {
+                        const returnEl = body.body.filter(el =>
+                          t.isReturnStatement(el),
+                        )[0];
+                        if (returnEl) jsxEl = returnEl.argument;
+                      }
+                      const {
+                        node: slotComponentNode,
+                        dynamicValue: slotComponentDynamicValue,
+                      } = createSlotComponent(jsxEl, node.name.name, params);
+                      Object.assign(dynamicValue, slotComponentDynamicValue);
+                      path.parentPath.node.children.push(slotComponentNode);
+                    }
+                    attrPath.remove();
+                  }
+                }
+              },
+            });
+          }
+
+          if (pkg.miniappConfig.subPackages) {
+            parsed.imported[alias.from].forEach(importedComponent => {
+              importedComponent.isFromComponentLibrary = true;
+            });
+          }
         }
       }
     }
@@ -184,14 +188,11 @@ function transformComponents(parsed, options) {
             removeImport(parsed.ast, alias);
             if (alias) {
               const pkg = getComponentConfig(alias.from, options.resourcePath);
-              if (
-                pkg &&
-                pkg.miniappConfig &&
-                pkg.miniappConfig.subComponents &&
-                pkg.miniappConfig.subComponents[property.name]
-              ) {
-                let subComponent =
-                  pkg.miniappConfig.subComponents[property.name];
+              const isSingleComponent = pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name];
+              const isComponentLibrary = pkg.miniappConfig && pkg.miniappConfig.subPackages && pkg.miniappConfig.subPackages[alias.local] && pkg.miniappConfig.subPackages[alias.local].subComponents && pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+
+              if (isSingleComponent) {
+                let subComponent = pkg.miniappConfig.subComponents[property.name];
                 replaceComponentTagName(
                   path,
                   t.jsxIdentifier(subComponent.tagNameMap),
@@ -205,6 +206,17 @@ function transformComponents(parsed, options) {
                     ),
                   );
                 }
+              } else if (isComponentLibrary) {
+                let subComponent = pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+                const componentTag = subComponent.tagNameMap || `${alias.name}-${object.name}-${property.name}`.toLowerCase().replace(/@|\//g, '_');
+                replaceComponentTagName(
+                  path,
+                  t.jsxIdentifier(componentTag)
+                );
+                componentsAlias[componentTag] = Object.assign({
+                  isSubComponent: true,
+                  subComponentName: property.name
+                }, alias);
               }
             }
           }
@@ -304,15 +316,24 @@ function getComponentPath(alias, options) {
       throw new Error('`resourcePath` must be passed to calc dependency path.');
     }
 
-    const filename =
-      moduleResolve(options.resourcePath, alias.from, '.jsx') ||
-      moduleResolve(options.resourcePath, alias.from, '.js');
+    const filename = multipleModuleResolve(options.resourcePath, alias.from, [
+      '.jsx', '.js', '.tsx', '.ts'
+    ]);
     return filename;
   } else {
     const { disableCopyNpm } = options;
     const realNpmFile = resolveModule.sync(alias.from, { basedir: dirname(options.resourcePath), preserveSymlinks: false });
-    const pkgName = getRealNpmPkgName(realNpmFile);
-    // npm module
+    const pkgName = getNpmName(alias.from);
+    const realPkgName = getRealNpmPkgName(realNpmFile);
+    const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
+    let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
+    npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
+
+    // Use specific path to import native miniapp component
+    if (pkgName !== alias.from) {
+      return normalizeFileName('./' + join(npmRelativePath, alias.from.replace(pkgName, realPkgName)));
+    }
+    // Use miniappConfig in package.json to import native miniapp component
     const pkg = getComponentConfig(alias.from, options.resourcePath);
     let mainName = 'main';
     if (options.platform.type !== 'ali') {
@@ -327,20 +348,20 @@ function getComponentPath(alias, options) {
       );
       return;
     } else {
-      const miniappComponentPath = isSingleComponent ? pkg.miniappConfig[mainName] : pkg.miniappConfig.subPackages[alias.local][mainName];
+      const miniappComponentPath = isSingleComponent ?
+        pkg.miniappConfig[mainName] :
+        alias.isSubComponent ?
+          pkg.miniappConfig.subPackages[alias.local].subComponents[alias.subComponentName][mainName] :
+          pkg.miniappConfig.subPackages[alias.local][mainName];
 
       if (disableCopyNpm) {
         return join(pkg.name, miniappComponentPath);
       }
 
-      const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
-      let npmRelativePath = relative(targetFileDir, join(options.outputPath, '/npm'));
-      npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
-
       const miniappConfigRelativePath = relative(pkg.main, miniappComponentPath);
       const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath);
-      const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(pkgName) + pkgName.length);
-      return './' + join(npmRelativePath, pkgName.replace(/@/g, '_'), realMiniappRelativePath);
+      const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(realPkgName) + realPkgName.length);
+      return normalizeFileName('./' + join(npmRelativePath, realPkgName, realMiniappRelativePath));
     }
   }
 }

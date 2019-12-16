@@ -4,6 +4,10 @@ import { enqueueRender } from './enqueueRender';
 const propsMap = {
   // instanceId -> props
 };
+
+const nextPropsMap = {
+  // instanceId -> props
+};
 const componentIntances = {};
 
 const updateChildPropsCallbacks = {};
@@ -18,6 +22,12 @@ export function setComponentInstance(instance) {
   }
 }
 
+export function setComponentProps(instanceId) {
+  if (nextPropsMap.hasOwnProperty(instanceId)) {
+    propsMap[instanceId] = nextPropsMap[instanceId];
+  }
+}
+
 export function getComponentProps(instanceId) {
   if (propsMap.hasOwnProperty(instanceId)) return propsMap[instanceId];
   else return null;
@@ -29,23 +39,28 @@ export function removeComponentProps(instanceId) {
   }
 }
 
-export function updateChildProps(trigger, instanceId, nextProps) {
+export function updateChildProps(trigger, instanceId, nextUpdateProps) {
   if (trigger) {
-    const targetComponent = componentIntances[instanceId];
     // Create a new object reference.
+    const targetComponent = componentIntances[instanceId];
     if (targetComponent) {
-      propsMap[instanceId] = Object.assign(
+      const nextProps = Object.assign(
         {
           __parentId: trigger.props.__tagId,
           __tagId: instanceId
         },
         targetComponent.props,
-        nextProps,
+        nextUpdateProps,
       );
-      nextTick(() => {
-        targetComponent.nextProps = propsMap[instanceId];
-        enqueueRender(targetComponent);
-      });
+      if (targetComponent.__mounted) {
+        targetComponent.nextProps = nextPropsMap[instanceId] = nextProps;
+        // Ensure parent component did update.
+        trigger._pendingCallbacks.push(() => {
+          enqueueRender(targetComponent);
+        });
+      } else {
+        targetComponent.props = propsMap[instanceId] = nextProps;
+      }
     } else {
       /**
        * updateChildProps may execute  before setComponentInstance
@@ -54,7 +69,7 @@ export function updateChildProps(trigger, instanceId, nextProps) {
         null,
         trigger,
         instanceId,
-        nextProps,
+        nextUpdateProps,
       );
     }
   }

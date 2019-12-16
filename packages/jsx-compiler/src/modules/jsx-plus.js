@@ -208,7 +208,7 @@ function transformDirectiveList(ast, code, adapter) {
             if (listItem.__listItem.index === params[1].name) {
               params[1].name += listIndexCount++;
             } else {
-              params = params.splice(2);
+              params.splice(2);
             }
             /**
              * Assign an new object to item

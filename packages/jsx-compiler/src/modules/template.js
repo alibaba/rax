@@ -8,6 +8,8 @@ const genExpression = require('../codegen/genExpression');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const findIndex = require('../utils/findIndex');
+const getExportComponentPath = require('../utils/getExportComponentPath');
+const getProgramPath = require('../utils/getProgramPath');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
@@ -17,13 +19,13 @@ const RENDER_FN_PATH = 'renderFunctionPath';
  */
 module.exports = {
   parse(parsed, code, options) {
-    const { defaultExportedPath } = parsed;
+    const { defaultExportedPath, ast } = parsed;
     if (!defaultExportedPath) return;
-
-    const renderFnPath = isFunctionComponent(defaultExportedPath)
-      ? defaultExportedPath
-      : isClassComponent(defaultExportedPath)
-        ? getRenderMethodPath(defaultExportedPath)
+    const exportComponentPath = parsed.exportComponentPath = getExportComponentPath(defaultExportedPath, getProgramPath(ast), code);
+    const renderFnPath = isFunctionComponent(exportComponentPath)
+      ? exportComponentPath
+      : isClassComponent(exportComponentPath)
+        ? getRenderMethodPath(exportComponentPath)
         : undefined;
     if (!renderFnPath) return;
 

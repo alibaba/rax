@@ -53,7 +53,20 @@ function isFromTargetDirs(targetDirs) {
   };
 }
 
+/**
+ * replace the file's extension with new extension
+ *
+ * @param {string} filePath
+ * @param {string} newExtension eg. .ts .js
+ * @returns {string}
+ */
+function replaceExtension(filePath, newExtension) {
+  const lastDot = filePath.lastIndexOf('.');
+  return filePath.slice(0, lastDot) + newExtension;
+}
+
 module.exports = {
   removeExt,
-  isFromTargetDirs
+  isFromTargetDirs,
+  replaceExtension
 };
