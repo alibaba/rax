@@ -1,6 +1,4 @@
-import { shared } from 'rax';
-
-const { Host } = shared;
+import getElementById from 'rax-get-element-by-id';
 
 function findDOMNode(instance) {
   if (instance == null) {
@@ -18,7 +16,7 @@ function findDOMNode(instance) {
   }
 
   if (typeof instance == 'string') {
-    return Host.driver.getElementById(instance);
+    return getElementById(instance);
   }
 
   if (typeof instance.render !== 'function') {

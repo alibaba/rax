@@ -32,15 +32,6 @@ describe('findDOMNode', () => {
     expect(node).toBeNull();
   });
 
-  it('findDOMNode with id', () => {
-    let mockFn = jest.fn();
-    Host.driver = {
-      getElementById: mockFn
-    };
-    let node = findDOMNode('id');
-    expect(mockFn).toBeCalledWith('id');
-  });
-
   it('findDOMNode with node', () => {
     let node = findDOMNode({
       ownerDocument: {}
