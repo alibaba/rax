@@ -76,7 +76,7 @@ module.exports = {
       const replacer = getReplacer(exportComponentPath);
       let { id, body } = exportComponentPath.node;
       if (!id) {
-        // Check fn is anonymity
+        // Check fn is anonymous
         if (exportComponentPath.isArrowFunctionExpression()
           && exportComponentPath.parentPath.isVariableDeclarator()) {
           id = exportComponentPath.parent.id;
