@@ -158,20 +158,18 @@ class App extends Component {
     expect(getTransfromCode(`
 import { createElement, Component } from 'rax';
 import './app.css';
-import style from './style.css';
+import styles from './style.css';
 
 class App extends Component {
   render() {
     return <div className="header2" style={styles.header1} />;
   }
-}`)).toBe(`${mergeStylesFunctionTemplate}
-
+}`)).toBe(`
 import { createElement, Component } from 'rax';
 import appStyleSheet from './app.css';
-import styleStyleSheet from './style.css';
+import styles from './style.css';
 
-var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);
-
+var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
     return <div style={Object.assign({}, _styleSheet["header2"], styles.header1)} />;
@@ -208,20 +206,18 @@ class App extends Component {
     expect(getTransfromCode(`
 import { createElement, Component } from 'rax';
 import './app.css';
-import style from './style.css';
+import styles from './style.css';
 
 class App extends Component {
   render() {
     return <div className="header2" style={[styles.header1, styles.header3]} />;
   }
-}`)).toBe(`${mergeStylesFunctionTemplate}
-
+}`)).toBe(`
 import { createElement, Component } from 'rax';
 import appStyleSheet from './app.css';
-import styleStyleSheet from './style.css';
+import styles from './style.css';
 
-var _styleSheet = _mergeStyles(appStyleSheet, styleStyleSheet);
-
+var _styleSheet = appStyleSheet;
 class App extends Component {
   render() {
     return <div style={[_styleSheet["header2"], styles.header1, styles.header3]} />;
@@ -315,5 +311,55 @@ render(<div __class="header" style={_styleSheet["header"]} />);`);
 
   afterEach(() => {
     process.env.NODE_ENV = lastEnv;
+  });
+});
+
+describe('edge test', () => {
+  it('transform class and style import same file', () => {
+    expect(getTransfromCode(`
+import { createElement, render } from 'rax';
+import './app.css';
+import styles from './app.css';
+
+render(<div className="header1" style={styles.header} />);
+`)).toBe(`
+import { createElement, render } from 'rax';
+import appStyleSheet from './app.css';
+import styles from './app.css';
+
+var _styleSheet = appStyleSheet;
+render(<div style={Object.assign({}, _styleSheet["header1"], styles.header)} />);`);
+  });
+
+  it('should transform two class files', () => {
+    expect(getTransfromCode(`
+import { createElement, render } from 'rax';
+import './app1.css';
+import './app2.css';
+
+render(<div className="header1 header2" />);
+`)).toBe(`${mergeStylesFunctionTemplate}
+
+import { createElement, render } from 'rax';
+import app1StyleSheet from './app1.css';
+import app2StyleSheet from './app2.css';
+
+var _styleSheet = _mergeStyles(app1StyleSheet, app2StyleSheet);
+
+render(<div style={Object.assign({}, _styleSheet["header1"], _styleSheet["header2"])} />);`);
+  });
+
+  it('should delete className attr when empty string', () => {
+    expect(getTransfromCode(`
+import { createElement, render } from 'rax';
+import 'app.css'
+
+render(<div className="" />);
+`)).toBe(`
+import { createElement, render } from 'rax';
+import appStyleSheet from 'app.css';
+
+var _styleSheet = appStyleSheet;
+render(<div />);`);
   });
 });
