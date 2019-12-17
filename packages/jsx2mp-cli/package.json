@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-cli",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "license": "BSD-3-Clause",
   "description": "A cli tool to transform Rax JSX based project to MiniApp.",
   "bin": {
