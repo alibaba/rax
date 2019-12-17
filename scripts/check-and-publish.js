@@ -108,15 +108,6 @@ function checkVersionAndPublish() {
     }
 
     if (ret.length > 0) {
-      console.log('npm run setup');
-      spawnSync('npm', [
-        'run',
-        'setup',
-      ], {
-        stdio: 'inherit',
-        cwd: process.cwd(),
-      });
-
       for (let i = 0; i < ret.length; i++) {
         const { name, workDir, local, tag } = ret[i];
         publish(name, workDir, local, tag);
