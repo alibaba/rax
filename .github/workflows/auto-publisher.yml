@@ -1,0 +1,21 @@
+name: Auto Publisher
+
+on:
+  push:
+    branches:
+      - master
+      - 'releases/**'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+          registry-url: https://registry.npmjs.org/
+      - run: npm i
+      - run: npm run check-and-publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
