@@ -245,7 +245,7 @@ function ${GET_STYLE_FUNC_NAME}(classNameExpression) {
         const extname = path.extname(sourceValue);
         const cssIndex = cssSuffixs.indexOf(extname);
         // Do not convert `import styles from './foo.css'` kind
-        if (node.importKind !== 'value' && cssIndex > -1) {
+        if (node.specifiers.length === 0 && cssIndex > -1) {
           let cssFileCount = file.get('cssFileCount') || 0;
           let cssParamIdentifiers = file.get('cssParamIdentifiers') || [];
           const cssFileBaseName = camelcase(path.basename(sourceValue, extname));
