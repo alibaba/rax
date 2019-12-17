@@ -1,6 +1,0 @@
-{
-  "name": "postcss-plugin-rpx2rem",
-  "version": "0.0.1",
-  "description": "Postcss plugin transform rpx to rem.",
-  "main": "src/index.js"
-}
