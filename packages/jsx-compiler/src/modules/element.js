@@ -223,8 +223,9 @@ function transformTemplate(
         });
         const formatName = formatEventName(name);
         if (Array.isArray(args)) {
+          const fnFirstParam = expression.params[0];
           if (!(args.length === 1 && t.isIdentifier(args[0], {
-            name: expression.params[0].name
+            name: fnFirstParam && fnFirstParam.name
           }))) {
             args.forEach((arg, index) => {
               const transformedArg = transformCallExpressionArg(arg, dynamicValues, isDirective);
