@@ -13,17 +13,12 @@ $ npm install --save driver-dom
 ```jsx
 import {createElement, render} from 'rax';
 import DriverDOM from 'driver-dom';
-import View from 'rax-view';
-import Image from 'rax-view';
-
 
 function Example() {
   return (
-    <View>
-      <Image source={{
-        uri: "https://img.alicdn.com/tps/TB1z.55OFXXXXcLXXXXXXXXXXXX-560-560.jpg"
-      }} />
-    </View>
+    <div>
+      <img width="560" height="560" src="https://img.alicdn.com/tps/TB1z.55OFXXXXcLXXXXXXXXXXXX-560-560.jpg" />
+    </div>
   );
 }
 
