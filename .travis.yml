@@ -32,7 +32,9 @@ jobs:
       script: npm run bench
 
     - stage: auto-publisher
-      script: npm run check-and-publish
+      script:
+        - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        - npm run check-and-publish
 
 stages:
   - test # default stage
