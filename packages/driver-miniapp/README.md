@@ -26,19 +26,3 @@ render(<Example />, null, {
   driver: DriverMiniApp
 });
 ```
-
-## API
-
-**static setTagNamePrefix(prefix: String)**
-
-Set tag prefix for custom elements.
-
-```js
-import DriverMiniApp from 'driver-miniapp';
-
-DriverMiniApp.setTagNamePrefix('a-');
-```
-
-
-
-
