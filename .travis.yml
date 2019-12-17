@@ -17,6 +17,7 @@ script:
   - npm run lint:nofix
   - npm run test
 
+
 jobs:
   include:
     - stage: bench
@@ -30,8 +31,15 @@ jobs:
         - xvfb
       script: npm run bench
 
+    - stage: auto-publisher
+      script:
+        - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        - npm run check-and-publish
+
 stages:
   - test # default stage
   - name: bench
     # require the branch name to be master (note for PRs this is the base branch name)
     if: (branch = master AND type != pull_request) OR branch =~ ^bench
+  - name: auto-publisher
+    if: (branch = master AND type != pull_request) OR branch =~ ^releases
