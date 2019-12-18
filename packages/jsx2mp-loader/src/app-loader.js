@@ -65,7 +65,7 @@ module.exports = async function appLoader(content) {
   try {
     transformed = compiler(rawContentAfterDCE, compilerOptions);
   } catch (e) {
-    console.log(chalk.red(`\n[Miniapp ${platform.type}] Error occured when handling App ${this.resourcePath}`));
+    console.log(chalk.red(`\n[${platform.name}] Error occured when handling App ${this.resourcePath}`));
     console.log(pe.render(e));
     return '';
   }
