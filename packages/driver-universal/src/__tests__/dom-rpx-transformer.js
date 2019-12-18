@@ -1,7 +1,8 @@
 import { createElement, render } from 'rax';
+import * as DriverDOM from 'driver-dom';
 import createDOMDriver from '../dom';
 
-const driver = createDOMDriver();
+const driver = createDOMDriver(DriverDOM);
 
 describe('Transform rpx', () => {
   const CLIENT_WIDTH = 750;
