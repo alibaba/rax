@@ -46,7 +46,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
       const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
       if (parentList) {
         const parentListIndexValue = parentList.args[1].name;
-        parentPath.node.__tagIdExpression = [tagId, parentListIndexValue, new Expression(indexValue)];
+        parentPath.node.__tagIdExpression = [tagId, new Expression(parentListIndexValue), new Expression(indexValue)];
         tagId += `-{{${parentListIndexValue}}}-{{${indexValue}}}`;
       } else {
         parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
