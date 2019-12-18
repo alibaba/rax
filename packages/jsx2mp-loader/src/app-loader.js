@@ -131,7 +131,7 @@ function transformAppConfig(entryPath, originalConfig, platform) {
         break;
       case 'tabBar':
         if (value.items) {
-          adaptAppConfig(value, 'items', platform);
+          adaptAppConfig(value, 'items', platform, originalConfig);
         }
         adaptAppConfig(value, 'tabBar', platform);
         config[key] = value;
