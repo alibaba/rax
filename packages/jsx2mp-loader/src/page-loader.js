@@ -47,7 +47,7 @@ module.exports = async function pageLoader(content) {
   try {
     transformed = compiler(rawContentAfterDCE, compilerOptions);
   } catch (e) {
-    console.log(chalk.red(`\n[Miniapp ${platform.type}] Error occured when handling Page ${this.resourcePath}`));
+    console.log(chalk.red(`\n[${platform.name}] Error occured when handling Page ${this.resourcePath}`));
     console.log(pe.render(e));
     return '';
   }

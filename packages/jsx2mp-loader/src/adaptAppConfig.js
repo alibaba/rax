@@ -35,6 +35,10 @@ const appConfigMap = {
     activeIcon: {
       ali: 'activeIcon',
       wechat: 'selectedIconPath'
+    },
+    path: {
+      ali: 'pagePath',
+      wechat: 'pagePath'
     }
   }
 };
@@ -50,12 +54,12 @@ const adaptValueMap = {
   }
 };
 
-function adaptAppConfig(config, property, platform) {
+function adaptAppConfig(config, property, platform, originalConfig = {}) {
   if (property === 'items') {
     config[property].forEach(item => {
       Object.keys(item).forEach(itemConfig => {
         if (appConfigMap.items[itemConfig] && appConfigMap.items[itemConfig][platform] !== itemConfig) {
-          item[appConfigMap.items[itemConfig][platform]] = item[itemConfig];
+          item[appConfigMap.items[itemConfig][platform]] = itemConfig === 'path' ? getSourceFromPath(item[itemConfig], originalConfig.routes) : item[itemConfig];
           delete item[itemConfig];
         }
       });
@@ -82,6 +86,21 @@ function getAdaptValue(value, valueMapArr) {
     }
   }
   return value;
+}
+
+/**
+ * Get corresponding source from path
+ *
+ * @param {string} path
+ * @param {Array<Object>} routes
+ */
+function getSourceFromPath(path, routes) {
+  for (let route of routes) {
+    if (route.path === path) {
+      return route.source;
+    }
+  }
+  return null;
 }
 
 module.exports = adaptAppConfig;

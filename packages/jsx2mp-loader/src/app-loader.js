@@ -65,7 +65,7 @@ module.exports = async function appLoader(content) {
   try {
     transformed = compiler(rawContentAfterDCE, compilerOptions);
   } catch (e) {
-    console.log(chalk.red(`\n[Miniapp ${platform.type}] Error occured when handling App ${this.resourcePath}`));
+    console.log(chalk.red(`\n[${platform.name}] Error occured when handling App ${this.resourcePath}`));
     console.log(pe.render(e));
     return '';
   }
@@ -131,7 +131,7 @@ function transformAppConfig(entryPath, originalConfig, platform) {
         break;
       case 'tabBar':
         if (value.items) {
-          adaptAppConfig(value, 'items', platform);
+          adaptAppConfig(value, 'items', platform, originalConfig);
         }
         adaptAppConfig(value, 'tabBar', platform);
         config[key] = value;
