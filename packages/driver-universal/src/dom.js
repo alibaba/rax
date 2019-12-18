@@ -1,12 +1,10 @@
-import * as DriverDOM from 'driver-dom';
-
-export default function createDOMDriver() {
-  return Object.assign({}, DriverDOM, {
+export default function createDOMDriver(driver) {
+  return Object.assign({}, driver, {
     createElement(type, props, component) {
-      return DriverDOM.createElement(type, props, component, true);
+      return driver.createElement(type, props, component, true);
     },
     setStyle(node, style) {
-      return DriverDOM.setStyle(node, style, true);
+      return driver.setStyle(node, style, true);
     }
   });
 }
