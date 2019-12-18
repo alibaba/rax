@@ -223,24 +223,28 @@ function transformTemplate(
         });
         const formatName = formatEventName(name);
         if (Array.isArray(args)) {
-          args.forEach((arg, index) => {
-            const transformedArg = transformCallExpressionArg(arg);
-            attributes.push(
-              t.jsxAttribute(
-                t.jsxIdentifier(`data-${formatName}-arg-` + index),
-                t.stringLiteral(
-                  createBinding(
-                    genExpression(transformedArg, {
-                      concise: true,
-                      comments: false,
-                    }),
+          const fnFirstParam = expression.params[0];
+          if (!(args.length === 1 && t.isIdentifier(args[0], {
+            name: fnFirstParam && fnFirstParam.name
+          }))) {
+            args.forEach((arg, index) => {
+              const transformedArg = transformCallExpressionArg(arg, dynamicValues, isDirective);
+              attributes.push(
+                t.jsxAttribute(
+                  t.jsxIdentifier(`data-${formatName}-arg-` + index),
+                  t.stringLiteral(
+                    createBinding(
+                      genExpression(transformedArg, {
+                        concise: true,
+                        comments: false,
+                      }),
+                    ),
                   ),
                 ),
-              ),
-            );
-          });
+              );
+            });
+          }
         }
-
         path.replaceWith(t.stringLiteral(name));
         break;
 
@@ -680,30 +684,30 @@ function transformObjectExpression(expression, dynamicBinding, isDirective) {
  * Transform CallExpression arg
  * @param {Object} ast
  */
-function transformCallExpressionArg(ast) {
+function transformCallExpressionArg(ast, dynamicValues, isDirective) {
   let arg;
-  if (t.isIdentifier(ast)) {
-    if (ast.__listItem) {
-      arg = t.memberExpression(
-        t.identifier(ast.__listItem.item),
-        ast,
-      );
-    }
-  } else {
-    traverse(ast, {
-      Identifier(innerPath) {
-        const { node: innerNode } = innerPath;
-        if (innerNode.__listItem) {
-          const item = innerNode.__listItem.item;
-          innerPath.replaceWith(
-            t.memberExpression(
-              t.identifier(item),
-              t.identifier(innerNode.name),
-            ),
-          );
-        }
-      },
-    });
+  switch (ast.type) {
+    case 'Identifier':
+      ast = transformIdentifier(ast, dynamicValues, isDirective);
+      break;
+    case 'MemberExpression':
+      ast = transformMemberExpression(ast, dynamicValues, isDirective);
+    default:
+      traverse(ast, {
+        Identifier(innerPath) {
+          const { node: innerNode } = innerPath;
+          if (innerNode.__listItem) {
+            const item = innerNode.__listItem.item;
+            innerPath.replaceWith(
+              t.memberExpression(
+                t.identifier(item),
+                t.identifier(innerNode.name),
+              ),
+            );
+          }
+        },
+      });
+      break;
   }
   if (!arg) {
     arg = ast;

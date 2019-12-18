@@ -1,6 +1,7 @@
 module.exports = {
   'ali': {
     type: 'ali',
+    name: 'Alibaba MiniApp',
     extension: {
       xml: '.axml',
       css: '.acss',
@@ -8,6 +9,7 @@ module.exports = {
   },
   'wechat': {
     type: 'wechat',
+    name: 'WeChat MiniProgram',
     extension: {
       xml: '.wxml',
       css: '.wxss',
@@ -15,13 +17,14 @@ module.exports = {
   },
   'baidu': {
     type: 'baidu',
+    name: 'Baidu SmartProgram',
     extension: {
       xml: '.swan',
       css: '.css',
     }
   },
   'tt': {
-    type: 'tt',
+    type: 'ByteDance MicroApp',
     extension: {
       xml: '.ttml',
       css: '.ttss'
