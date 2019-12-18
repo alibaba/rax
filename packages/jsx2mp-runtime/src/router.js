@@ -1,6 +1,6 @@
 import { navigateTo, redirectTo, navigateBack } from '@@ADAPTER@@';
+import { getMiniAppHistory } from './history';
 
-let router;
 let __routerMap = {};
 
 export function __updateRouterMap(appConfig) {
@@ -15,11 +15,11 @@ export function __updateRouterMap(appConfig) {
  * @param Klass
  */
 export function withRouter(Klass) {
-  if (Klass) Klass.defaultProps = Klass.defaultProps || {};
-  Object.assign(Klass.defaultProps, {
-    router,
-    history: router.history,
-    location: router.history.location,
+  if (Klass) Klass.props = Klass.props || {};
+  const history = getMiniAppHistory();
+  Object.assign(Klass.props, {
+    history: history,
+    location: history.location,
   });
 
   return Klass;
