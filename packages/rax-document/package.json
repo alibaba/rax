@@ -1,6 +1,6 @@
 {
   "name": "rax-document",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Provide components for building Document",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
