@@ -255,3 +255,14 @@ export function withRouter(Component) {
   Wrapper.WrappedComponent = Component;
   return Wrapper;
 }
+
+export function useHistory() {
+  return router.history;
+}
+
+export function useLocation() {
+  if (router.history) {
+    return router.history.location;
+  }
+  return null;
+}
