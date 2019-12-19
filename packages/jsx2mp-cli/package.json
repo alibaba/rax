@@ -28,6 +28,7 @@
     "del": "^5.1.0",
     "fs-extra": "^7.0.1",
     "inquirer": "^6.2.2",
+    "jsx-compiler": "^0.3.19",
     "jsx2mp-loader": "^0.2.0",
     "jsx2mp-runtime": "^0.3.0",
     "kebab-case": "^1.0.0",
