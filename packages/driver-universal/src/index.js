@@ -8,7 +8,7 @@ let currentDriver;
 if (isWeex) {
   currentDriver = DriverWeex;
 } else if (isWeb) {
-  currentDriver = createDOMDriver(DriverDOM);
+  currentDriver = createDOMDriver();
 } else if (isKraken) {
   currentDriver = createKrakenDriver();
 } else if (isMiniApp || isWeChatMiniProgram) {
