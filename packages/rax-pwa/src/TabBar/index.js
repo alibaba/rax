@@ -16,7 +16,7 @@ export default function TabBar(props) {
     // Have tabBar config
     typeof config === 'object' && Array.isArray(config.items)
     // Current page need show tabBar
-    && config.items.find(item => item.pagePath === pathname);
+    && config.items.find(item => item.path === pathname);
 
   const {
     backgroundColor = '#FFF',
@@ -37,7 +37,7 @@ export default function TabBar(props) {
       {showTabBar ? (
         <View style={{ ...styles.tabBar, backgroundColor }}>
           {items.map((item, index) => {
-            const selected = item.pagePath === pathname;
+            const selected = item.path === pathname;
             const itemTextColor = item.textColor || textColor;
             const itemSelectedColor = item.selectedColor || selectedColor;
             return (
@@ -46,7 +46,11 @@ export default function TabBar(props) {
                 style={styles.tabBarItem}
                 onClick={() => {
                   onClick && onClick(item);
-                  history.push(item.pagePath);
+                  if (!item.path) {
+                    console.warn(`TabBar item ${item.name} need set path`);
+                  } else {
+                    history.push(item.path);
+                  }
                 }}>
                 {selected && item.activeIcon ? (
                   <Image

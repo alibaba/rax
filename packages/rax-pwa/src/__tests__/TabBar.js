@@ -22,15 +22,15 @@ const testProps = {
     items: [
       {
         'name': 'welcome',
-        'pagePath': '/'
+        'path': '/'
       },
       {
         'name': 'page1',
-        'pagePath': '/page1'
+        'path': '/page1'
       },
       {
         'name': 'page2',
-        'pagePath': '/page2'
+        'path': '/page2'
       }
     ]
   }
