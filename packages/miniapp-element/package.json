@@ -1,0 +1,50 @@
+{
+  "name": "miniapp-element",
+  "version": "0.0.1",
+  "description": "web's adapter for miniapp",
+  "main": "src/index.js",
+  "miniprogram": "src",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
+    "test": "jest --bail",
+    "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
+    "coverage": "jest --coverage --bail",
+    "codecov": "jest --coverage && codecov"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "testURL": "https://jest.test",
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alibaba/rax"
+  },
+  "license": "MIT",
+  "author": "Rax Team",
+  "peerDependencies": {
+    "miniapp-render": "*"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.4.5",
+    "cross-env": "^5.2.0",
+    "fs-extra": "^8.1.0",
+    "jest": "^24.9.0",
+    "miniprogram-simulate": "^1.1.5",
+    "rollup": "^1.13.1",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-filesize": "^6.1.0",
+    "rollup-plugin-replace": "^2.2.0"
+  },
+  "dependencies": {
+    "miniprogram-render": "^0.5.12"
+  }
+}

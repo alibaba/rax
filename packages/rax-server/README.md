@@ -67,9 +67,9 @@ const options = {
   pages: {
     index: {
       title: 'Index',
-      component: require('./dist/server/index.js'),
+      component: require('./dist/server/generateTemplate.js'),
       styles: ['./client/index.css'],
-      scripts: ['./client/index.js']
+      scripts: ['./client/generateTemplate.js']
     },
     bar: {
       component: require('./dsit2/server/bar.js')
@@ -100,7 +100,7 @@ app.listen(PORT, () => {
 
 options:
  * page
- * pathname 
+ * pathname
  * query
  * component
  * styles

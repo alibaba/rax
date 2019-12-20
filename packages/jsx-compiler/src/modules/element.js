@@ -698,12 +698,14 @@ function transformCallExpressionArg(ast, dynamicValues, isDirective) {
           const { node: innerNode } = innerPath;
           if (innerNode.__listItem) {
             const item = innerNode.__listItem.item;
-            innerPath.replaceWith(
-              t.memberExpression(
-                t.identifier(item),
-                t.identifier(innerNode.name),
-              ),
-            );
+            if (item) {
+              innerPath.replaceWith(
+                t.memberExpression(
+                  t.identifier(item),
+                  t.identifier(innerNode.name),
+                ),
+              );
+            }
           }
         },
       });

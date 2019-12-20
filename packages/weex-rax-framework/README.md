@@ -12,7 +12,7 @@ module.exports = {
   target: 'node',
   entry: {
     // Entry name should ends with `.factory`
-    'your-module.factory' : './src/index.js',
+    'your-module.factory' : './src/generateTemplate.js',
   },
   output: {
     path: './dist/',
@@ -79,7 +79,7 @@ module.exports = {
   target: 'node',
   entry: {
     // Entry name should ends with `.framework`
-    'rax.framework': './packages/weex-rax-framework/src/index.js',
+    'rax.framework': './packages/weex-rax-framework/src/generateTemplate.js',
   },
   output: {
     path: './packages/weex-rax-framework/dist/',
@@ -124,7 +124,7 @@ npm link weex-rax-framework
 
 ### 3. Config `weex-rax-framework`
 
-Update `html5/frameworks/index.js` file with below content:
+Update `html5/frameworks/generateTemplate.js` file with below content:
 
 ```js
 import * as Weex from './legacy/index'
