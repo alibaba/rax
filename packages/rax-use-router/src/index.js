@@ -212,6 +212,12 @@ function getInitialComponent(routerConfig) {
   return InitialComponent;
 }
 
+const getRouteProps = function(props) {
+  const history = router.history;
+  const routeProps = { history, location: history.location, ...props };
+  return routeProps;
+};
+
 export function useRouter(routerConfig) {
   const [component, setComponent] = useState(getInitialComponent(routerConfig));
 
@@ -242,27 +248,19 @@ export function useRouter(routerConfig) {
     };
   }, []);
 
-  return { component };
-}
+  return {
+    component: (props) => {
+      return createElement(component, getRouteProps(props));
+    }
+  };
+};
 
 export function withRouter(Component) {
   function Wrapper(props) {
-    const history = router.history;
-    return createElement(Component, { ...props, history, location: history.location });
+    return createElement(Component, getRouteProps(props));
   };
 
   Wrapper.displayName = 'withRouter(' + (Component.displayName || Component.name) + ')';
   Wrapper.WrappedComponent = Component;
   return Wrapper;
-}
-
-export function useHistory() {
-  return router.history;
-}
-
-export function useLocation() {
-  if (router.history) {
-    return router.history.location;
-  }
-  return null;
 }
