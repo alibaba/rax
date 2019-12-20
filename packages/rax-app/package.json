@@ -1,6 +1,6 @@
 {
   "name": "rax-app",
-  "version": "0.2.5",
+  "version": "1.0.0",
   "description": "Rax application framework for univesal app.",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -17,7 +17,7 @@
     "driver-universal": "^2.2.0",
     "history": "^4.9.0",
     "querystring": "^0.2.0",
-    "rax-pwa": "^1.1.0",
+    "rax-pwa": "^2.0.0",
     "rax-use-router": "^3.0.0",
     "universal-env": "^3.0.0"
   },
