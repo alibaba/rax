@@ -48,15 +48,15 @@ const testProps = {
       'items': [
         {
           'name': 'welcome',
-          'path': '/'
+          'pagePath': '/'
         },
         {
           'name': 'page1',
-          'path': '/page1'
+          'pagePath': '/page1'
         },
         {
           'name': 'page2',
-          'path': '/page2'
+          'pagePath': '/page2'
         }
       ]
     }
