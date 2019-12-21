@@ -122,7 +122,7 @@ Input `hello.css`:
 }
 ```
 
-Use react in `generateTemplate.js`:
+Use react in `index.js`:
 
 ```js
 import React from 'react';
@@ -139,7 +139,7 @@ ReactDOM.render(
 
 Of cource, You also can use rax with es6.
 
-Use rax in `generateTemplate.js`:
+Use rax in `index.js`:
 
 ```js
 import { createElement, Component, render } from 'rax';

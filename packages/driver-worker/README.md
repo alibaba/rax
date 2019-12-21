@@ -25,7 +25,7 @@ render(
 );
 ```
 
-`generateTemplate.js`
+`index.js`
 ```js
 import domRenderer from 'driver-worker/lib/renderer';
 import spawnWorker from 'worker-loader?inline!./worker.js';

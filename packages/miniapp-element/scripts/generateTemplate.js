@@ -103,7 +103,7 @@ function createSubtreeCoverTemplate(templatePath, platform) {
   fs.writeFileSync(path.join(templatePath, `subtree-cover.${adapter[platform].xml}`), content.join(''), 'utf8');
 }
 
-export default function generateTemplate(distPath, platform) {
+export default function index(distPath, platform) {
   const templatePath = path.join(distPath, 'template');
   fs.ensureDirSync(templatePath);
   createSubtreeTemplate(templatePath, platform);

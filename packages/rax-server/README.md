@@ -67,9 +67,9 @@ const options = {
   pages: {
     index: {
       title: 'Index',
-      component: require('./dist/server/generateTemplate.js'),
+      component: require('./dist/server/index.js'),
       styles: ['./client/index.css'],
-      scripts: ['./client/generateTemplate.js']
+      scripts: ['./client/index.js']
     },
     bar: {
       component: require('./dsit2/server/bar.js')
