@@ -1,9 +1,9 @@
 import { useMemo } from 'rax';
 import usePromise from 'rax-use-promise';
 
-export default function useImport(create) {
+export default function useImport(create, args) {
   let [mod, error] = usePromise(
-    useMemo(create, [])
+    useMemo(create, [args])
   );
 
   if (mod) {
