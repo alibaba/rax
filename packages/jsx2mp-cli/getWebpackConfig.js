@@ -17,6 +17,13 @@ const FileLoader = require.resolve('jsx2mp-loader/src/file-loader');
 const BabelLoader = require.resolve('babel-loader');
 let buildStartTime;
 
+function tenantizeExtensions(tenant, extensions) {
+  return [
+    ...(tenant ? extensions.map((ext) => `.${tenant}${ext}`) : []),
+    ...extensions,
+  ];
+}
+
 function getBabelConfig() {
   return {
     presets: [
@@ -141,7 +148,7 @@ module.exports = (options = {}) => {
       ],
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+      extensions: tenantizeExtensions(platform, ['.js', '.jsx', '.ts', '.tsx', '.json']),
       mainFields: ['main', 'module']
     },
     externals: [
