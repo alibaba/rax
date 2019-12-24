@@ -7,7 +7,7 @@ const addSourceMap = require('./utils/addSourceMap');
 function transformCode(rawContent, mode, externalPlugins = [], externalPreset = []) {
   const presets = [].concat(externalPreset);
   const plugins = externalPlugins.concat([
-    require('@babel/plugin-proposal-export-default-from'), // for support of export defualt
+    require('@babel/plugin-proposal-export-default-from'), // for support of export default
     [
       require('babel-plugin-transform-define'),
       {
