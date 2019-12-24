@@ -1,5 +1,7 @@
 const genExpression = require('../codegen/genExpression');
 
+let count = 0;
+
 module.exports = class DynamicBinding {
   constructor(prefix) {
     this.prefix = prefix;
@@ -8,7 +10,8 @@ module.exports = class DynamicBinding {
   }
 
   _generateDynamicName() {
-    return this.prefix + this._store.length;
+    count++;
+    return this.prefix + count;
   }
 
   _bindDynamicValue({
@@ -21,7 +24,10 @@ module.exports = class DynamicBinding {
       value: expression,
       isDirective
     });
-    this._map[this._store.length - 1] = expression;
+    this._map[count] = {
+      expression,
+      name
+    };
     return name;
   }
 
@@ -38,8 +44,8 @@ module.exports = class DynamicBinding {
     } else {
       let name;
       keys.some(key => {
-        if (genExpression(expression) === genExpression(this._map[key])) {
-          name = this._store[key].name;
+        if (genExpression(expression) === genExpression(this._map[key].expression)) {
+          name = this._map[key].name;
           return true;
         }
         return false;
