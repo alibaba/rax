@@ -38,9 +38,10 @@ function transformAttribute(ast, code, adapter) {
           switch (node.value.type) {
             case 'JSXExpressionContainer':
               const childExpression = node.value.expression;
+              // For this.xxx = createRef();
               if (t.isMemberExpression(childExpression)
                 && t.isThisExpression(childExpression.object)) {
-                node.value = t.stringLiteral(dynamicValues.add({
+                node.value = t.stringLiteral(dynamicRefs.add({
                   expression: childExpression
                 }));
               } else {

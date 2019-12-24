@@ -527,14 +527,11 @@ function addRegisterRefs(refs, renderFunctionPath) {
   refs.map(ref => {
     if (t.isStringLiteral(ref.method)) {
       stringRefs.push(ref);
-    } else if (t.isMemberExpression(ref.method)) {
-      scopedRefs.push(ref);
+    } else if (t.isIdentifier(ref.method) && !renderFunctionPath.scope.hasBinding(ref.name.value)) {
+      stringRefs.push(ref);
     } else {
-      if (renderFunctionPath.scope.hasBinding(ref.name.value)) {
-        scopedRefs.push(ref);
-      } else {
-        stringRefs.push(ref);
-      }
+      // For this.xxx or difficult expression
+      scopedRefs.push(ref);
     }
   });
   if (scopedRefs.length > 0) {
