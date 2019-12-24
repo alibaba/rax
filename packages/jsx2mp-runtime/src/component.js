@@ -259,6 +259,8 @@ export default class Component {
    */
   _trigger(cycle, ...args) {
     let ret;
+    const pageId = this.instanceId;
+
     switch (cycle) {
       case COMPONENT_WILL_MOUNT:
       case COMPONENT_DID_MOUNT:
@@ -277,11 +279,8 @@ export default class Component {
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
         }
-        const pageId = this.instanceId;
-        if (pageCycles[pageId]) {
-          if (pageCycles[pageId][cycle]) {
-            pageCycles[pageId][cycle].forEach(fn => fn(...args));
-          }
+        if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
+          pageCycles[pageId][cycle].forEach(fn => fn(...args));
         }
         break;
 
@@ -299,6 +298,10 @@ export default class Component {
 
       case ON_SHARE_APP_MESSAGE:
         if (isFunction(this[cycle])) ret = this[cycle](...args);
+        if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
+          const fn = pageCycles[pageId][cycle][0];
+          ret = fn(...args);
+        }
         break;
     }
     return ret;

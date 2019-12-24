@@ -35,7 +35,11 @@ export function usePageEffect(cycle, callback) {
           if (!cycles[pageId][cycle]) {
             cycles[pageId][cycle] = [];
           }
-          cycles[pageId][cycle].push(callback);
+          if (cycle === ON_SHARE_APP_MESSAGE && cycles[pageId][cycle].length > 1) {
+            console.warn('useShareAppMessage can only receive one callback function.');
+          } else {
+            cycles[pageId][cycle].push(callback);
+          }
         }
       }, []);
       break;
