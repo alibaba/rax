@@ -1,0 +1,15 @@
+{
+  "name": "driver-server",
+  "version": "1.0.0",
+  "description": "Server driver for Rax",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme"
+}

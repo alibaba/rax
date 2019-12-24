@@ -314,7 +314,8 @@ export default class Component {
     const parentId = getId('parent', internal);
     const tagId = getId('tag', internal);
     this.instanceId = `${parentId}-${tagId}`;
-    this.props = Object.assign({}, internal[PROPS], {
+    console.log('this', this)
+    this.props = Object.assign({}, this.defaultProps, internal[PROPS], {
       __tagId: tagId,
       __parentId: parentId
     }, getComponentProps(this.instanceId));
