@@ -233,12 +233,12 @@ function formatEventName(name) {
   return name.replace('_', '');
 }
 
-function generateBaseOptions(internal, ...restProps) {
+function generateBaseOptions(internal, defaultProps, ...restProps) {
   const tagId = getId('tag', internal);
   const parentId = getId('parent', internal);
   const instanceId = `${parentId}-${tagId}`;
 
-  const props = Object.assign({}, internal[PROPS], {
+  const props = Object.assign({}, defaultProps, internal[PROPS], {
     __tagId: tagId,
     __parentId: parentId
   }, getComponentProps(instanceId), ...restProps);
