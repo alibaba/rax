@@ -15,7 +15,6 @@ module.exports = function getListItem(ast) {
       const { node } = path;
       if (node.__listItem) {
         listItem = node;
-        path.stop();
       }
     }
   });
