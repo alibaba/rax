@@ -26,15 +26,18 @@ function getPageCycles(Klass) {
     onLoad(options) {
       // Ensure page has loaded
       const history = createMiniAppHistory();
-      this.instance = new Klass(Object.assign(this[PROPS], _pageProps));
-      // Reverse sync from state to data.
-      this.instance._setInternal(this);
-      // Add route information for page.
-      history.location.__updatePageOption(this.instance.instanceId, options);
-      Object.assign(this.instance.props, {
+      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, {
         history,
         location: history.location
-      });
+      }, _pageProps);
+      this.instance = new Klass(props);
+      this.instance.defaultProps = Klass.defaultProps;
+      // Reverse sync from state to data.
+      this.instance.instanceId = instanceId;
+      this.instance._internal = this;
+      Object.assign(this.instance.state, this.data);
+      // Add route information for page.
+      history.location.__updatePageOption(this.instance.instanceId, options);
       this.data = this.instance.state;
 
       if (this.instance.__ready) return;
@@ -63,24 +66,19 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getComponentLifecycle({
     mount: function() {
-      const tagId = getId('tag', this);
-      const parentId = getId('parent', this);
-      const instanceId = `${parentId}-${tagId}`;
-
-      const props = Object.assign({}, this[PROPS], {
-        __tagId: tagId,
-        __parentId: parentId
-      }, getComponentProps(instanceId));
+      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps);
       this.instance = new Klass(props);
+      this.instance.defaultProps = Klass.defaultProps;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
+      this.instance._internal = this;
+      Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
       }
 
-      this.instance._setInternal(this);
       this.data = this.instance.state;
       this.instance._mountComponent();
     },
@@ -233,4 +231,19 @@ function isDatasetArg(str) {
 
 function formatEventName(name) {
   return name.replace('_', '');
+}
+
+function generateBaseOptions(internal, defaultProps, ...restProps) {
+  const tagId = getId('tag', internal);
+  const parentId = getId('parent', internal);
+  const instanceId = `${parentId}-${tagId}`;
+
+  const props = Object.assign({}, defaultProps, internal[PROPS], {
+    __tagId: tagId,
+    __parentId: parentId
+  }, getComponentProps(instanceId), ...restProps);
+  return {
+    instanceId,
+    props
+  };
 }

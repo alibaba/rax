@@ -27,9 +27,9 @@ import { cycles as pageCycles } from './page';
 import getId from './getId';
 
 export default class Component {
-  constructor() {
+  constructor(props) {
     this.state = {};
-    this.props = {};
+    this.props = props;
 
     this.__dependencies = {}; // for context
 
