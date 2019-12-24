@@ -16,6 +16,7 @@ import Component from './component';
 import createStyle from './createStyle';
 import createContext from './createContext';
 import classnames from './classnames';
+import createRef from './createRef';
 
 export {
   runApp,
@@ -24,6 +25,7 @@ export {
   createStyle,
   createContext,
   classnames,
+  createRef,
 
   Component,
 
