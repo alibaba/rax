@@ -23,7 +23,8 @@ describe('Transform JSX Attribute', () => {
     const ast = parseExpression(code);
     const { refs } = _transformAttribute(ast, code, adapter);
     expect(genCode(ast).code).toEqual('<View ref="scrollViewRef">test</View>');
-    expect(refs).toEqual([{'method': {'end': 24, 'loc': {'end': {'column': 24, 'line': 1}, 'identifierName': 'scrollViewRef', 'start': {'column': 11, 'line': 1}}, 'name': 'scrollViewRef', 'start': 11, 'type': 'Identifier'}, 'name': {'type': 'StringLiteral', 'value': 'scrollViewRef'}}]);
+    expect(refs[0].name).toEqual({'type': 'StringLiteral', 'value': 'scrollViewRef'});
+    expect(refs[0].method.name).toEqual('scrollViewRef');
   });
   it('should transform wechat native component className into class', () => {
     const code = '<rax-view className="box">test</rax-view>';
