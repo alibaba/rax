@@ -19,6 +19,7 @@ const Comment = require('./node/comment');
 const ClassList = require('./node/class-list');
 const Style = require('./node/style');
 const Attribute = require('./node/attribute');
+const { getSystemInfoSync } = require('./util/platformAdapter');
 
 let lastRafTime = 0;
 const WINDOW_PROTOTYPE_MAP = {
@@ -38,7 +39,7 @@ const ELEMENT_PROTOTYPE_MAP = {
 };
 
 class Window extends EventTarget {
-  constructor(pageId) {
+  constructor(pageId, target) {
     super();
 
     const timeOrigin = +new Date();
@@ -50,18 +51,18 @@ class Window extends EventTarget {
     this.$_innerHeight = 0;
     this.$_innerWidth = 0;
 
-    this.$_location = new Location(pageId);
+    this.$_location = new Location(pageId, target);
     this.$_navigator = new Navigator();
     this.$_screen = new Screen();
-    this.$_history = new History(this.$_location);
+    this.$_history = new History(this.$_location, target);
     this.$_miniprogram = new Miniprogram(pageId);
-    this.$_localStorage = new LocalStorage(this);
+    this.$_localStorage = new LocalStorage(this, target);
     this.$_sessionStorage = new SessionStorage(this);
     this.$_performance = new Performance(timeOrigin);
 
     this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
 
-    this.$_fetchDeviceInfo();
+    this.$_fetchDeviceInfo(target);
     this.$_initInnerEvent();
 
     // 补充实例的属性，用于 'xxx' in XXX 判断
@@ -118,9 +119,9 @@ class Window extends EventTarget {
   /**
      * 拉取设备参数
      */
-  $_fetchDeviceInfo() {
+  $_fetchDeviceInfo(target) {
     try {
-      const info = wx.getSystemInfoSync();
+      const info = getSystemInfoSync[target]();
 
       this.$_outerHeight = info.screenHeight;
       this.$_outerWidth = info.screenWidth;

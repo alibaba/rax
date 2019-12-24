@@ -6,6 +6,7 @@ const cache = require('../util/cache');
 const parser = require('../tree/parser');
 const tool = require('../util/tool');
 const Pool = require('../util/pool');
+const { createSelectorQuery } = require('../util/platformAdapter');
 
 const pool = new Pool();
 
@@ -346,6 +347,8 @@ class Element extends Node {
      * https://developers.weixin.qq.com/miniprogram/dev/api/wxml/NodesRef.boundingClientRect.html
      */
   $$getBoundingClientRect() {
+    const config = cache.getConfig();
+    const { target } = config;
     tool.flushThrottleCache(); // 先清空 setData
     const window = cache.getWindow(this.$_pageId);
     return new Promise((resolve, reject) => {
@@ -363,6 +366,7 @@ class Element extends Node {
      * 获取对应小程序组件的 context 对象
      */
   $$getContext() {
+
     tool.flushThrottleCache(); // 先清空 setData
     const window = cache.getWindow(this.$_pageId);
     return new Promise((resolve, reject) => {
@@ -370,7 +374,9 @@ class Element extends Node {
 
       if (this.tagName === 'CANVAS') {
         // TODO，为了兼容基础库的一个 bug，暂且如此实现
-        wx.createSelectorQuery().in(this._wxComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
+        const config = cache.getConfig();
+        const target = { config };
+        createSelectorQuery[target]().in(this._wxComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
                     .exec();
       } else {
         window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject()).exec();
@@ -390,7 +396,9 @@ class Element extends Node {
 
       if (this.tagName === 'CANVAS') {
         // TODO，为了兼容基础库的一个 bug，暂且如此实现
-        resolve(wx.createSelectorQuery().in(this._wxComponent).select(`.node-${this.$_nodeId}`));
+        const config = cache.getConfig();
+        const target = { config };
+        resolve(createSelectorQuery[target]().in(this._wxComponent).select(`.node-${this.$_nodeId}`));
       } else {
         resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
       }

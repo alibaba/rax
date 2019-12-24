@@ -4,12 +4,14 @@
 const EventTarget = require('../event/event-target');
 const tool = require('../util/tool');
 const cache = require('../util/cache');
+const API = require('../util/platformAdapter');
 
 class Location extends EventTarget {
-  constructor(pageId) {
+  constructor(pageId, target) {
     super();
 
     this.$_pageId = pageId;
+    this.$_target = target;
     this.$_pageRoute = tool.getPageRoute(pageId); // 小程序页面路由
 
     this.$_protocol = 'https:';
@@ -157,7 +159,7 @@ class Location extends EventTarget {
         param = '?' + param.join('&');
 
         const callMethod = window.$$miniprogram.isTabBarPage(matchRoute) ? 'switchTab' : 'redirectTo';
-        wx[callMethod]({
+        API[callMethod][this.$_target]({
           url: `${matchRoute}${param}`,
         });
 
@@ -226,7 +228,7 @@ class Location extends EventTarget {
       param = '?' + param.join('&');
 
       const callMethod = window.$$miniprogram.isTabBarPage(matchRoute) ? 'switchTab' : 'navigateTo';
-      wx[callMethod]({
+      API[callMethod][this.$_target]({
         url: `${matchRoute}${param}`,
       });
     } else {
@@ -558,7 +560,7 @@ class Location extends EventTarget {
     param = '?' + param.join('&');
 
     const callMethod = window.$$miniprogram.isTabBarPage(this.$_pageRoute) ? 'switchTab' : 'redirectTo';
-    wx[callMethod]({
+    API[callMethod][this.$_target]({
       url: `${this.$_pageRoute}${param}`,
     });
   }

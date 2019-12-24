@@ -2,6 +2,7 @@ const Element = require('../element');
 const Event = require('../../event/event');
 const Pool = require('../../util/pool');
 const cache = require('../../util/cache');
+const { getImageInfo } = require('../../util/platformAdapter');
 
 const pool = new Pool();
 
@@ -108,8 +109,10 @@ class Image extends Element {
 
     this.$_attrs.set('src', value);
 
+    const config = cache.getConfig();
+    const { target } = config;
     setTimeout(() => {
-      wx.getImageInfo({
+      getImageInfo[target]({
         src: this.src,
         success: res => {
           // 加载成功，调整图片的宽高

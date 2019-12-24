@@ -1,9 +1,11 @@
 const Event = require('../event/event');
+const { getStorageInfoSync, getStorageSync, setStorageSync, clearStorageSync, removeStorageSync } = require('../util/platformAdapter');
 
 class LocalStorage {
-  constructor(window) {
+  constructor(window, target) {
     this.$_keys = [];
     this.$_window = window;
+    this.$_target = target;
   }
 
   /**
@@ -11,8 +13,7 @@ class LocalStorage {
      */
   $_updateInfo() {
     try {
-      const info = wx.getStorageInfoSync();
-
+      const info = getStorageInfoSync[this.$_target]();
       this.$_keys = info.keys;
     } catch (err) {
       console.warn('getStorageInfoSync fail');
@@ -56,15 +57,15 @@ class LocalStorage {
   getItem(key) {
     if (!key || typeof key !== 'string') return null;
 
-    return wx.getStorageSync(key) || null;
+    return getStorageSync[this.$_target](key) || null;
   }
 
   setItem(key, data) {
     if (!key || typeof key !== 'string' || typeof data !== 'string') return;
 
-    const oldValue = wx.getStorageSync(key) || null;
+    const oldValue = getStorageSync[this.$_target](key) || null;
 
-    wx.setStorageSync(key, data);
+    setStorageSync[this.$_target](key, data);
     this.$_updateInfo();
     this.$_triggerStorage(key, data, oldValue);
   }
@@ -72,15 +73,15 @@ class LocalStorage {
   removeItem(key) {
     if (!key || typeof key !== 'string') return;
 
-    const oldValue = wx.getStorageSync(key) || null;
+    const oldValue = getStorageSync[this.$_target](key) || null;
 
-    wx.removeStorageSync(key);
+    removeStorageSync[this.$_target]({key});
     this.$_updateInfo();
     this.$_triggerStorage(key, null, oldValue);
   }
 
   clear() {
-    wx.clearStorageSync();
+    clearStorageSync[this.$_target]();
     this.$_updateInfo();
     this.$_triggerStorage(null, null, null, true);
   }

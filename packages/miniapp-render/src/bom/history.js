@@ -3,12 +3,15 @@
  */
 const Location = require('./location');
 const EventTarget = require('../event/event-target');
+const { setNavigationBar } = require('../util/platformAdapter');
+
 
 class History extends EventTarget {
-  constructor(location) {
+  constructor(location, target) {
     super();
 
     this.$_location = location;
+    this.$_target = target;
     this.$_stack = [{
       state: null,
       title: '',
@@ -96,7 +99,7 @@ class History extends EventTarget {
       // 同源才允许操作
       if (title && typeof title === 'string') {
         // 设置标题
-        wx.setNavigationBarTitle({title});
+        setNavigationBar[this.$_target]({title});
       }
 
 
@@ -117,7 +120,7 @@ class History extends EventTarget {
       // 同源才允许操作
       if (title && typeof title === 'string') {
         // 设置标题
-        wx.setNavigationBarTitle({title});
+        setNavigationBar[this.$_target]({title});
       }
 
       // 替换 href，但不做跳转

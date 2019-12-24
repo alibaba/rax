@@ -1,9 +1,12 @@
 const Location = require('./location');
 const cache = require('../util/cache');
+const { setStorage } = require('../util/platformAdapter');
+
 
 class Cookie {
-  constructor(pageName) {
+  constructor(pageName, target) {
     this.$_pageName = pageName;
+    this.$_target = target;
     this.$_map = {}; // 三维数组，domain - path - key
 
     const config = cache.getConfig();
@@ -160,7 +163,7 @@ class Cookie {
 
     // 持久化 cookie
     if (this.cookieStore !== 'memory') {
-      wx.setStorage({
+      setStorage[this.$_target]({
         key: `PAGE_COOKIE_${this.$_pageName}`,
         data: this.serialize(),
       });

@@ -1,7 +1,7 @@
 class Navigator {
   constructor() {
     this.$_language = '';
-    this.$_wxVersion = '';
+    this.$_appVersion = '';
     this.$_brand = ''; // 手机品牌
     this.$_model = ''; // 手机型号
     this.$_platform = '';
@@ -15,7 +15,7 @@ class Navigator {
      */
   $$reset(info) {
     this.$_language = info.language;
-    this.$_wxVersion = info.version;
+    this.$_appVersion = info.version;
     this.$_brand = info.brand;
     this.$_model = info.model;
     this.$_platform = info.platform;
@@ -42,7 +42,7 @@ class Navigator {
       platformContext = 'Windows NT 6.1; win64; x64';
     }
 
-    this.$_userAgent = `${this.appCodeName}/${appVersion} (${platformContext}) AppleWebKit/${appleWebKitVersion} (KHTML, like Gecko) Mobile MicroMessenger/${this.$_wxVersion} Language/${this.language}`;
+    this.$_userAgent = `${this.appCodeName}/${appVersion} (${platformContext}) AppleWebKit/${appleWebKitVersion} (KHTML, like Gecko) Mobile MicroMessenger/${this.$_appVersion} Language/${this.language}`;
   }
 
   /**
