@@ -7,7 +7,7 @@ const DynamicBinding = require('../utils/DynamicBinding');
 
 function transformAttribute(ast, code, adapter) {
   const refs = [];
-  const dynamicValues = new DynamicBinding('_d');
+  const dynamicRefs = new DynamicBinding('_r');
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
@@ -68,7 +68,7 @@ function transformAttribute(ast, code, adapter) {
   });
   return {
     refs,
-    dynamicValues: dynamicValues.getStore()
+    dynamicRefs: dynamicRefs.getStore()
   };
 }
 
@@ -81,14 +81,14 @@ function isNativeComponent(path) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const { refs, dynamicValues } = transformAttribute(parsed.templateAST, code, options.adapter);
-    const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {
+    const { refs, dynamicRefs } = transformAttribute(parsed.templateAST, code, options.adapter);
+    const dynamicRef = dynamicRefs.reduce((prev, curr, vals) => {
       const name = curr.name;
       prev[name] = curr.value;
       return prev;
     }, {});
     parsed.refs = refs;
-    Object.assign(parsed.dynamicValue, dynamicValue);
+    Object.assign(parsed.dynamicValue, dynamicRef);
   },
 
   // For test cases.

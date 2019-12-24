@@ -21,9 +21,9 @@ describe('Transform JSX Attribute', () => {
   it("should collect attribute name is ref and parse it's value as a string", () => {
     const code = '<View ref={scrollViewRef}>test</View>';
     const ast = parseExpression(code);
-    const refs = _transformAttribute(ast, code, adapter);
+    const { refs } = _transformAttribute(ast, code, adapter);
     expect(genCode(ast).code).toEqual('<View ref="scrollViewRef">test</View>');
-    expect(refs).toEqual([t.stringLiteral('scrollViewRef')]);
+    expect(refs).toEqual([{'method': {'end': 24, 'loc': {'end': {'column': 24, 'line': 1}, 'identifierName': 'scrollViewRef', 'start': {'column': 11, 'line': 1}}, 'name': 'scrollViewRef', 'start': 11, 'type': 'Identifier'}, 'name': {'type': 'StringLiteral', 'value': 'scrollViewRef'}}]);
   });
   it('should transform wechat native component className into class', () => {
     const code = '<rax-view className="box">test</rax-view>';
