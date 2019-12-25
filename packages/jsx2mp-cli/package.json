@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-cli",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "license": "BSD-3-Clause",
   "description": "A cli tool to transform Rax JSX based project to MiniApp.",
   "bin": {
@@ -23,6 +23,7 @@
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
     "chalk": "^2.4.2",
+    "chokidar": "^3.3.1",
     "commander": "^2.20.0",
     "console-clear": "^1.1.1",
     "del": "^5.1.0",
