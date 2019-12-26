@@ -323,7 +323,7 @@ function transformTemplate(
                     ),
                   );
                 } else {
-                  const transformedArg = transformCallExpressionArg(arg);
+                  const transformedArg = transformCallExpressionArg(arg, dynamicValues, isDirective);
                   attributes.push(
                     t.jsxAttribute(
                       t.jsxIdentifier(`data-${formatName}-arg-` + (index - 1)),
@@ -699,12 +699,14 @@ function transformCallExpressionArg(ast, dynamicValues, isDirective) {
           const { node: innerNode } = innerPath;
           if (innerNode.__listItem) {
             const item = innerNode.__listItem.item;
-            innerPath.replaceWith(
-              t.memberExpression(
-                t.identifier(item),
-                t.identifier(innerNode.name),
-              ),
-            );
+            if (item) {
+              innerPath.parentPath.replaceWith(
+                t.memberExpression(
+                  t.identifier(item),
+                  t.identifier(innerNode.name),
+                ),
+              );
+            }
           }
         },
       });
