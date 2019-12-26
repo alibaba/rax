@@ -54,7 +54,7 @@ function checkIsWxComponent(tagName, notNeedPrefix) {
 }
 
 class Document extends EventTarget {
-  constructor(pageId, nodeIdMap, target) {
+  constructor(pageId, nodeIdMap) {
     super();
 
     const config = cache.getConfig();
@@ -87,7 +87,7 @@ class Document extends EventTarget {
       nodeId: 'e-body',
       children: [],
     }, nodeIdMap, this);
-    this.$_cookie = new Cookie(pageName, target);
+    this.$_cookie = new Cookie(pageName);
     this.$_config = null;
 
     // documentElement
@@ -109,7 +109,7 @@ class Document extends EventTarget {
     // 处久化 cookie
     if (cookieStore !== 'memory') {
       try {
-        const cookie = getStorageSync[target](`PAGE_COOKIE_${pageName}`);
+        const cookie = getStorageSync(`PAGE_COOKIE_${pageName}`);
         if (cookie) this.$$cookieInstance.deserialize(cookie);
       } catch (err) {
         // ignore

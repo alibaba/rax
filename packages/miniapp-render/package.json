@@ -1,33 +1,36 @@
 {
-	"name": "miniprogram-render",
-	"version": "0.5.12",
-	"description": "web's adapter for miniprogram",
-	"main": "src/index.js",
-	"miniprogram": "src",
-	"scripts": {
-		"test": "jest --bail",
-		"test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
-		"coverage": "jest --coverage --bail",
-		"codecov": "jest --coverage && codecov"
-	},
-	"jest": {
-		"testEnvironment": "node",
-		"testMatch": [
-			"**/**/__tests__/**/*.js?(x)"
-		],
-		"collectCoverageFrom": [
-			"src/**/*.js"
-		]
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/wechat-miniprogram/kbone.git     "
-	},
-	"author": "wechat-miniprogram",
-	"license": "MIT",
-	"devDependencies": {
-		"jest": "^24.8.0",
-		"jsdom": "^15.1.1"
-	},
-	"gitHead": "53705a22bfc41c98cf570b9feeae525b7f45ef99"
+  "name": "miniprogram-render",
+  "version": "0.5.12",
+  "description": "web's adapter for miniprogram",
+  "main": "src/index.js",
+  "miniprogram": "src",
+  "scripts": {
+    "test": "jest --bail",
+    "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
+    "coverage": "jest --coverage --bail",
+    "codecov": "jest --coverage && codecov"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/**/__tests__/**/*.js?(x)"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wechat-miniprogram/kbone.git     "
+  },
+  "author": "wechat-miniprogram",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "jsdom": "^15.1.1"
+  },
+  "gitHead": "53705a22bfc41c98cf570b9feeae525b7f45ef99",
+  "dependencies": {
+    "universal-env": "^3.0.0"
+  }
 }

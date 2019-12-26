@@ -39,7 +39,7 @@ const ELEMENT_PROTOTYPE_MAP = {
 };
 
 class Window extends EventTarget {
-  constructor(pageId, target) {
+  constructor(pageId) {
     super();
 
     const timeOrigin = +new Date();
@@ -51,18 +51,18 @@ class Window extends EventTarget {
     this.$_innerHeight = 0;
     this.$_innerWidth = 0;
 
-    this.$_location = new Location(pageId, target);
+    this.$_location = new Location(pageId);
     this.$_navigator = new Navigator();
     this.$_screen = new Screen();
-    this.$_history = new History(this.$_location, target);
+    this.$_history = new History(this.$_location);
     this.$_miniprogram = new Miniprogram(pageId);
-    this.$_localStorage = new LocalStorage(this, target);
+    this.$_localStorage = new LocalStorage(this);
     this.$_sessionStorage = new SessionStorage(this);
     this.$_performance = new Performance(timeOrigin);
 
     this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
 
-    this.$_fetchDeviceInfo(target);
+    this.$_fetchDeviceInfo();
     this.$_initInnerEvent();
 
     // 补充实例的属性，用于 'xxx' in XXX 判断
@@ -119,9 +119,9 @@ class Window extends EventTarget {
   /**
      * 拉取设备参数
      */
-  $_fetchDeviceInfo(target) {
+  $_fetchDeviceInfo() {
     try {
-      const info = getSystemInfoSync[target]();
+      const info = getSystemInfoSync();
 
       this.$_outerHeight = info.screenHeight;
       this.$_outerWidth = info.screenWidth;

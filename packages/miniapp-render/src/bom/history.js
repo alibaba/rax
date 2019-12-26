@@ -7,11 +7,10 @@ const { setNavigationBar } = require('../util/platformAdapter');
 
 
 class History extends EventTarget {
-  constructor(location, target) {
+  constructor(location) {
     super();
 
     this.$_location = location;
-    this.$_target = target;
     this.$_stack = [{
       state: null,
       title: '',
@@ -99,7 +98,7 @@ class History extends EventTarget {
       // 同源才允许操作
       if (title && typeof title === 'string') {
         // 设置标题
-        setNavigationBar[this.$_target]({title});
+        setNavigationBar({title});
       }
 
 
@@ -120,7 +119,7 @@ class History extends EventTarget {
       // 同源才允许操作
       if (title && typeof title === 'string') {
         // 设置标题
-        setNavigationBar[this.$_target]({title});
+        setNavigationBar({title});
       }
 
       // 替换 href，但不做跳转

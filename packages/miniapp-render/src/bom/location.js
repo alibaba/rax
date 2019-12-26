@@ -7,11 +7,10 @@ const cache = require('../util/cache');
 const API = require('../util/platformAdapter');
 
 class Location extends EventTarget {
-  constructor(pageId, target) {
+  constructor(pageId) {
     super();
 
     this.$_pageId = pageId;
-    this.$_target = target;
     this.$_pageRoute = tool.getPageRoute(pageId); // 小程序页面路由
 
     this.$_protocol = 'https:';
@@ -159,7 +158,7 @@ class Location extends EventTarget {
         param = '?' + param.join('&');
 
         const callMethod = window.$$miniprogram.isTabBarPage(matchRoute) ? 'switchTab' : 'redirectTo';
-        API[callMethod][this.$_target]({
+        API[callMethod]({
           url: `${matchRoute}${param}`,
         });
 
@@ -228,7 +227,7 @@ class Location extends EventTarget {
       param = '?' + param.join('&');
 
       const callMethod = window.$$miniprogram.isTabBarPage(matchRoute) ? 'switchTab' : 'navigateTo';
-      API[callMethod][this.$_target]({
+      API[callMethod]({
         url: `${matchRoute}${param}`,
       });
     } else {
@@ -560,7 +559,7 @@ class Location extends EventTarget {
     param = '?' + param.join('&');
 
     const callMethod = window.$$miniprogram.isTabBarPage(this.$_pageRoute) ? 'switchTab' : 'redirectTo';
-    API[callMethod][this.$_target]({
+    API[callMethod]({
       url: `${this.$_pageRoute}${param}`,
     });
   }

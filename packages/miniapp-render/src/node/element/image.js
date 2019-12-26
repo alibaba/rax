@@ -109,10 +109,8 @@ class Image extends Element {
 
     this.$_attrs.set('src', value);
 
-    const config = cache.getConfig();
-    const { target } = config;
     setTimeout(() => {
-      getImageInfo[target]({
+      getImageInfo({
         src: this.src,
         success: res => {
           // 加载成功，调整图片的宽高

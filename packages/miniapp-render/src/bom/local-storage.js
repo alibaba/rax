@@ -2,10 +2,9 @@ const Event = require('../event/event');
 const { getStorageInfoSync, getStorageSync, setStorageSync, clearStorageSync, removeStorageSync } = require('../util/platformAdapter');
 
 class LocalStorage {
-  constructor(window, target) {
+  constructor(window) {
     this.$_keys = [];
     this.$_window = window;
-    this.$_target = target;
   }
 
   /**
@@ -13,7 +12,7 @@ class LocalStorage {
      */
   $_updateInfo() {
     try {
-      const info = getStorageInfoSync[this.$_target]();
+      const info = getStorageInfoSync();
       this.$_keys = info.keys;
     } catch (err) {
       console.warn('getStorageInfoSync fail');
@@ -57,15 +56,15 @@ class LocalStorage {
   getItem(key) {
     if (!key || typeof key !== 'string') return null;
 
-    return getStorageSync[this.$_target](key) || null;
+    return getStorageSync(key) || null;
   }
 
   setItem(key, data) {
     if (!key || typeof key !== 'string' || typeof data !== 'string') return;
 
-    const oldValue = getStorageSync[this.$_target](key) || null;
+    const oldValue = getStorageSync(key) || null;
 
-    setStorageSync[this.$_target](key, data);
+    setStorageSync(key, data);
     this.$_updateInfo();
     this.$_triggerStorage(key, data, oldValue);
   }
@@ -73,15 +72,15 @@ class LocalStorage {
   removeItem(key) {
     if (!key || typeof key !== 'string') return;
 
-    const oldValue = getStorageSync[this.$_target](key) || null;
+    const oldValue = getStorageSync(key) || null;
 
-    removeStorageSync[this.$_target]({key});
+    removeStorageSync({key});
     this.$_updateInfo();
     this.$_triggerStorage(key, null, oldValue);
   }
 
   clear() {
-    clearStorageSync[this.$_target]();
+    clearStorageSync();
     this.$_updateInfo();
     this.$_triggerStorage(null, null, null, true);
   }

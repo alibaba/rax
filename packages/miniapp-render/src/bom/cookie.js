@@ -4,9 +4,8 @@ const { setStorage } = require('../util/platformAdapter');
 
 
 class Cookie {
-  constructor(pageName, target) {
+  constructor(pageName) {
     this.$_pageName = pageName;
-    this.$_target = target;
     this.$_map = {}; // 三维数组，domain - path - key
 
     const config = cache.getConfig();
@@ -163,7 +162,7 @@ class Cookie {
 
     // 持久化 cookie
     if (this.cookieStore !== 'memory') {
-      setStorage[this.$_target]({
+      setStorage({
         key: `PAGE_COOKIE_${this.$_pageName}`,
         data: this.serialize(),
       });
