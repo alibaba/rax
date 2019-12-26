@@ -299,6 +299,7 @@ export default class Component {
       case ON_SHARE_APP_MESSAGE:
         if (isFunction(this[cycle])) ret = this[cycle](...args);
         if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
+          // There will be one callback fn for shareAppMessage at most
           const fn = pageCycles[pageId][cycle][0];
           ret = fn(...args);
         }
