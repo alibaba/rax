@@ -1,4 +1,6 @@
-# miniprogram-render
+# miniapp-render
+
+> Forked from kbone.
 
 ## 介绍
 
@@ -8,31 +10,31 @@
 
 ## 安装
 
-```
-npm install --save miniprogram-render
+```shell
+npm install --save miniapp-render
 ```
 
 ## 使用
 
 ```js
-const mp = require('miniprogram-render')
+const mp = require('miniapp-render')
 
 ```js
 Page({
-    onLoad() {
-        // 创建页面
-        const { pageId, window, document } = mp.createPage(this.route, config)
-        this.pageId = pageId
+  onLoad() {
+    // 创建页面
+    const { pageId, window, document } = mp.createPage(this.route, config)
+    this.pageId = pageId
 
-        // 设置页面的 url
-        window.$$miniprogram.setRealUrl('http://test.miniprogram.com')
-        // 初始化页面
-        window.$$miniprogram.init()
-    },
-    onUnload() {
-        // 销毁页面
-        mp.destroyPage(this.pageId)
-    },
+    // 设置页面的 url
+    window.$$miniprogram.setRealUrl('http://test.miniprogram.com')
+    // 初始化页面
+    window.$$miniprogram.init()
+  },
+  onUnload() {
+    // 销毁页面
+    mp.destroyPage(this.pageId)
+  },
 })
 ```
 

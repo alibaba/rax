@@ -1,6 +1,6 @@
 # miniapp-element
 
-> Forked by kbone.
+> Forked from kbone.
 
 ## Introduce
 
@@ -32,5 +32,3 @@ npm install --save miniapp-element
 | -------- | -------- | -------------------------------------------------- |
 | pageId   | ✔️        | Find the window/document corresponding to the page |
 | nodeId   | ✔️        | Find  the dom corresponding to the node            |
-
-
