@@ -38,18 +38,20 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
 
   if (!compiledComponents[componentTag]) {
     // <tag __tagId="tagId" />
-    let tagId = '' + tagCount++;
+
+    let tagId = '' + tagCount;
 
     const parentsJSXList = findParentsJSXListEl(path);
     if (parentsJSXList.length > 0) {
       parentPath.node.__tagIdExpression = [];
-      parentsJSXList.forEach(parentJSXListEl => {
-        const { args } = parentJSXListEl.node.__jsxlist;
+      for (let i = parentsJSXList.length - 1; i >= 0; i--) {
+        const { args } = parentsJSXList[i].node.__jsxlist;
         const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
         parentPath.node.__tagIdExpression.push(new Expression(indexValue));
         tagId += `-{{${indexValue}}}`;
-      });
-      parentPath.node.__tagIdExpression.unshift(tagCount - 1);
+      }
+      parentPath.node.__tagIdExpression.unshift(tagCount);
+      tagCount++;
     }
     parentPath.node.__tagId = tagId;
     componentDependentProps[tagId] = componentDependentProps[tagId] || {};
@@ -73,7 +75,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     }
 
     node.attributes.push(
-      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral( '{{__tagId}}-' + tagId)),
     );
 
     /**

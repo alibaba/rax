@@ -236,7 +236,7 @@ function formatEventName(name) {
 function generateBaseOptions(internal, defaultProps, ...restProps) {
   const tagId = getId('tag', internal);
   const parentId = getId('parent', internal);
-  const instanceId = `${parentId}-${tagId}`;
+  const instanceId = tagId;
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
     __tagId: tagId,

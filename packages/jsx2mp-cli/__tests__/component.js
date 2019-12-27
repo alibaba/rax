@@ -33,7 +33,7 @@ describe('Component compiled result', () => {
     expect(axmlContent).toEqual(
       `<block a:if="{{$ready}}"><view class="__rax-view">
       Hello World!
-      <rax-image source="{{ uri: _d0 }}" c="{{_d1 && _d2}}" d="{{_d0 ? _d1 : _d2}}" __tagId="0" /></view></block>`);
+      <rax-image source="{{ uri: _d0 }}" c="{{_d1 && _d2}}" d="{{_d0 ? _d1 : _d2}}" __tagId="{{__tagId}}-0" /></view></block>`);
   });
 
   it('should return correct js', () => {
