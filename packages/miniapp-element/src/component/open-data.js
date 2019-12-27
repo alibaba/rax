@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/open-data.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'type',
     get(domNode) {
       return domNode.getAttribute('type') || '';

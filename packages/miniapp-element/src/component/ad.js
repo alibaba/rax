@@ -1,5 +1,5 @@
 export default {
-  properties: [{
+  PROPS: [{
     name: 'unitId',
     get(domNode) {
       return domNode.getAttribute('unit-id') || '';

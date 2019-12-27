@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/slider.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'min',
     get(domNode) {
       return +domNode.getAttribute('min') || 0;

@@ -4,20 +4,7 @@ import filesize from 'rollup-plugin-filesize';
 import { name } from './package.json';
 import handleComponentFile from './scripts/handleComponentFile';
 
-function getPropsIdentifierName(platform) {
-  switch (platform) {
-    case 'wechat':
-    case 'baidu':
-    case 'toutiao':
-      return 'properties';
-
-    case 'ali':
-    default:
-      return 'props';
-  }
-}
-
-function getBabelConfig() {
+function getBabelConfig(platform) {
   return {
     presets: [
       [
@@ -31,6 +18,8 @@ function getBabelConfig() {
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
+       // Support different adatpers replacement.
+       ['./scripts/import-adapter-replace-plugin', { platform }]
     ]
   };
 }
@@ -47,10 +36,9 @@ function getRollupConfig(platform) {
     ],
     plugins: [
       replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-        'PROPS': JSON.stringify(getPropsIdentifierName(platform)),
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
       }),
-      babel(getBabelConfig()),
+      babel(getBabelConfig(platform)),
       filesize(),
       {
         buildEnd() {

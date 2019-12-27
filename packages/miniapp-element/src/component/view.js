@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/view.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'hoverClass',
     get(domNode) {
       return domNode.getAttribute('hover-class') || 'none';

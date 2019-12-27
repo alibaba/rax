@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/button.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'size',
     get(domNode) {
       return domNode.getAttribute('size') || 'default';

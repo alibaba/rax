@@ -8,7 +8,7 @@ const {
  * https://developers.weixin.qq.com/miniprogram/dev/component/input.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'value',
     get(domNode) {
       return domNode.value || '';

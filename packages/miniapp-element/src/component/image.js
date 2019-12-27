@@ -9,7 +9,7 @@ const {
  * https://developers.weixin.qq.com/miniprogram/dev/component/image.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'renderingMode',
     get(domNode) {
       return domNode.getAttribute('rendering-mode') || '';

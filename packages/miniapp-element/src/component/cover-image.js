@@ -9,7 +9,7 @@ const {
  * https://developers.weixin.qq.com/miniprogram/dev/component/cover-image.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'src',
     get(domNode) {
       const window = cache.getWindow(domNode.$$pageId);

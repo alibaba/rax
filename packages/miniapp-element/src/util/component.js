@@ -137,13 +137,13 @@ const subComponentMap = {
 
 const componentKeys = Object.keys(componentMap);
 const componentNameMap = {};
-const properties = {};
+const PROPS = {};
 const handles = {};
 componentKeys.forEach(key => {
   const {componentName, config} = componentMap[key];
 
   componentNameMap[key] = componentName;
-  properties[componentName] = config.properties;
+  PROPS[componentName] = config.PROPS;
   Object.assign(handles, config.handles);
 });
 Object.keys(subComponentMap).forEach(key => {
@@ -153,7 +153,7 @@ Object.keys(subComponentMap).forEach(key => {
 
 export default {
   componentNameMap,
-  properties,
+  PROPS,
   handles,
   subComponentMap,
 };

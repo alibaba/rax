@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/picker-view.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'value',
     get(domNode) {
       const value = domNode.getAttribute('value');

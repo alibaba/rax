@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/textarea.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'value',
     get(domNode) {
       return domNode.value || '';

@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/progress.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'percent',
     get(domNode) {
       return +domNode.getAttribute('percent') || 0;

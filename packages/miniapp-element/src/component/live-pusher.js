@@ -9,7 +9,7 @@ const {
  * https://developers.weixin.qq.com/miniprogram/dev/component/live-pusher.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'url',
     get(domNode) {
       const window = cache.getWindow(domNode.$$pageId);

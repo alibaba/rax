@@ -4,7 +4,7 @@
  * 可以认为下述 form 组件的属性和事件是没有用的，因为 button 组件会被封装到自定义组件内
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'reportSubmit',
     get(domNode) {
       return !!domNode.getAttribute('report-submit');

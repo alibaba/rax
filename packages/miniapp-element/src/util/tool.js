@@ -46,9 +46,9 @@ function filterNodes(domNode, level) {
         };
 
         // 补充该内置组件的属性
-        const {properties} = wxSubComponentMap[child.behavior] || {};
-        if (properties && properties.length) {
-          properties.forEach(({name, get}) => {
+        const {PROPS} = wxSubComponentMap[child.behavior] || {};
+        if (PROPS && PROPS.length) {
+          PROPS.forEach(({name, get}) => {
             domInfo.extra[name] = get(child);
           });
         }

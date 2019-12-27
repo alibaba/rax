@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/official-account.html
  */
 export default {
-  properties: [],
+  PROPS: [],
   handles: {
     onOfficialAccountLoad(evt) {
       this.callSimpleEvent('load', evt);

@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/switch.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'checked',
     get(domNode) {
       return !!domNode.getAttribute('checked');

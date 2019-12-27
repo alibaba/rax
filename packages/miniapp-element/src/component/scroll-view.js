@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/scroll-view.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'scrollX',
     get(domNode) {
       return !!domNode.getAttribute('scroll-x');

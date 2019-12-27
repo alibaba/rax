@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/navigator.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'target',
     get(domNode) {
       return domNode.getAttribute('target') || 'self';

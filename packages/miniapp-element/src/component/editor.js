@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/editor.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'readOnly',
     get(domNode) {
       return !!domNode.getAttribute('read-only');

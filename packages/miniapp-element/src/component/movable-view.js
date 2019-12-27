@@ -8,7 +8,7 @@ const {
  * https://developers.weixin.qq.com/miniprogram/dev/component/movable-view.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'direction',
     get(domNode) {
       return domNode.getAttribute('direction') || 'none';

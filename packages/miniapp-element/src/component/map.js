@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/map.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'longitude',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('longitude'), 10);

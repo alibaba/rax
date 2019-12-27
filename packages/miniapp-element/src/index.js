@@ -2,6 +2,7 @@ import mp from 'miniprogram-render';
 import _ from './util/tool';
 import initHandle from './util/init-handle';
 import component from './util/component';
+import { getId, PROPS, MOUNT, UNMOUNT } from '@@ADAPTER@@';
 
 const {
   cache,
@@ -20,8 +21,14 @@ const {
 const MAX_DOM_SUB_TREE_LEVEL = 10;
 let DOM_SUB_TREE_LEVEL = 10;
 
+const config = cache.getConfig();
+
+// 根据配置重置全局变量
+const domSubTreeLevel = +config.optimization.domSubTreeLevel;
+if (domSubTreeLevel >= 1 && domSubTreeLevel <= MAX_DOM_SUB_TREE_LEVEL) DOM_SUB_TREE_LEVEL = domSubTreeLevel;
+
 Component({
-  properties: {
+  [PROPS]: {
     inCover: {
       type: Boolean,
       value: false,
@@ -36,18 +43,9 @@ Component({
   options: {
     addGlobalClass: true, // 开启全局样式
   },
-  created() {
-    const config = cache.getConfig();
-
-    // 根据配置重置全局变量
-    const domSubTreeLevel = +config.optimization.domSubTreeLevel;
-    if (domSubTreeLevel >= 1 && domSubTreeLevel <= MAX_DOM_SUB_TREE_LEVEL) DOM_SUB_TREE_LEVEL = domSubTreeLevel;
-  },
-  attached() {
-    const nodeId = this.dataset.privateNodeId;
-    const pageId = this.dataset.privatePageId;
+  [MOUNT]() {
+    const { nodeId, pageId } = getId(this);
     const data = {};
-
     this.nodeId = nodeId;
     this.pageId = pageId;
 
@@ -88,7 +86,7 @@ Component({
     // 执行一次 setData
     if (Object.keys(data).length) this.setData(data);
   },
-  detached() {
+  [UNMOUNT]() {
     this.nodeId = null;
     this.pageId = null;
     this.domNode = null;

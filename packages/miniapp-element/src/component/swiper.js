@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/swiper.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'indicatorDots',
     get(domNode) {
       return !!domNode.getAttribute('mindicator-dotsin');

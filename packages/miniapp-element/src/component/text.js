@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/text.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'selectable',
     get(domNode) {
       return !!domNode.getAttribute('selectable');

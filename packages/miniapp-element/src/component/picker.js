@@ -2,7 +2,7 @@
  * https://developers.weixin.qq.com/miniprogram/dev/component/picker.html
  */
 export default {
-  properties: [{
+  PROPS: [{
     name: 'mode',
     get(domNode) {
       return domNode.getAttribute('mode') || 'selector';
