@@ -341,7 +341,7 @@ export default class Component {
           useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
           if (diffData(this.state[key], data[key])) {
-            if (data[key].constructor.name === 'Object') {
+            if (Object.prototype.toString.call(data[key]) === '[object Object]') {
               useSetData[key] = Object.assign({}, this.state[key], data[key]);
             } else {
               useSetData[key] = data[key];
