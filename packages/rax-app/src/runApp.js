@@ -110,43 +110,42 @@ export default function runApp(appConfig, pageProps = {}) {
     // In other situation use createMemoryHistory
     history = createMemoryHistory();
   }
-}
 
-// Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
-pathRedirect(history, routes);
+  // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
+  pathRedirect(history, routes);
 
-let _initialComponent;
-return matchInitialComponent(history.location.pathname, routes)
-  .then((initialComponent) => {
-    _initialComponent = initialComponent;
-    let appInstance = createElement(App, {
-      appConfig,
-      history,
-      routes,
-      pageProps,
-      InitialComponent: _initialComponent
+  let _initialComponent;
+  return matchInitialComponent(history.location.pathname, routes)
+    .then((initialComponent) => {
+      _initialComponent = initialComponent;
+      let appInstance = createElement(App, {
+        appConfig,
+        history,
+        routes,
+        pageProps,
+        InitialComponent: _initialComponent
+      });
+
+      if (shell) {
+        const shellData = initialDataFromSSR ? initialDataFromSSR[SHELL_DATA] : null;
+        appInstance = createElement(shell.component, { data: shellData }, appInstance);
+      }
+
+      // Emit app launch cycle.
+      emit('launch');
+
+      let rootEl = isWeex || isKraken ? null : document.getElementById('root');
+      if (isWeb && rootEl === null) console.warn('Error: Can not find #root element, please check which exists in DOM.');
+      // Async render.
+      return render(
+        appInstance,
+        rootEl,
+        { driver, hydrate }
+      );
+    })
+    .catch((err) => {
+      console.error(err);
     });
-
-    if (shell) {
-      const shellData = initialDataFromSSR ? initialDataFromSSR[SHELL_DATA] : null;
-      appInstance = createElement(shell.component, { data: shellData }, appInstance);
-    }
-
-    // Emit app launch cycle.
-    emit('launch');
-
-    let rootEl = isWeex || isKraken ? null : document.getElementById('root');
-    if (isWeb && rootEl === null) console.warn('Error: Can not find #root element, please check which exists in DOM.');
-    // Async render.
-    return render(
-      appInstance,
-      rootEl,
-      { driver, hydrate }
-    );
-  })
-  .catch((err) => {
-    console.error(err);
-  });
 }
 
 function matchInitialComponent(fullpath, routes) {
