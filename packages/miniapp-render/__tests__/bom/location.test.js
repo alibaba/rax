@@ -51,7 +51,7 @@ test('location: set', () => {
   const location = window.location;
 
   global.expectPagePath = '';
-  global.expectWxCallMethod = 'redirectTo';
+  global.expectCallMethod = 'redirectTo';
 
   let hashChangeCount = 0;
   let pageAccessDeniedCount = 0;
@@ -339,13 +339,13 @@ test('location: set', () => {
   window.$$miniprogram.init('https://test.miniprogram.com/p/a/t/h?query=string#hash');
   expect(location.href).toBe('https://test.miniprogram.com/p/a/t/h?query=string#hash');
   global.expectPagePath = `/pages/home/index?type=jump&targeturl=${encodeURIComponent('https://test.miniprogram.com/p/a/t/h?query=string#hash')}&search=${encodeURIComponent('?query=string')}&hash=${encodeURIComponent('#hash')}`;
-  global.expectWxCallMethod = 'redirectTo';
+  global.expectCallMethod = 'redirectTo';
   location.reload();
   expect(location.href).toBe('https://test.miniprogram.com/p/a/t/h?query=string#hash');
 
   // replace
   global.expectPagePath = `/pages/detail/index?type=jump&targeturl=${encodeURIComponent('https://test.miniprogram.com/index/aaa/detail/123?query=string#hash')}&search=${encodeURIComponent('?query=string')}&hash=${encodeURIComponent('#hash')}`;
-  global.expectWxCallMethod = 'redirectTo';
+  global.expectCallMethod = 'redirectTo';
   location.replace('https://test.miniprogram.com/index/aaa/detail/123?query=string#hash');
   expect(location.href).toBe('https://test.miniprogram.com/index/aaa/detail/123?query=string#hash');
   location.replace('https://test.miniprogram.com/index/hahaha?query=string#321');

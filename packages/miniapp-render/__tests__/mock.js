@@ -116,11 +116,11 @@ global.wx = {
     if (typeof global.expectTitle === 'string') expect(options.title).toBe(global.expectTitle);
   },
   redirectTo(options) {
-    if (typeof global.expectWxCallMethod === 'string') expect(global.expectWxCallMethod).toBe('redirectTo');
+    if (typeof global.expectCallMethod === 'string') expect(global.expectCallMethod).toBe('redirectTo');
     if (typeof global.expectPagePath === 'string') expect(options.url).toBe(global.expectPagePath);
   },
   navigateTo(options) {
-    if (typeof global.expectWxCallMethod === 'string') expect(global.expectWxCallMethod).toBe('navigateTo');
+    if (typeof global.expectCallMethod === 'string') expect(global.expectCallMethod).toBe('navigateTo');
     if (typeof global.expectPagePath === 'string') expect(options.url).toBe(global.expectPagePath);
   },
   getImageInfo(options) {
@@ -135,6 +135,8 @@ global.wx = {
       }
     }, 10);
   },
+  login() {
+  }
 };
 
 module.exports = {

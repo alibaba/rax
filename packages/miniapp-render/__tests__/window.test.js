@@ -457,7 +457,7 @@ test('window: open', () => {
 
   window.$$miniprogram.init('https://test.miniprogram.com/p/a/t/h?query=string#hash');
   global.expectPagePath = `/pages/detail/index?type=open&targeturl=${encodeURIComponent('https://test.miniprogram.com/index/aaa/detail/123?query=string#hash')}&search=${encodeURIComponent('?query=string')}&hash=${encodeURIComponent('#hash')}`;
-  global.expectWxCallMethod = 'navigateTo';
+  global.expectCallMethod = 'navigateTo';
   window.open('https://test.miniprogram.com/index/aaa/detail/123?query=string#hash');
   expect(location.href).toBe('https://test.miniprogram.com/p/a/t/h?query=string#hash');
   window.open('https://test.miniprogram.com/index/hahaha?query=string#321');
