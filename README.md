@@ -55,6 +55,10 @@ and extension not works in `producation` mode.
 1. Install the Chrome [Rax Developer Tools](https://chrome.google.com/webstore/detail/rax-developer-tools/anpeoinhjjligmgoiepbnigjhmijblff) extension
 2. Reload and go to the 'Rax' tab in the browser's development tools
 
+### VS Code Extensions
+
+You can also use the [Rax VS Code Extensions](https://github.com/raxjs/rax-vscode-extensions) to get a better development experience.fe
+
 ## Contributing
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
