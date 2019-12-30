@@ -1,9 +1,9 @@
 import Instance from '../vdom/instance';
 import Host from '../vdom/host';
-import reconciler from './reconciler';
+import Reconciler from './reconciler';
 import { RENDERED_COMPONENT } from '../constant';
 
-const renderer = {
+const DevtoolsHook = {
   ComponentTree: {
     getClosestInstanceFromNode(node) {
       return Instance.get(node);
@@ -33,16 +33,11 @@ const renderer = {
       return rootComponents;
     },
 
-    _renderNewRootComponent: reconciler.renderNewRootComponent
+    _renderNewRootComponent: Reconciler.renderNewRootComponent
   },
-  Reconciler: reconciler,
+  Reconciler,
   // monitor the info of all components
   monitor: null
 };
 
-/* global __RAX_DEVTOOLS_GLOBAL_HOOK__ */
-if (
-  typeof __RAX_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' &&
-  typeof __RAX_DEVTOOLS_GLOBAL_HOOK__.inject === 'function') {
-  __RAX_DEVTOOLS_GLOBAL_HOOK__.inject(renderer);
-}
+export default DevtoolsHook;
