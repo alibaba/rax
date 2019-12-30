@@ -51,8 +51,8 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
         tagId += `-{{${indexValue}}}`;
       }
       parentPath.node.__tagIdExpression.unshift(tagCount);
-      tagCount++;
     }
+    tagCount++;
     parentPath.node.__tagId = tagId;
     componentDependentProps[tagId] = componentDependentProps[tagId] || {};
     if (parentPath.node.__tagIdExpression) {
