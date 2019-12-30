@@ -55,7 +55,7 @@ Component({
     if (!this.domNode) return;
 
     // TODO，为了兼容基础库的一个 bug，暂且如此实现
-    if (this.domNode.tagName === 'CANVAS') this.domNode._wxComponent = this;
+    if (this.domNode.tagName === 'CANVAS') this.domNode._builtInComponent = this;
 
     // 存储 document
     this.document = cache.getDocument(pageId);

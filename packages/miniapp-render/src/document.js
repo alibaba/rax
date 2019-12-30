@@ -13,8 +13,8 @@ const Textarea = require('./node/element/textarea');
 const Video = require('./node/element/video');
 const Canvas = require('./node/element/canvas');
 const NotSupport = require('./node/element/not-support');
-const WxComponent = require('./node/element/wx-component');
-const WxCustomComponent = require('./node/element/wx-custom-component');
+const BuiltInComponent = require('./node/element/builtin-component');
+const CustomComponent = require('./node/element/custom-component');
 const Cookie = require('./bom/cookie');
 const { getStorageSync } = require('./util/platformAdapter');
 
@@ -25,10 +25,10 @@ const CONSTRUCTOR_MAP = {
   TEXTAREA: Textarea,
   VIDEO: Video,
   CANVAS: Canvas,
-  'WX-COMPONENT': WxComponent,
+  'BUILTIN-COMPONENT': BuiltInComponent,
 };
-const WX_COMPONENT_MAP = {};
-const WX_COMPONENT_LIST = [
+const BUILTIN_COMPONENT_MAP = {};
+const BUILTIN_COMPONENT_LIST = [
   'movable-view', 'cover-image', 'cover-view', 'movable-area', 'scroll-view', 'swiper', 'swiper-item', 'view',
   'icon', 'progress', 'rich-text', 'text',
   'button', 'checkbox', 'checkbox-group', 'editor', 'form', 'input', 'label', 'picker', 'picker-view', 'picker-view-column', 'radio', 'radio-group', 'slider', 'switch', 'textarea',
@@ -38,19 +38,14 @@ const WX_COMPONENT_LIST = [
   'canvas',
   'ad', 'official-account', 'open-data', 'web-view'
 ];
-WX_COMPONENT_LIST.forEach(name => WX_COMPONENT_MAP[name] = name);
-let WX_CUSTOM_COMPONENT_MAP = {};
+BUILTIN_COMPONENT_LIST.forEach(name => BUILTIN_COMPONENT_MAP[name] = name);
+let CUSTOM_COMPONENT_MAP = {};
 
 /**
  * 判断是否是内置组件
  */
-function checkIsWxComponent(tagName, notNeedPrefix) {
-  const hasPrefix = tagName.indexOf('wx-') === 0;
-  if (notNeedPrefix) {
-    return hasPrefix ? WX_COMPONENT_MAP[tagName.slice(3)] : WX_COMPONENT_MAP[tagName];
-  } else {
-    return hasPrefix ? WX_COMPONENT_MAP[tagName.slice(3)] : false;
-  }
+function checkIsBuiltInComponent(tagName) {
+  return BUILTIN_COMPONENT_MAP[tagName];
 }
 
 class Document extends EventTarget {
@@ -60,7 +55,7 @@ class Document extends EventTarget {
     const config = cache.getConfig();
     const runtime = config.runtime || {};
     const cookieStore = runtime.cookieStore;
-    WX_CUSTOM_COMPONENT_MAP = runtime.usingComponents || {};
+    CUSTOM_COMPONENT_MAP = runtime.usingComponents || {};
 
     this.$_pageId = pageId;
     const pageRoute = tool.getPageRoute(pageId);
@@ -143,14 +138,6 @@ class Document extends EventTarget {
   }
 
   /**
-     * 创建内置组件的时候是否支持不用前缀写法
-     */
-  get $$notNeedPrefix() {
-    if (!this.$_config) this.$_config = cache.getConfig();
-    return this.$_config && this.$_config.runtime && this.$_config.runtime.wxComponent === 'noprefix';
-  }
-
-  /**
      * 触发节点事件
      */
   $$trigger(eventName, options) {
@@ -163,25 +150,25 @@ class Document extends EventTarget {
   $$createElement(options, tree) {
     const originTagName = options.tagName;
     const tagName = originTagName.toUpperCase();
-    let wxComponentName = null;
+    let componentName = null;
     tree = tree || this.$_tree;
 
     const constructorClass = CONSTRUCTOR_MAP[tagName];
     if (constructorClass) {
       return constructorClass.$$create(options, tree);
       // eslint-disable-next-line no-cond-assign
-    } else if (wxComponentName = checkIsWxComponent(originTagName, this.$$notNeedPrefix)) {
-      // 内置组件的特殊写法，转成 wx-component 节点
-      options.tagName = 'wx-component';
+    } else if (componentName = checkIsBuiltInComponent(originTagName)) {
+      // 内置组件的特殊写法，转成 builtin-component 节点
+      options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
-      options.attrs.behavior = wxComponentName;
-      return WxComponent.$$create(options, tree);
-    } else if (WX_CUSTOM_COMPONENT_MAP[originTagName]) {
-      // 自定义组件的特殊写法，转成 wx-custom-component 节点
-      options.tagName = 'wx-custom-component';
+      options.attrs.behavior = componentName;
+      return BuiltInComponent.$$create(options, tree);
+    } else if (CUSTOM_COMPONENT_MAP[originTagName]) {
+      // 自定义组件的特殊写法，转成 custom-component 节点
+      options.tagName = 'custom-component';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
-      return WxCustomComponent.$$create(options, tree);
+      return CustomComponent.$$create(options, tree);
     } else if (!tool.isTagNameSupport(tagName)) {
       return NotSupport.$$create(options, tree);
     } else {

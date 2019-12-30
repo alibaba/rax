@@ -191,7 +191,7 @@ class QuerySelector {
     this.parseCacheKeys = [];
 
     const idReg = '#([\\\\\\w-]+)'; // id 选择器
-    const tagReg = '\\*|wx-component|[a-zA-Z-]\\w*'; // 标签选择器
+    const tagReg = '\\*|builtin-component|[a-zA-Z-]\\w*'; // 标签选择器
     const classReg = '\\.([\\\\\\w-]+)'; // 类选择器
     const pseudoReg = ':([\\\\\\w-]+)(?:\\(([^\\(\\)]*|(?:\\([^\\)]+\\)|[^\\(\\)]*)+)\\))?'; // 伪类选择器
     const attrReg = '\\[\\s*([\\\\\\w-]+)(?:([*^$|~!]?=)[\'"]?([^\'"\\[]+)[\'"]?)?\\s*\\]'; // 属性选择器

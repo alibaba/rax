@@ -80,7 +80,7 @@ class Attribute {
 
     if (name === 'id') {
       map.id = value;
-    } else if (name === 'class' || element.tagName === 'WX-COMPONENT' && name === 'className') {
+    } else if (name === 'class' || element.tagName === 'BUILTIN-COMPONENT' && name === 'className') {
       element.className = value;
     } else if (name === 'style') {
       element.style.cssText = value;
