@@ -11,3 +11,4 @@ export function getId(instance) {
 export const PROPS = 'properties';
 export const MOUNT = 'attached';
 export const UNMOUNT = 'detached';
+export const INIT = 'created';
