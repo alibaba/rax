@@ -2,7 +2,7 @@ import mp from 'miniprogram-render';
 import _ from './util/tool';
 import initHandle from './util/init-handle';
 import component from './util/component';
-import { getId, PROPS, MOUNT, UNMOUNT } from '@@ADAPTER@@';
+import { getId, PROPS, INIT, MOUNT, UNMOUNT } from '@@ADAPTER@@';
 
 const {
   cache,
@@ -21,12 +21,6 @@ const {
 const MAX_DOM_SUB_TREE_LEVEL = 10;
 let DOM_SUB_TREE_LEVEL = 10;
 
-const config = cache.getConfig();
-
-// 根据配置重置全局变量
-const domSubTreeLevel = +config.optimization.domSubTreeLevel;
-if (domSubTreeLevel >= 1 && domSubTreeLevel <= MAX_DOM_SUB_TREE_LEVEL) DOM_SUB_TREE_LEVEL = domSubTreeLevel;
-
 Component({
   [PROPS]: {
     inCover: {
@@ -42,6 +36,13 @@ Component({
   },
   options: {
     addGlobalClass: true, // 开启全局样式
+  },
+  [INIT]() {
+    const config = cache.getConfig();
+
+    // 根据配置重置全局变量
+    const domSubTreeLevel = +config.optimization.domSubTreeLevel;
+    if (domSubTreeLevel >= 1 && domSubTreeLevel <= MAX_DOM_SUB_TREE_LEVEL) DOM_SUB_TREE_LEVEL = domSubTreeLevel;
   },
   [MOUNT]() {
     const { nodeId, pageId } = getId(this);
