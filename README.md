@@ -57,7 +57,7 @@ and extension not works in `producation` mode.
 
 ### VS Code Extensions
 
-You can also use the [Rax VS Code Extensions](https://github.com/raxjs/rax-vscode-extensions) to get a better development experience.fe
+You can also use the [Rax VS Code Extensions](https://github.com/raxjs/rax-vscode-extensions) to get a better development experience.
 
 ## Contributing
 
