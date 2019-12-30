@@ -100,14 +100,14 @@ export default function runApp(appConfig, pageProps = {}) {
   // Set history
   if (typeof appConfig.history !== 'undefined') {
     history = appConfig.history;
-  } else if (isWeb) {
-    history = createHashHistory();
   } else if (initialDataFromSSR) {
     // If that contains `initialDataFromSSR`, which means SSR is enabled,
-    // we should use brower history to make it works.
+    // we should use browser history to make it works.
     history = createBrowserHistory();
+  } else if (isWeb) {
+    history = createHashHistory();
   } else {
-    // In other situation use createMemoryHistory
+    // In other situation use memory history.
     history = createMemoryHistory();
   }
 
