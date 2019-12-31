@@ -242,6 +242,12 @@ function transformComponents(parsed, options) {
         }
       }
     },
+    JSXFragment(path) {
+      // Transform <></> => <block></block>
+      const blockNode = t.jsxIdentifier('block');
+      const { children = [] } = path.node;
+      path.replaceWith(t.jsxElement(t.jsxOpeningElement(blockNode, []), t.jsxClosingElement(blockNode), children));
+    }
   });
   return {
     contextList,
