@@ -111,9 +111,9 @@ module.exports = function visitor({ types: t }, options) {
               }
 
               if (!disableCopyNpm) {
-                path.node.arguments = [
-                  source(moduleName, nodeModulesPathList, state.cwd)
-                ];
+                const processedSource = source(moduleName, nodeModulesPathList, state.cwd);
+                transformPathMap[processedSource.value] = true;
+                path.node.arguments = [ processedSource ];
               }
             } else {
               if (!transformPathMap[moduleName]) {
