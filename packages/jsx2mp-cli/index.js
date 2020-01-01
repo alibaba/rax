@@ -111,9 +111,9 @@ function watch(options = {}) {
   spinner.shouldClear = !skipClearStdout;
 
   const compiler = webpack(config);
+
   const watchOpts = {
-    aggregateTimeout: 600,
-    ignored: /node_modules/
+    aggregateTimeout: 600
   };
   compiler.outputFileSystem = new MemFs();
   compiler.watch(watchOpts, (err, stats) => {

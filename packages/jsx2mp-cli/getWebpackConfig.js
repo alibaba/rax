@@ -159,6 +159,9 @@ module.exports = (options = {}) => {
       },
     ],
     plugins: [
+      new webpack.WatchIgnorePlugin([
+        /node_modules/
+      ]),
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: mode === 'build' ? '"production"' : '"development"',
