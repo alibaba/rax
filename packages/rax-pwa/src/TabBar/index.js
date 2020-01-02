@@ -2,7 +2,12 @@ import { createElement, useEffect, useState, Fragment } from 'rax';
 import Image from 'rax-image';
 import Text from 'rax-text';
 import View from 'rax-view';
+import isIPhoneX from '../isIPhoneX';
+
 import styles from './index.css';
+
+const TAB_BAR_HEIGHT = 98;
+const IPHONE_X_BOTTOM = 34;
 
 export default function TabBar(props) {
   const [pathname, setPathname] = useState('');
@@ -35,7 +40,14 @@ export default function TabBar(props) {
   return (
     <Fragment>
       {showTabBar ? (
-        <View style={{ ...styles.tabBar, backgroundColor }}>
+        <View
+          style={{
+            ...styles.tabBar,
+            backgroundColor,
+            height: isIPhoneX() ? `${TAB_BAR_HEIGHT + IPHONE_X_BOTTOM}rpx` : `${TAB_BAR_HEIGHT}rpx`,
+            paddingBottom: isIPhoneX() ? `${IPHONE_X_BOTTOM}rpx` : 0
+          }}
+        >
           {items.map((item, index) => {
             const selected = item.path === pathname;
             const itemTextColor = item.textColor || textColor;
