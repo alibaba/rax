@@ -9,6 +9,7 @@ const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
 const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
+const VAR_KEY_VAL_REG = /"(.*?)"\s*:\s*"var\(\-\-(.*)\)"/g;
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
@@ -100,8 +101,9 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
 
   resetMessage();
-
-  return `var _styles = ${stringifyData(styles)};
+  
+  return `${parsedQuery.theme ? 'function _getvar(name){return ((require("universal-theme").getCSSVariables() || {}) || {})[name]}' : ''}
+  var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
@@ -173,6 +175,7 @@ const getFontFaceContent = (rules) => {
   return content;
 };
 
-const stringifyData = (data) => {
-  return JSON.stringify(data, undefined, '  ');
+const stringifyData = (data, theme) => {
+  const str = JSON.stringify(data, undefined, '  ');
+  return !theme ? str : str.replace(VAR_KEY_VAL_REG, 'get $1(){return _getvar("$2")}');
 };
