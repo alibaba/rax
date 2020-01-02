@@ -171,3 +171,33 @@ We followed the [css-layout](https://github.com/facebook/yoga) style standard. T
   <img alt="stylesheet validation" src="https://gw.alicdn.com/tfs/TB1EHgXPXXXXXc3XVXXXXXXXXXX-1324-208.png" width="400">
 </p>
 
+## Theme support
+
+### Global Theme
+
+#### install
+
+```shell
+npm install universal-theme
+```
+
+And enable option `{ theme: true }` for `stylesheet-loader`
+
+#### Usage
+
+You can write `var()` in CSS
+
+```css
+.text {
+  color: var(--color-error-1);
+}
+```
+
+Then change this variable at runtime
+
+```js
+import { setTheme } from 'universal-theme';
+setTheme({
+  '--color-error-1': 'red'
+});
+```
