@@ -285,13 +285,6 @@ test('window: self', () => {
   expect(window.self).toBe(window);
 });
 
-test('window: outerHeight/outerWidth/innerHeight/innerWidth', () => {
-  expect(window.outerHeight).toBe(300);
-  expect(window.outerWidth).toBe(200);
-  expect(window.innerHeight).toBe(280);
-  expect(window.innerWidth).toBe(190);
-});
-
 test('window: Image', () => {
   const image = new window.Image();
   expect(image).toBeInstanceOf(Image);

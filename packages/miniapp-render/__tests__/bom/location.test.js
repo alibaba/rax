@@ -1,5 +1,4 @@
-const mock = require('../mock');
-
+import mock from './mock';
 let window;
 
 beforeAll(() => {

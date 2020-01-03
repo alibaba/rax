@@ -1,7 +1,7 @@
-const styleList = require('./style-list');
-const tool = require('../util/tool');
-const Pool = require('../util/pool');
-const cache = require('../util/cache');
+import styleList from './style-list';
+import Pool from '../util/pool';
+import cache from '../util/cache';
+import tool from '../util/tool';
 
 const pool = new Pool();
 
@@ -155,4 +155,4 @@ styleList.forEach(name => {
 });
 Object.defineProperties(Style.prototype, properties);
 
-module.exports = Style;
+export default Style;

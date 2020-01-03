@@ -178,4 +178,4 @@ Event.CAPTURING_PHASE = 1;
 Event.AT_TARGET = 2;
 Event.BUBBLING_PHASE = 3;
 
-module.exports = Event;
+export default Event;

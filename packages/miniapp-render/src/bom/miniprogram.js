@@ -1,4 +1,4 @@
-const cache = require('../util/cache');
+import cache from '../util/cache';
 
 let pageUrlRouteMap = null;
 
@@ -91,4 +91,4 @@ class Miniprogram {
   }
 }
 
-module.exports = Miniprogram;
+export default Miniprogram;

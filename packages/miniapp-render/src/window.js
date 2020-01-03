@@ -1,19 +1,18 @@
-const Document = require('./document');
-const EventTarget = require('./event/event-target');
-const Event = require('./event/event');
-const OriginalCustomEvent = require('./event/custom-event');
-const Location = require('./bom/location');
-const cache = require('./util/cache');
-const tool = require('./util/tool');
-const Miniprogram = require('./bom/miniprogram');
-const Node = require('./node/node');
-const Element = require('./node/element');
-const TextNode = require('./node/text-node');
-const Comment = require('./node/comment');
-const ClassList = require('./node/class-list');
-const Style = require('./node/style');
-const Attribute = require('./node/attribute');
-const { getSystemInfoSync } = require('./util/platformAdapter');
+import EventTarget from './event/event-target';
+import OriginalCustomEvent from './event/custom-event';
+import tool from './util/tool';
+import cache from './util/cache';
+import Node from './node/node';
+import Element from './node/element';
+import Location from './bom/location';
+import Event from './event/event';
+import Document from './Document';
+import TextNode from './node/text-node';
+import Miniprogram from './bom/miniprogram';
+import Comment from './node/comment';
+import ClassList from './node/class-list';
+import Style from './node/style';
+import Attribute from './node/attribute';
 
 let lastRafTime = 0;
 const WINDOW_PROTOTYPE_MAP = {
@@ -436,4 +435,4 @@ class Window extends EventTarget {
   }
 }
 
-module.exports = Window;
+export default Window;

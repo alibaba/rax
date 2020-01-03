@@ -250,7 +250,7 @@ function parse(html) {
   return r.children;
 }
 
-module.exports = {
+export default {
   tokenize,
   parse,
   voidMap,

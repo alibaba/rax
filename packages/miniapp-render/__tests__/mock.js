@@ -1,4 +1,4 @@
-const render = require('../src');
+import render from '../dist/wechat';
 
 const config = {
   origin: 'https://test.miniprogram.com',
@@ -73,48 +73,7 @@ const html = `<div class="aa">
     </div>
 </div>`;
 
-const storageMap = {};
 global.wx = {
-  getSystemInfoSync() {
-    return {
-      language: 'zh',
-      version: '7.0.0',
-      brand: 'devtools',
-      model: 'iPhone 6',
-      platform: 'devtools',
-      system: 'iOS 10.0.1',
-      screenHeight: 300,
-      screenWidth: 200,
-      windowHeight: 280,
-      windowWidth: 190,
-    };
-  },
-  getStorageInfoSync() {
-    const keys = Object.keys(storageMap);
-    const currentSize = 12345;
-
-    return {keys, currentSize};
-  },
-  getStorageSync(key) {
-    return storageMap[key];
-  },
-  setStorageSync(key, data) {
-    storageMap[key] = data;
-  },
-  setStorage(key, data) {
-    setTimeout(() => {
-      storageMap[key] = data;
-    }, 0);
-  },
-  removeStorageSync(key) {
-    delete storageMap[key];
-  },
-  clearStorageSync() {
-    Object.keys(storageMap).forEach(key => delete storageMap[key]);
-  },
-  setNavigationBarTitle(options) {
-    if (typeof global.expectTitle === 'string') expect(options.title).toBe(global.expectTitle);
-  },
   redirectTo(options) {
     if (typeof global.expectCallMethod === 'string') expect(global.expectCallMethod).toBe('redirectTo');
     if (typeof global.expectPagePath === 'string') expect(options.url).toBe(global.expectPagePath);
@@ -135,11 +94,10 @@ global.wx = {
       }
     }, 10);
   },
-  login() {
-  }
+  login() {}
 };
 
-module.exports = {
+export default {
   html,
   createPage(type = 'home', realUrl) {
     const route = `pages/${type}/index`;

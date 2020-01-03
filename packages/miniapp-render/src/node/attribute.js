@@ -1,6 +1,6 @@
-const Pool = require('../util/pool');
-const cache = require('../util/cache');
-const tool = require('../util/tool');
+import Pool from '../util/pool';
+import cache from '../util/cache';
+import tool from '../util/tool';
 
 const pool = new Pool();
 
@@ -218,4 +218,4 @@ class Attribute {
   }
 }
 
-module.exports = Attribute;
+export default Attribute;

@@ -1,12 +1,12 @@
-const Node = require('./node');
-const ClassList = require('./class-list');
-const Style = require('./style');
-const Attribute = require('./attribute');
-const cache = require('../util/cache');
-const parser = require('../tree/parser');
-const tool = require('../util/tool');
-const Pool = require('../util/pool');
-const { createSelectorQuery } = require('../util/platformAdapter');
+/* global CONTAINER */
+import Node from './node';
+import ClassList from './class-list';
+import Style from './style';
+import Attribute from './attribute';
+import Pool from '../util/pool';
+import cache from '../util/cache';
+import tool from '../util/tool';
+import parser from '../tree/parser';
 
 const pool = new Pool();
 
@@ -364,7 +364,6 @@ class Element extends Node {
      * 获取对应小程序组件的 context 对象
      */
   $$getContext() {
-
     tool.flushThrottleCache(); // 先清空 setData
     const window = cache.getWindow(this.$_pageId);
     return new Promise((resolve, reject) => {
@@ -372,7 +371,7 @@ class Element extends Node {
 
       if (this.tagName === 'CANVAS') {
         // TODO，为了兼容基础库的一个 bug，暂且如此实现
-        createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
+        CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
                     .exec();
       } else {
         window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject()).exec();
@@ -919,4 +918,4 @@ class Element extends Node {
   }
 }
 
-module.exports = Element;
+export default Element;

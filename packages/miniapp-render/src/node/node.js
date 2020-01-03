@@ -1,5 +1,5 @@
-const EventTarget = require('../event/event-target');
-const cache = require('../util/cache');
+import EventTarget from '../event/event-target';
+import cache from '../util/cache';
 
 class Node extends EventTarget {
   /**
@@ -127,4 +127,4 @@ Node.DOCUMENT_NODE = 9;
 Node.DOCUMENT_TYPE_NODE = 10;
 Node.DOCUMENT_FRAGMENT_NODE = 11;
 
-module.exports = Node;
+export default Node;

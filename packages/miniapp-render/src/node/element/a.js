@@ -1,7 +1,7 @@
-const Element = require('../element');
-const Location = require('../../bom/location');
-const cache = require('../../util/cache');
-const Pool = require('../../util/pool');
+import Element from '../element';
+import Location from '../../bom/location';
+import cache from '../../util/cache';
+import Pool from '../../util/pool';
 
 const pool = new Pool();
 
@@ -161,4 +161,4 @@ class HTMLAnchorElement extends Element {
   }
 }
 
-module.exports = HTMLAnchorElement;
+export default HTMLAnchorElement;

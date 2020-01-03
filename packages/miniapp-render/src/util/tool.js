@@ -1,4 +1,4 @@
-const cache = require('./cache');
+import cache from './cache';
 
 /**
  * 驼峰转连字符
@@ -109,7 +109,7 @@ function isTagNameSupport(tagName) {
   return NOT_SUPPORT_TAG_NAME_LIST.indexOf(tagName) === -1;
 }
 
-module.exports = {
+export default {
   toDash,
   toCamel,
   getId,

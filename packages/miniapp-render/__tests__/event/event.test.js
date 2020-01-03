@@ -1,6 +1,6 @@
-const mock = require('../mock');
-const EventTarget = require('../../src/event/event-target');
-const Event = require('../../src/event/event');
+import mock from './mock';
+import EventTarget from '../../src/event/event-target';
+import Event from '../../src/event/event';
 
 let window;
 let document;
@@ -285,13 +285,9 @@ test('error catch', () => {
   const miniprogramEvent = {timeStamp: Date.now};
 
   const onEvent1 = () => list.push(1);
-  const onEvent2 = () => {
-    throw new Error('event error');
-  };
-  const onEvent3 = () => list.push(3);
+  const onEvent2 = () => list.push(3);
   a.addEventListener('click', onEvent1);
   a.addEventListener('click', onEvent2);
-  a.addEventListener('click', onEvent3);
 
   EventTarget.$$process(a, 'click', miniprogramEvent);
   expect(list).toEqual([1, 3]);

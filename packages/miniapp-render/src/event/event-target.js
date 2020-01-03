@@ -1,5 +1,5 @@
-const Event = require('./event');
-const CustomEvent = require('./custom-event');
+import Event from './event';
+import CustomEvent from './custom-event';
 
 /**
  * 比较 touch 列表
@@ -299,4 +299,4 @@ class EventTarget {
   }
 }
 
-module.exports = EventTarget;
+export default EventTarget;

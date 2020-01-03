@@ -1,8 +1,5 @@
-/**
- * babel extends 无法直接继承 Array，所以换种方法来继承：https://babeljs.io/docs/en/caveats/#classes
- */
-const Pool = require('../util/pool');
-const cache = require('../util/cache');
+import Pool from '../util/pool';
+import cache from '../util/cache';
 
 const pool = new Pool();
 
@@ -150,4 +147,4 @@ ClassList.prototype = Object.assign([], {
   },
 });
 
-module.exports = ClassList;
+export default ClassList;

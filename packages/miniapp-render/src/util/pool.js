@@ -21,4 +21,4 @@ class Pool {
   }
 }
 
-module.exports = Pool;
+export default Pool;

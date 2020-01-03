@@ -1,21 +1,20 @@
-const EventTarget = require('./event/event-target');
-const Tree = require('./tree/tree');
-const Node = require('./node/node');
-const Element = require('./node/element');
-const TextNode = require('./node/text-node');
-const Comment = require('./node/comment');
-const tool = require('./util/tool');
-const cache = require('./util/cache');
-const A = require('./node/element/a');
-const Image = require('./node/element/image');
-const Input = require('./node/element/input');
-const Textarea = require('./node/element/textarea');
-const Video = require('./node/element/video');
-const Canvas = require('./node/element/canvas');
-const NotSupport = require('./node/element/not-support');
-const BuiltInComponent = require('./node/element/builtin-component');
-const CustomComponent = require('./node/element/custom-component');
-const { getStorageSync } = require('./util/platformAdapter');
+import EventTarget from './event/event-target';
+import Tree from './tree/tree';
+import Node from './node/node';
+import Element from './node/element';
+import TextNode from './node/text-node';
+import Comment from './node/comment';
+import tool from './util/tool';
+import cache from './util/cache';
+import A from './node/element/a';
+import Image from './node/element/image';
+import Input from './node/element/input';
+import Textarea from './node/element/textarea';
+import Video from './node/element/video';
+import Canvas from './node/element/canvas';
+import NotSupport from './node/element/not-support';
+import BuiltInComponent from './node/element/builtin-component';
+import CustomComponent from './node/element/custom-component';
 
 const CONSTRUCTOR_MAP = {
   A,
@@ -286,4 +285,4 @@ class Document extends EventTarget {
   }
 }
 
-module.exports = Document;
+export default Document;

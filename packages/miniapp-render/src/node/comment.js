@@ -1,7 +1,7 @@
-const Node = require('./node');
-const tool = require('../util/tool');
-const Pool = require('../util/pool');
-const cache = require('../util/cache');
+import Pool from '../util/pool';
+import cache from '../util/cache';
+import tool from '../util/tool';
+import Node from './node';
 
 const pool = new Pool();
 
@@ -77,4 +77,4 @@ class Comment extends Node {
   }
 }
 
-module.exports = Comment;
+export default Comment;

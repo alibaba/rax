@@ -2,7 +2,7 @@
  * 支持的样式属性列表，默认只包含常用的样式属性
  */
 
-module.exports = [
+export default [
   'position', 'top', 'bottom', 'right', 'left', 'float', 'clear',
   'display', 'width', 'height', 'maxHeight', 'maxWidth', 'minHeight', 'minWidth', 'flexBasis', 'flexGrow', 'flexShrink', 'flexDirection', 'flexWrap', 'justifyContent', 'alignItems',
   'padding', 'paddingBottom', 'paddingLeft', 'paddingRight', 'paddingTop',

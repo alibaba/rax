@@ -1,4 +1,4 @@
-const Event = require('./event');
+import Event from './event';
 
 class CustomEvent extends Event {
   constructor(name = '', options = {}) {
@@ -9,4 +9,4 @@ class CustomEvent extends Event {
   }
 }
 
-module.exports = CustomEvent;
+export default CustomEvent;

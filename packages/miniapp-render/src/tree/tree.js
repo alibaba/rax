@@ -1,4 +1,4 @@
-const QuerySelector = require('./query-selector');
+import QuerySelector from './query-selector';
 
 /**
  * 遍历 dom 树，收集类和标签对应的节点列表
@@ -128,4 +128,4 @@ class Tree {
   }
 }
 
-module.exports = Tree;
+export default Tree;

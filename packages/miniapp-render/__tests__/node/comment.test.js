@@ -1,5 +1,5 @@
-const mock = require('../mock');
-const Node = require('../../src/node/node');
+import mock from '../mock';
+import Node from '../../src/node/node';
 
 let document;
 

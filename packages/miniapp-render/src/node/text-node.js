@@ -1,7 +1,7 @@
-const Node = require('./node');
-const tool = require('../util/tool');
-const Pool = require('../util/pool');
-const cache = require('../util/cache');
+import Pool from '../util/pool';
+import cache from '../util/cache';
+import tool from '../util/tool';
+import Node from '../node/node';
 
 const pool = new Pool();
 
@@ -124,4 +124,4 @@ class TextNode extends Node {
   }
 }
 
-module.exports = TextNode;
+export default TextNode;

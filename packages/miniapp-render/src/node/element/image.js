@@ -1,8 +1,8 @@
-const Element = require('../element');
-const Event = require('../../event/event');
-const Pool = require('../../util/pool');
-const cache = require('../../util/cache');
-const { getImageInfo } = require('../../util/platformAdapter');
+/* global CONTAINER */
+import Element from '../element';
+import cache from '../../util/cache';
+import Pool from '../../util/pool';
+import Event from '../../event/event';
 
 const pool = new Pool();
 
@@ -110,7 +110,7 @@ class Image extends Element {
     this.$_attrs.set('src', value);
 
     setTimeout(() => {
-      getImageInfo({
+      CONTAINER.getImageInfo({
         src: this.src,
         success: res => {
           // 加载成功，调整图片的宽高
@@ -175,4 +175,4 @@ class Image extends Element {
   }
 }
 
-module.exports = Image;
+export default Image;

@@ -74,7 +74,7 @@ function getConfig() {
   return configCache;
 }
 
-module.exports = {
+export default {
   init,
   destroy,
   getDocument,

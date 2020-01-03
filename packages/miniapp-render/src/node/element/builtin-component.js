@@ -1,6 +1,6 @@
-const Element = require('../element');
-const Pool = require('../../util/pool');
-const cache = require('../../util/cache');
+import Element from '../element';
+import cache from '../../util/cache';
+import Pool from '../../util/pool';
 
 const pool = new Pool();
 
@@ -49,4 +49,4 @@ class BuiltInComponent extends Element {
   }
 }
 
-module.exports = BuiltInComponent;
+export default BuiltInComponent;

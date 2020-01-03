@@ -1,10 +1,7 @@
-/**
- * 暂不对 ipv6 地址做支持
- */
-const EventTarget = require('../event/event-target');
-const tool = require('../util/tool');
-const cache = require('../util/cache');
-const API = require('../util/platformAdapter');
+/* global CONTAINER */
+import EventTarget from '../event/event-target';
+import cache from '../util/cache';
+import tool from '../util/tool';
 
 class Location extends EventTarget {
   constructor(pageId) {
@@ -158,7 +155,7 @@ class Location extends EventTarget {
         param = '?' + param.join('&');
 
         const callMethod = window.$$miniprogram.isTabBarPage(matchRoute) ? 'switchTab' : 'redirectTo';
-        API[callMethod]({
+        CONTAINER[callMethod]({
           url: `${matchRoute}${param}`,
         });
 
@@ -227,7 +224,7 @@ class Location extends EventTarget {
       param = '?' + param.join('&');
 
       const callMethod = window.$$miniprogram.isTabBarPage(matchRoute) ? 'switchTab' : 'navigateTo';
-      API[callMethod]({
+      CONTAINER[callMethod]({
         url: `${matchRoute}${param}`,
       });
     } else {
@@ -559,7 +556,7 @@ class Location extends EventTarget {
     param = '?' + param.join('&');
 
     const callMethod = window.$$miniprogram.isTabBarPage(this.$_pageRoute) ? 'switchTab' : 'redirectTo';
-    API[callMethod]({
+    CONTAINER[callMethod]({
       url: `${this.$_pageRoute}${param}`,
     });
   }
@@ -574,4 +571,4 @@ class Location extends EventTarget {
   }
 }
 
-module.exports = Location;
+export default Location;

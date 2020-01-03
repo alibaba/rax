@@ -1,12 +1,11 @@
-const tool = require('./util/tool');
-const cache = require('./util/cache');
-const Window = require('./window');
-const Document = require('./document');
-const EventTarget = require('./event/event-target');
-const Event = require('./event/event');
+import tool from './util/tool';
+import cache from './util/cache';
+import Window from './Window';
+import Document from './Document';
+import EventTarget from './event/event-target';
+import Event from './event/event';
 
-
-module.exports = {
+export default {
   createPage(route, config) {
     if (config) cache.setConfig(config);
 
@@ -18,13 +17,13 @@ module.exports = {
     cache.init(pageId, {
       window,
       document,
-      nodeIdMap,
+      nodeIdMap
     });
 
     return {
       pageId,
       window,
-      document,
+      document
     };
   },
 
@@ -37,6 +36,6 @@ module.exports = {
     cache,
     EventTarget,
     Event,
-    tool,
-  },
+    tool
+  }
 };

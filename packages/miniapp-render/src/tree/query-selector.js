@@ -1,5 +1,5 @@
 /**
- * 感谢 sizzle：https://github.com/jquery/sizzle/tree/master
+ * Thanks sizzle：https://github.com/jquery/sizzle/tree/master
  */
 
 const PSEUDO_CHECK = {
@@ -417,4 +417,4 @@ class QuerySelector {
   }
 }
 
-module.exports = QuerySelector;
+export default QuerySelector;
