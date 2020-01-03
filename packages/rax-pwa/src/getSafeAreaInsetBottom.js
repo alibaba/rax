@@ -26,7 +26,6 @@ const getSafeAreaInsetBottom = () => {
       return 0;
     }
   } catch (e) {
-    // In Node.js or some error occur.
     return 0;
   }
 };

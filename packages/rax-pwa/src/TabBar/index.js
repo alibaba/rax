@@ -4,7 +4,6 @@ import Text from 'rax-text';
 import View from 'rax-view';
 import getSafeAreaInsetBottom from '../getSafeAreaInsetBottom';
 
-
 import styles from './index.css';
 
 const TAB_BAR_HEIGHT = 98;
