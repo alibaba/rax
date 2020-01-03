@@ -2,12 +2,12 @@ import { createElement, useEffect, useState, Fragment } from 'rax';
 import Image from 'rax-image';
 import Text from 'rax-text';
 import View from 'rax-view';
-import isLikeIPhoneX from '../isLikeIPhoneX';
+import getSafeAreaInsetBottom from '../getSafeAreaInsetBottom';
+
 
 import styles from './index.css';
 
 const TAB_BAR_HEIGHT = 98;
-const IPHONE_X_BOTTOM = 34;
 
 export default function TabBar(props) {
   const [pathname, setPathname] = useState('');
@@ -44,8 +44,8 @@ export default function TabBar(props) {
           style={{
             ...styles.tabBar,
             backgroundColor,
-            height: isLikeIPhoneX() ? `${TAB_BAR_HEIGHT + IPHONE_X_BOTTOM}rpx` : `${TAB_BAR_HEIGHT}rpx`,
-            paddingBottom: isLikeIPhoneX() ? `${IPHONE_X_BOTTOM}rpx` : 0
+            height: `${TAB_BAR_HEIGHT + getSafeAreaInsetBottom()}rpx`,
+            paddingBottom: `${getSafeAreaInsetBottom()}rpx`
           }}
         >
           {items.map((item, index) => {
