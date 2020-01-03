@@ -1,6 +1,6 @@
 import { isWeex } from 'universal-env';
 
-const isIPhoneX = () => {
+const isLikeIPhoneX = () => {
   try {
     let screenHeight = window.screen.height;
     if (isWeex) {
@@ -18,4 +18,4 @@ const isIPhoneX = () => {
   }
 };
 
-export default isIPhoneX;
+export default isLikeIPhoneX;

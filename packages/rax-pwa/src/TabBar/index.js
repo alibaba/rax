@@ -2,7 +2,7 @@ import { createElement, useEffect, useState, Fragment } from 'rax';
 import Image from 'rax-image';
 import Text from 'rax-text';
 import View from 'rax-view';
-import isIPhoneX from '../isIPhoneX';
+import isLikeIPhoneX from '../isLikeIPhoneX';
 
 import styles from './index.css';
 
@@ -44,8 +44,8 @@ export default function TabBar(props) {
           style={{
             ...styles.tabBar,
             backgroundColor,
-            height: isIPhoneX() ? `${TAB_BAR_HEIGHT + IPHONE_X_BOTTOM}rpx` : `${TAB_BAR_HEIGHT}rpx`,
-            paddingBottom: isIPhoneX() ? `${IPHONE_X_BOTTOM}rpx` : 0
+            height: isLikeIPhoneX() ? `${TAB_BAR_HEIGHT + IPHONE_X_BOTTOM}rpx` : `${TAB_BAR_HEIGHT}rpx`,
+            paddingBottom: isLikeIPhoneX() ? `${IPHONE_X_BOTTOM}rpx` : 0
           }}
         >
           {items.map((item, index) => {
