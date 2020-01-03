@@ -35,17 +35,6 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
   expect(window.location.testFunc()).toBe(window.location);
   expect(window.location.testStr).toBe('window.location');
 
-  // window.performance
-  expect(window.$$getPrototype('window.performance')).toBe(window.performance.__proto__);
-  window.$$extend('window.performance', {
-    testStr: 'window.performance',
-    testFunc() {
-      return this;
-    },
-  });
-  expect(window.performance.testFunc()).toBe(window.performance);
-  expect(window.performance.testStr).toBe('window.performance');
-
   // window.screen
   expect(window.$$getPrototype('window.screen')).toBe(window.screen.__proto__);
   window.$$extend('window.screen', {

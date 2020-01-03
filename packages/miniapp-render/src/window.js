@@ -8,7 +8,6 @@ const tool = require('./util/tool');
 const Screen = require('./bom/screen');
 const History = require('./bom/history');
 const Miniprogram = require('./bom/miniprogram');
-const Performance = require('./bom/performance');
 const Node = require('./node/node');
 const Element = require('./node/element');
 const TextNode = require('./node/text-node');
@@ -21,7 +20,6 @@ const { getSystemInfoSync } = require('./util/platformAdapter');
 let lastRafTime = 0;
 const WINDOW_PROTOTYPE_MAP = {
   location: Location.prototype,
-  performance: Performance.prototype,
   screen: Screen.prototype,
   history: History.prototype,
   event: Event.prototype,
@@ -49,7 +47,6 @@ class Window extends EventTarget {
     this.$_screen = new Screen();
     this.$_history = new History(this.$_location);
     this.$_miniprogram = new Miniprogram(pageId);
-    this.$_performance = new Performance(timeOrigin);
 
     this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
 
@@ -471,10 +468,6 @@ class Window extends EventTarget {
 
   get Symbol() {
     return Symbol;
-  }
-
-  get performance() {
-    return this.$_performance;
   }
 
   open(url) {
