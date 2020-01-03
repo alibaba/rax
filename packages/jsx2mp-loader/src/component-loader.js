@@ -26,7 +26,7 @@ module.exports = async function componentLoader(content) {
   const sourcePath = join(rootContext, dirname(entryPath));
 
   const relativeSourcePath = relative(sourcePath, this.resourcePath);
-  const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
+  const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath), platform.type);
 
   const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
 

@@ -17,6 +17,13 @@ const FileLoader = require.resolve('jsx2mp-loader/src/file-loader');
 const BabelLoader = require.resolve('babel-loader');
 let buildStartTime;
 
+function getPlatformExtensions(platform, extensions) {
+  return [
+    ...platform ? extensions.map((ext) => `.${platform}${ext}`) : [],
+    ...extensions,
+  ];
+}
+
 function getBabelConfig() {
   return {
     presets: [
@@ -141,7 +148,7 @@ module.exports = (options = {}) => {
       ],
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+      extensions: getPlatformExtensions(platform, ['.js', '.jsx', '.ts', '.tsx', '.json']),
       mainFields: ['main', 'module']
     },
     externals: [
