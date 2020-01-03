@@ -2,8 +2,6 @@
 const mock = require('./mock');
 const Document = require('../src/document');
 const Location = require('../src/bom/location');
-const LocalStorage = require('../src/bom/local-storage');
-const SessionStorage = require('../src/bom/session-storage');
 const History = require('../src/bom/history');
 const Screen = require('../src/bom/screen');
 const CustomEvent = require('../src/event/custom-event');
@@ -69,28 +67,6 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
   });
   expect(window.history.testFunc()).toBe(window.history);
   expect(window.history.testStr).toBe('window.history');
-
-  // window.localStorage
-  expect(window.$$getPrototype('window.localStorage')).toBe(window.localStorage.__proto__);
-  window.$$extend('window.localStorage', {
-    testStr: 'window.localStorage',
-    testFunc() {
-      return this;
-    },
-  });
-  expect(window.localStorage.testFunc()).toBe(window.localStorage);
-  expect(window.localStorage.testStr).toBe('window.localStorage');
-
-  // window.sessionStorage
-  expect(window.$$getPrototype('window.sessionStorage')).toBe(window.sessionStorage.__proto__);
-  window.$$extend('window.sessionStorage', {
-    testStr: 'window.sessionStorage',
-    testFunc() {
-      return this;
-    },
-  });
-  expect(window.sessionStorage.testFunc()).toBe(window.sessionStorage);
-  expect(window.sessionStorage.testStr).toBe('window.sessionStorage');
 
   // window.event
   const evt = new window.CustomEvent('test');
@@ -342,14 +318,6 @@ test('window: CustomEvent', () => {
 
 test('window: self', () => {
   expect(window.self).toBe(window);
-});
-
-test('window: localStorage', () => {
-  expect(window.localStorage).toBeInstanceOf(LocalStorage);
-});
-
-test('window: sessionStorage', () => {
-  expect(window.sessionStorage).toBeInstanceOf(SessionStorage);
 });
 
 test('window: screen', () => {

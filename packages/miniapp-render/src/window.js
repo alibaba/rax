@@ -8,8 +8,6 @@ const tool = require('./util/tool');
 const Screen = require('./bom/screen');
 const History = require('./bom/history');
 const Miniprogram = require('./bom/miniprogram');
-const LocalStorage = require('./bom/local-storage');
-const SessionStorage = require('./bom/session-storage');
 const Performance = require('./bom/performance');
 const Node = require('./node/node');
 const Element = require('./node/element');
@@ -26,8 +24,6 @@ const WINDOW_PROTOTYPE_MAP = {
   performance: Performance.prototype,
   screen: Screen.prototype,
   history: History.prototype,
-  localStorage: LocalStorage.prototype,
-  sessionStorage: SessionStorage.prototype,
   event: Event.prototype,
 };
 const ELEMENT_PROTOTYPE_MAP = {
@@ -53,8 +49,6 @@ class Window extends EventTarget {
     this.$_screen = new Screen();
     this.$_history = new History(this.$_location);
     this.$_miniprogram = new Miniprogram(pageId);
-    this.$_localStorage = new LocalStorage(this);
-    this.$_sessionStorage = new SessionStorage(this);
     this.$_performance = new Performance(timeOrigin);
 
     this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
@@ -393,14 +387,6 @@ class Window extends EventTarget {
 
   get self() {
     return this;
-  }
-
-  get localStorage() {
-    return this.$_localStorage;
-  }
-
-  get sessionStorage() {
-    return this.$_sessionStorage;
   }
 
   get screen() {
