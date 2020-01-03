@@ -5,7 +5,6 @@ const OriginalCustomEvent = require('./event/custom-event');
 const Location = require('./bom/location');
 const cache = require('./util/cache');
 const tool = require('./util/tool');
-const Screen = require('./bom/screen');
 const History = require('./bom/history');
 const Miniprogram = require('./bom/miniprogram');
 const Node = require('./node/node');
@@ -20,7 +19,6 @@ const { getSystemInfoSync } = require('./util/platformAdapter');
 let lastRafTime = 0;
 const WINDOW_PROTOTYPE_MAP = {
   location: Location.prototype,
-  screen: Screen.prototype,
   history: History.prototype,
   event: Event.prototype,
 };
@@ -44,13 +42,11 @@ class Window extends EventTarget {
     this.$_innerWidth = 0;
 
     this.$_location = new Location(pageId);
-    this.$_screen = new Screen();
     this.$_history = new History(this.$_location);
     this.$_miniprogram = new Miniprogram(pageId);
 
     this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
 
-    this.$_fetchDeviceInfo();
     this.$_initInnerEvent();
 
     // 补充实例的属性，用于 'xxx' in XXX 判断
@@ -102,24 +98,6 @@ class Window extends EventTarget {
         currentTarget: this,
       });
     });
-  }
-
-  /**
-     * 拉取设备参数
-     */
-  $_fetchDeviceInfo() {
-    try {
-      const info = getSystemInfoSync();
-
-      this.$_outerHeight = info.screenHeight;
-      this.$_outerWidth = info.screenWidth;
-      this.$_innerHeight = info.windowHeight;
-      this.$_innerWidth = info.windowWidth;
-
-      this.$_screen.$$reset(info);
-    } catch (err) {
-      // ignore
-    }
   }
 
   /**
@@ -384,10 +362,6 @@ class Window extends EventTarget {
 
   get self() {
     return this;
-  }
-
-  get screen() {
-    return this.$_screen;
   }
 
   get history() {
