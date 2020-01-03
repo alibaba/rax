@@ -1,1 +1,1 @@
-# rax-create-factory
+# rax-create-class

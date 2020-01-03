@@ -43,7 +43,7 @@ export default function Navigation(props) {
 
   const Component = component;
   const currentPathname = history.location.pathname;
-  const currentPage = routes.find(route => route.path === currentPathname);
+  const currentPage = routes.find(route => route.path === currentPathname) || {};
 
   const isAlivePage = currentPage.keepAlive;
   useEffect(() => {

@@ -11,4 +11,3 @@ build/
 coverage/
 node_modules/
 examples/test
-.idea/
