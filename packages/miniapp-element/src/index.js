@@ -13,7 +13,7 @@ const {
   NOT_SUPPORT,
 } = _;
 const {
-  wxCompNameMap,
+  componentNameMap,
   handles
 } = component;
 
@@ -29,8 +29,8 @@ Component({
     },
   },
   data: {
-    wxCompName: '', // 需要渲染的内置组件名
-    wxCustomCompName: '', // 需要渲染的自定义组件名
+    builtinComponentName: '', // 需要渲染的内置组件名
+    customComponentName: '', // 需要渲染的自定义组件名
     innerChildNodes: [], // 内置组件的孩子节点
     childNodes: [], // 孩子节点
   },
@@ -74,7 +74,7 @@ Component({
     // 初始化孩子节点
     const childNodes = _.filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1);
     const dataChildNodes = _.dealWithLeafAndSimple(childNodes, this.onChildNodesUpdate);
-    if (data.wxCompName || data.wxCustomCompName) {
+    if (data.builtinComponentName || data.customComponentName) {
       // 内置组件/自定义组件
       data.innerChildNodes = dataChildNodes;
       data.childNodes = [];
@@ -103,11 +103,11 @@ Component({
 
       // 儿子节点有变化
       const childNodes = _.filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1);
-      const oldChildNodes = this.data.wxCompName || this.data.wxCustomCompName ? this.data.innerChildNodes : this.data.childNodes;
+      const oldChildNodes = this.data.builtinComponentName || this.data.customComponentName ? this.data.innerChildNodes : this.data.childNodes;
       if (_.checkDiffChildNodes(childNodes, oldChildNodes)) {
         const dataChildNodes = _.dealWithLeafAndSimple(childNodes, this.onChildNodesUpdate);
         const newData = {};
-        if (this.data.wxCompName || this.data.wxCustomCompName) {
+        if (this.data.builtinComponentName || this.data.customComponentName) {
           // 内置组件/自定义组件
           newData.innerChildNodes = dataChildNodes;
           newData.childNodes = [];
@@ -145,24 +145,24 @@ Component({
       const data = this.data;
       const tagName = domNode.tagName;
 
-      if (tagName === 'WX-COMPONENT') {
+      if (tagName === 'BUILTIN-COMPONENT') {
         // 内置组件
-        if (data.wxCompName !== domNode.behavior) newData.wxCompName = domNode.behavior;
-        const wxCompName = wxCompNameMap[domNode.behavior];
-        if (wxCompName) _.checkComponentAttr(wxCompName, domNode, newData, data);
-      } else if (tagName === 'WX-CUSTOM-COMPONENT') {
+        if (data.builtinComponentName !== domNode.behavior) newData.builtinComponentName = domNode.behavior;
+        const builtinComponentName = componentNameMap[domNode.behavior];
+        if (builtinComponentName) _.checkComponentAttr(builtinComponentName, domNode, newData, data);
+      } else if (tagName === 'CUSTOM-COMPONENT') {
         // 自定义组件
-        if (data.wxCustomCompName !== domNode.behavior) newData.wxCustomCompName = domNode.behavior;
+        if (data.customComponentName !== domNode.behavior) newData.customComponentName = domNode.behavior;
         if (data.nodeId !== this.nodeId) data.nodeId = this.nodeId;
         if (data.pageId !== this.pageId) data.pageId = this.pageId;
       } else if (NOT_SUPPORT.indexOf(tagName) >= 0) {
         // 不支持标签
-        newData.wxCompName = 'not-support';
+        newData.builtinComponentName = 'not-support';
         if (data.content !== domNode.content) newData.content = domNode.textContent;
       } else {
         // 可替换 html 标签
-        const wxCompName = wxCompNameMap[tagName];
-        if (wxCompName) _.checkComponentAttr(wxCompName, domNode, newData, data);
+        const builtinComponentName = componentNameMap[tagName];
+        if (builtinComponentName) _.checkComponentAttr(builtinComponentName, domNode, newData, data);
       }
 
       this.setData(newData);
@@ -204,7 +204,7 @@ Component({
               targetDomNode = domNode.querySelector('input');
 
               // 寻找 switch 节点
-              if (!targetDomNode) targetDomNode = domNode.querySelector('wx-component[behavior=switch]');
+              if (!targetDomNode) targetDomNode = domNode.querySelector('builtin-component[behavior=switch]');
             }
 
             if (!targetDomNode || !!targetDomNode.getAttribute('disabled')) return;
@@ -230,7 +230,7 @@ Component({
               } else {
                 targetDomNode.focus();
               }
-            } else if (targetDomNode.tagName === 'WX-COMPONENT') {
+            } else if (targetDomNode.tagName === 'BUILTIN-COMPONENT') {
               if (_.checkEventAccessDomNode(evt, targetDomNode, domNode)) return;
 
               const behavior = targetDomNode.behavior;
@@ -240,7 +240,7 @@ Component({
                 this.callSimpleEvent('change', {detail: {value: checked}}, targetDomNode);
               }
             }
-          } else if ((domNode.tagName === 'BUTTON' || domNode.tagName === 'WX-COMPONENT' && domNode.behavior === 'button') && evt.type === 'click' && !isCapture) {
+          } else if ((domNode.tagName === 'BUTTON' || domNode.tagName === 'BUILTIN-COMPONENT' && domNode.behavior === 'button') && evt.type === 'click' && !isCapture) {
             // 处理 button 点击
             const type = domNode.tagName === 'BUTTON' ? domNode.getAttribute('type') : domNode.getAttribute('form-type');
             const formAttr = domNode.getAttribute('form');
@@ -251,9 +251,9 @@ Component({
 
             const inputList = form.querySelectorAll('input[name]');
             const textareaList = form.querySelectorAll('textarea[name]');
-            const switchList = form.querySelectorAll('wx-component[behavior=switch]').filter(item => !!item.getAttribute('name'));
-            const sliderList = form.querySelectorAll('wx-component[behavior=slider]').filter(item => !!item.getAttribute('name'));
-            const pickerList = form.querySelectorAll('wx-component[behavior=picker]').filter(item => !!item.getAttribute('name'));
+            const switchList = form.querySelectorAll('builtin-component[behavior=switch]').filter(item => !!item.getAttribute('name'));
+            const sliderList = form.querySelectorAll('builtin-component[behavior=slider]').filter(item => !!item.getAttribute('name'));
+            const pickerList = form.querySelectorAll('builtin-component[behavior=picker]').filter(item => !!item.getAttribute('name'));
 
             if (type === 'submit') {
               const formData = {};

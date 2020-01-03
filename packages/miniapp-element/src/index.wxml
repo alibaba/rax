@@ -2,7 +2,7 @@
 <import src="./template/subtree-cover.wxml"/>
 <!-- 视图容器 -->
 <cover-image
-    wx:if="{{wxCompName === 'cover-image'}}"
+    wx:if="{{builtinComponentName === 'cover-image'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -12,7 +12,7 @@
     binderror="onCoverImageError"
 ></cover-image>
 <cover-view
-    wx:elif="{{wxCompName === 'cover-view'}}"
+    wx:elif="{{builtinComponentName === 'cover-view'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -20,7 +20,7 @@
     scroll-top="{{scrollTop}}"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></cover-view>
 <movable-area
-    wx:elif="{{wxCompName === 'movable-area'}}"
+    wx:elif="{{builtinComponentName === 'movable-area'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -60,7 +60,7 @@
     ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></movable-view>
 </block></movable-area>
 <scroll-view
-    wx:elif="{{wxCompName === 'scroll-view'}}"
+    wx:elif="{{builtinComponentName === 'scroll-view'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -80,7 +80,7 @@
     bindscroll="onScrollViewScroll"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></scroll-view>
 <swiper
-    wx:elif="{{wxCompName === 'swiper'}}"
+    wx:elif="{{builtinComponentName === 'swiper'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -120,7 +120,7 @@
     ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></swiper-item>
 </block></swiper>
 <view
-    wx:elif="{{wxCompName === 'view'}}"
+    wx:elif="{{builtinComponentName === 'view'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -132,7 +132,7 @@
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></view>
 <!-- 基础内容 -->
 <icon
-    wx:elif="{{wxCompName === 'icon'}}"
+    wx:elif="{{builtinComponentName === 'icon'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -142,7 +142,7 @@
     color="{{color}}"
 ></icon>
 <progress
-    wx:elif="{{wxCompName === 'progress'}}"
+    wx:elif="{{builtinComponentName === 'progress'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -160,7 +160,7 @@
     bindactiveend="onProgressActiveEnd"
 ></progress>
 <text
-    wx:elif="{{wxCompName === 'text'}}"
+    wx:elif="{{builtinComponentName === 'text'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -171,7 +171,7 @@
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></text>
 <!-- 表单组件 -->
 <button
-    wx:elif="{{wxCompName === 'button'}}"
+    wx:elif="{{builtinComponentName === 'button'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -203,7 +203,7 @@
     bindlaunchapp="onButtonLaunchApp"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></button>
 <editor
-    wx:elif="{{wxCompName === 'editor'}}"
+    wx:elif="{{builtinComponentName === 'editor'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -220,7 +220,7 @@
     bindstatuschange="onEditorStatusChange"
 ></editor>
 <form
-    wx:elif="{{wxCompName === 'form'}}"
+    wx:elif="{{builtinComponentName === 'form'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -230,7 +230,7 @@
     bindsubmit="onFormSubmit"
     bindreset="onFormReset"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></form>
-<block wx:elif="{{wxCompName === 'input'}}">
+<block wx:elif="{{builtinComponentName === 'input'}}">
     <radio-group wx:if="{{type === 'radio'}}" bindchange="onRadioChange"><radio
         id="{{id}}"
         class="{{class}}"
@@ -282,7 +282,7 @@
     ></input>
 </block>
 <picker
-    wx:elif="{{wxCompName === 'picker'}}"
+    wx:elif="{{builtinComponentName === 'picker'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -301,7 +301,7 @@
     bindcancel="onPickerCancel"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></picker>
 <picker-view
-    wx:elif="{{wxCompName === 'picker-view'}}"
+    wx:elif="{{builtinComponentName === 'picker-view'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -331,7 +331,7 @@
     ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></picker-view-column>
 </block></picker-view>
 <slider
-    wx:elif="{{wxCompName === 'slider'}}"
+    wx:elif="{{builtinComponentName === 'slider'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -352,7 +352,7 @@
     bindchanging="onSliderChanging"
 ></slider>
 <switch
-    wx:elif="{{wxCompName === 'switch'}}"
+    wx:elif="{{builtinComponentName === 'switch'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -364,7 +364,7 @@
     bindchange="onSwitchChange"
 ></switch>
 <textarea
-    wx:elif="{{wxCompName === 'textarea'}}"
+    wx:elif="{{builtinComponentName === 'textarea'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -394,7 +394,7 @@
 ></textarea>
 <!-- 导航 -->
 <navigator
-    wx:elif="{{wxCompName === 'navigator'}}"
+    wx:elif="{{builtinComponentName === 'navigator'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -417,7 +417,7 @@
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></navigator>
 <!-- 媒体组件 -->
 <camera
-    wx:elif="{{wxCompName === 'camera'}}"
+    wx:elif="{{builtinComponentName === 'camera'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -432,7 +432,7 @@
     bindscancode="onCameraScanCode"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></camera>
 <image
-    wx:elif="{{wxCompName === 'image'}}"
+    wx:elif="{{builtinComponentName === 'image'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -446,7 +446,7 @@
     binderror="onImageError"
 ></image>
 <live-player
-    wx:elif="{{wxCompName === 'live-player'}}"
+    wx:elif="{{builtinComponentName === 'live-player'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -468,7 +468,7 @@
     bindnetstatus="onLivePlayerNetStatus"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></live-player>
 <live-pusher
-    wx:elif="{{wxCompName === 'live-pusher'}}"
+    wx:elif="{{builtinComponentName === 'live-pusher'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -498,8 +498,8 @@
     bindbgmprogress="onLivePusherBgmProgress"
     bindbgmcomplete="onLivePusherBgmComplete"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></live-pusher>
-<video 
-    wx:elif="{{wxCompName === 'video'}}"
+<video
+    wx:elif="{{builtinComponentName === 'video'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -541,7 +541,7 @@
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></video>
 <!-- 地图 -->
 <map
-    wx:elif="{{wxCompName === 'map'}}"
+    wx:elif="{{builtinComponentName === 'map'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -578,7 +578,7 @@
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></map>
 <!-- 画布 -->
 <canvas
-    wx:elif="{{wxCompName === 'canvas'}}"
+    wx:elif="{{builtinComponentName === 'canvas'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -595,7 +595,7 @@
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></canvas>
 <!-- 开放能力 -->
 <ad
-    wx:elif="{{wxCompName === 'ad'}}"
+    wx:elif="{{builtinComponentName === 'ad'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -607,7 +607,7 @@
     bindclose="onAdClose"
 ></ad>
 <official-account
-    wx:elif="{{wxCompName === 'official-account'}}"
+    wx:elif="{{builtinComponentName === 'official-account'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -616,7 +616,7 @@
     binderror="onOfficialAccountError"
 ></official-account>
 <open-data
-    wx:elif="{{wxCompName === 'open-data'}}"
+    wx:elif="{{builtinComponentName === 'open-data'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -626,7 +626,7 @@
     lang="{{lang}}"
 ></open-data>
 <web-view
-    wx:elif="{{wxCompName === 'web-view'}}"
+    wx:elif="{{builtinComponentName === 'web-view'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
@@ -638,12 +638,12 @@
 ></web-view>
 <!-- 其他 -->
 <block
-    wx:elif="{{wxCompName === 'not-support'}}"
+    wx:elif="{{builtinComponentName === 'not-support'}}"
 >{{content}}</block>
 <!-- 自定义组件 -->
 <custom-component
-    wx:elif="{{!!wxCustomCompName}}"
-    name="{{wxCustomCompName}}"
+    wx:elif="{{!!CustomComponentName}}"
+    name="{{CustomComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></custom-component>
