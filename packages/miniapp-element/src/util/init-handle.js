@@ -20,25 +20,25 @@ export default {
     const domNode = this.domNode;
     const tagName = domNode.tagName;
 
-    if (tagName === 'WX-COMPONENT') {
+    if (tagName === 'BUILTIN-COMPONENT') {
       // 内置组件
-      data.wxCompName = domNode.behavior;
-      const wxCompName = componentNameMap[data.wxCompName];
-      if (wxCompName) _.checkComponentAttr(wxCompName, domNode, data);
-      else console.warn(`value "${data.wxCompName}" is not supported for wx-component's behavior`);
-    } else if (tagName === 'WX-CUSTOM-COMPONENT') {
+      data.builtinComponentName = domNode.behavior;
+      const builtinComponentName = componentNameMap[data.builtinComponentName];
+      if (builtinComponentName) _.checkComponentAttr(builtinComponentName, domNode, data);
+      else console.warn(`value "${data.builtinComponentName}" is not supported for builtin-component's behavior`);
+    } else if (tagName === 'CUSTOM-COMPONENT') {
       // 自定义组件
-      data.wxCustomCompName = domNode.behavior;
+      data.customComponentName = domNode.behavior;
       data.nodeId = this.nodeId;
       data.pageId = this.pageId;
     } else if (NOT_SUPPORT.indexOf(tagName) >= 0) {
       // 不支持标签
-      data.wxCompName = 'not-support';
+      data.builtinComponentName = 'not-support';
       data.content = domNode.textContent;
     } else {
       // 可替换 html 标签
-      const wxCompName = componentNameMap[tagName];
-      if (wxCompName) _.checkComponentAttr(wxCompName, domNode, data);
+      const builtinComponentName = componentNameMap[tagName];
+      if (builtinComponentName) _.checkComponentAttr(builtinComponentName, domNode, data);
     }
   },
 

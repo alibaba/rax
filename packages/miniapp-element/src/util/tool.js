@@ -8,12 +8,12 @@ const {
 } = mp.$$adapter;
 
 const {
-  wxSubComponentMap,
+  subComponentMap,
 } = component;
 
 const ELEMENT_DIFF_KEYS = ['nodeId', 'pageId', 'tagName', 'compName', 'id', 'class', 'style', 'src', 'mode', 'lazyLoad', 'showMenuByLongpress', 'isImage', 'isLeaf', 'isSimple', 'content', 'extra'];
 const TEXT_NODE_DIFF_KEYS = ['nodeId', 'pageId', 'content'];
-const NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT = ['INPUT', 'TEXTAREA', 'VIDEO', 'CANVAS', 'WX-COMPONENT', 'WX-CUSTOM-COMPONENT']; // 需要分离 class 和 style 的节点
+const NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT = ['INPUT', 'TEXTAREA', 'VIDEO', 'CANVAS', 'BUILTIN-COMPONENT', 'CUSTOM-COMPONENT']; // 需要分离 class 和 style 的节点
 const NEET_BEHAVIOR_NORMAL_CUSTOM_ELEMENT = ['swiper-item', 'movable-view', 'picker-view-column'];
 const NEET_RENDER_TO_CUSTOM_ELEMENT = ['IFRAME', ...NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT]; // 必须渲染成自定义组件的节点
 const NOT_SUPPORT = ['IFRAME'];
@@ -38,7 +38,7 @@ function filterNodes(domNode, level) {
 
     // 特殊节点
     if (NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT.indexOf(child.tagName) >= 0) {
-      if (domInfo.tagName === 'wx-component' && NEET_BEHAVIOR_NORMAL_CUSTOM_ELEMENT.indexOf(child.behavior) !== -1) {
+      if (domInfo.tagName === 'builtin-component' && NEET_BEHAVIOR_NORMAL_CUSTOM_ELEMENT.indexOf(child.behavior) !== -1) {
         // 特殊内置组件，强制作为某内置组件的子组件，需要直接在当前模板渲染
         domInfo.compName = child.behavior;
         domInfo.extra = {
@@ -46,7 +46,7 @@ function filterNodes(domNode, level) {
         };
 
         // 补充该内置组件的属性
-        const {PROPS} = wxSubComponentMap[child.behavior] || {};
+        const {PROPS} = subComponentMap[child.behavior] || {};
         if (PROPS && PROPS.length) {
           PROPS.forEach(({name, get}) => {
             domInfo.extra[name] = get(child);
@@ -60,7 +60,7 @@ function filterNodes(domNode, level) {
       }
 
       // 不需要处理 id 和样式
-      domInfo.class = `h5-${domInfo.tagName} ${domInfo.tagName === 'wx-component' ? 'wx-' + child.behavior : ''}`;
+      domInfo.class = `h5-${domInfo.tagName} ${domInfo.tagName === 'builtin-component' ? 'builtin-' + child.behavior : ''}`;
       domInfo.id = '';
       domInfo.style = '';
     }
@@ -143,7 +143,7 @@ function checkDiffChildNodes(newChildNodes, oldChildNodes) {
 function checkComponentAttr(name, domNode, destData, oldData) {
   const attrs = initData[name];
 
-  destData.wxCompName = name;
+  destData.builtinComponentName = name;
 
   if (attrs && attrs.length) {
     for (const {name, get} of attrs) {
@@ -155,7 +155,7 @@ function checkComponentAttr(name, domNode, destData, oldData) {
   // 补充 id、class、style 和 hidden
   const newId = domNode.id;
   if (!oldData || oldData.id !== newId) destData.id = newId;
-  const newClass = `wx-comp-${name} node-${domNode.$$nodeId} ${domNode.className || ''}`;
+  const newClass = `builtin-component-${name} node-${domNode.$$nodeId} ${domNode.className || ''}`;
   if (!oldData || oldData.class !== newClass) destData.class = newClass;
   const newStyle = domNode.style.cssText;
   if (!oldData || oldData.style !== newStyle) destData.style = newStyle;
@@ -211,7 +211,7 @@ function findParentNode(domNode, tagName) {
   const checkParentNode = (parentNode, tagName) => {
     if (!parentNode) return false;
     if (parentNode.tagName === tagName) return true;
-    if (parentNode.tagName === 'WX-COMPONENT' && parentNode.behavior === tagName.toLowerCase()) return true;
+    if (parentNode.tagName === 'BUILTIN-COMPONENT' && parentNode.behavior === tagName.toLowerCase()) return true;
 
     return false;
   };
