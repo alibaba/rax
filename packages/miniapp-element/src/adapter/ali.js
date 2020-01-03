@@ -5,7 +5,7 @@ export function getId(instance) {
   return {
     nodeId,
     pageId
-  }
+  };
 }
 
 export const PROPS = 'props';

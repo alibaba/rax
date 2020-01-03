@@ -1,6 +1,6 @@
-const mock = require('../mock');
+import mock from '../mock';
 
-const parser = require('../../src/tree/parser');
+import parser from '../../src/tree/parser';
 
 function getTokenizeResult(content) {
   const startStack = [];

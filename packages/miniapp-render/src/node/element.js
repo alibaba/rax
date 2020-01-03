@@ -393,7 +393,7 @@ class Element extends Node {
         // TODO，为了兼容基础库的一个 bug，暂且如此实现
         const config = cache.getConfig();
         const target = { config };
-        resolve(createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
+        resolve(CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
       } else {
         resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
       }

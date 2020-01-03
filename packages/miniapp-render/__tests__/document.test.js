@@ -1,8 +1,5 @@
-const mock = require('./mock');
-const Element = require('../src/node/element');
-const TextNode = require('../src/node/text-node');
-const Comment = require('../src/node/comment');
-const Node = require('../src/node/node');
+import mock from './mock';
+import Node from '../src/node/node';
 
 let window;
 let document;
@@ -18,13 +15,11 @@ test('document: nodeType', () => {
 });
 
 test('document: documentElement', () => {
-  expect(document.documentElement).toBeInstanceOf(Element);
   expect(document.documentElement.tagName).toBe('HTML');
   expect(document.documentElement.parentNode).toBe(document);
 });
 
 test('document: body', () => {
-  expect(document.body).toBeInstanceOf(Element);
   expect(document.body.tagName).toBe('BODY');
 });
 
@@ -33,7 +28,6 @@ test('document: nodeName', () => {
 });
 
 test('document: head', () => {
-  expect(document.head).toBeInstanceOf(Element);
   expect(document.head.tagName).toBe('HEAD');
 });
 
@@ -47,12 +41,10 @@ test('document: URL', () => {
 
 test('document: getElementById', () => {
   const node1 = document.getElementById('bb');
-  expect(node1).toBeInstanceOf(Element);
   expect(node1.tagName).toBe('DIV');
   expect(node1.id).toBe('bb');
 
   const node2 = document.getElementById('bb4');
-  expect(node2).toBeInstanceOf(Element);
   expect(node2.tagName).toBe('SPAN');
   expect(node2.id).toBe('bb4');
 
@@ -62,33 +54,25 @@ test('document: getElementById', () => {
 test('document: getElementsByTagName', () => {
   const nodes = document.getElementsByTagName('span');
   expect(nodes.length).toBe(3);
-  expect(nodes[0]).toBeInstanceOf(Element);
   expect(nodes[0].tagName).toBe('SPAN');
-  expect(nodes[1]).toBeInstanceOf(Element);
   expect(nodes[1].tagName).toBe('SPAN');
-  expect(nodes[2]).toBeInstanceOf(Element);
   expect(nodes[2].tagName).toBe('SPAN');
 });
 
 test('document: getElementsByClassName', () => {
   const nodes = document.getElementsByClassName('bb4');
   expect(nodes.length).toBe(3);
-  expect(nodes[0]).toBeInstanceOf(Element);
   expect(nodes[0].tagName).toBe('SPAN');
-  expect(nodes[1]).toBeInstanceOf(Element);
   expect(nodes[1].tagName).toBe('SPAN');
-  expect(nodes[2]).toBeInstanceOf(Element);
   expect(nodes[2].tagName).toBe('SPAN');
 });
 
 test('document: querySelector', () => {
   const node1 = document.querySelector('#bb');
-  expect(node1).toBeInstanceOf(Element);
   expect(node1.tagName).toBe('DIV');
   expect(node1.id).toBe('bb');
 
   const node2 = document.querySelector('#bb .bb4');
-  expect(node2).toBeInstanceOf(Element);
   expect(node2.tagName).toBe('SPAN');
   expect(node2.id).toBe('bb4');
 
@@ -98,12 +82,9 @@ test('document: querySelector', () => {
 test('document: querySelectorAll', () => {
   const nodes = document.querySelectorAll('#bb .bb4');
   expect(nodes.length).toBe(3);
-  expect(nodes[0]).toBeInstanceOf(Element);
   expect(nodes[0].tagName).toBe('SPAN');
   expect(nodes[0].id).toBe('bb4');
-  expect(nodes[1]).toBeInstanceOf(Element);
   expect(nodes[1].tagName).toBe('SPAN');
-  expect(nodes[2]).toBeInstanceOf(Element);
   expect(nodes[2].tagName).toBe('SPAN');
 
   expect(document.querySelectorAll('#aa').length).toBe(0);
@@ -111,42 +92,33 @@ test('document: querySelectorAll', () => {
 
 test('document: createElement/createElementNS', () => {
   const node1 = document.createElement('div');
-  expect(node1).toBeInstanceOf(Element);
   expect(node1.tagName).toBe('DIV');
 
   const node2 = document.createElement('span');
-  expect(node2).toBeInstanceOf(Element);
   expect(node2.tagName).toBe('SPAN');
 
   const node3 = document.createElementNS('xxx', 'div');
-  expect(node3).toBeInstanceOf(Element);
   expect(node3.tagName).toBe('DIV');
 
   const node4 = document.createElement('img');
-  expect(node4).toBeInstanceOf(Element);
   expect(node4.tagName).toBe('IMG');
 
   const node5 = document.createElement('iframe');
-  expect(node5).toBeInstanceOf(Element);
   expect(node5.tagName).toBe('IFRAME');
 });
 
 test('document: createTextNode', () => {
   const node1 = document.createTextNode('123');
-  expect(node1).toBeInstanceOf(TextNode);
   expect(node1.textContent).toBe('123');
 
   const node2 = document.createTextNode('321');
-  expect(node2).toBeInstanceOf(TextNode);
   expect(node2.textContent).toBe('321');
 });
 
 test('document: createComment', () => {
   const node1 = document.createComment('123');
-  expect(node1).toBeInstanceOf(Comment);
 
   const node2 = document.createComment('321');
-  expect(node2).toBeInstanceOf(Comment);
 
   const parent = document.createElement('div');
   const child = document.createElement('div');

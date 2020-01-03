@@ -1,4 +1,4 @@
-import mock from './mock';
+import mock from '../mock';
 import EventTarget from '../../src/event/event-target';
 import Event from '../../src/event/event';
 
@@ -244,7 +244,7 @@ test('event: CustomEvent/dispatchEvent', () => {
   // 普通
   customEvent = new window.CustomEvent('testevent');
   expect(customEvent.type).toBe('testevent');
-  expect(customEvent).toBeInstanceOf(Event);
+  expect(customEvent).toBeInstanceOf(window.CustomEvent);
 
   b.dispatchEvent(customEvent);
   expect(seqList).toEqual(['b', 'b']);

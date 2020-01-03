@@ -27,15 +27,19 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.6",
     "@babel/preset-env": "^7.4.5",
+    "@babel/runtime": "^7.7.7",
+    "babel-jest": "^24.9.0",
     "cross-env": "^5.2.1",
     "jest": "^24.8.0",
-    "jsdom": "^15.1.1",
     "miniprogram-simulate": "^1.1.5",
     "rollup": "^1.13.1",
     "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-filesize": "^6.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0"
   }
 }

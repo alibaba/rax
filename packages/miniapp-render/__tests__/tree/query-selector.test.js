@@ -1,6 +1,5 @@
-const JsDom = require('jsdom').JSDOM;
-const mock = require('../mock');
-const QuerySelector = require('../../src/tree/query-selector');
+import mock from '../mock';
+import QuerySelector from '../../src/tree/query-selector';
 
 const querySelector = new QuerySelector();
 
@@ -94,34 +93,4 @@ test('query-selector: parse selector', () => {
     {tag: '*', id: 'id', kinship: ' '},
     {tag: '*', class: ['class'], attr: [{name: 'name', opr: '^=', val: 'value'}]}
   ]);
-});
-
-test('query-selector: exec select', () => {
-  const jsDom = new JsDom(mock.html);
-  const window = jsDom.window;
-  const document = window.document;
-
-  // 兼容
-  window.HTMLCollection.prototype.indexOf = function(item, from) {
-    const array = toArray(this);
-    return array.indexOf(item, from);
-  };
-
-  expect(querySelector.exec('#bb .bb1', getExtra(document))[0]).toBe(document.body.querySelector('#bb .bb1'));
-  expect(querySelector.exec('div.bb header', getExtra(document))[0]).toBe(document.body.querySelector('div.bb header'));
-
-  const res1 = querySelector.exec('.bb footer > .bb4', getExtra(document));
-  const res2 = document.body.querySelectorAll('.bb footer > .bb4');
-  expect(res1[0]).toBe(res2[0]);
-  expect(res1[1]).toBe(res2[1]);
-  expect(res1[2]).toBe(res2[2]);
-
-  expect(querySelector.exec('.bb footer > .bb4:nth-child(2)', getExtra(document))[0]).toBe(document.body.querySelector('.bb footer > .bb4:nth-child(2)'));
-  expect(querySelector.exec('.bb footer > .bb4:first-child', getExtra(document))[0]).toBe(document.body.querySelector('.bb footer > .bb4:first-child'));
-  expect(querySelector.exec('.bb footer > .bb4:last-child', getExtra(document))[0]).toBe(document.body.querySelector('.bb footer > .bb4:last-child'));
-
-  const res3 = querySelector.exec('.bb footer > .bb4:nth-child(2n-1)', getExtra(document));
-  const res4 = document.body.querySelectorAll('.bb footer > .bb4:nth-child(2n-1)');
-  expect(res3[0]).toBe(res4[0]);
-  expect(res3[1]).toBe(res4[1]);
 });

@@ -1,12 +1,5 @@
 /* eslint-disable no-proto */
-const mock = require('./mock');
-const Document = require('../src/document');
-const Location = require('../src/bom/location');
-const CustomEvent = require('../src/event/custom-event');
-const Event = require('../src/event/event');
-const Element = require('../src/node/element');
-const Node = require('../src/node/node');
-const Image = require('../src/node/element/image');
+import mock from './mock';
 
 let window;
 let document;
@@ -17,124 +10,118 @@ beforeAll(() => {
   document = res.document;
 });
 
-test('window: init', () => {
-  expect(window.HTMLIFrameElement).toBeInstanceOf(Function);
-});
-
 test('window: $$getPrototype/$$extend/$$addAspect', () => {
   // window.location
-  expect(window.$$getPrototype('window.location')).toBe(window.location.__proto__);
   window.$$extend('window.location', {
     testStr: 'window.location',
     testFunc() {
       return this;
     },
   });
-  expect(window.location.testFunc()).toBe(window.location);
+  expect(window.location.testFunc()).toMatchObject(window.location);
   expect(window.location.testStr).toBe('window.location');
 
   // window.event
   const evt = new window.CustomEvent('test');
-  expect(window.$$getPrototype('window.event')).toBe(Event.prototype);
   window.$$extend('window.event', {
     testStr: 'window.event',
     testFunc() {
       return this;
     },
   });
-  expect(evt.testFunc()).toBe(evt);
+  expect(evt.testFunc()).toMatchObject(evt);
   expect(evt.testStr).toBe('window.event');
 
   // window
-  expect(window.$$getPrototype('window')).toBe(window.__proto__);
+  expect(window.$$getPrototype('window')).toMatchObject(window.__proto__);
   window.$$extend('window', {
     testStr: 'window',
     testFunc() {
       return this;
     },
   });
-  expect(window.testFunc()).toBe(window);
+  expect(window.testFunc()).toMatchObject(window);
   expect(window.testStr).toBe('window');
 
   // document
-  expect(window.$$getPrototype('document')).toBe(document.__proto__);
+  expect(window.$$getPrototype('document')).toMatchObject(document.__proto__);
   window.$$extend('document', {
     testStr: 'document',
     testFunc() {
       return this;
     },
   });
-  expect(document.testFunc()).toBe(document);
+  expect(document.testFunc()).toMatchObject(document);
   expect(document.testStr).toBe('document');
 
   const element = document.createElement('div');
 
   // element.attribute
-  expect(window.$$getPrototype('element.attribute')).toBe(element.$_attrs.__proto__);
+  expect(window.$$getPrototype('element.attribute')).toMatchObject(element.$_attrs.__proto__);
   window.$$extend('element.attribute', {
     testStr: 'element.attribute',
     testFunc() {
       return this;
     },
   });
-  expect(element.$_attrs.testFunc()).toBe(element.$_attrs);
+  expect(element.$_attrs.testFunc()).toMatchObject(element.$_attrs);
   expect(element.$_attrs.testStr).toBe('element.attribute');
 
   // element.classList
-  expect(window.$$getPrototype('element.classList')).toBe(element.classList.__proto__);
+  expect(window.$$getPrototype('element.classList')).toMatchObject(element.classList.__proto__);
   window.$$extend('element.classList', {
     testStr: 'element.classList',
     testFunc() {
       return this;
     },
   });
-  expect(element.classList.testFunc()).toBe(element.classList);
+  expect(element.classList.testFunc()).toMatchObject(element.classList);
   expect(element.classList.testStr).toBe('element.classList');
 
   // element.style
-  expect(window.$$getPrototype('element.style')).toBe(element.style.__proto__);
+  expect(window.$$getPrototype('element.style')).toMatchObject(element.style.__proto__);
   window.$$extend('element.style', {
     testStr: 'element.style',
     testFunc() {
       return this;
     },
   });
-  expect(element.style.testFunc()).toBe(element.style);
+  expect(element.style.testFunc()).toMatchObject(element.style);
   expect(element.style.testStr).toBe('element.style');
 
   // element
-  expect(window.$$getPrototype('element')).toBe(element.__proto__);
+  expect(window.$$getPrototype('element')).toMatchObject(element.__proto__);
   window.$$extend('element', {
     testStr: 'element',
     testFunc() {
       return this;
     },
   });
-  expect(element.testFunc()).toBe(element);
+  expect(element.testFunc()).toMatchObject(element);
   expect(element.testStr).toBe('element');
 
   // textNode
   const textNode = document.createTextNode('text');
-  expect(window.$$getPrototype('textNode')).toBe(textNode.__proto__);
+  expect(window.$$getPrototype('textNode')).toMatchObject(textNode.__proto__);
   window.$$extend('textNode', {
     testStr: 'textNode',
     testFunc() {
       return this;
     },
   });
-  expect(textNode.testFunc()).toBe(textNode);
+  expect(textNode.testFunc()).toMatchObject(textNode);
   expect(textNode.testStr).toBe('textNode');
 
   // comment
   const comment = document.createComment('comment');
-  expect(window.$$getPrototype('comment')).toBe(comment.__proto__);
+  expect(window.$$getPrototype('comment')).toMatchObject(comment.__proto__);
   window.$$extend('comment', {
     testStr: 'comment',
     testFunc() {
       return this;
     },
   });
-  expect(comment.testFunc()).toBe(comment);
+  expect(comment.testFunc()).toMatchObject(comment);
   expect(comment.testStr).toBe('comment');
 
   // normal aspect
@@ -265,29 +252,17 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
 
 test('window: document', () => {
   expect(window.document).toBe(document);
-  expect(window.document).toBeInstanceOf(Document);
-});
-
-test('window: location', () => {
-  expect(window.location).toBeInstanceOf(Location);
-
-  // TODO setter
 });
 
 test('window: CustomEvent', () => {
   const evt = new window.CustomEvent('click');
   expect(evt.timeStamp < 3600000).toBe(true);
   expect(evt).toBeInstanceOf(window.CustomEvent);
-  expect(evt).toBeInstanceOf(CustomEvent);
+  expect(evt).toBeInstanceOf(window.CustomEvent);
 });
 
 test('window: self', () => {
   expect(window.self).toBe(window);
-});
-
-test('window: Image', () => {
-  const image = new window.Image();
-  expect(image).toBeInstanceOf(Image);
 });
 
 test('window: setTimeout/clearTimeout/setInterval/clearInterval', async() => {
@@ -312,24 +287,6 @@ test('window: setTimeout/clearTimeout/setInterval/clearInterval', async() => {
 
 test('window: HTMLElement', () => {
   // TODO
-});
-
-test('window: Element', () => {
-  expect(window.Element).toBe(Element);
-});
-
-test('window: Node', () => {
-  expect(window.Node).toBe(Node);
-});
-
-test('window: RegExp/Math/Number/Boolean/String/Date/Symbol', () => {
-  expect(window.RegExp).toBe(RegExp);
-  expect(window.Math).toBe(Math);
-  expect(window.Number).toBe(Number);
-  expect(window.Boolean).toBe(Boolean);
-  expect(window.String).toBe(String);
-  expect(window.Date).toBe(Date);
-  expect(window.Symbol).toBe(Symbol);
 });
 
 test('window: open', () => {

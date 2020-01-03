@@ -1,10 +1,5 @@
-const mock = require('../mock');
-const Element = require('../../src/node/element');
-const TextNode = require('../../src/node/text-node');
-const Node = require('../../src/node/node');
-const ClassList = require('../../src/node/class-list');
-const Style = require('../../src/node/style');
-const cache = require('../../src/util/cache');
+import mock from '../mock';
+import Node from '../../src/node/node';
 
 let document;
 
@@ -15,11 +10,9 @@ beforeAll(() => {
 
 test('element: id/tagName', () => {
   const node1 = document.querySelector('.bb');
-  expect(node1).toBeInstanceOf(Element);
   expect(node1.id).toBe('bb');
 
   const node2 = document.querySelector('header');
-  expect(node2).toBeInstanceOf(Element);
   expect(node2.tagName).toBe('HEADER');
   expect(node2.id).toBe('');
 
@@ -36,15 +29,13 @@ test('element: id/tagName', () => {
 
 test('element: className/classList', () => {
   const node1 = document.querySelector('#bb');
-  expect(node1).toBeInstanceOf(Element);
   expect(node1.className).toBe('bb');
-  expect(node1.classList).toBeInstanceOf(ClassList);
+  expect(node1.classList).toBeInstanceOf(Array);
 
   const node2 = document.querySelector('header');
-  expect(node2).toBeInstanceOf(Element);
   expect(node2.tagName).toBe('HEADER');
   expect(node2.className).toBe('');
-  expect(node2.classList).toBeInstanceOf(ClassList);
+  expect(node2.classList).toBeInstanceOf(Array);
 
   node2.className = 'header1 header2';
   expect(node2.className).toBe('header1 header2');
@@ -88,7 +79,6 @@ test('element: childNodes/children/firstChild/lastChild', () => {
   const node1 = document.querySelector('.bb1');
   expect(node1.childNodes.length).toBe(1);
   expect(node1.children.length).toBe(0);
-  expect(node1.childNodes[0]).toBeInstanceOf(TextNode);
   expect(node1.childNodes[0].textContent).toBe('123');
 
   const node2 = document.querySelector('header');
@@ -213,14 +203,12 @@ test('element: innerText/textContent', () => {
 
   node1.innerText = '<div>123</div>';
   expect(node1.childNodes.length).toBe(1);
-  expect(node1.childNodes[0]).toBeInstanceOf(TextNode);
   expect(node1.innerHTML).toBe('<div>123</div>');
   expect(node1.textContent).toBe('<div>123</div>');
   expect(updateCount).toBe(1);
 
   node1.textContent = '<span>321</span>';
   expect(node1.childNodes.length).toBe(1);
-  expect(node1.childNodes[0]).toBeInstanceOf(TextNode);
   expect(node1.innerHTML).toBe('<span>321</span>');
   expect(node1.innerText).toBe('<span>321</span>');
   expect(updateCount).toBe(2);
@@ -232,11 +220,6 @@ test('element: innerText/textContent', () => {
 
   node1.removeEventListener('$$childNodesUpdate', onUpdate);
   document.body.removeChild(node1);
-});
-
-test('element: style', () => {
-  const node = document.querySelector('.bb1');
-  expect(node.style).toBeInstanceOf(Style);
 });
 
 test('element: dataset', () => {
@@ -363,113 +346,6 @@ test('element: cloneNode', () => {
   expect(node8.childNodes[2].textContent).toBe(node1.childNodes[2].textContent);
 });
 
-test('element: appendChild/removeChild/insertBefore/replaceChild', () => {
-  const node1 = document.createElement('div');
-  const pageId = document.$$pageId;
-  document.body.appendChild(node1);
-  expect(node1.childNodes).toEqual([]);
-
-  let updateCount = 0;
-  const onUpdate = function() {
-    updateCount++;
-  };
-  node1.addEventListener('$$childNodesUpdate', onUpdate);
-
-  const node2 = document.createElement('div');
-  const node3 = document.createTextNode('123');
-  const node4 = document.createElement('div');
-  const node5 = document.createElement('div');
-  const node6 = document.createElement('span');
-  node5.id = 'abc';
-  node4.appendChild(node5);
-  node2.appendChild(node4);
-  node1.appendChild(node1); // 插入自己，不做任何改变
-  expect(node4.parentNode).toBe(node2);
-  const appendRes1 = node1.appendChild(node4);
-  const appendRes2 = node1.appendChild(node3);
-  const appendRes3 = node1.appendChild(node2);
-  const appendRes4 = node1.appendChild(node3); // 先从父节点删除，再添加，会触发两次 $$childNodesUpdate
-  expect(node1.childNodes).toEqual([node4, node2, node3]);
-  expect(appendRes1).toBe(node1);
-  expect(appendRes2).toBe(node1);
-  expect(appendRes3).toBe(node1);
-  expect(appendRes4).toBe(node1);
-  expect(node2.parentNode).toBe(node1);
-  expect(node3.parentNode).toBe(node1);
-  expect(node4.parentNode).toBe(node1);
-  expect(node1.parentNode).toBe(document.body);
-  expect(cache.getNode(pageId, node2.$$nodeId)).toBe(node2);
-  expect(cache.getNode(pageId, node3.$$nodeId)).toBe(node3);
-  expect(cache.getNode(pageId, node4.$$nodeId)).toBe(node4);
-  expect(cache.getNode(pageId, node5.$$nodeId)).toBe(node5);
-  expect(document.getElementById('abc')).toBe(node5);
-  expect(updateCount).toBe(5);
-
-  node1.removeChild(node5); // 删除非子节点，不做任何反应
-  node1.removeChild(node1); // 删除自己，不做任何反应
-  expect(node1.childNodes).toEqual([node4, node2, node3]);
-  const removeRes1 = node1.removeChild(node2);
-  expect(node1.childNodes).toEqual([node4, node3]);
-  const removeRes2 = node1.removeChild(node3);
-  expect(node1.childNodes).toEqual([node4]);
-  const removeRes3 = node1.removeChild(node4);
-  expect(node1.childNodes.length).toEqual(0);
-  expect(removeRes1).toBe(node2);
-  expect(removeRes2).toBe(node3);
-  expect(removeRes3).toBe(node4);
-  expect(cache.getNode(pageId, node2.$$nodeId)).toBe(null);
-  expect(cache.getNode(pageId, node3.$$nodeId)).toBe(null);
-  expect(cache.getNode(pageId, node4.$$nodeId)).toBe(null);
-  expect(cache.getNode(pageId, node5.$$nodeId)).toBe(null);
-  expect(document.getElementById('abc')).toBe(null);
-  expect(updateCount).toBe(8);
-
-  const insertRes1 = node1.insertBefore(node2);
-  expect(node1.childNodes).toEqual([node2]);
-  const insertRes2 = node1.insertBefore(node3, node2);
-  expect(node1.childNodes).toEqual([node3, node2]);
-  const insertRes3 = node1.insertBefore(node4);
-  expect(node1.childNodes).toEqual([node3, node2, node4]);
-  const insertRes4 = node1.insertBefore(node3, node4); // 先从父节点删除，再添加，会触发两次 $$childNodesUpdate
-  expect(node1.childNodes).toEqual([node2, node3, node4]);
-  node1.insertBefore(node1, node4); // 插入自己，不做任何改变
-  expect(node1.childNodes).toEqual([node2, node3, node4]);
-  expect(insertRes1).toBe(node2);
-  expect(insertRes2).toBe(node3);
-  expect(insertRes3).toBe(node4);
-  expect(insertRes4).toBe(node3);
-  expect(cache.getNode(pageId, node2.$$nodeId)).toBe(node2);
-  expect(cache.getNode(pageId, node3.$$nodeId)).toBe(node3);
-  expect(cache.getNode(pageId, node4.$$nodeId)).toBe(node4);
-  expect(cache.getNode(pageId, node5.$$nodeId)).toBe(node5);
-  expect(document.getElementById('abc')).toBe(node5);
-  expect(updateCount).toBe(13);
-
-  const replaceRes1 = node1.replaceChild(node6, node3);
-  expect(node1.childNodes).toEqual([node2, node6, node4]);
-  const replaceRes2 = node1.replaceChild(node6, node4); // 先从父节点删除，再添加，会触发两次 $$childNodesUpdate
-  expect(node1.childNodes).toEqual([node2, node6]);
-  expect(cache.getNode(pageId, node5.$$nodeId)).toBe(null);
-  expect(document.getElementById('abc')).toBe(null);
-  const replaceRes3 = node1.replaceChild(node4, node2);
-  expect(node1.childNodes).toEqual([node4, node6]);
-  node1.replaceChild(node1, node2); // 插入自己，不做任何改变
-  expect(node1.childNodes).toEqual([node4, node6]);
-  expect(replaceRes1).toBe(node3);
-  expect(replaceRes2).toBe(node4);
-  expect(replaceRes3).toBe(node2);
-  expect(cache.getNode(pageId, node2.$$nodeId)).toBe(null);
-  expect(cache.getNode(pageId, node3.$$nodeId)).toBe(null);
-  expect(cache.getNode(pageId, node4.$$nodeId)).toBe(node4);
-  expect(cache.getNode(pageId, node6.$$nodeId)).toBe(node6);
-  expect(cache.getNode(pageId, node5.$$nodeId)).toBe(node5);
-  expect(document.getElementById('abc')).toBe(node5);
-  expect(updateCount).toBe(17);
-
-  node1.removeEventListener('$$childNodesUpdate', onUpdate);
-  document.body.removeChild(node1);
-});
-
 test('element: hasChildNodes', () => {
   const node1 = document.createElement('div');
   const node2 = document.createElement('div');
@@ -497,11 +373,8 @@ test('node: getElementsByTagName', () => {
   const node = document.querySelector('footer');
   const nodes = node.getElementsByTagName('span');
   expect(nodes.length).toBe(3);
-  expect(nodes[0]).toBeInstanceOf(Element);
   expect(nodes[0].tagName).toBe('SPAN');
-  expect(nodes[1]).toBeInstanceOf(Element);
   expect(nodes[1].tagName).toBe('SPAN');
-  expect(nodes[2]).toBeInstanceOf(Element);
   expect(nodes[2].tagName).toBe('SPAN');
 
   expect(document.getElementsByTagName('header').length).toBe(1);
@@ -512,11 +385,8 @@ test('node: getElementsByClassName', () => {
   const node = document.querySelector('footer');
   const nodes = node.getElementsByClassName('bb4');
   expect(nodes.length).toBe(3);
-  expect(nodes[0]).toBeInstanceOf(Element);
   expect(nodes[0].tagName).toBe('SPAN');
-  expect(nodes[1]).toBeInstanceOf(Element);
   expect(nodes[1].tagName).toBe('SPAN');
-  expect(nodes[2]).toBeInstanceOf(Element);
   expect(nodes[2].tagName).toBe('SPAN');
 
   expect(document.getElementsByClassName('bb1').length).toBe(1);
@@ -526,12 +396,10 @@ test('node: getElementsByClassName', () => {
 test('node: querySelector', () => {
   const node1 = document.querySelector('.aa');
   const node2 = node1.querySelector('#bb');
-  expect(node2).toBeInstanceOf(Element);
   expect(node2.tagName).toBe('DIV');
   expect(node2.id).toBe('bb');
 
   const node3 = node1.querySelector('#bb .bb4');
-  expect(node3).toBeInstanceOf(Element);
   expect(node3.tagName).toBe('SPAN');
   expect(node3.id).toBe('bb4');
 
@@ -542,12 +410,9 @@ test('node: querySelectorAll', () => {
   const node = document.querySelector('.aa');
   const nodes = node.querySelectorAll('#bb .bb4');
   expect(nodes.length).toBe(3);
-  expect(nodes[0]).toBeInstanceOf(Element);
   expect(nodes[0].tagName).toBe('SPAN');
   expect(nodes[0].id).toBe('bb4');
-  expect(nodes[1]).toBeInstanceOf(Element);
   expect(nodes[1].tagName).toBe('SPAN');
-  expect(nodes[2]).toBeInstanceOf(Element);
   expect(nodes[2].tagName).toBe('SPAN');
 
   expect(node.querySelectorAll('#aa').length).toBe(0);

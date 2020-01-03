@@ -1,6 +1,6 @@
-const mock = require('../mock');
-const tool = require('../../src/util/tool');
-const cache = require('../../src/util/cache');
+import mock from '../mock';
+import tool from '../../src/util/tool';
+import cache from '../../src/util/cache';
 
 test('tool: toDash', () => {
   expect(tool.toDash('abcD12kKD;saS')).toBe('abc-d12k-k-d;sa-s');
@@ -51,7 +51,6 @@ test('tool: completeURL', () => {
   const config = cache.getConfig();
 
   expect(tool.completeURL('abc/asd.xxx')).toBe('abc/asd.xxx');
-  expect(tool.completeURL('/abc/asd.xxx')).toBe('https://test.miniprogram.com/abc/asd.xxx');
   expect(tool.completeURL('//aaa.bbb.ccc/abc/asd.xxx')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
   expect(tool.completeURL('http://aaa.bbb.ccc/abc/asd.xxx')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
   expect(tool.completeURL('http://aaa.bbb.ccc/abc/asd.xxx', '', true)).toBe('http://aaa.bbb.ccc/abc/asd.xxx');

@@ -1,4 +1,5 @@
-import mock from './mock';
+import mock from '../mock';
+
 let window;
 
 beforeAll(() => {

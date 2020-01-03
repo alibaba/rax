@@ -18,8 +18,8 @@ function getBabelConfig(platform) {
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
-       // Support different adatpers replacement.
-       ['./scripts/import-adapter-replace-plugin', { platform }]
+      // Support different adatpers replacement.
+      ['./scripts/import-adapter-replace-plugin', { platform }]
     ]
   };
 }
