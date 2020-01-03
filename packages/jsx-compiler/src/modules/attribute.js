@@ -3,10 +3,11 @@ const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
 const compiledComponents = require('../compiledComponents');
-const basedComponents = require('../baseComponents');
+const DynamicBinding = require('../utils/DynamicBinding');
 
 function transformAttribute(ast, code, adapter) {
   const refs = [];
+  const dynamicRefs = new DynamicBinding('_r');
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
@@ -34,13 +35,31 @@ function transformAttribute(ast, code, adapter) {
           }
           break;
         case 'ref':
-          if (t.isJSXExpressionContainer(node.value)) {
-            node.value = t.stringLiteral(genExpression(node.value.expression));
-          }
-          if (t.isStringLiteral(node.value)) {
-            refs.push(node.value);
-          } else {
-            throw new CodeError(code, node, path.loc, "Ref's type must be string or jsxExpressionContainer");
+          switch (node.value.type) {
+            case 'JSXExpressionContainer':
+              const childExpression = node.value.expression;
+              // For this.xxx = createRef();
+              if (t.isMemberExpression(childExpression)
+                && t.isThisExpression(childExpression.object)) {
+                node.value = t.stringLiteral(dynamicRefs.add({
+                  expression: childExpression
+                }));
+              } else {
+                node.value = t.stringLiteral(genExpression(childExpression));
+              }
+              refs.push({
+                name: node.value,
+                method: childExpression
+              });
+              break;
+            case 'StringLiteral':
+              refs.push({
+                name: node.value,
+                method: node.value
+              });
+              break;
+            default:
+              throw new CodeError(code, node, path.loc, "Ref's type must be string or jsxExpressionContainer");
           }
           break;
         default:
@@ -48,7 +67,10 @@ function transformAttribute(ast, code, adapter) {
       }
     }
   });
-  return refs;
+  return {
+    refs,
+    dynamicRefs: dynamicRefs.getStore()
+  };
 }
 
 function isNativeComponent(path) {
@@ -60,7 +82,14 @@ function isNativeComponent(path) {
 
 module.exports = {
   parse(parsed, code, options) {
-    parsed.refs = transformAttribute(parsed.templateAST, code, options.adapter);
+    const { refs, dynamicRefs } = transformAttribute(parsed.templateAST, code, options.adapter);
+    const dynamicRef = dynamicRefs.reduce((prev, curr, vals) => {
+      const name = curr.name;
+      prev[name] = curr.value;
+      return prev;
+    }, {});
+    parsed.refs = refs;
+    Object.assign(parsed.dynamicValue, dynamicRef);
   },
 
   // For test cases.

@@ -2,7 +2,7 @@ const { join, relative, dirname, resolve } = require('path');
 const { existsSync } = require('fs-extra');
 const chalk = require('chalk');
 
-const { isNpmModule, isWeexModule, isRaxModule } = require('./utils/judgeModule');
+const { isNpmModule, isWeexModule, isRaxModule, isJsx2mpRuntimeModule } = require('./utils/judgeModule');
 
 const RUNTIME = 'jsx2mp-runtime';
 
@@ -59,6 +59,13 @@ module.exports = function visitor({ types: t }, options) {
             return;
           }
 
+          if (isJsx2mpRuntimeModule(value)) {
+            const runtimePath = disableCopyNpm ? value : getRuntimeRelativePath(distSourcePath, outputPath);
+            path.node.source = t.stringLiteral(runtimePath);
+            transformPathMap[runtimePath] = true;
+            return;
+          }
+
           if (!disableCopyNpm) {
             const processedSource = source(value, nodeModulesPathList, state.cwd);
             // Add lock to avoid repeatly transformed in CallExpression if @babel/preset-env invoked
@@ -95,10 +102,18 @@ module.exports = function visitor({ types: t }, options) {
                 return;
               }
 
-              if (!disableCopyNpm) {
+              if (isJsx2mpRuntimeModule(moduleName)) {
+                const runtimePath = disableCopyNpm ? moduleName : getRuntimeRelativePath(distSourcePath, outputPath);
                 path.node.arguments = [
-                  source(moduleName, nodeModulesPathList, state.cwd)
+                  t.stringLiteral(runtimePath)
                 ];
+                return;
+              }
+
+              if (!disableCopyNpm) {
+                const processedSource = source(moduleName, nodeModulesPathList, state.cwd);
+                transformPathMap[processedSource.value] = true;
+                path.node.arguments = [ processedSource ];
               }
             } else {
               if (!transformPathMap[moduleName]) {

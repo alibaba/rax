@@ -5,6 +5,7 @@ import isFunction from './isFunction';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 import { enqueueRender } from './enqueueRender';
 import { createMiniAppHistory } from './history';
+import createRef from './createRef';
 
 const history = createMiniAppHistory();
 
@@ -170,15 +171,8 @@ export function useRef(initialValue) {
   const hooks = currentInstance.getHooks();
 
   if (!hooks[hookID]) {
-    const ref = {
-      current: initialValue
-    };
-    const refFn = (instance) => {
-      ref.current = instance;
-    };
-    refFn.__proto__ = ref;
     // currentInstance._internal.,
-    hooks[hookID] = refFn;
+    hooks[hookID] = createRef(initialValue);
   }
 
   return hooks[hookID];

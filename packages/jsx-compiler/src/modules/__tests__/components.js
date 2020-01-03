@@ -39,8 +39,17 @@ describe('Transform components', () => {
     const options = {};
     const { componentsAlias } = _transformComponents(parsed, options);
     expect(genCode(ast).code).toEqual(`<rax-view>
-        <c-a94616 __parentId="{{__tagId}}" __tagId="0" />
+        <c-a94616 __parentId="{{__tagId}}" __tagId="{{__tagId}}-0" />
       </rax-view>`);
     expect(componentsAlias).toEqual({'c-a94616': {'default': true, 'namespace': false, 'from': '../components/CustomEl', 'isCustomEl': true, 'local': 'CustomEl', 'name': 'c-a94616'}});
+  });
+  it('should transform JSX Fragment', () => {
+    const ast = parseExpression('<View><>Test</></View>');
+    const parsed = {
+      templateAST: ast
+    };
+    const options = {};
+    _transformComponents(parsed, options);
+    expect(genCode(ast).code).toEqual('<View><block>Test</block></View>');
   });
 });

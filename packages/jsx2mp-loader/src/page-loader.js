@@ -59,7 +59,7 @@ module.exports = async function pageLoader(content) {
   const pageDistDir = dirname(targetFilePath);
   if (!existsSync(pageDistDir)) mkdirpSync(pageDistDir);
 
-  const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath));
+  const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath), platform.type);
 
   const config = Object.assign(pageConfig, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
