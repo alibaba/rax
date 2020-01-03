@@ -32,7 +32,6 @@ class Miniprogram {
 
     this.$_pageUrl = this.$_pageUrl || origin + entry;
     this.window.location.$$reset(this.$_pageUrl);
-    this.window.history.$$reset();
 
     if (!pageUrlRouteMap) {
       // 需要初始化页面 url - 小程序页面路由映射表

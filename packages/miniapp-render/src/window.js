@@ -5,7 +5,6 @@ const OriginalCustomEvent = require('./event/custom-event');
 const Location = require('./bom/location');
 const cache = require('./util/cache');
 const tool = require('./util/tool');
-const History = require('./bom/history');
 const Miniprogram = require('./bom/miniprogram');
 const Node = require('./node/node');
 const Element = require('./node/element');
@@ -19,7 +18,6 @@ const { getSystemInfoSync } = require('./util/platformAdapter');
 let lastRafTime = 0;
 const WINDOW_PROTOTYPE_MAP = {
   location: Location.prototype,
-  history: History.prototype,
   event: Event.prototype,
 };
 const ELEMENT_PROTOTYPE_MAP = {
@@ -36,13 +34,7 @@ class Window extends EventTarget {
 
     this.$_pageId = pageId;
 
-    this.$_outerHeight = 0;
-    this.$_outerWidth = 0;
-    this.$_innerHeight = 0;
-    this.$_innerWidth = 0;
-
     this.$_location = new Location(pageId);
-    this.$_history = new History(this.$_location);
     this.$_miniprogram = new Miniprogram(pageId);
 
     this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
@@ -81,19 +73,6 @@ class Window extends EventTarget {
             oldURL,
             newURL,
           },
-        }),
-        currentTarget: this,
-      });
-    });
-
-    // 监听 history 的事件
-    this.$_history.addEventListener('popstate', ({state}) => {
-      this.$$trigger('popstate', {
-        event: new Event({
-          name: 'popstate',
-          target: this,
-          eventPhase: Event.AT_TARGET,
-          $$extra: {state},
         }),
         currentTarget: this,
       });
@@ -362,26 +341,6 @@ class Window extends EventTarget {
 
   get self() {
     return this;
-  }
-
-  get history() {
-    return this.$_history;
-  }
-
-  get outerHeight() {
-    return this.$_outerHeight;
-  }
-
-  get outerWidth() {
-    return this.$_outerWidth;
-  }
-
-  get innerHeight() {
-    return this.$_innerHeight;
-  }
-
-  get innerWidth() {
-    return this.$_innerWidth;
   }
 
   get Image() {

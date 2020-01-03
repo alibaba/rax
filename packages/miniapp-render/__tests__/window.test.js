@@ -2,7 +2,6 @@
 const mock = require('./mock');
 const Document = require('../src/document');
 const Location = require('../src/bom/location');
-const History = require('../src/bom/history');
 const CustomEvent = require('../src/event/custom-event');
 const Event = require('../src/event/event');
 const Element = require('../src/node/element');
@@ -33,17 +32,6 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
   });
   expect(window.location.testFunc()).toBe(window.location);
   expect(window.location.testStr).toBe('window.location');
-
-  // window.history
-  expect(window.$$getPrototype('window.history')).toBe(window.history.__proto__);
-  window.$$extend('window.history', {
-    testStr: 'window.history',
-    testFunc() {
-      return this;
-    },
-  });
-  expect(window.history.testFunc()).toBe(window.history);
-  expect(window.history.testStr).toBe('window.history');
 
   // window.event
   const evt = new window.CustomEvent('test');
@@ -295,10 +283,6 @@ test('window: CustomEvent', () => {
 
 test('window: self', () => {
   expect(window.self).toBe(window);
-});
-
-test('window: history', () => {
-  expect(window.history).toBeInstanceOf(History);
 });
 
 test('window: outerHeight/outerWidth/innerHeight/innerWidth', () => {
