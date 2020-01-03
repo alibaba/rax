@@ -2,7 +2,6 @@
 const mock = require('./mock');
 const Document = require('../src/document');
 const Location = require('../src/bom/location');
-const Navigator = require('../src/bom/navigator');
 const LocalStorage = require('../src/bom/local-storage');
 const SessionStorage = require('../src/bom/session-storage');
 const History = require('../src/bom/history');
@@ -37,17 +36,6 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
   });
   expect(window.location.testFunc()).toBe(window.location);
   expect(window.location.testStr).toBe('window.location');
-
-  // window.navigator
-  expect(window.$$getPrototype('window.navigator')).toBe(window.navigator.__proto__);
-  window.$$extend('window.navigator', {
-    testStr: 'window.navigator',
-    testFunc() {
-      return this;
-    },
-  });
-  expect(window.navigator.testFunc()).toBe(window.navigator);
-  expect(window.navigator.testStr).toBe('window.navigator');
 
   // window.performance
   expect(window.$$getPrototype('window.performance')).toBe(window.performance.__proto__);
@@ -343,10 +331,6 @@ test('window: location', () => {
   expect(window.location).toBeInstanceOf(Location);
 
   // TODO setter
-});
-
-test('window: navigator', () => {
-  expect(window.navigator).toBeInstanceOf(Navigator);
 });
 
 test('window: CustomEvent', () => {

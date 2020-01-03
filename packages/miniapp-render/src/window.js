@@ -3,7 +3,6 @@ const EventTarget = require('./event/event-target');
 const Event = require('./event/event');
 const OriginalCustomEvent = require('./event/custom-event');
 const Location = require('./bom/location');
-const Navigator = require('./bom/navigator');
 const cache = require('./util/cache');
 const tool = require('./util/tool');
 const Screen = require('./bom/screen');
@@ -24,7 +23,6 @@ const { getSystemInfoSync } = require('./util/platformAdapter');
 let lastRafTime = 0;
 const WINDOW_PROTOTYPE_MAP = {
   location: Location.prototype,
-  navigator: Navigator.prototype,
   performance: Performance.prototype,
   screen: Screen.prototype,
   history: History.prototype,
@@ -52,7 +50,6 @@ class Window extends EventTarget {
     this.$_innerWidth = 0;
 
     this.$_location = new Location(pageId);
-    this.$_navigator = new Navigator();
     this.$_screen = new Screen();
     this.$_history = new History(this.$_location);
     this.$_miniprogram = new Miniprogram(pageId);
@@ -129,7 +126,6 @@ class Window extends EventTarget {
       this.$_innerWidth = info.windowWidth;
 
       this.$_screen.$$reset(info);
-      this.$_navigator.$$reset(info);
     } catch (err) {
       // ignore
     }
@@ -389,10 +385,6 @@ class Window extends EventTarget {
 
   set location(href) {
     this.$_location.href = href;
-  }
-
-  get navigator() {
-    return this.$_navigator;
   }
 
   get CustomEvent() {
