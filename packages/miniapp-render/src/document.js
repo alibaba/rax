@@ -15,7 +15,6 @@ const Canvas = require('./node/element/canvas');
 const NotSupport = require('./node/element/not-support');
 const BuiltInComponent = require('./node/element/builtin-component');
 const CustomComponent = require('./node/element/custom-component');
-const Cookie = require('./bom/cookie');
 const { getStorageSync } = require('./util/platformAdapter');
 
 const CONSTRUCTOR_MAP = {
@@ -54,7 +53,6 @@ class Document extends EventTarget {
 
     const config = cache.getConfig();
     const runtime = config.runtime || {};
-    const cookieStore = runtime.cookieStore;
     CUSTOM_COMPONENT_MAP = runtime.usingComponents || {};
 
     this.$_pageId = pageId;
@@ -82,7 +80,6 @@ class Document extends EventTarget {
       nodeId: 'e-body',
       children: [],
     }, nodeIdMap, this);
-    this.$_cookie = new Cookie(pageName);
     this.$_config = null;
 
     // documentElement
@@ -100,16 +97,6 @@ class Document extends EventTarget {
 
     // 更新 body 的 parentNode
     this.$_tree.root.$$updateParent(this.$_node);
-
-    // 处久化 cookie
-    if (cookieStore !== 'memory') {
-      try {
-        const cookie = getStorageSync(`PAGE_COOKIE_${pageName}`);
-        if (cookie) this.$$cookieInstance.deserialize(cookie);
-      } catch (err) {
-        // ignore
-      }
-    }
   }
 
   /**
@@ -121,20 +108,6 @@ class Document extends EventTarget {
 
   get $$pageId() {
     return this.$_pageId;
-  }
-
-  /**
-     * 完整的 cookie，包括 httpOnly 也能获取到
-     */
-  get $$cookie() {
-    return this.$_cookie.getCookie(this.URL, true);
-  }
-
-  /**
-     * 获取 cookie 实例
-     */
-  get $$cookieInstance() {
-    return this.$_cookie;
   }
 
   /**
@@ -191,37 +164,6 @@ class Document extends EventTarget {
   }
 
   /**
-     * 处理 Set-Cookie 头串
-     */
-  $$setCookie(str) {
-    if (str && typeof str === 'string') {
-      let start = 0;
-      let startSplit = 0;
-      let nextSplit = str.indexOf(',', startSplit);
-      const cookies = [];
-
-      while (nextSplit >= 0) {
-        const lastSplitStr = str.substring(start, nextSplit);
-        const splitStr = str.substr(nextSplit);
-
-        if (/^,\s*([^,=;\x00-\x1F]+)=([^;\n\r\0\x00-\x1F]*).*/.test(splitStr)) {
-          // 分割成功，则上一片是完整 cookie
-          cookies.push(lastSplitStr);
-          start = nextSplit + 1;
-        }
-
-        startSplit = nextSplit + 1;
-        nextSplit = str.indexOf(',', startSplit);
-      }
-
-      // 塞入最后一片 cookie
-      cookies.push(str.substr(start));
-
-      cookies.forEach(cookie => this.cookie = cookie);
-    }
-  }
-
-  /**
      * 对外属性和方法
      */
   get nodeType() {
@@ -252,16 +194,6 @@ class Document extends EventTarget {
     if (this.defaultView) return this.defaultView.location.href;
 
     return '';
-  }
-
-  get cookie() {
-    return this.$_cookie.getCookie(this.URL);
-  }
-
-  set cookie(value) {
-    if (!value || typeof value !== 'string') return;
-
-    this.$_cookie.setCookie(value, this.URL);
   }
 
   getElementById(id) {
