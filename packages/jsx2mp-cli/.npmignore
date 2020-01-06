@@ -1,3 +1,6 @@
 coverage
 .idea
 example
+
+es/*
+lib/*

@@ -3,6 +3,9 @@
   "version": "0.3.25",
   "license": "BSD-3-Clause",
   "description": "Parser for Rax JSX Statements.",
+  "files": [
+    "src"
+  ],
   "main": "src/index.js",
   "scripts": {
     "test": "jest --coverage --testPathIgnorePatterns=__modules__",
