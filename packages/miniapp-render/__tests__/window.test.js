@@ -46,12 +46,8 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
   // document
   expect(window.$$getPrototype('document')).toMatchObject(document.__proto__);
   window.$$extend('document', {
-    testStr: 'document',
-    testFunc() {
-      return this;
-    },
+    testStr: 'document'
   });
-  // expect(document.testFunc()).toMatchObject(document);
   expect(document.testStr).toBe('document');
 
   const element = document.createElement('div');
@@ -59,12 +55,8 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
   // element.attribute
   expect(window.$$getPrototype('element.attribute')).toMatchObject(element.$_attrs.__proto__);
   window.$$extend('element.attribute', {
-    testStr: 'element.attribute',
-    testFunc() {
-      return this;
-    },
+    testStr: 'element.attribute'
   });
-  // expect(element.$_attrs.testFunc()).toMatchObject(element.$_attrs);
   expect(element.$_attrs.testStr).toBe('element.attribute');
 
   // element.classList
@@ -92,36 +84,24 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
   // element
   expect(window.$$getPrototype('element')).toMatchObject(element.__proto__);
   window.$$extend('element', {
-    testStr: 'element',
-    testFunc() {
-      return this;
-    },
+    testStr: 'element'
   });
-  // expect(element.testFunc()).toMatchObject(element);
   expect(element.testStr).toBe('element');
 
   // textNode
   const textNode = document.createTextNode('text');
   expect(window.$$getPrototype('textNode')).toMatchObject(textNode.__proto__);
   window.$$extend('textNode', {
-    testStr: 'textNode',
-    testFunc() {
-      return this;
-    },
+    testStr: 'textNode'
   });
-  // expect(textNode.testFunc()).toMatchObject(textNode);
   expect(textNode.testStr).toBe('textNode');
 
   // comment
   const comment = document.createComment('comment');
   expect(window.$$getPrototype('comment')).toMatchObject(comment.__proto__);
   window.$$extend('comment', {
-    testStr: 'comment',
-    testFunc() {
-      return this;
-    },
+    testStr: 'comment'
   });
-  // expect(comment.testFunc()).toMatchObject(comment);
   expect(comment.testStr).toBe('comment');
 
   // normal aspect
