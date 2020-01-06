@@ -196,8 +196,8 @@ You can write `var()` in CSS
 Then change this variable at runtime
 
 ```js
-import { setTheme } from 'universal-theme';
-setTheme({
+import { setCSSVariables } from 'universal-theme';
+setCSSVariables({
   '--color-error-1': 'red'
 });
 ```
