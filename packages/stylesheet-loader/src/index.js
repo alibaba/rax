@@ -101,8 +101,16 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
 
   resetMessage();
+
+  const getVarFuc = `
+    function _getvar(name){
+      return (typeof window === 'object' && typeof window.getComputedStyle === 'function') 
+        ? window.getComputedStyle(typeof document == 'object' ? document.body : null).getPropertyValue('--' + name) 
+        : "";
+    }
+  `;
   
-  return `${parsedQuery.theme ? 'function _getvar(name){return (typeof window === "object" && typeof window.getComputedStyle === "function") ? window.getComputedStyle(typeof document == "object" ? document.body : null).getPropertyValue("--" + name) : ""}' : ''}
+  return `${parsedQuery.theme ? getVarFuc : ''}
   var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}
