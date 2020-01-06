@@ -1,9 +1,12 @@
 {
   "name": "miniapp-render",
-  "version": "0.0.1",
-  "description": "web's adapter for miniprogram",
-  "main": "src/index.js",
+  "version": "0.1.1",
+  "description": "DOM simulator for MiniApp",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "prepublish": "npm run build",
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
     "test": "npm run build && jest --bail",
     "test-debug": "npm run build && node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
@@ -24,9 +27,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/wechat-miniprogram/kbone.git     "
+    "url": "https://github.com/alibaba/rax.git"
   },
-  "author": "wechat-miniprogram",
+  "author": {
+    "name": "rax"
+  },
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.5",

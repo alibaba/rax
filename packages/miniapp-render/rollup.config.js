@@ -21,7 +21,7 @@ function getRollupConfig(platform) {
     output: [
       {
         dir: `dist/${platform}`,
-        format: 'cjs',
+        format: 'umd',
         name
       }
     ],
