@@ -102,7 +102,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
 
   resetMessage();
   
-  return `${parsedQuery.theme ? 'function _getvar(name){return ((require("universal-theme").getCSSVariables() || {}) || {})[name]}' : ''}
+  return `${parsedQuery.theme ? 'function _getvar(name){return (typeof window === "object" && typeof window.getComputedStyle === "function") ? window.getComputedStyle(typeof document == "object" ? document.body : null).getPropertyValue("--" + name) : ""}' : ''}
   var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}

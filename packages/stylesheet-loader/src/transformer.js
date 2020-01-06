@@ -86,7 +86,7 @@ export default {
       let camelCaseProperty = this.convertProp(declaration.property);
       let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
-      
+
       if (value && VAR_REGEX.test(value)) {
         // var(--test-var)
         Object.assign(style, {[camelCaseProperty]: value});
@@ -102,7 +102,6 @@ export default {
           Object.assign(style, particularResult);
         }
       }
-      
     });
 
     return style;
