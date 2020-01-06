@@ -99,9 +99,6 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
-
-  resetMessage();
-
   const getVarFuc = `
     function _getvar(name){
       return (typeof window === 'object' && typeof window.getComputedStyle === 'function') 
@@ -109,6 +106,8 @@ const genStyleContent = (parsedData, parsedQuery) => {
         : "";
     }
   `;
+
+  resetMessage();
   
   return `${parsedQuery.theme ? getVarFuc : ''}
   var _styles = ${stringifyData(styles, parsedQuery.theme)};
