@@ -108,7 +108,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
   `;
 
   resetMessage();
-  
+
   return `${parsedQuery.theme ? getVarFuc : ''}
   var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
