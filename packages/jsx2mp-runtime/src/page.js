@@ -45,16 +45,18 @@ export function usePageEffect(cycle, callback) {
         }
 
         const pageInstance = getPageInstance(pageId);
-        if (cycle === ON_SHOW || cycle === ON_HIDE) {
-          pageInstance._internal[cycle] = () => {
-            if (pageInstance.__mounted) {
-              pageInstance._trigger(cycle);
-            }
-          };
-        } else {
-          pageInstance._internal[cycle] = (e) => {
-            return pageInstance._trigger(cycle, e);
-          };
+        if (!pageInstance._internal[cycle]) {
+          if (cycle === ON_SHOW || cycle === ON_HIDE) {
+            pageInstance._internal[cycle] = () => {
+              if (pageInstance.__mounted) {
+                pageInstance._trigger(cycle);
+              }
+            };
+          } else {
+            pageInstance._internal[cycle] = (e) => {
+              return pageInstance._trigger(cycle, e);
+            };
+          }
         }
       }, []);
       break;
