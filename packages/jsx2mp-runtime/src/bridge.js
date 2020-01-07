@@ -1,7 +1,7 @@
 /* global PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK, ON_LAUNCH, ON_ERROR } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
