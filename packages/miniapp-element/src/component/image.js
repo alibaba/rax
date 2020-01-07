@@ -1,4 +1,4 @@
-const mp = require('miniprogram-render');
+const mp = require('miniapp-render/dist/ali');
 
 const {
   cache,

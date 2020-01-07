@@ -2,62 +2,60 @@
 
 > Forked from kbone.
 
-## 介绍
+## Introduction
 
-这是一个 dom 环境模拟工具，它为小程序而设计，用于提供 dom 接口给开发者使用。
+`miniapp-render` is a DOM simulator designed for MiniApp which can provides DOM-related API for developers.
 
-> 可以认为这是一个跑在小程序 appService 上的一个超轻量级 jsDom
+> You can think of it as a lightweight jsDom running on appService.
 
-## 安装
+## Install
 
 ```shell
 npm install --save miniapp-render
 ```
 
-## 使用
+## Usage
 
 ```js
-const mp = require('miniapp-render')
+const render = require('miniapp-render')
 
 ```js
 Page({
   onLoad() {
-    // 创建页面
-    const { pageId, window, document } = mp.createPage(this.route, config)
+    // Create page
+    const { pageId, window, document } = render.createPage(this.route, config)
     this.pageId = pageId
 
-    // 设置页面的 url
+    // Set url of the page
     window.$$miniprogram.setRealUrl('http://test.miniprogram.com')
-    // 初始化页面
+    // Init the page
     window.$$miniprogram.init()
   },
   onUnload() {
-    // 销毁页面
-    mp.destroyPage(this.pageId)
+    // Destroy the page
+    render.destroyPage(this.pageId)
   },
 })
 ```
 
-## 接口
+## API
 
 ### createPage(route, config)
 
-创建页面。
+Create the page.
 
-| 参数 | 类型 | 描述 |
+| Param | Type | Description |
 |---|---|---|
-| route | String | 页面路由，即小程序页面实例的 route 属性 |
-| config | Object | 页面全局配置，这个配置是小程序维度的，所有页面都共用一个 config 对象，每次创建页面传入的 config 会覆盖当前已有的 config 对象 |
+| route | String | The route of the page, aka the route property of the instance of MiniApp page |
+| config | Object | Global config of the page. It's shared by all pages. Every time the page creates, passed-in config will override current one |
 
 ```js
-const page1 = mp.createPage('/pages/home/index', config1) // 传入 config1
-const page2 = mp.createPage('/pages/home/index', config2) // 传入 config2
+const page1 = mp.createPage('/pages/home/index', config1) // Pass in config1
+const page2 = mp.createPage('/pages/home/index', config2) // Pass in config2
 
-// 后传入的 config2 会覆盖 config1，即所有页面都会使用 config2，config1 相当于被废弃的，不会再被使用到
+// The latter config2 will override config1,  all pages will use config2 and config1 will be deprecated.
 ```
-
-> PS：config 的覆盖规则设计是为了保证多个页面能共用一份配置，以确保页面的表现一致
 
 ### destroyPage(pageId)
 
-销毁页面。
+Destroy the page

@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel';
 import replace from 'rollup-plugin-replace';
+import clear from 'rollup-plugin-clear';
 import filesize from 'rollup-plugin-filesize';
 import { name } from './package.json';
 import handleComponentFile from './scripts/handleComponentFile';
@@ -35,6 +36,9 @@ function getRollupConfig(platform) {
       }
     ],
     plugins: [
+      clear({
+        targets: ['dist']
+      }),
       replace({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
       }),
@@ -46,7 +50,7 @@ function getRollupConfig(platform) {
         }
       }
     ],
-    external: ['miniprogram-render'],
+    external: ['miniapp-render/dist/ali'],
   };
 }
 

@@ -1,4 +1,4 @@
-import mp from 'miniprogram-render';
+import mp from 'miniapp-render/dist/ali';
 import _ from './util/tool';
 import initHandle from './util/init-handle';
 import component from './util/component';

@@ -1,5 +1,5 @@
 const path = require('path');
-const mp = require('miniprogram-render');
+const mp = require('miniapp-render/dist/ali');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const simulate = require('miniprogram-simulate');
 
