@@ -9,6 +9,7 @@ const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
+const adaptPageConfig = require('./adaptConfig');
 
 const ComponentLoader = require.resolve('./component-loader');
 const ScriptLoader = require.resolve('./script-loader');
@@ -60,6 +61,7 @@ module.exports = async function pageLoader(content) {
   if (!existsSync(pageDistDir)) mkdirpSync(pageDistDir);
 
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath), platform.type);
+  adaptPageConfig(pageConfig, 'window', platform.type);
 
   const config = Object.assign(pageConfig, transformed.config);
   if (Array.isArray(transformed.dependencies)) {

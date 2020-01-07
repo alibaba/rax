@@ -1,6 +1,6 @@
 const appConfigMap = {
   window: {
-    defaultTitle: {
+    title: {
       ali: 'defaultTitle',
       wechat: 'navigationBarTitleText'
     },
@@ -54,7 +54,7 @@ const adaptValueMap = {
   }
 };
 
-function adaptAppConfig(config, property, platform, originalConfig = {}) {
+function adaptConfig(config, property, platform, originalConfig = {}) {
   if (property === 'items') {
     config[property].forEach(item => {
       Object.keys(item).forEach(itemConfig => {
@@ -66,6 +66,7 @@ function adaptAppConfig(config, property, platform, originalConfig = {}) {
     });
   } else if (property === 'window') {
     Object.keys(config).forEach(c => {
+      console.log("TCL: adaptConfig -> c", c)
       if (appConfigMap[property][c]) {
         if (adaptValueMap[property][c] && adaptValueMap[property][c][platform]) {
           config[c] = getAdaptValue(config[c], adaptValueMap[property][c][platform]);
@@ -103,4 +104,4 @@ function getSourceFromPath(path, routes) {
   return null;
 }
 
-module.exports = adaptAppConfig;
+module.exports = adaptConfig;

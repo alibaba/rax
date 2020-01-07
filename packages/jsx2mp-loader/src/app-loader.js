@@ -10,7 +10,7 @@ const eliminateDeadCode = require('./utils/dce');
 const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
-const adaptAppConfig = require('./adaptAppConfig');
+const adaptAppConfig = require('./adaptConfig');
 
 const pe = new PrettyError();
 
