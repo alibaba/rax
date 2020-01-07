@@ -1,7 +1,7 @@
 /* global PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
@@ -190,14 +190,22 @@ export function runApp(appConfig, pageProps = {}) {
   const appOptions = {
     // Bridge app launch.
     onLaunch(launchOptions) {
-      const launchQueue = appCycles.launch;
-      if (Array.isArray(launchQueue) && launchQueue.length > 0) {
-        let fn;
-        while (fn = launchQueue.pop()) { // eslint-disable-line
-          fn.call(this, launchOptions);
-        }
-      }
+      executeCallback(this, ON_LAUNCH, launchOptions);
     },
+    onShow(showOptions) {
+      executeCallback(this, ON_SHOW, showOptions);
+    },
+    onHide() {
+      executeCallback(this, ON_HIDE);
+    },
+    onError(error) {
+      executeCallback(this, ON_ERROR, error);
+    },
+    onShareAppMessage(shareOptions) {
+      // There will be one callback fn for shareAppMessage at most
+      const shareCallback = appCycles[ON_SHARE_APP_MESSAGE];
+      return shareCallback && shareCallback.call(this, shareOptions);
+    }
   };
 
   // eslint-disable-next-line
@@ -246,4 +254,21 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
     instanceId,
     props
   };
+}
+
+/**
+ * Execute App life cycle callback(s)
+ *
+ * @param {object} instance App instance
+ * @param {string} cycle
+ * @param {*} [param={}]
+ */
+function executeCallback(instance, cycle, param = {}) {
+  const callbackQueue = appCycles[cycle];
+  if (Array.isArray(callbackQueue) && callbackQueue.length > 0) {
+    let fn;
+    while (fn = callbackQueue.pop()) { // eslint-disable-line
+      fn.call(instance, param);
+    }
+  }
 }
