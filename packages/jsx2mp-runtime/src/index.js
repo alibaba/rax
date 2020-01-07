@@ -1,5 +1,5 @@
 import { runApp, createPage, createComponent } from './bridge';
-import { useAppEffect, useAppLaunch } from './app';
+import { useAppEffect, useAppLaunch, useAppShow, useAppHide, useAppShare, useAppError } from './app';
 import {
   usePageEffect,
   usePageShow,
@@ -8,6 +8,7 @@ import {
   usePageReachBottom,
   usePageScroll,
   useShareAppMessage,
+  usePageShare,
   useTabItemTap,
   useTitleClick
 } from './page';
@@ -31,12 +32,18 @@ export {
 
   // Cycles
   useAppLaunch,
+  useAppShow,
+  useAppHide,
+  useAppShare,
+  useAppError,
+
   usePageShow,
   usePageHide,
   usePagePullDownRefresh,
   usePageReachBottom,
   usePageScroll,
   useShareAppMessage,
+  usePageShare,
   useTabItemTap,
   useTitleClick,
 
