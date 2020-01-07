@@ -66,7 +66,6 @@ function adaptConfig(config, property, platform, originalConfig = {}) {
     });
   } else if (property === 'window') {
     Object.keys(config).forEach(c => {
-      console.log("TCL: adaptConfig -> c", c)
       if (appConfigMap[property][c]) {
         if (adaptValueMap[property][c] && adaptValueMap[property][c][platform]) {
           config[c] = getAdaptValue(config[c], adaptValueMap[property][c][platform]);
