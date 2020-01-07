@@ -61,7 +61,7 @@ export function usePageScroll(callback) {
 }
 
 export function useShareAppMessage(callback) {
-  console.warn('useShareAppMessage() will be deprecated soon, please use usePageShare() instead.')
+  console.warn('useShareAppMessage() will be deprecated soon, please use usePageShare() instead.');
   return usePageEffect(ON_SHARE_APP_MESSAGE, callback);
 }
 
