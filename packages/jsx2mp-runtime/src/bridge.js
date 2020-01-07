@@ -258,9 +258,6 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
 function executeCallback(instance, cycle, param = {}) {
   const callbackQueue = appCycles[cycle];
   if (Array.isArray(callbackQueue) && callbackQueue.length > 0) {
-    let fn;
-    while (fn = callbackQueue.pop()) { // eslint-disable-line
-      fn.call(instance, param);
-    }
+    callbackQueue.forEach(fn => fn.call(instance, param));
   }
 }
