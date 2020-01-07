@@ -1,6 +1,6 @@
 const appConfigMap = {
   window: {
-    defaultTitle: {
+    title: {
       ali: 'defaultTitle',
       wechat: 'navigationBarTitleText'
     },
@@ -54,7 +54,7 @@ const adaptValueMap = {
   }
 };
 
-function adaptAppConfig(config, property, platform, originalConfig = {}) {
+function adaptConfig(config, property, platform, originalConfig = {}) {
   if (property === 'items') {
     config[property].forEach(item => {
       Object.keys(item).forEach(itemConfig => {
@@ -103,4 +103,4 @@ function getSourceFromPath(path, routes) {
   return null;
 }
 
-module.exports = adaptAppConfig;
+module.exports = adaptConfig;
