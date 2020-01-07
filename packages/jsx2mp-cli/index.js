@@ -39,7 +39,7 @@ function build(options = {}) {
     del.sync(distDirectory + '/**');
   }
 
-  watchConstantDir(constantDir, distDirectory);
+  constantDir.forEach(dir => copyConstantDir(dir, distDirectory));
 
   const needUpdate = checkNeedUpdate(turnOffCheckUpdate);
 
