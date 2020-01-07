@@ -4,6 +4,7 @@
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "index.js",
+  "module": "es/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
