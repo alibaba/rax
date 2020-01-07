@@ -203,8 +203,10 @@ export function runApp(appConfig, pageProps = {}) {
     },
     onShareAppMessage(shareOptions) {
       // There will be one callback fn for shareAppMessage at most
-      const shareCallback = appCycles[ON_SHARE_APP_MESSAGE];
-      return shareCallback && shareCallback.call(this, shareOptions);
+      const callbackQueue = appCycles[ON_SHARE_APP_MESSAGE];
+      if (Array.isArray(callbackQueue) && callbackQueue[0]) {
+        return callbackQueue[0].call(this, shareOptions);
+      }
     }
   };
 
