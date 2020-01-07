@@ -11,6 +11,8 @@ import {
 } from './cycles';
 import { useEffect } from './hooks';
 import { getMiniAppHistory } from './history';
+import { getPageInstance } from './pageInstanceMap';
+
 
 const history = getMiniAppHistory();
 
@@ -40,6 +42,19 @@ export function usePageEffect(cycle, callback) {
           } else {
             cycles[pageId][cycle].push(callback);
           }
+        }
+
+        const pageInstance = getPageInstance(pageId);
+        if (cycle === ON_SHOW || cycle === ON_HIDE) {
+          pageInstance._internal[cycle] = () => {
+            if (pageInstance.__mounted) {
+              pageInstance._trigger(cycle);
+            }
+          };
+        } else {
+          pageInstance._internal[cycle] = (e) => {
+            return pageInstance._trigger(cycle, e);
+          };
         }
       }, []);
       break;
