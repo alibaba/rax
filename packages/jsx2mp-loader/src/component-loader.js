@@ -5,7 +5,7 @@ const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, handleBackslash } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
@@ -166,5 +166,5 @@ function generateDependencies(dependencies) {
 }
 
 function createImportStatement(req) {
-  return `import '${req}';`;
+  return `import '${handleBackslash(req)}';`;
 }

@@ -14,7 +14,7 @@ const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName } = require('../utils/pathHelper');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
-const PKG_NAME_REG = /^.*\/node_modules\/([^\/]*).*$/;
+const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
 let tagCount = 0;
 
 /**
