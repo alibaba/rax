@@ -1,5 +1,5 @@
 const { readJSONSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
-const { join } = require('path');
+const { join, sep } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
@@ -27,12 +27,12 @@ function generateDependencies(dependencies) {
 
 function getRelativePath(filePath) {
   let relativePath;
-  if (filePath[0] === '/') {
+  if (filePath[0] === sep) {
     relativePath = `.${filePath}`;
   } else if (filePath[0] === '.') {
     relativePath = filePath;
   } else {
-    relativePath = `./${filePath}`;
+    relativePath = `.${sep}${filePath}`;
   }
   return relativePath;
 }

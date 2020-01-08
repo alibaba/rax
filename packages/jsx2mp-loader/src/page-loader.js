@@ -1,5 +1,5 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, resolve } = require('path');
+const { relative, join, dirname, resolve, sep } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const chalk = require('chalk');
@@ -75,7 +75,7 @@ module.exports = async function pageLoader(content) {
     Object.keys(config.usingComponents).forEach(key => {
       const value = config.usingComponents[key];
       if (/^c-/.test(key)) {
-        let result = './' + relative(dirname(this.resourcePath), value); // components/Repo.jsx
+        let result = `.${sep}` + relative(dirname(this.resourcePath), value); // components/Repo.jsx
         result = removeExt(result); // components/Repo
         usingComponents[key] = result;
       } else {

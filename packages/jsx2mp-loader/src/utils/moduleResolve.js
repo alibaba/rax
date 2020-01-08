@@ -33,8 +33,9 @@ function loadAsDirectory(module, extensions) {
   let stat = statSync(module);
   if (stat.isDirectory()) {
     for (let e of extensions) {
-      if (existsSync(module + `/index${e}`) && statSync(module + `/index${e}`).isFile()) {
-        return join(module, '/index');
+      const indexFile = join(module, `index${e}`);
+      if (existsSync(indexFile) && statSync(indexFile).isFile()) {
+        return join(module, 'index');
       }
     }
   } else if (stat.isFile()) {
@@ -87,7 +88,7 @@ function loadNpmModules(module, start, extension) {
 */
 module.exports = function resolve(script, dependency, extensions = ['.js', '.jsx', '.ts', '.tsx']) {
   let target;
-  if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
+  if (startsWith(dependency, `.${sep}`) || startsWith(dependency, sep) || startsWith(dependency, `..${sep}`)) {
     let dependencyPath = join(script, dependency);
     target = loadAsFile(dependencyPath, extensions) || loadAsDirectory(dependencyPath, extensions);
     target = relative(script, target);

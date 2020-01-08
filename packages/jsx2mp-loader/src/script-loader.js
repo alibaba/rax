@@ -1,6 +1,6 @@
 const { join, dirname, relative, resolve, extname, sep } = require('path');
 
-const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
+const { copySync, existsSync, mkdirpSync, writeJSONSync, readFileSync, readJSONSync } = require('fs-extra');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
 const { removeExt, isFromTargetDirs, replaceExtension } = require('./utils/pathHelper');
@@ -46,7 +46,7 @@ module.exports = function scriptLoader(content) {
     let distSourcePath;
     if (isFromNpm) {
       const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
-      const splitedNpmPath = relativeNpmPath.split('/');
+      const splitedNpmPath = relativeNpmPath.split(sep);
       if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
@@ -109,14 +109,14 @@ module.exports = function scriptLoader(content) {
               const realComponentPath = require.resolve(componentPath, {
                 paths: [this.resourcePath]
               });
-              const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(sourceNativeMiniappScriptFile), realComponentPath));
+              const relativeComponentPath = normalizeNpmFileName(`.${sep}` + relative(dirname(sourceNativeMiniappScriptFile), realComponentPath));
               componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
               dependencies.push({
                 name: realComponentPath,
                 loader: ScriptLoader, // Native miniapp component js file will loaded by script-loader
                 options: loaderOptions
               });
-            } else if (componentPath.indexOf('/npm/') === -1) { // Exclude the path that has been modified by jsx-compiler
+            } else if (componentPath.indexOf(`${sep}npm${sep}`) === -1) { // Exclude the path that has been modified by jsx-compiler
               const absComponentPath = resolve(dirname(sourceNativeMiniappScriptFile), componentPath);
               dependencies.push({
                 name: absComponentPath,
@@ -179,7 +179,7 @@ module.exports = function scriptLoader(content) {
             });
           });
         }
-        const miniappComponentDir = miniappComponentPath.slice(0, miniappComponentPath.lastIndexOf('/'));
+        const miniappComponentDir = miniappComponentPath.slice(0, miniappComponentPath.lastIndexOf(sep));
         const source = join(sourcePackagePath, miniappComponentDir);
         const target = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, sourcePackagePath), miniappComponentDir));
         outputDir(source, target);
@@ -223,11 +223,11 @@ function normalizeNpmFileName(filename) {
 }
 
 function getNearestNodeModulesPath(root, current) {
-  const relativePathArray = relative(root, current).split('/');
+  const relativePathArray = relative(root, current).split(sep);
   let index = root;
   const result = [];
   while (index !== current) {
-    const ifNodeModules = join(index, '/node_modules');
+    const ifNodeModules = join(index, 'node_modules');
     if (existsSync(ifNodeModules)) {
       result.push(ifNodeModules);
     }

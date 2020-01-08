@@ -1,8 +1,9 @@
+const { sep } = require('path');
 const WEEX_MODULE_REG = /^@?weex-/;
 const JSX2MP_RUNTIME_MODULE_REG = /^jsx2mp-runtime/;
 
 function isNpmModule(value) {
-  return !(value[0] === '.' || value[0] === '/');
+  return !(value[0] === '.' || value[0] === sep);
 }
 
 function isWeexModule(value) {
