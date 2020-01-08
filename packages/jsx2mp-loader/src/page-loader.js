@@ -5,7 +5,7 @@ const compiler = require('jsx-compiler');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, handleBackslash } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
@@ -156,7 +156,7 @@ module.exports = async function pageLoader(content) {
 };
 
 function createImportStatement(req) {
-  return `import '${req}';`;
+  return `import '${handleBackslash(req)}';`;
 }
 
 function generateDependencies(dependencies, loaderOptions) {
