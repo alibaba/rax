@@ -1,4 +1,5 @@
 const { sep } = require('path');
+
 const WEEX_MODULE_REG = /^@?weex-/;
 const JSX2MP_RUNTIME_MODULE_REG = /^jsx2mp-runtime/;
 

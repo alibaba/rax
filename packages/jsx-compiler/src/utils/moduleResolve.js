@@ -1,4 +1,4 @@
-const { sep, join, dirname, sep } = require('path');
+const { sep, join, dirname } = require('path');
 const { existsSync, statSync, readFileSync } = require('fs-extra');
 
 function startsWith(prevString, nextString) {
