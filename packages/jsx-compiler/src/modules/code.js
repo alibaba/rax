@@ -497,8 +497,8 @@ function addProviderIniter(contextList, renderFunctionPath) {
         t.identifier('Provider')
       );
       const fnBody = renderFunctionPath.node.body.body;
-
-      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
+      const args = ctx.contextInitValue ? [ctx.contextInitValue] : [];
+      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, args)));
     });
   }
 }
