@@ -89,5 +89,6 @@ module.exports = {
   removeExt,
   isFromTargetDirs,
   replaceExtension,
-  doubleBackslash
+  doubleBackslash,
+  replaceBackSlashWithSlash
 };

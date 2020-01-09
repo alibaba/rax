@@ -3,7 +3,7 @@ const { join, dirname, relative, resolve, extname, sep } = require('path');
 const { copySync, existsSync, mkdirpSync, writeJSONSync, readFileSync, readJSONSync } = require('fs-extra');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs, replaceExtension, doubleBackslash } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, replaceExtension, doubleBackslash, replaceBackSlashWithSlash } = require('./utils/pathHelper');
 const { isNpmModule } = require('./utils/judgeModule');
 const isMiniappComponent = require('./utils/isMiniappComponent');
 const output = require('./output');
@@ -110,7 +110,7 @@ module.exports = function scriptLoader(content) {
                 paths: [this.resourcePath]
               });
               const relativeComponentPath = normalizeNpmFileName(`.${sep}` + relative(dirname(sourceNativeMiniappScriptFile), realComponentPath));
-              componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
+              componentConfig.usingComponents[key] = replaceBackSlashWithSlash(removeExt(relativeComponentPath));
               dependencies.push({
                 name: realComponentPath,
                 loader: ScriptLoader, // Native miniapp component js file will loaded by script-loader
