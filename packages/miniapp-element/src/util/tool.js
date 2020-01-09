@@ -1,4 +1,4 @@
-import mp from 'miniapp-render/dist/ali';
+import mp from 'miniapp-render';
 import component from './component';
 import initData from './init-data';
 

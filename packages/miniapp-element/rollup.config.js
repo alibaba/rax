@@ -40,7 +40,8 @@ function getRollupConfig(platform) {
         targets: ['dist']
       }),
       replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        'miniapp-render': `miniapp-render/dist/${platform}`
       }),
       babel(getBabelConfig(platform)),
       filesize(),
@@ -50,7 +51,7 @@ function getRollupConfig(platform) {
         }
       }
     ],
-    external: ['miniapp-render/dist/ali'],
+    external: ['miniapp-render'],
   };
 }
 
