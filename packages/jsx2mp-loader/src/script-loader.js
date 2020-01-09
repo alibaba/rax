@@ -3,7 +3,7 @@ const { join, dirname, relative, resolve, extname, sep } = require('path');
 const { copySync, existsSync, mkdirpSync, writeJSONSync, readFileSync, readJSONSync } = require('fs-extra');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs, replaceExtension, handleBackslash } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, replaceExtension, doubleBackslash } = require('./utils/pathHelper');
 const { isNpmModule } = require('./utils/judgeModule');
 const isMiniappComponent = require('./utils/isMiniappComponent');
 const output = require('./output');
@@ -247,5 +247,5 @@ function generateDependencies(dependencies) {
 }
 
 function createImportStatement(req) {
-  return `import '${handleBackslash(req)}';`;
+  return `import '${doubleBackslash(req)}';`;
 }
