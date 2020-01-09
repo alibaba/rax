@@ -295,22 +295,33 @@ function transformSlotDirective(ast, adapter) {
       const { node } = path;
       if (t.isJSXNamespacedName(node.name) && t.isJSXIdentifier(node.name.namespace, { name: 'x-slot'})) {
         const slotName = node.name.name;
-        const slotScopeName = node.value;
-        if (slotScopeName) {
-          const parentJSXOpeningEl = path.parentPath.node;
-          if (adapter.slotScope) {
-            parentJSXOpeningEl.attributes.push(t.jsxAttribute(t.jsxIdentifier('slot-scope'), slotScopeName));
-          }
-          const parentJSXElPath = path.parentPath.parentPath;
-          parentJSXElPath.traverse({
-            Identifier(innerPath) {
-              if (innerPath.node.name === slotScopeName.value
-                && !(innerPath.parentPath.isMemberExpression() && innerPath.parent.property === innerPath.node) ) {
-                innerPath.node.__slotScope = true;
-              }
-            }
-          });
+        const slotScopeName = node.value || "__defaultScopeName";
+        const parentJSXOpeningEl = path.parentPath.node;
+
+        if (adapter.slotScope && slotScopeName) {
+          parentJSXOpeningEl.attributes.push(t.jsxAttribute(t.jsxIdentifier('slot-scope'), slotScopeName));
         }
+
+        const parentJSXElPath = path.parentPath.parentPath;
+        parentJSXElPath.traverse({
+          Identifier(innerPath) {
+            if (
+              innerPath.node.name === slotScopeName.value &&
+              !(
+                innerPath.parentPath.isMemberExpression() &&
+                innerPath.parent.property === innerPath.node
+              )
+            ) {
+              innerPath.node.__slotScope = true;
+            }
+          },
+          JSXOpeningElement(innerPath) {
+            // mark slot element
+            innerPath.node.__slotChildEl = {
+              scopeName: slotScopeName
+            };
+          }
+        });
         path.replaceWith(t.jsxAttribute(t.jsxIdentifier('slot'), t.stringLiteral(slotName.name)));
       }
     }
