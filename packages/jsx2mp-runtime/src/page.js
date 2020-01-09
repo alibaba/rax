@@ -11,6 +11,8 @@ import {
 } from './cycles';
 import { useEffect } from './hooks';
 import { getMiniAppHistory } from './history';
+import { getPageInstance } from './pageInstanceMap';
+
 
 const history = getMiniAppHistory();
 
@@ -41,6 +43,21 @@ export function usePageEffect(cycle, callback) {
             cycles[pageId][cycle].push(callback);
           }
         }
+
+        const pageInstance = getPageInstance(pageId);
+        if (!pageInstance._internal[cycle]) {
+          if (cycle === ON_SHOW || cycle === ON_HIDE) {
+            pageInstance._internal[cycle] = () => {
+              if (pageInstance.__mounted) {
+                pageInstance._trigger(cycle);
+              }
+            };
+          } else {
+            pageInstance._internal[cycle] = (e) => {
+              return pageInstance._trigger(cycle, e);
+            };
+          }
+        }
       }, []);
       break;
     default:
@@ -61,6 +78,11 @@ export function usePageScroll(callback) {
 }
 
 export function useShareAppMessage(callback) {
+  console.warn('useShareAppMessage() will be deprecated soon, please use usePageShare() instead.');
+  return usePageEffect(ON_SHARE_APP_MESSAGE, callback);
+}
+
+export function usePageShare(callback) {
   return usePageEffect(ON_SHARE_APP_MESSAGE, callback);
 }
 
