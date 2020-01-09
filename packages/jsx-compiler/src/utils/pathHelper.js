@@ -1,6 +1,8 @@
+const { sep } = require('path');
+
 function getNpmName(value) {
   const isScopedNpm = /^_?@/.test(value);
-  return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
+  return value.split(sep).slice(0, isScopedNpm ? 2 : 1).join(sep);
 }
 
 /**
