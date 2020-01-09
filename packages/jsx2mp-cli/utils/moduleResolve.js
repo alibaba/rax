@@ -5,6 +5,10 @@ function startsWith(prevString, nextString) {
   return prevString.indexOf(nextString) === 0;
 }
 
+function startsWithArr(prevString, nextStringArr = []) {
+  return nextStringArr.some(nextString => startsWith(prevString, nextString));
+}
+
 function loadAsFile(module, extension) {
   if (existsSync(module + extension) && statSync(module + extension).isFile()) {
     return module + extension;
@@ -83,7 +87,7 @@ function loadNpmModules(module, start, extension) {
 function moduleResolve(script, dependency, extension = '.js') {
   let target;
 
-  if (startsWith(dependency, `.${sep}`) || startsWith(dependency, sep) || startsWith(dependency, `..${sep}`)) {
+  if (startsWithArr(dependency, ['./', '../', '/', '.\\', '..\\', '\\'])) {
     let dependencyPath = join(script, dependency);
     target = loadAsFile(dependencyPath, extension) || loadAsDirectory(dependencyPath, extension);
   } else {
