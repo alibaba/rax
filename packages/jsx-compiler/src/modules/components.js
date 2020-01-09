@@ -43,14 +43,14 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     let tagId;
 
     if (!node.__slotChildEl) {
-      tagId = "" + tagCount;
+      tagId = '' + tagCount;
 
       const parentsJSXList = findParentsJSXListEl(path);
       if (parentsJSXList.length > 0) {
         parentPath.node.__tagIdExpression = [];
         for (let i = parentsJSXList.length - 1; i >= 0; i--) {
           const { args } = parentsJSXList[i].node.__jsxlist;
-          const indexValue = args.length > 1 ? genExpression(args[1]) : "index";
+          const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
           parentPath.node.__tagIdExpression.push(new Expression(indexValue));
           tagId += `-{{${indexValue}}}`;
         }
@@ -72,23 +72,21 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
       if (baseComponents.indexOf(componentTag) < 0) {
         node.attributes.push(
           t.jsxAttribute(
-            t.jsxIdentifier("__parentId"),
-            t.stringLiteral("{{__tagId}}")
+            t.jsxIdentifier('__parentId'),
+            t.stringLiteral('{{__tagId}}')
           )
         );
       }
       tagId = '{{__tagId}}-' + tagId;
     } else {
-      console.log(node.__slotChildEl.scopeName);
       tagId = createBinding(
         genExpression(
           t.memberExpression(
             t.identifier(node.__slotChildEl.scopeName.value),
-            t.identifier("__tagId")
+            t.identifier('__tagId')
           )
         )
       );
-      console.log(tagId);
     }
 
     node.attributes.push(
@@ -175,7 +173,8 @@ function transformComponents(parsed, options) {
       const { node } = path;
       if (t.isJSXIdentifier(node.name)) {
         // <View/>
-        const alias = getComponentAlias(node.name.name, imported);
+        const componentTag = node.name.name;
+        const alias = getComponentAlias(componentTag, imported);
         if (alias) {
           removeImport(ast, alias);
           const componentTag = transformIdentifierComponentName(path, alias, dynamicValue, parsed, options);
@@ -183,6 +182,17 @@ function transformComponents(parsed, options) {
             // Collect renamed component tag & path info
             componentsAlias[componentTag] = alias;
           }
+        } else if (componentTag === 'slot') {
+          transformIdentifierComponentName(
+            path,
+            {
+              name: 'slot',
+              default: true
+            },
+            dynamicValue,
+            parsed,
+            options
+          );
         }
       } else if (t.isJSXMemberExpression(node.name)) {
         // <RecyclerView.Cell /> or <Context.Provider>

@@ -295,7 +295,7 @@ function transformSlotDirective(ast, adapter) {
       const { node } = path;
       if (t.isJSXNamespacedName(node.name) && t.isJSXIdentifier(node.name.namespace, { name: 'x-slot'})) {
         const slotName = node.name.name;
-        const slotScopeName = node.value || "__defaultScopeName";
+        const slotScopeName = node.value || '__defaultScopeName';
         const parentJSXOpeningEl = path.parentPath.node;
 
         if (adapter.slotScope && slotScopeName) {
