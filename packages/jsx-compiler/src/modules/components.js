@@ -203,7 +203,7 @@ function transformComponents(parsed, options) {
             const valueAttribute = node.attributes.find(a =>
               t.isJSXIdentifier(a.name, { name: 'value' }),
             );
-            const contextInitValue = valueAttribute ? valueAttribute.value.expression : undefined;
+            const contextInitValue = valueAttribute && valueAttribute.value.expression;
             const contextItem = {
               contextInitValue,
               contextName: object.name,

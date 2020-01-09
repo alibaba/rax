@@ -8,7 +8,6 @@ export default function createContext(defaultValue) {
   const defaultEmitter = new Emitter(defaultValue);
 
   function Provider(passedVal = defaultValue) {
-
     const emitter = globalEmitter;
     if (!emitter) {
       globalEmitter = new Emitter(passedVal);
