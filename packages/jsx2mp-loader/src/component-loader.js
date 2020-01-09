@@ -5,7 +5,7 @@ const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs, doubleBackslash } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
@@ -71,9 +71,9 @@ module.exports = async function componentLoader(content) {
         let result = `.${sep}` + relative(dirname(this.resourcePath), value); // ./components/Repo.jsx
         result = removeExt(result); // ./components/Repo
 
-        usingComponents[key] = result;
+        usingComponents[key] = replaceBackSlashWithSlash(result);
       } else {
-        usingComponents[key] = value;
+        usingComponents[key] = replaceBackSlashWithSlash(value);
       }
     });
     config.usingComponents = usingComponents;
