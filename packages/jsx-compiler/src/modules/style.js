@@ -4,6 +4,7 @@ const traverse = require('../utils/traverseNodePath');
 const TEMPLATE_AST = 'templateAST';
 const DynamicBinding = require('../utils/DynamicBinding');
 const getListItem = require('../utils/getListItem');
+const isSlotScopeNode = require('../utils/isSlotScopeNode');
 
 /**
  * Transform style object.
@@ -35,7 +36,7 @@ function transformStyle(ast) {
 function shouldReplace(path) {
   const { node } = path;
   if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
-    return !getListItem(node.value.expression);
+    return !(getListItem(node.value.expression) || isSlotScopeNode(node.value.expression));
   }
   return false;
 }

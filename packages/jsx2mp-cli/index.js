@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const consoleClear = require('console-clear');
 const chalk = require('chalk');
 const del = require('del');
+const chokidar = require('chokidar');
 
 const getWebpackConfig = require('./getWebpackConfig');
 const spinner = require('./utils/spinner');
@@ -38,7 +39,7 @@ function build(options = {}) {
     del.sync(distDirectory + '/**');
   }
 
-  copyConstantDir(constantDir, distDirectory);
+  watchConstantDir(constantDir, distDirectory);
 
   const needUpdate = checkNeedUpdate(turnOffCheckUpdate);
 
@@ -88,7 +89,7 @@ function watch(options = {}) {
     turnOffCheckUpdate = false
   } = options;
 
-  copyConstantDir(constantDir, distDirectory);
+  watchConstantDir(constantDir, distDirectory);
 
   const needUpdate = checkNeedUpdate(turnOffCheckUpdate);
 
@@ -110,9 +111,9 @@ function watch(options = {}) {
   spinner.shouldClear = !skipClearStdout;
 
   const compiler = webpack(config);
+
   const watchOpts = {
-    aggregateTimeout: 600,
-    ignored: /node_modules/
+    aggregateTimeout: 600
   };
   compiler.outputFileSystem = new MemFs();
   compiler.watch(watchOpts, (err, stats) => {
@@ -148,21 +149,31 @@ function handleCompiled(err, stats, { skipClearStdout }) {
 }
 
 /**
- * copy constant directories to dist
+ * watch and copy constant dir file change
  * @param {array} dirs
  * @param {string} distDirectory
  */
-function copyConstantDir(dirs, distDirectory) {
-  dirs.forEach(dir => {
-    if (!dir) {
-      return;
-    }
-    if (!existsSync(dir)) {
-      mkdirSync(dir);
-    }
-    copySync(dir, join(distDirectory, getCurrentDirectoryPath(dir, 'src')), {
-      filter: (filename) => !/\.ts$/.test(filename),
-    });
+function watchConstantDir(dirs, distDirectory) {
+  const watcher = chokidar.watch(dirs);
+  watcher.on('all', (event, path) => {
+    copyConstantDir(path, distDirectory);
+  });
+}
+
+/**
+ * copy constant path to dist
+ * @param {string} path
+ * @param {string} distDirectory
+ */
+function copyConstantDir(path, distDirectory) {
+  if (!path) {
+    return;
+  }
+  if (!existsSync(path)) {
+    mkdirSync(path);
+  }
+  copySync(path, join(distDirectory, getCurrentDirectoryPath(path, 'src')), {
+    filter: (filename) => !/\.ts$/.test(filename),
   });
 }
 

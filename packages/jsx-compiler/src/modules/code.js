@@ -17,6 +17,7 @@ const CREATE_STYLE = 'createStyle';
 const CLASSNAMES = 'classnames';
 const CREATE_CONTEXT = 'createContext';
 const FORWARD_REF = 'forwardRef';
+const CREATE_REF = 'createRef';
 
 const SAFE_SUPER_COMPONENT = '__component__';
 const SAFE_CREATE_COMPONENT = '__create_component__';
@@ -36,7 +37,7 @@ const USE_IMPERATIVEHANDLE = 'useImperativeHandle';
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
-const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF,
+const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, CREATE_REF,
   USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT];
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
@@ -524,24 +525,27 @@ function addRegisterRefs(refs, renderFunctionPath) {
   const scopedRefs = [];
   const stringRefs = [];
   refs.map(ref => {
-    if (renderFunctionPath.scope.hasBinding(ref.value)) {
-      scopedRefs.push(ref);
-    } else {
+    if (t.isStringLiteral(ref.method)) {
       stringRefs.push(ref);
+    } else if (t.isIdentifier(ref.method) && !renderFunctionPath.scope.hasBinding(ref.name.value)) {
+      stringRefs.push(ref);
+    } else {
+      // For this.xxx or difficult expression
+      scopedRefs.push(ref);
     }
   });
   if (scopedRefs.length > 0) {
     fnBody.push(t.expressionStatement(t.callExpression(registerRefsMethods, [
       t.arrayExpression(scopedRefs.map(ref => {
-        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref),
-          t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]);
+        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.name),
+          t.objectProperty(t.stringLiteral('method'), ref.method )]);
       }))
     ])));
   }
   if (stringRefs.length > 0) {
     fnBody.unshift(t.expressionStatement(t.callExpression(registerRefsMethods, [
       t.arrayExpression(stringRefs.map(ref => {
-        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref)]);
+        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.method)]);
       }))
     ])));
   }

@@ -33,7 +33,7 @@ const DevtoolsHook = {
       return rootComponents;
     },
 
-    _renderNewRootComponent: reconciler.renderNewRootComponent
+    _renderNewRootComponent: Reconciler.renderNewRootComponent
   },
   Reconciler,
   // monitor the info of all components

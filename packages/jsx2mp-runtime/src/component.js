@@ -27,9 +27,9 @@ import { cycles as pageCycles } from './page';
 import getId from './getId';
 
 export default class Component {
-  constructor() {
+  constructor(props) {
     this.state = {};
-    this.props = {};
+    this.props = props;
 
     this.__dependencies = {}; // for context
 
@@ -259,6 +259,8 @@ export default class Component {
    */
   _trigger(cycle, ...args) {
     let ret;
+    const pageId = this.instanceId;
+
     switch (cycle) {
       case COMPONENT_WILL_MOUNT:
       case COMPONENT_DID_MOUNT:
@@ -277,11 +279,8 @@ export default class Component {
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
         }
-        const pageId = this.instanceId;
-        if (pageCycles[pageId]) {
-          if (pageCycles[pageId][cycle]) {
-            pageCycles[pageId][cycle].forEach(fn => fn(...args));
-          }
+        if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
+          pageCycles[pageId][cycle].forEach(fn => fn(...args));
         }
         break;
 
@@ -299,6 +298,11 @@ export default class Component {
 
       case ON_SHARE_APP_MESSAGE:
         if (isFunction(this[cycle])) ret = this[cycle](...args);
+        if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
+          // There will be one callback fn for shareAppMessage at most
+          const fn = pageCycles[pageId][cycle][0];
+          ret = fn(...args);
+        }
         break;
     }
     return ret;
@@ -337,7 +341,11 @@ export default class Component {
           useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
           if (diffData(this.state[key], data[key])) {
-            useSetData[key] = data[key];
+            if (Object.prototype.toString.call(data[key]) === '[object Object]') {
+              useSetData[key] = Object.assign({}, this.state[key], data[key]);
+            } else {
+              useSetData[key] = data[key];
+            }
           }
         }
       }

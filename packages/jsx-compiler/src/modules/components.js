@@ -37,22 +37,22 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
 
   if (!compiledComponents[componentTag]) {
-    const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
     // <tag __tagId="tagId" />
-    let tagId = '' + tagCount++;
 
-    if (parentJSXListEl) {
-      const { args, parentList } = parentJSXListEl.node.__jsxlist;
-      const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
-      if (parentList) {
-        const parentListIndexValue = parentList.args[1].name;
-        parentPath.node.__tagIdExpression = [tagId, new Expression(parentListIndexValue), new Expression(indexValue)];
-        tagId += `-{{${parentListIndexValue}}}-{{${indexValue}}}`;
-      } else {
-        parentPath.node.__tagIdExpression = [tagId, new Expression(indexValue)];
+    let tagId = '' + tagCount;
+
+    const parentsJSXList = findParentsJSXListEl(path);
+    if (parentsJSXList.length > 0) {
+      parentPath.node.__tagIdExpression = [];
+      for (let i = parentsJSXList.length - 1; i >= 0; i--) {
+        const { args } = parentsJSXList[i].node.__jsxlist;
+        const indexValue = args.length > 1 ? genExpression(args[1]) : 'index';
+        parentPath.node.__tagIdExpression.push(new Expression(indexValue));
         tagId += `-{{${indexValue}}}`;
       }
+      parentPath.node.__tagIdExpression.unshift(tagCount);
     }
+    tagCount++;
     parentPath.node.__tagId = tagId;
     componentDependentProps[tagId] = componentDependentProps[tagId] || {};
     if (parentPath.node.__tagIdExpression) {
@@ -60,7 +60,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
         parentPath.node.__tagIdExpression;
 
       if (renderFunctionPath) {
-        const { loopFnBody } = parentJSXListEl.node.__jsxlist;
+        const { loopFnBody } = parentsJSXList[0].node.__jsxlist;
         componentDependentProps[tagId].parentNode = loopFnBody.body;
       }
     }
@@ -75,7 +75,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     }
 
     node.attributes.push(
-      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral( '{{__tagId}}-' + tagId)),
     );
 
     /**
@@ -242,6 +242,12 @@ function transformComponents(parsed, options) {
         }
       }
     },
+    JSXFragment(path) {
+      // Transform <></> => <block></block>
+      const blockNode = t.jsxIdentifier('block');
+      const { children = [] } = path.node;
+      path.replaceWith(t.jsxElement(t.jsxOpeningElement(blockNode, []), t.jsxClosingElement(blockNode), children));
+    }
   });
   return {
     contextList,
@@ -418,4 +424,15 @@ function createSlotComponent(jsxEl, slotName, args) {
   );
 
   return { dynamicValue, node: jsxEl };
+}
+
+
+function findParentsJSXListEl(path, parentList = []) {
+  const parentJSXListEl = path.findParent(p => p.node.__jsxlist);
+  if (parentJSXListEl) {
+    parentList.push(parentJSXListEl);
+    return findParentsJSXListEl(parentJSXListEl, parentList);
+  } else {
+    return parentList;
+  }
 }

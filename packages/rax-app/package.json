@@ -1,6 +1,6 @@
 {
   "name": "rax-app",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "description": "Rax application framework for univesal app.",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "driver-universal": "^2.2.0",
+    "driver-universal": "^3.1.0",
     "history": "^4.9.0",
     "querystring": "^0.2.0",
     "rax-pwa": "^2.0.0",

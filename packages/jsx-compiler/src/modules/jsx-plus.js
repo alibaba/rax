@@ -304,7 +304,8 @@ function transformSlotDirective(ast, adapter) {
           const parentJSXElPath = path.parentPath.parentPath;
           parentJSXElPath.traverse({
             Identifier(innerPath) {
-              if (innerPath.node.name === slotScopeName.value) {
+              if (innerPath.node.name === slotScopeName.value
+                && !(innerPath.parentPath.isMemberExpression() && innerPath.parent.property === innerPath.node) ) {
                 innerPath.node.__slotScope = true;
               }
             }

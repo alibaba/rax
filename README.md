@@ -48,7 +48,7 @@ You need install the [Rax extension](https://marketplace.visualstudio.com/items?
 
 ![vscode](https://user-images.githubusercontent.com/677114/72176350-2488e700-3419-11ea-9f51-b640c51256db.gif)
 
-### Developer Tools 🛠
+## Developer Tools 🛠
 
 You can inspect and modify the state of your Rax components at runtime using the
 [Rax Developer Tools](https://github.com/raxjs/rax-devtools) browser extension,
@@ -57,7 +57,11 @@ and extension not works in `producation` mode.
 1. Install the Chrome [Rax Developer Tools](https://chrome.google.com/webstore/detail/rax-developer-tools/anpeoinhjjligmgoiepbnigjhmijblff) extension
 2. Reload and go to the 'Rax' tab in the browser's development tools
 
-### Awesome Things 📝
+### VS Code Extensions
+
+You can use [Rax VS Code Extensions](https://github.com/raxjs/rax-vscode-extensions) to get better development experience.
+
+## Awesome Things 📝
 
 You can find some awesome things in the [awesome-rax](https://github.com/raxjs/awesome-rax).
 
