@@ -8,7 +8,7 @@
   "main": "dist/ali/index.js",
   "miniprogram": "dist/wechat",
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
     "test": "jest --bail",
     "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",

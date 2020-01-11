@@ -6,7 +6,7 @@
     "dist"
   ],
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
     "test": "npm run build && jest --bail",
     "test-debug": "npm run build && node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
