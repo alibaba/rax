@@ -1,6 +1,6 @@
 {
   "name": "miniapp-render",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "DOM simulator for MiniApp",
   "files": [
     "dist"
@@ -25,6 +25,8 @@
       "./scripts/build.js"
     ]
   },
+  "main": "dist/ali/index.js",
+  "miniprogram": "dist/wechat",
   "repository": {
     "type": "git",
     "url": "https://github.com/alibaba/rax.git"

@@ -1,12 +1,12 @@
 {
   "name": "miniapp-element",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Custom element for MiniApp",
   "files": [
     "dist"
   ],
-  "main": "src/index.js",
-  "miniprogram": "src",
+  "main": "dist/ali/index.js",
+  "miniprogram": "dist/wechat",
   "scripts": {
     "prepublish": "npm run build",
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
