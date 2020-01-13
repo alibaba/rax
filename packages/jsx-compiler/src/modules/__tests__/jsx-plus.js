@@ -142,5 +142,12 @@ describe('Directives', () => {
       _transformSlotDirective(ast, adapter);
       expect(genExpression(ast)).toEqual('<View slot="item" slot-scope="props">{props.text}</View>');
     });
+
+    it('should add default scope name', () => {
+      const code = '<View x-slot:item>{props.text}</View>';
+      const ast = parseExpression(code);
+      _transformSlotDirective(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View slot="item" slot-scope="__defaultScopeName">{props.text}</View>');
+    });
   });
 });
