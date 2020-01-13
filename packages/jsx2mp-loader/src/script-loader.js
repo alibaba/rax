@@ -68,7 +68,6 @@ module.exports = function scriptLoader(content) {
         [
           require('./babel-plugin-rename-import'),
           { normalizeNpmFileName,
-            nodeModulesPathList,
             distSourcePath,
             resourcePath: this.resourcePath,
             outputPath,

@@ -1,4 +1,5 @@
 const { join, relative, dirname, resolve, sep } = require('path');
+const enhancedResolve = require('enhanced-resolve');
 const { existsSync } = require('fs-extra');
 const chalk = require('chalk');
 
@@ -18,16 +19,15 @@ const transformPathMap = {};
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, resourcePath, outputPath, disableCopyNpm, platform } = options;
-  const source = (value, npmList, rootContext) => {
+  const { normalizeNpmFileName, distSourcePath, resourcePath, outputPath, disableCopyNpm, platform } = options;
+  const source = (value, rootContext) => {
     // Example:
     // value => '@ali/universal-goldlog' or '@ali/xxx/foo/lib'
     // npmList => ['/Users/xxx/node_modules/xxx', '/Users/xxx/node_modules/aaa/node_modules/bbb']
     // filename => '/Users/xxx/workspace/yyy/src/utils/logger.js'
     // rootContext => '/Users/xxx/workspace/yyy/'
 
-    const searchPaths = npmList.reverse();
-    const target = require.resolve(value, { paths: searchPaths });
+    const target = enhancedResolve.sync(resourcePath, value);
 
     const rootNodeModulePath = join(rootContext, 'node_modules');
     const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target)));
@@ -67,7 +67,7 @@ module.exports = function visitor({ types: t }, options) {
           }
 
           if (!disableCopyNpm) {
-            const processedSource = source(value, nodeModulesPathList, state.cwd);
+            const processedSource = source(value, state.cwd);
             // Add lock to avoid repeatly transformed in CallExpression if @babel/preset-env invoked
             transformPathMap[processedSource.value] = true;
             path.node.source = processedSource;
@@ -111,7 +111,7 @@ module.exports = function visitor({ types: t }, options) {
               }
 
               if (!disableCopyNpm) {
-                const processedSource = source(moduleName, nodeModulesPathList, state.cwd);
+                const processedSource = source(moduleName, state.cwd);
                 transformPathMap[processedSource.value] = true;
                 path.node.arguments = [ processedSource ];
               }
