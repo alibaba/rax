@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { join, relative, dirname, resolve, extname } = require('path');
+const { join, relative, dirname, resolve, extname, sep } = require('path');
 const resolveModule = require('resolve');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
@@ -203,7 +203,7 @@ function getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm) {
   let runtimePath = getRuntimeByPlatform(platform.type);
   if (!disableCopyNpm) {
     runtimePath = relative(targetFileDir, join(outputPath, 'npm', RUNTIME));
-    runtimePath = runtimePath[0] !== '.' ? './' + runtimePath : runtimePath;
+    runtimePath = runtimePath[0] !== '.' ? `.${sep}${runtimePath}` : runtimePath;
   }
   return runtimePath;
 }
@@ -296,7 +296,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     } else {
       ret = join(prefix, value.replace(npmName, realNpmName));
     }
-    if (ret[0] !== '.') ret = './' + ret;
+    if (ret[0] !== '.') ret = `.${sep}` + ret;
     // ret => '../npm/_ali/universal-toast/lib/index.js
 
     return t.stringLiteral(normalizeFileName(ret));
@@ -497,8 +497,8 @@ function addProviderIniter(contextList, renderFunctionPath) {
         t.identifier('Provider')
       );
       const fnBody = renderFunctionPath.node.body.body;
-
-      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
+      const args = ctx.contextInitValue ? [ctx.contextInitValue] : [];
+      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, args)));
     });
   }
 }
@@ -563,7 +563,7 @@ function ensureIndexInPath(value, resourcePath) {
     extensions: ['.js', '.ts']
   });
   const result = relative(dirname(resourcePath), target);
-  return removeJSExtension(result[0] === '.' ? result : './' + result);
+  return removeJSExtension(result[0] === '.' ? result : `.${sep}${result}`);
 };
 
 function removeJSExtension(filePath) {

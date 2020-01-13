@@ -66,8 +66,29 @@ function replaceExtension(filePath, newExtension) {
   return filePath.slice(0, lastDot) + newExtension;
 }
 
+/**
+ * add double backslashs in case that filePath contains single backslashs
+ * @param {string} filePath
+ * @returns {string}
+ */
+function doubleBackslash(filePath) {
+  return filePath.replace(/\\/g, '\\\\');
+}
+
+/**
+ * Replace backslashs with slashs
+ * for pages and usingComponents in json don't support backslashs
+ *
+ * @param {*} filePath
+ */
+function replaceBackSlashWithSlash(filePath) {
+  return filePath.replace(/\\/g, '/');
+}
+
 module.exports = {
   removeExt,
   isFromTargetDirs,
-  replaceExtension
+  replaceExtension,
+  doubleBackslash,
+  replaceBackSlashWithSlash
 };

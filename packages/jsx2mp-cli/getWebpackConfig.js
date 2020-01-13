@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const { readJSONSync } = require('fs-extra');
-const { join, relative, dirname } = require('path');
+const { join, relative, dirname, sep } = require('path');
 const chalk = require('chalk');
 const RuntimeWebpackPlugin = require('./plugins/runtime');
 const spinner = require('./utils/spinner');
@@ -93,10 +93,10 @@ function getEntry(type, cwd, entryFilePath, options) {
  * pages/foo -> based on src, add prefix: './'
  */
 function getDepPath(path, rootContext) {
-  if (path[0] === '.' || path[0] === '/') {
+  if (path[0] === '.' || path[0] === sep) {
     return join(rootContext, path);
   } else {
-    return `./${rootContext}/${path}`;
+    return `.${sep}${rootContext}${sep}${path}`;
   }
 }
 
@@ -104,9 +104,9 @@ const cwd = process.cwd();
 
 module.exports = (options = {}) => {
   let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, constantDir, disableCopyNpm, turnOffSourceMap } = options;
-  if (entryPath[0] !== '.') entryPath = './' + entryPath;
+  if (entryPath[0] !== '.') entryPath = `.${sep}` + entryPath;
   entryPath = multipleModuleResolve(workDirectory, entryPath, ['.js', '.jsx', '.ts', '.tsx']) || entryPath;
-  const relativeEntryFilePath = './' + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
+  const relativeEntryFilePath = `.${sep}` + relative(workDirectory, entryPath); // src/app.js   or src/mobile/index.js
 
   const config = {
     mode: 'production', // Will be fast

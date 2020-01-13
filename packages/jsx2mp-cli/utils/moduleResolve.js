@@ -5,6 +5,10 @@ function startsWith(prevString, nextString) {
   return prevString.indexOf(nextString) === 0;
 }
 
+function startsWithArr(prevString, nextStringArr = []) {
+  return nextStringArr.some(nextString => startsWith(prevString, nextString));
+}
+
 function loadAsFile(module, extension) {
   if (existsSync(module + extension) && statSync(module + extension).isFile()) {
     return module + extension;
@@ -23,13 +27,14 @@ function loadAsDirectory(module, extension) {
   let stat = statSync(module);
 
   if (stat.isDirectory()) {
-    let packagePath = module + '/package.json';
+    const packagePath = join(module, 'package.json');
+    const indexFile = join(module, 'index' + extension);
     if (existsSync(packagePath) && statSync(packagePath).isFile()) {
       let pkg = JSON.parse(readFileSync(packagePath, 'utf-8'));
       let main = join(module, pkg.main || 'index' + extension);
       return loadAsFile(main) || loadAsDirectory(main);
-    } else if (existsSync(module + '/index' + extension) && statSync(module + '/index' + extension).isFile()) {
-      return join(module, '/index' + extension);
+    } else if (existsSync(indexFile) && statSync(indexFile).isFile()) {
+      return indexFile;
     }
   } else if (stat.isFile()) {
     return loadAsFile(module, extension);
@@ -82,7 +87,7 @@ function loadNpmModules(module, start, extension) {
 function moduleResolve(script, dependency, extension = '.js') {
   let target;
 
-  if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
+  if (startsWithArr(dependency, ['./', '../', '/', '.\\', '..\\', '\\'])) {
     let dependencyPath = join(script, dependency);
     target = loadAsFile(dependencyPath, extension) || loadAsDirectory(dependencyPath, extension);
   } else {

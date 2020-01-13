@@ -1,12 +1,13 @@
 /* global PROPS */
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';
+import { setPageInstance } from './pageInstanceMap';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
@@ -34,6 +35,7 @@ function getPageCycles(Klass) {
       this.instance.defaultProps = Klass.defaultProps;
       // Reverse sync from state to data.
       this.instance.instanceId = instanceId;
+      setPageInstance(this.instance);
       this.instance._internal = this;
       Object.assign(this.instance.state, this.data);
       // Add route information for page.
@@ -44,22 +46,10 @@ function getPageCycles(Klass) {
       this.instance.__ready = true;
       this.instance._mountComponent();
     },
-    onReady() {}, // noop
     onUnload() {
       this.instance._unmountComponent();
-    },
-    onShow() {
-      if (this.instance.__mounted) this.instance._trigger(ON_SHOW);
-    },
-    onHide() {
-      if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
   };
-  [ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK].forEach((hook) => {
-    config[hook] = function(e) {
-      return this.instance._trigger(hook, e);
-    };
-  });
   return config;
 }
 
@@ -190,14 +180,24 @@ export function runApp(appConfig, pageProps = {}) {
   const appOptions = {
     // Bridge app launch.
     onLaunch(launchOptions) {
-      const launchQueue = appCycles.launch;
-      if (Array.isArray(launchQueue) && launchQueue.length > 0) {
-        let fn;
-        while (fn = launchQueue.pop()) { // eslint-disable-line
-          fn.call(this, launchOptions);
-        }
-      }
+      executeCallback(this, ON_LAUNCH, launchOptions);
     },
+    onShow(showOptions) {
+      executeCallback(this, ON_SHOW, showOptions);
+    },
+    onHide() {
+      executeCallback(this, ON_HIDE);
+    },
+    onError(error) {
+      executeCallback(this, ON_ERROR, error);
+    },
+    onShareAppMessage(shareOptions) {
+      // There will be one callback fn for shareAppMessage at most
+      const callbackQueue = appCycles[ON_SHARE_APP_MESSAGE];
+      if (Array.isArray(callbackQueue) && callbackQueue[0]) {
+        return callbackQueue[0].call(this, shareOptions);
+      }
+    }
   };
 
   // eslint-disable-next-line
@@ -246,4 +246,18 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
     instanceId,
     props
   };
+}
+
+/**
+ * Execute App life cycle callback(s)
+ *
+ * @param {object} instance App instance
+ * @param {string} cycle
+ * @param {*} [param={}]
+ */
+function executeCallback(instance, cycle, param = {}) {
+  const callbackQueue = appCycles[cycle];
+  if (Array.isArray(callbackQueue) && callbackQueue.length > 0) {
+    callbackQueue.forEach(fn => fn.call(instance, param));
+  }
 }

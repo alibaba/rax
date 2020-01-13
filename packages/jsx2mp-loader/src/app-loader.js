@@ -1,11 +1,11 @@
 const { readJSONSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
-const { join } = require('path');
+const { join, sep } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const moduleResolve = require('./utils/moduleResolve');
-const { removeExt } = require('./utils/pathHelper');
+const { removeExt, doubleBackslash, replaceBackSlashWithSlash } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
@@ -15,7 +15,7 @@ const adaptAppConfig = require('./adaptConfig');
 const pe = new PrettyError();
 
 function createImportStatement(req) {
-  return `import '${req}';`;
+  return `import '${doubleBackslash(req)}';`;
 }
 
 function generateDependencies(dependencies) {
@@ -27,12 +27,12 @@ function generateDependencies(dependencies) {
 
 function getRelativePath(filePath) {
   let relativePath;
-  if (filePath[0] === '/') {
+  if (filePath[0] === sep) {
     relativePath = `.${filePath}`;
   } else if (filePath[0] === '.') {
     relativePath = filePath;
   } else {
-    relativePath = `./${filePath}`;
+    relativePath = `.${sep}${filePath}`;
   }
   return relativePath;
 }
@@ -116,10 +116,10 @@ function transformAppConfig(entryPath, originalConfig, platform) {
           value.forEach(({ component, source, targets }) => {
             // Compatible with old version definition of `component`.
             if (!Array.isArray(targets)) {
-              pages.push(moduleResolve(entryPath, getRelativePath(source || component)));
+              pages.push(replaceBackSlashWithSlash(moduleResolve(entryPath, getRelativePath(source || component))));
             }
             if (Array.isArray(targets) && targets.indexOf('miniapp') > -1) {
-              pages.push(moduleResolve(entryPath, getRelativePath(source || component)));
+              pages.push(replaceBackSlashWithSlash(moduleResolve(entryPath, getRelativePath(source || component))));
             }
           });
         }
