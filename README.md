@@ -5,8 +5,7 @@
 </p>
 
 <p align="center">
-The fastest way to build universal application.
-</p>
+Rax is a progressive React framework for building universal application.
 
 <p align="center">
   <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/rax.svg"></a>
@@ -18,18 +17,15 @@ The fastest way to build universal application.
 
 ---
 
-:christmas_tree: **Familiar:** React compatible API with Class Component and Hooks.
+💌 **Write Once, Run Anywhere:** write one codebase, run with `Web`, [`Weex`](https://weex.apache.org/), [`Node.js`](https://nodejs.org/), `Alibaba MiniApp`, `WeChat MiniProgram` and could work with more container that implements [driver specification](./docs/en-US/driver-spec.md).
 
-:candy: **Tiny:** ~6.4 KB minified + gzipped.
+⏱ **Fast:** use better performance and tinier size(📦~6KB) alternative to [React](http://reactjs.org/) with the some API.
 
-:earth_asia: **Universal:** works with DOM, Weex, Node.js, Mini-program, WebGL and could work more container that implements [driver specification](./docs/en-US/driver-spec.md).
+📤 **Easy:** quick start with zero configuration, all features like `Progressive Web App(PWA)`, `Server-Side Rendering(SSR)` and `Function as a service(FaaS)` can be used out of the box.
 
-:banana: **Easy:** using via `rax-cli` with zero configuration, one codebase with universal UI toolkit & APIs.
+### Quick Start 🥢🍚
 
-:lollipop: **Friendly:** developer tools for Rax development.
-
-
-## Quick Start
+#### Start from command line
 
 Create a new Rax project using `create-rax`:
 
@@ -46,7 +42,13 @@ $ npm install
 $ npm run start
 ```
 
-### Developer Tools
+#### Start from [VS Code](https://code.visualstudio.com/)
+
+You need to install the [Rax extension](https://marketplace.visualstudio.com/items?itemName=Rax.vscode-rax) and invoke the `rax` command from the VS Code command palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on Mac):
+
+![vscode](https://user-images.githubusercontent.com/677114/72176350-2488e700-3419-11ea-9f51-b640c51256db.gif)
+
+### Developer Tools 🛠
 
 You can inspect and modify the state of your Rax components at runtime using the
 [Rax Developer Tools](https://github.com/raxjs/rax-devtools) browser extension,
@@ -55,15 +57,19 @@ and extension not works in `producation` mode.
 1. Install the Chrome [Rax Developer Tools](https://chrome.google.com/webstore/detail/rax-developer-tools/anpeoinhjjligmgoiepbnigjhmijblff) extension
 2. Reload and go to the 'Rax' tab in the browser's development tools
 
-### VS Code Extensions
+#### VS Code Extensions
 
-You can also use the [Rax VS Code Extensions](https://github.com/raxjs/rax-vscode-extensions) to get better development experience.
+You can use [Rax VS Code Extensions](https://github.com/raxjs/rax-vscode-extensions) to get better development experience.
 
-## Contributing
+### Awesome Things 📝
+
+You can find some awesome things in the [awesome-rax](https://github.com/raxjs/awesome-rax).
+
+### Contributing 🧼
 
 Want to file a bug, contribute some code, or improve documentation? Excellent! Read up on our [guidelines for contributing](./.github/CONTRIBUTING.md).
 
-### Code Contributors
+#### Code Contributors
 
 This project exists thanks to all the people who contribute.
 <a href="https://github.com/alibaba/rax/graphs/contributors"><img src="https://opencollective.com/rax/contributors.svg?width=890&button=false" /></a>
