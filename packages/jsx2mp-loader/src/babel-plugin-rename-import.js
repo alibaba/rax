@@ -23,7 +23,6 @@ module.exports = function visitor({ types: t }, options) {
   const source = (value, rootContext) => {
     // Example:
     // value => '@ali/universal-goldlog' or '@ali/xxx/foo/lib'
-    // npmList => ['/Users/xxx/node_modules/xxx', '/Users/xxx/node_modules/aaa/node_modules/bbb']
     // filename => '/Users/xxx/workspace/yyy/src/utils/logger.js'
     // rootContext => '/Users/xxx/workspace/yyy/'
 
