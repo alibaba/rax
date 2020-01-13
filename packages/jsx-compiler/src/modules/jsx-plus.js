@@ -117,8 +117,8 @@ function transformDirectiveClass(ast, parsed) {
           const callExp = t.callExpression(t.identifier('__classnames__'), params);
 
           let classNameAttribute;
-          for (let i = 0, l = attributes.length; i < l; i++ ) {
-            if (t.isJSXIdentifier(attributes[i].name, { name: 'className'})) classNameAttribute = attributes[i];
+          for (let i = 0, l = attributes.length; i < l; i++) {
+            if (t.isJSXIdentifier(attributes[i].name, { name: 'className' })) classNameAttribute = attributes[i];
           }
 
           if (classNameAttribute) {
@@ -216,7 +216,7 @@ function transformDirectiveList(ast, code, adapter) {
              * */
             const loopFnBodyLength = parentList.loopFnBody.body.length;
             const properties = parentList.loopFnBody.body[loopFnBodyLength - 1].argument.properties;
-            const forItem = properties.find(({key}) => key.name === listItem.name);
+            const forItem = properties.find(({ key }) => key.name === listItem.name);
             if (t.isIdentifier(iterValue)) {
               forItem.value = mapCallExpression;
             }
@@ -293,9 +293,10 @@ function transformSlotDirective(ast, adapter) {
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
-      if (t.isJSXNamespacedName(node.name) && t.isJSXIdentifier(node.name.namespace, { name: 'x-slot'})) {
+      if (t.isJSXNamespacedName(node.name) && t.isJSXIdentifier(node.name.namespace, { name: 'x-slot' })) {
         const slotName = node.name.name;
-        const slotScopeName = node.value || '__defaultScopeName';
+        const slotScopeName =
+          node.value || t.stringLiteral('__defaultScopeName');
         const parentJSXOpeningEl = path.parentPath.node;
 
         if (adapter.slotScope && slotScopeName) {
@@ -337,7 +338,7 @@ function transformListJSXElement(path, adapter) {
     const { args, iterValue } = node.__jsxlist;
     path.traverse({
       Identifier(innerPath) {
-        const {node: innerNode} = innerPath;
+        const { node: innerNode } = innerPath;
         if (args.find(arg => arg.name === innerNode.name)) {
           // Rename index node
           innerNode.__listItem = {
