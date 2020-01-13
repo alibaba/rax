@@ -17,11 +17,11 @@ Rax is a progressive React framework for building universal application.
 
 ---
 
-💌 **Write Once, Run Anywhere:** write one codebase, run with `Web`, [`Weex`](https://weex.apache.org/), [`Node.js`](https://nodejs.org/), `Alibaba MiniApp`, `WeChat MiniProgram` and could work more container that implements [driver specification](./docs/en-US/driver-spec.md).
+💌 **Write Once, Run Anywhere:** write one codebase, run with `Web`, [`Weex`](https://weex.apache.org/), [`Node.js`](https://nodejs.org/), `Alibaba MiniApp`, `WeChat MiniProgram` and could work with more container that implements [driver specification](./docs/en-US/driver-spec.md).
 
-⏱ **Fast:** use better performance and tiny (📦~6KB) alternative to [React](http://reactjs.org/) with the some API.
+⏱ **Fast:** use better performance and tinier size(📦~6KB) alternative to [React](http://reactjs.org/) with the some API.
 
-📤 **Easy:** quick start with zero configuration, `Progressive Web App(PWA)`, `Server-Side Rendering(SSR)`, `Function as a service(FaaS)` all features can be used out of the box.
+📤 **Easy:** quick start with zero configuration, all features like `Progressive Web App(PWA)`, `Server-Side Rendering(SSR)` and `Function as a service(FaaS)` can be used out of the box.
 
 ### Quick Start 🥢🍚
 
@@ -44,7 +44,7 @@ $ npm run start
 
 #### Start from [VS Code](https://code.visualstudio.com/)
 
-You need install the [Rax extension](https://marketplace.visualstudio.com/items?itemName=Rax.vscode-rax) and invoke the `rax` command from the VS Code command palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on Mac):
+You need to install the [Rax extension](https://marketplace.visualstudio.com/items?itemName=Rax.vscode-rax) and invoke the `rax` command from the VS Code command palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on Mac):
 
 ![vscode](https://user-images.githubusercontent.com/677114/72176350-2488e700-3419-11ea-9f51-b640c51256db.gif)
 
