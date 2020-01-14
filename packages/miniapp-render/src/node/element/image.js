@@ -110,37 +110,39 @@ class Image extends Element {
     this.$_attrs.set('src', value);
 
     setTimeout(() => {
-      CONTAINER.getImageInfo({
-        src: this.src,
-        success: res => {
-          // 加载成功，调整图片的宽高
-          this.$_resetRect(res);
+      if (this.src.indexOf('data:image') !== 0) {
+        CONTAINER.getImageInfo({
+          src: this.src,
+          success: res => {
+            // 加载成功，调整图片的宽高
+            this.$_resetRect(res);
 
-          // 触发 load 事件
-          this.$$trigger('load', {
-            event: new Event({
-              name: 'load',
-              target: this,
-              eventPhase: Event.AT_TARGET
-            }),
-            currentTarget: this,
-          });
-        },
-        fail: () => {
-          // 加载失败，调整图片的宽高
-          this.$_resetRect({width: 0, height: 0});
+            // 触发 load 事件
+            this.$$trigger('load', {
+              event: new Event({
+                name: 'load',
+                target: this,
+                eventPhase: Event.AT_TARGET
+              }),
+              currentTarget: this,
+            });
+          },
+          fail: () => {
+            // 加载失败，调整图片的宽高
+            this.$_resetRect({width: 0, height: 0});
 
-          // 触发 error 事件
-          this.$$trigger('error', {
-            event: new Event({
-              name: 'error',
-              target: this,
-              eventPhase: Event.AT_TARGET
-            }),
-            currentTarget: this,
-          });
-        },
-      });
+            // 触发 error 事件
+            this.$$trigger('error', {
+              event: new Event({
+                name: 'error',
+                target: this,
+                eventPhase: Event.AT_TARGET
+              }),
+              currentTarget: this,
+            });
+          },
+        });
+      }
     }, 0);
   }
 
