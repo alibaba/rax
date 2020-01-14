@@ -17,7 +17,13 @@ module.exports = function(api) {
       ['@babel/plugin-proposal-class-properties', { 'loose': false }],
       'babel-plugin-transform-jsx-stylesheet',
       ['@babel/plugin-proposal-decorators', { 'legacy': true }],
+      '@babel/plugin-syntax-dynamic-import'
     ],
+    'env': {
+      'test': {
+        'plugins': ['dynamic-import-node']
+      }
+    },
     'ignore': [
       'src/generator/templates',
       '__mockc__',

@@ -32,6 +32,7 @@ module.exports = {
     'getApp': true,
     'Component': true,
     'my': true,
+    'wx': true,
     '__weex_data__': true,
     '__weex_options__': true,
     '__weex_downgrade__': true,

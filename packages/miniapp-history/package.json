@@ -1,0 +1,22 @@
+{
+  "name": "miniapp-history",
+  "version": "0.1.0-0",
+  "description": "Miniapp implementation of history.",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "author": "Rax Team",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "universal-env": "^3.0.0"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.8"
+  }
+}
