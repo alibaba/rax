@@ -178,4 +178,37 @@ describe('Transiform condition render function', () => {
   return vdom;
 }`);
   });
+
+  it('assign without jsx element', () => {
+    const ast = parseExpression(`(function render(props) {
+        let { a, b, ...c } = props;
+        let vdom;
+        if (a > 0) {
+          vdom = 123;
+          b = 2;
+        } else {
+          vdom = <view>case 1.1</view>
+        }
+        return vdom;
+      })
+    `);
+
+    const tmpVars = _transformRenderFunction(ast, adapter);
+    expect(genExpression(tmpVars.vdom)).toEqual('<block><block a:if={a > 0}>{123}</block><block a:else><view>case 1.1</view></block></block>');
+    expect(genExpression(ast)).toEqual(`function render(props) {
+  let {
+    a,
+    b,
+    ...c
+  } = props;
+  let vdom;
+
+  if (a > 0) {
+    vdom = 123;
+    b = 2;
+  } else {}
+
+  return vdom;
+}`);
+  });
 });
