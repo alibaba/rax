@@ -10,8 +10,8 @@ const history = createMiniAppHistory();
 ## API
 
 ### Support
-* push({ url: soucePath })
-* replace({ url: soucePath })
+* push({ url: sourcePath })
+* replace({ url: sourcePath })
 * goBack(delta)
 * go(callback)
 * canGo()
