@@ -1,6 +1,6 @@
 {
   "name": "miniapp-history",
-  "version": "0.1.0-1",
+  "version": "0.1.0",
   "description": "Miniapp implementation of history.",
   "main": "lib/index.js",
   "module": "es/index.js",
