@@ -294,7 +294,7 @@ function handleConsequent(path, expressionPath, templateMap, adapter) {
     ) {
       testAttrName = adapter.elseif;
     }
-    const rightNode = expression.right;
+    const rightNode = rightPath.node;
     const containerNode = createJSX(
       'block',
       {
@@ -304,7 +304,10 @@ function handleConsequent(path, expressionPath, templateMap, adapter) {
     );
 
     templateMap[varName].children.push(containerNode);
-    expressionPath.remove();
+    if (hasJSX(rightPath)) {
+      // Remove only if the expression contains JSX
+      expressionPath.remove();
+    }
   }
 }
 
