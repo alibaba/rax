@@ -4,7 +4,7 @@
 
 export default [
   'position', 'top', 'bottom', 'right', 'left', 'float', 'clear',
-  'display', 'width', 'height', 'maxHeight', 'maxWidth', 'minHeight', 'minWidth', 'flexBasis', 'flexGrow', 'flexShrink', 'flexDirection', 'flexWrap', 'justifyContent', 'alignItems',
+  'display', 'width', 'height', 'maxHeight', 'maxWidth', 'minHeight', 'minWidth', 'flex', 'flexBasis', 'flexGrow', 'flexShrink', 'flexDirection', 'flexWrap', 'justifyContent', 'alignItems',
   'padding', 'paddingBottom', 'paddingLeft', 'paddingRight', 'paddingTop',
   'margin', 'marginBottom', 'marginLeft', 'marginRight', 'marginTop',
 
