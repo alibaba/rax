@@ -23,10 +23,15 @@ fs.readdirSync(PACKAGES_DIR)
 
     const cmd = 'npm owner add ' + user + ' ' + packageName;
     console.log(cmd);
-    execSync(
-      cmd,
-      {
-        stdio: 'inherit'
-      }
-    );
+
+    try {
+      execSync(
+        cmd,
+        {
+          stdio: 'inherit'
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
   });
