@@ -57,3 +57,6 @@ export {
 
 /* hooks */
 export * from './hooks';
+
+/* native events listener methods */
+export * from './nativeEventListener';

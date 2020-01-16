@@ -31,8 +31,11 @@ class Location {
   }
 
   __updatePageOption(pageId, pageOptions) {
-    this._pageId = pageId;
     this._currentPageOptions = pageOptions;
+  }
+
+  __updatePageId(pageId) {
+    this._pageId = pageId;
   }
 
   get href() {

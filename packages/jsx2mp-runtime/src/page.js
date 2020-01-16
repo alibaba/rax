@@ -13,24 +13,23 @@ import { useEffect } from './hooks';
 import { getMiniAppHistory } from './history';
 import { getPageInstance } from './pageInstanceMap';
 
-
 const history = getMiniAppHistory();
 
 export const cycles = {};
 
 export function usePageEffect(cycle, callback) {
-  switch (cycle) {
-    case ON_SHOW:
-    case ON_HIDE:
-    case ON_PAGE_SCROLL:
-    case ON_SHARE_APP_MESSAGE:
-    case ON_REACH_BOTTOM:
-    case ON_PULL_DOWN_REFRESH:
-    case ON_TAB_ITEM_TAP:
-    case ON_TITLE_CLICK:
-      const pageId = history && history.location._pageId;
-      useEffect(() => {
-        if (isFunction(callback)) {
+  if (isFunction(callback)) {
+    switch (cycle) {
+      case ON_SHOW:
+      case ON_HIDE:
+      case ON_PAGE_SCROLL:
+      case ON_SHARE_APP_MESSAGE:
+      case ON_REACH_BOTTOM:
+      case ON_PULL_DOWN_REFRESH:
+      case ON_TAB_ITEM_TAP:
+      case ON_TITLE_CLICK:
+        const pageId = history && history.location._pageId;
+        useEffect(() => {
           if (!cycles[pageId]) {
             cycles[pageId] = {};
           }
@@ -42,26 +41,19 @@ export function usePageEffect(cycle, callback) {
           } else {
             cycles[pageId][cycle].push(callback);
           }
-        }
 
-        const pageInstance = getPageInstance(pageId);
-        if (!pageInstance._internal[cycle]) {
-          if (cycle === ON_SHOW || cycle === ON_HIDE) {
-            pageInstance._internal[cycle] = () => {
-              if (pageInstance.__mounted) {
-                pageInstance._trigger(cycle);
-              }
-            };
-          } else {
+          // Define page instance life cycle when the cycle is used
+          const pageInstance = getPageInstance(pageId);
+          if (!pageInstance._internal[cycle]) {
             pageInstance._internal[cycle] = (e) => {
               return pageInstance._trigger(cycle, e);
             };
           }
-        }
-      }, []);
-      break;
-    default:
-      throw new Error('Unsupported page cycle ' + cycle);
+        }, []);
+        break;
+      default:
+        throw new Error('Unsupported page cycle ' + cycle);
+    }
   }
 }
 
