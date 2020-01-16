@@ -8,7 +8,7 @@ import {createMiniAppHistory, getMiniAppHistory} from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
-import { registerEventsInConfig } from "./nativeEventListener";
+import { registerEventsInConfig } from './nativeEventListener';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
