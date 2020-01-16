@@ -9,7 +9,7 @@ const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
 const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
-const VAR_KEY_VAL_REG = /"(.*?)"\s*:\s*"var\(\-\-(.*)\)"/g;
+const VAR_KEY_VAL_REG = /"(.*?)"\s*:\s*"var\((.*)\)"/g;
 
 module.exports = function(source) {
   this.cacheable && this.cacheable();
@@ -48,11 +48,11 @@ const parse = (parsedQuery, stylesheet) => {
 
       rule.selectors.forEach((selector) => {
         let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator, rule.position, parsedQuery.log);
-
         if (sanitizedSelector) {
           // handle pseudo class
           const pseudoIndex = sanitizedSelector.indexOf(':');
-          if (pseudoIndex > -1) {
+          const pseudoRootIndex = sanitizedSelector.indexOf(':root');
+          if (pseudoIndex > -1 && !parsedQuery.theme) {
             let pseudoStyle = {};
             const pseudoName = selector.slice(pseudoIndex + 1);
             sanitizedSelector = sanitizedSelector.slice(0, pseudoIndex);
@@ -62,6 +62,9 @@ const parse = (parsedQuery, stylesheet) => {
             });
 
             style = pseudoStyle;
+          }
+          if (pseudoRootIndex >-1 && parsedQuery.theme) {
+            sanitizedSelector = '__CSSVariable';
           }
 
           styles[sanitizedSelector] = Object.assign(styles[sanitizedSelector] || {}, style);
@@ -99,14 +102,22 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
-  const getVarFuc = `
+  let setVar = 'if ("object" == typeof window) { window.__RootCSSVariable = window.__RootCSSVariable || {};';
+  for (let key in styles) {
+    if (key === '__CSSVariable' && styles[key]) {
+      for (let name in styles[key]) {
+        setVar += 'window.__RootCSSVariable["' + name + '"] = "' + styles[key][name] + '";';
+      }
+    }
+  }
+  setVar += '}';
+  const getVarFuc = setVar + `
     function _getvar(name){
-      return (typeof window === 'object' && typeof window.getComputedStyle === 'function') 
-        ? window.getComputedStyle(typeof document == 'object' ? document.body : null).getPropertyValue('--' + name) 
+      return (typeof window === 'object' && typeof window.__RootCSSVariable) 
+        ? window.__RootCSSVariable[name] 
         : "";
     }
   `;
-
   resetMessage();
 
   return `${parsedQuery.theme ? getVarFuc : ''}

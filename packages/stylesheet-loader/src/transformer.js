@@ -54,7 +54,7 @@ export default {
     var result = value,
       resultNumber;
 
-    if (VAR_REGEX.test(value)) {
+    if (value && value.search(VAR_REGEX) > -1) {
       // var(--test-var)
       result = value;
       return result;
@@ -87,9 +87,13 @@ export default {
       let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
 
-      if (value && VAR_REGEX.test(value)) {
+      if (value && value && value.search(VAR_REGEX) > -1) {
         // var(--test-var)
-        Object.assign(style, {[camelCaseProperty]: value});
+        Object.assign(style, {
+          [camelCaseProperty]: value.replace(/--/, '').replace(/\-(\w)/g, function(all, letter){
+            return letter.toUpperCase();
+          })
+        });
       } else {
         Validation.validate(camelCaseProperty, declaration.property, declaration.value, rule.selectors.join(', '), declaration.position, log);
         if (particular[camelCaseProperty]) {
