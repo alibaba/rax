@@ -18,6 +18,7 @@ import createStyle from './createStyle';
 import createContext from './createContext';
 import classnames from './classnames';
 import createRef from './createRef';
+import { addNativeEventListener, registerNativeEventListeners } from "./nativeEventListener";
 
 export {
   runApp,
@@ -53,10 +54,11 @@ export {
 
   // Router
   withRouter,
+
+  // Native events
+  addNativeEventListener,
+  registerNativeEventListeners
 };
 
 /* hooks */
 export * from './hooks';
-
-/* native events listener methods */
-export * from './nativeEventListener';
