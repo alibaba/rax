@@ -21,6 +21,8 @@ script:
 jobs:
   include:
     - stage: bench
+      node_js:
+        - "12"
       addons:
         chrome: stable
       skip_cleanup: true
