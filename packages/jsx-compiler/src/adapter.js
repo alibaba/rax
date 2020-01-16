@@ -18,6 +18,7 @@ const parserAdapters = {
       onLongPress: 'onLongTap',
       className: '__rax-view'
     },
+    compatibleText: false,
     // Need transform style & class keyword
     styleKeyword: false,
     // Need transform onClick -> bindonclick
@@ -43,6 +44,7 @@ const parserAdapters = {
       onTouchCancel: 'bindtouchcancel',
       className: '__rax-view'
     },
+    compatibleText: true,
     styleKeyword: true,
     needTransformEvent: true,
     slotScope: false

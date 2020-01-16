@@ -1,6 +1,6 @@
 import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram } from 'universal-env';
 import createDOMDriver from './dom';
-import * as MiniAppDriver from 'driver-miniapp';
+import MiniAppDriver from 'driver-miniapp';
 import * as WeexDriver from 'driver-weex';
 import createKrakenDriver from 'driver-kraken';
 

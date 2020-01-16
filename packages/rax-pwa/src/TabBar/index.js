@@ -2,7 +2,11 @@ import { createElement, useEffect, useState, Fragment } from 'rax';
 import Image from 'rax-image';
 import Text from 'rax-text';
 import View from 'rax-view';
+import getSafeAreaInsetBottom from '../getSafeAreaInsetBottom';
+
 import styles from './index.css';
+
+const TAB_BAR_HEIGHT = 98;
 
 export default function TabBar(props) {
   const [pathname, setPathname] = useState('');
@@ -35,7 +39,14 @@ export default function TabBar(props) {
   return (
     <Fragment>
       {showTabBar ? (
-        <View style={{ ...styles.tabBar, backgroundColor }}>
+        <View
+          style={{
+            ...styles.tabBar,
+            backgroundColor,
+            height: `${TAB_BAR_HEIGHT + getSafeAreaInsetBottom()}rpx`,
+            paddingBottom: `${getSafeAreaInsetBottom()}rpx`
+          }}
+        >
           {items.map((item, index) => {
             const selected = item.path === pathname;
             const itemTextColor = item.textColor || textColor;

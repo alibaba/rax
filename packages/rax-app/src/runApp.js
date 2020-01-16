@@ -97,14 +97,18 @@ export default function runApp(appConfig, pageProps = {}) {
     driver = appConfig.driver;
   }
 
-  if (isWeex || isKraken) {
-    history = createMemoryHistory();
+  // Set history
+  if (typeof appConfig.history !== 'undefined') {
+    history = appConfig.history;
   } else if (initialDataFromSSR) {
     // If that contains `initialDataFromSSR`, which means SSR is enabled,
-    // we should use brower history to make it works.
+    // we should use browser history to make it works.
     history = createBrowserHistory();
-  } else {
+  } else if (isWeb) {
     history = createHashHistory();
+  } else {
+    // In other situation use memory history.
+    history = createMemoryHistory();
   }
 
   // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.

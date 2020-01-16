@@ -9,6 +9,7 @@ const compiledComponents = require('../compiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
+const isSlotScopeNode = require('../utils/isSlotScopeNode');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -322,7 +323,7 @@ function transformTemplate(
                     ),
                   );
                 } else {
-                  const transformedArg = transformCallExpressionArg(arg);
+                  const transformedArg = transformCallExpressionArg(arg, dynamicValues, isDirective);
                   attributes.push(
                     t.jsxAttribute(
                       t.jsxIdentifier(`data-${formatName}-arg-` + (index - 1)),
@@ -698,12 +699,14 @@ function transformCallExpressionArg(ast, dynamicValues, isDirective) {
           const { node: innerNode } = innerPath;
           if (innerNode.__listItem) {
             const item = innerNode.__listItem.item;
-            innerPath.replaceWith(
-              t.memberExpression(
-                t.identifier(item),
-                t.identifier(innerNode.name),
-              ),
-            );
+            if (item) {
+              innerPath.parentPath.replaceWith(
+                t.memberExpression(
+                  t.identifier(item),
+                  t.identifier(innerNode.name),
+                ),
+              );
+            }
           }
         },
       });
@@ -740,6 +743,7 @@ function collectComponentDependentProps(path, attrValue, attrPath, componentDepe
   const isDirective = isDirectiveAttr(attrName);
   if (
     !isDirective
+    && !isSlotScopeNode(attrValue)
     && attrValue.type
     && jsxEl.__tagId
   ) {
