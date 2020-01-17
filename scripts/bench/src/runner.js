@@ -122,8 +122,8 @@ function extractRawValue(results, id) {
   if (!audits) return null;
   let audit_with_id = audits[id];
   if (typeof audit_with_id === 'undefined') return null;
-  if (typeof audit_with_id.rawValue === 'undefined') return null;
-  return audit_with_id.rawValue;
+  if (typeof audit_with_id.numericValue === 'undefined') return null;
+  return audit_with_id.numericValue;
 }
 
 function rmDir(dirPath) {
