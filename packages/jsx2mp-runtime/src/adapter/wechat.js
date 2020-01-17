@@ -43,3 +43,7 @@ export function getComponentBaseConfig() {
     }
   };
 }
+
+export function getNativeEventsBindTarget(Klass) {
+  return Klass.__config;
+}

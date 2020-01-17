@@ -4,10 +4,11 @@ import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
-import { createMiniAppHistory } from './history';
+import {createMiniAppHistory, getMiniAppHistory} from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
+import { registerEventsInConfig } from './nativeEventListener';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
@@ -39,7 +40,8 @@ function getPageCycles(Klass) {
       this.instance._internal = this;
       Object.assign(this.instance.state, this.data);
       // Add route information for page.
-      history.location.__updatePageOption(this.instance.instanceId, options);
+      history.location.__updatePageOption(options);
+      history.location.__updatePageId(this.instance.instanceId);
       this.data = this.instance.state;
 
       if (this.instance.__ready) return;
@@ -48,6 +50,14 @@ function getPageCycles(Klass) {
     },
     onUnload() {
       this.instance._unmountComponent();
+    },
+    onShow() {
+      if (this.instance && this.instance.__mounted) {
+        // Update current location pageId
+        const history = getMiniAppHistory();
+        history.location.__updatePageId(this.instance.instanceId);
+        this.instance._trigger(ON_SHOW);
+      }
     }
   };
   return config;
@@ -147,6 +157,7 @@ function createConfig(component, options) {
 
   const { events, isPage } = options;
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
+
   const config = {
     data: {},
     ...cycles,
@@ -156,6 +167,9 @@ function createConfig(component, options) {
   const proxiedMethods = createProxyMethods(events);
   if (isPage) {
     Object.assign(config, proxiedMethods);
+    // Bind config to instance
+    Klass.__proto__.__config = config;
+    registerEventsInConfig(Klass, component.__nativeEvents);
   } else {
     config.methods = proxiedMethods;
   }

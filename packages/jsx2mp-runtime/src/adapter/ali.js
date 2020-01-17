@@ -27,5 +27,10 @@ export function getComponentLifecycle({ mount, unmount }) {
 export function getComponentBaseConfig() {
   return {
     props: {},
+    events: {}
   };
+}
+
+export function getNativeEventsBindTarget(Klass) {
+  return Klass.__config.events;
 }
