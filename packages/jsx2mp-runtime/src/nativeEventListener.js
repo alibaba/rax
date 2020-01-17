@@ -9,7 +9,9 @@ export function registerEventsInConfig(Klass, events = []) {
   }
   events.forEach(eventName => {
     eventBindTarget[eventName] = function(...args) {
-      Klass.prototype.__nativeEventQueue[eventName].forEach(callback => callback(...args));
+      if (Klass.prototype.__nativeEventQueue[eventName]) {
+        Klass.prototype.__nativeEventQueue[eventName].forEach(callback => callback(...args));
+      }
     };
   });
 }
