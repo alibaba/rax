@@ -63,7 +63,7 @@ const parse = (parsedQuery, stylesheet) => {
 
             style = pseudoStyle;
           }
-          if (pseudoRootIndex >-1 && parsedQuery.theme) {
+          if (pseudoRootIndex > -1 && parsedQuery.theme) {
             sanitizedSelector = '__CSSVariable';
           }
 
