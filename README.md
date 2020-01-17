@@ -73,3 +73,12 @@ Want to file a bug, contribute some code, or improve documentation? Excellent! R
 
 This project exists thanks to all the people who contribute.
 <a href="https://github.com/alibaba/rax/graphs/contributors"><img src="https://opencollective.com/rax/contributors.svg?width=890&button=false" /></a>
+
+### Community support
+
+For general help using Rax, please refer to [the official site](https://rax.js.org/). For additional help, you can use one of these channels to ask a question:
+
+- [GitHub](https://github.com/alibaba/rax) (Bug reports, contributions)
+- [Twitter](https://twitter.com/RaxNews) (Get the news fast)
+- [Medium](https://medium.com/@raxjs) (Get blogs and articles)
+- [知乎专栏](https://zhuanlan.zhihu.com/raxjs) (Get blogs and articles in Simplified Chinese)
