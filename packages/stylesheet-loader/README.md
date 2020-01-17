@@ -171,16 +171,11 @@ We followed the [css-layout](https://github.com/facebook/yoga) style standard. T
   <img alt="stylesheet validation" src="https://gw.alicdn.com/tfs/TB1EHgXPXXXXXc3XVXXXXXXXXXX-1324-208.png" width="400">
 </p>
 
-## Theme support
-
-### Global Theme
-
-#### install
-
+## CSS Variables
 
 #### Usage
 
-You can write `var()` in CSS
+You can write `var()` in CSS. Variables need to be defined in `:root`
 
 ```css
 :root {
