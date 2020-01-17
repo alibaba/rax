@@ -177,27 +177,16 @@ We followed the [css-layout](https://github.com/facebook/yoga) style standard. T
 
 #### install
 
-```shell
-npm install universal-theme
-```
-
-And enable option `{ theme: true }` for `stylesheet-loader`
 
 #### Usage
 
 You can write `var()` in CSS
 
 ```css
+:root {
+  --color-error-1: red;
+}
 .text {
   color: var(--color-error-1);
 }
-```
-
-Then change this variable at runtime
-
-```js
-import { setCSSVariables } from 'universal-theme';
-setCSSVariables({
-  '--color-error-1': 'red'
-});
 ```
