@@ -28,8 +28,7 @@ function transformCode(rawContent, mode, externalPlugins = [], externalPreset = 
     plugins: [
       'classProperties',
       'jsx',
-      'flow',
-      'flowComment',
+      'typescript',
       'trailingFunctionCommas',
       'asyncFunctions',
       'exponentiationOperator',

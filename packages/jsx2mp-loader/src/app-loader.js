@@ -1,5 +1,5 @@
 const { readJSONSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
-const { join, sep } = require('path');
+const { join, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
@@ -95,6 +95,11 @@ module.exports = async function appLoader(content) {
     mode
   };
 
+  if (extname(this.resourcePath) === '.ts') {
+    outputOption.externalPlugins = [
+      require('@babel/plugin-transform-typescript')
+    ];
+  }
   output(outputContent, rawContent, outputOption);
 
   return [

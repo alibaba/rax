@@ -1,5 +1,5 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, resolve, sep } = require('path');
+const { relative, join, dirname, resolve, sep, extname } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const chalk = require('chalk');
@@ -104,6 +104,12 @@ module.exports = async function pageLoader(content) {
     mode
   };
 
+  const fileType = extname(this.resourcePath);
+  if (['.ts', '.tsx'].includes(fileType)) {
+    outputOption.externalPlugins = [
+      require('@babel/plugin-transform-typescript')
+    ];
+  }
   output(outputContent, rawContent, outputOption);
 
   function isCustomComponent(name, usingComponents = {}) {

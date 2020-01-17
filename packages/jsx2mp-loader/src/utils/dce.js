@@ -4,8 +4,7 @@ const parserOpts = {
   plugins: [
     'classProperties',
     'jsx',
-    'flow',
-    'flowComment',
+    'typescript',
     'trailingFunctionCommas',
     'asyncFunctions',
     'exponentiationOperator',
