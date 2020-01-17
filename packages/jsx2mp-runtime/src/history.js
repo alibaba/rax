@@ -30,7 +30,7 @@ class Location {
     this.hash = '';
   }
 
-  __updatePageOption(pageId, pageOptions) {
+  __updatePageOption(pageOptions) {
     this._currentPageOptions = pageOptions;
   }
 
