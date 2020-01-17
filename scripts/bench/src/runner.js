@@ -257,14 +257,14 @@ async function computeResultsCPU(
       console.log('# of paint events ', paints.length);
       if (paints.length > 2) {
         warnings.push(
-          `For framework ${framework.name} and benchmark ${
+          `For framework ${framework} and benchmark ${
             benchmark.id
           } the number of paint calls is higher than expected. There were ${
             paints.length
           } paints though at most 2 are expected. Please consider re-running and check the results`
         );
         console.log(
-          `For framework ${framework.name} and benchmark ${
+          `For framework ${framework} and benchmark ${
             benchmark.id
           } the number of paint calls is higher than expected. There were ${
             paints.length
