@@ -1,7 +1,6 @@
 'use strict';
 
 import globalCSSVariable from '../globalCSSVariable';
-import transformer from '../transformer';
 
 describe('globalCSSVariable', () => {
   const mockStyleString = `let globalObject = typeof window === 'object' ? window : typeof global === 'object' ? global : {};
@@ -25,21 +24,5 @@ describe('globalCSSVariable', () => {
     });
 
     expect(styleString).toEqual(mockStyleString);
-  });
-
-  it('should be returned the value of css variable', () => {
-    const style = transformer.convert({
-      type: 'rule',
-      selectors: [ ':root' ],
-      declarations: [
-        {
-          type: 'declaration',
-          property: '--color-name',
-          value: 'blue'
-        }
-      ]
-    });
-
-    expect(style.colorName).toEqual('blue');
   });
 });
