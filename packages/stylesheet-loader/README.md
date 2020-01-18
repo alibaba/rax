@@ -173,7 +173,7 @@ We followed the [css-layout](https://github.com/facebook/yoga) style standard. T
 
 ## CSS Variables
 
-#### Usage
+### Usage
 
 You can write `var()` in CSS. Variables need to be defined in `:root`
 
