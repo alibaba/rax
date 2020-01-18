@@ -105,17 +105,19 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
-  let globalCSSVariable = 'if ("object" == typeof window) { window.__RootCSSVariable = window.__RootCSSVariable || {};';
+  let globalCSSVariable = `let globalObject = typeof window === 'object' ? window : typeof global === 'object' ? global : {};
+    if (typeof globalObject === "object") { 
+      globalObject.__RootCSSVariable = globalObject.__RootCSSVariable || {};`;
   for (let key in styles) {
     if (key === GROBAL_CSS_VAR &&  typeof styles[key] === 'object') {
       for (let name in styles[key]) {
-        globalCSSVariable += 'window.__RootCSSVariable["' + name + '"] = "' + normalizeColor(styles[key][name]) + '";';
+        globalCSSVariable += 'globalObject.__RootCSSVariable["' + name + '"] = "' + normalizeColor(styles[key][name]) + '";';
       }
     }
   }
   globalCSSVariable += `}
     function _getvar(name){
-      return (typeof window === 'object' && typeof window.__RootCSSVariable) 
+      return (typeof globalObject.__RootCSSVariable === "object") 
         ? window.__RootCSSVariable[name] 
         : "";
     }
