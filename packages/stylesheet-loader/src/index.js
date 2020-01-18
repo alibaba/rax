@@ -2,7 +2,7 @@
 
 import css from 'css';
 import transformer from './transformer';
-import normalizeColor from './normalizeColor';
+import globalCSSVariable from './globalCSSVariable';
 import loaderUtils from 'loader-utils';
 import { getErrorMessages, getWarnMessages, resetMessage } from './promptMessage';
 
@@ -105,26 +105,9 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
-  let globalCSSVariable = `let globalObject = typeof window === 'object' ? window : typeof global === 'object' ? global : {};
-    if (typeof globalObject === "object") { 
-      globalObject.__RootCSSVariable = globalObject.__RootCSSVariable || {};`;
-  for (let key in styles) {
-    if (key === GROBAL_CSS_VAR &&  typeof styles[key] === 'object') {
-      for (let name in styles[key]) {
-        globalCSSVariable += 'globalObject.__RootCSSVariable["' + name + '"] = "' + normalizeColor(styles[key][name]) + '";';
-      }
-    }
-  }
-  globalCSSVariable += `}
-    function _getvar(name){
-      return (typeof globalObject.__RootCSSVariable === "object") 
-        ? window.__RootCSSVariable[name] 
-        : "";
-    }
-  `;
   resetMessage();
 
-  return `${parsedQuery.theme ? globalCSSVariable : ''}
+  return `${parsedQuery.theme ? globalCSSVariable(styles) : ''}
   var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}
