@@ -3,7 +3,7 @@ const enhancedResolve = require('enhanced-resolve');
 const { existsSync } = require('fs-extra');
 const chalk = require('chalk');
 
-const { isNpmModule, isWeexModule, isRaxModule, isJsx2mpRuntimeModule } = require('./utils/judgeModule');
+const { isNpmModule, isWeexModule, isRaxModule, isJsx2mpRuntimeModule, isNodeNativeModule } = require('./utils/judgeModule');
 
 const RUNTIME = 'jsx2mp-runtime';
 
@@ -50,6 +50,10 @@ module.exports = function visitor({ types: t }, options) {
             path.remove();
             return;
           }
+          if (isNodeNativeModule(value)) {
+            path.skip();
+            return;
+          }
 
           if (isRaxModule(value)) {
             const runtimePath = disableCopyNpm ? getRuntimeByPlatform(platform.type) : getRuntimeRelativePath(distSourcePath, outputPath);
@@ -92,6 +96,15 @@ module.exports = function visitor({ types: t }, options) {
                 path.replaceWith(t.nullLiteral());
                 return;
               }
+              if (isNodeNativeModule(moduleName)) {
+                path.skip();
+                return;
+              }
+
+              // if (['http', 'https', 'url', 'zlib', 'stream', 'tty'].includes(moduleName)) {
+              //   path.replaceWith(t.nullLiteral());
+              //   return;
+              // }
 
               if (isRaxModule(moduleName)) {
                 const runtimePath = disableCopyNpm ? getRuntimeByPlatform(platform.type) : getRuntimeRelativePath(distSourcePath, outputPath);

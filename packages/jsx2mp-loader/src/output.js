@@ -57,35 +57,36 @@ function output(content, raw, options) {
   let { code, config, json, css, map, template, assets } = content;
   if (mode === 'build') {
     // Compile ES6 => ES5 and minify code
-    code = minifyJS(transformCode(code,
-      mode,
-      externalPlugins.concat([require('@babel/plugin-proposal-class-properties')]),
-      [require('@babel/preset-env')]
-    ).code);
-    if (config) {
-      // Compile ES6 => ES5 and minify code
+    code && (
+      code = minifyJS(transformCode(code,
+        mode,
+        externalPlugins.concat([require('@babel/plugin-proposal-class-properties')]),
+        [require('@babel/preset-env')]
+      ).code)
+    );
+    config && (
       config = minifyJS(transformCode(config,
         mode,
         externalPlugins.concat([require('@babel/plugin-proposal-class-properties')]),
         [require('@babel/preset-env')]
-      ).code);
-    }
-    if (css) {
-      css = minifyCSS(css);
-    }
-    if (template) {
-      template = minifyXML(template);
-    }
+      ).code)
+    );
+    css && (css = minifyCSS(css));
+    template && (template = minifyXML(template));
   } else {
-    code = transformCode(code, mode, externalPlugins).code;
-    // Add source map
-    if (map) {
-      code = addSourceMap(code, raw, map);
+    if (code) {
+      code = transformCode(code, mode, externalPlugins).code;
+      // Add source map
+      if (map) {
+        code = addSourceMap(code, raw, map);
+      }
     }
   }
 
   // Write file
-  writeFileWithDirCheck(outputPath.code, code);
+  if (code) {
+    writeFileWithDirCheck(outputPath.code, code);
+  }
 
   if (json) {
     writeFileWithDirCheck(outputPath.json, json, 'json');
