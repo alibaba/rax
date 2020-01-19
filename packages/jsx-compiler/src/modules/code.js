@@ -63,7 +63,7 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { ast, programPath, defaultExportedPath, exportComponentPath, renderFunctionPath,
-      useCreateStyle, useClassnames, dynamicValue, dynamicEvents, imported,
+      useCreateStyle, useClassnames, dynamicValue, dynamicRef, dynamicStyle, dynamicEvents, imported,
       contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
     const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
     if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
@@ -178,7 +178,7 @@ module.exports = {
           parentNode && parentNode.remove && parentNode.remove();
         }
       });
-      addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath);
+      addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath);
       addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
       addProviderIniter(contextList, renderFunctionPath);
       addRegisterRefs(refs, renderFunctionPath);
@@ -449,11 +449,13 @@ function collectCoreMethods(raxExported) {
   return vaildList;
 }
 
-function addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath) {
+function addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath) {
   const dataProperties = [];
-
-  Object.keys(dynamicValue).forEach(name => {
-    dataProperties.push(t.objectProperty(t.stringLiteral(name), dynamicValue[name]));
+  const dataStore = dynamicValue.getStore();
+  const refStore = dynamicRef.getStore();
+  const styleStore = dynamicStyle.getStore();
+  [...dataStore, ...refStore, ...styleStore].forEach(({name, value}) => {
+    dataProperties.push(t.objectProperty(t.stringLiteral(name), value));
   });
 
   renderItemFunctions.map(renderItemFn => {
