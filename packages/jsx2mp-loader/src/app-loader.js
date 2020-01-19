@@ -11,6 +11,7 @@ const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 const adaptAppConfig = require('./adaptConfig');
+const { isTypescriptFile } = require('./utils/judgeModule');
 
 const pe = new PrettyError();
 
@@ -92,14 +93,10 @@ module.exports = async function appLoader(content) {
       css: join(outputPath, 'app' + platform.extension.css),
       config: join(outputPath, 'app.config.js')
     },
-    mode
+    mode,
+    isTypescriptFile: isTypescriptFile(this.resourcePath)
   };
 
-  if (extname(this.resourcePath) === '.ts') {
-    outputOption.externalPlugins = [
-      require('@babel/plugin-transform-typescript')
-    ];
-  }
   output(outputContent, rawContent, outputOption);
 
   return [

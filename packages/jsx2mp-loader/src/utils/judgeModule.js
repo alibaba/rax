@@ -28,7 +28,7 @@ function isJSONFile(value) {
 }
 
 function isTypescriptFile(value) {
-  return extname(value) === '.ts';
+  return extname(value) === '.ts' || extname(value) === '.tsx';
 }
 
 module.exports = {

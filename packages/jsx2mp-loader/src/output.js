@@ -53,8 +53,13 @@ function transformCode(rawContent, mode, externalPlugins = [], externalPreset = 
  * @param {object} options
  */
 function output(content, raw, options) {
-  const { mode, outputPath, externalPlugins = [] } = options;
+  const { mode, outputPath, externalPlugins = [], isTypescriptFile } = options;
   let { code, config, json, css, map, template, assets } = content;
+
+  if (isTypescriptFile) {
+    externalPlugins.unshift(require('@babel/plugin-transform-typescript'));
+  }
+
   if (mode === 'build') {
     // Compile ES6 => ES5 and minify code
     code && (

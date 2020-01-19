@@ -76,7 +76,7 @@ module.exports = function scriptLoader(content) {
       outputContent = { code: rawContent };
       outputOption = {
         outputPath: {
-          code: distSourcePath
+          code: removeExt(distSourcePath) + '.js'
         },
         mode,
         externalPlugins: [
@@ -90,14 +90,9 @@ module.exports = function scriptLoader(content) {
               platform
             }
           ]
-        ]
+        ],
+        isTypescriptFile: isTypescriptFile(this.resourcePath)
       };
-
-      // If typescript
-      if (isTypescriptFile(this.resourcePath)) {
-        outputOption.externalPlugins.unshift(require('@babel/plugin-transform-typescript'));
-        outputOption.outputPath.code = replaceExtension(outputOption.outputPath.code, '.js');
-      }
     }
 
     output(outputContent, null, outputOption);

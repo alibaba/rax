@@ -10,6 +10,7 @@ const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 const adaptPageConfig = require('./adaptConfig');
+const { isTypescriptFile } = require('./utils/judgeModule');
 
 const ComponentLoader = require.resolve('./component-loader');
 const ScriptLoader = require.resolve('./script-loader');
@@ -101,15 +102,10 @@ module.exports = async function pageLoader(content) {
       template: distFileWithoutExt + platform.extension.xml,
       assets: outputPath
     },
-    mode
+    mode,
+    isTypescriptFile: isTypescriptFile(this.resourcePath)
   };
 
-  const fileType = extname(this.resourcePath);
-  if (['.ts', '.tsx'].includes(fileType)) {
-    outputOption.externalPlugins = [
-      require('@babel/plugin-transform-typescript')
-    ];
-  }
   output(outputContent, rawContent, outputOption);
 
   function isCustomComponent(name, usingComponents = {}) {
