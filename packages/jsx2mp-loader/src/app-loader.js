@@ -1,5 +1,5 @@
 const { readJSONSync, readFileSync, existsSync, mkdirSync } = require('fs-extra');
-const { join, sep } = require('path');
+const { join, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
@@ -11,6 +11,7 @@ const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 const adaptAppConfig = require('./adaptConfig');
+const { isTypescriptFile } = require('./utils/judgeModule');
 
 const pe = new PrettyError();
 
@@ -92,7 +93,8 @@ module.exports = async function appLoader(content) {
       css: join(outputPath, 'app' + platform.extension.css),
       config: join(outputPath, 'app.config.js')
     },
-    mode
+    mode,
+    isTypescriptFile: isTypescriptFile(this.resourcePath)
   };
 
   output(outputContent, rawContent, outputOption);

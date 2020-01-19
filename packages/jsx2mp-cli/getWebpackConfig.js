@@ -144,6 +144,20 @@ module.exports = (options = {}) => {
           options: {
             entryPath: relativeEntryFilePath
           },
+        },
+        {
+          test: /\.json$/,
+          use: [{
+            loader: ScriptLoader,
+            options: {
+              mode: options.mode,
+              entryPath: relativeEntryFilePath,
+              platform: platformConfig[platform],
+              constantDir,
+              disableCopyNpm,
+              turnOffSourceMap
+            },
+          }]
         }
       ],
     },

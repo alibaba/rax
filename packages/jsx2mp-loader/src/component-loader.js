@@ -1,5 +1,5 @@
 const { readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, resolve, sep } = require('path');
+const { relative, join, dirname, resolve, sep, extname } = require('path');
 const compiler = require('jsx-compiler');
 const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
@@ -7,6 +7,7 @@ const PrettyError = require('pretty-error');
 const cached = require('./cached');
 const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
+const { isTypescriptFile } = require('./utils/judgeModule');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 
@@ -98,7 +99,8 @@ module.exports = async function componentLoader(content) {
       template: distFileWithoutExt + platform.extension.xml,
       assets: outputPath
     },
-    mode
+    mode,
+    isTypescriptFile: isTypescriptFile(this.resourcePath)
   };
 
   output(outputContent, rawContent, outputOption);

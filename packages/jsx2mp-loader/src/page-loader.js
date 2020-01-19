@@ -1,5 +1,5 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, resolve, sep } = require('path');
+const { relative, join, dirname, resolve, sep, extname } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const chalk = require('chalk');
@@ -10,6 +10,7 @@ const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 const adaptPageConfig = require('./adaptConfig');
+const { isTypescriptFile } = require('./utils/judgeModule');
 
 const ComponentLoader = require.resolve('./component-loader');
 const ScriptLoader = require.resolve('./script-loader');
@@ -101,7 +102,8 @@ module.exports = async function pageLoader(content) {
       template: distFileWithoutExt + platform.extension.xml,
       assets: outputPath
     },
-    mode
+    mode,
+    isTypescriptFile: isTypescriptFile(this.resourcePath)
   };
 
   output(outputContent, rawContent, outputOption);
