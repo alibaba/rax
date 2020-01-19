@@ -48,7 +48,9 @@ function shouldReplace(path) {
 module.exports = {
   parse(parsed, code, options) {
     const { useCreateStyle, dynamicStyle } = transformStyle(parsed[TEMPLATE_AST]);
-    parsed.useCreateStyle = useCreateStyle;
+    if (!parsed.useCreateStyle) {
+      parsed.useCreateStyle = useCreateStyle;
+    }
     // Set global dynamic style value
     parsed.dynamicStyle = dynamicStyle;
   },
