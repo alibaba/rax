@@ -59,15 +59,15 @@ module.exports = function scriptLoader(content) {
       distSourcePath = join(outputPath, relativeFilePath);
     }
 
-    let outputContent = {}
-    let outputOption = {}
+    let outputContent = {};
+    let outputOption = {};
 
     if (isJSON) {
       outputContent = {
         json: JSON.parse(rawContent)
       };
       outputOption = {
-        outputPath:{
+        outputPath: {
           json: distSourcePath
         },
         mode
