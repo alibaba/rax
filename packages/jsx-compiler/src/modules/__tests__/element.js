@@ -247,7 +247,7 @@ describe('Transform JSXElement', () => {
           {{ _d0 }}
           {{ _d1 }}
           {{ _d2 }}
-
+          
         </View>`);
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: /a-z/, _d1: { a: 1 }, _d2: [0, 1, 2] }');
     });
