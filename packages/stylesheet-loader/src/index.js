@@ -16,7 +16,8 @@ const GLOBAL_CSS_VAR = '__CSSVariables';
 const CSS_VAR_NAME = ':root';
 
 module.exports = function(source) {
-  this.cacheable && this.cacheable();
+  let self = typeof this === 'object' ? this : {};
+  self.cacheable && self.cacheable();
 
   const stylesheet = css.parse(source).stylesheet;
 
@@ -25,7 +26,7 @@ module.exports = function(source) {
   }
 
   // getOptions can return null if no query passed.
-  const parsedQuery = loaderUtils.getOptions(this) || {};
+  const parsedQuery = loaderUtils.getOptions(self) || {};
 
   // Compatible with string true.
   if (parsedQuery.log === 'true') {
