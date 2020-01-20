@@ -40,7 +40,7 @@ function App(props) {
         // Check getInitialProps returns promise.
         if (process.env.NODE_ENV !== 'production') {
           if (!getInitialPropsPromise.then) {
-            throw new Error('getInitialProps should be async function or return a promise. See detail at "' + Component.name + '".');
+            throw new Error('getInitialProps should be async function or return a promise. See detail at "' + component.name + '".');
           }
         }
 
