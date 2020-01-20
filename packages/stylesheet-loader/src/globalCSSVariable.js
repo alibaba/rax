@@ -1,13 +1,12 @@
 import normalizeColor from './normalizeColor';
 
-const GROBAL_CSS_VAR = '__CSSVariable';
-
-export default function getGlobalCSSVariable(styles) {
+export default function getGlobalCSSVariable(config) {
+  let { styles, globalCSSVarName } = config;
   let globalCSSVariable = `let __globalObject = typeof window === 'object' ? window : typeof global === 'object' ? global : {};
     if (typeof __globalObject === "object") { 
       __globalObject.__RootCSSVariable = __globalObject.__RootCSSVariable || {};`;
   for (let key in styles) {
-    if (key === GROBAL_CSS_VAR && typeof styles[key] === 'object') {
+    if (key === globalCSSVarName && typeof styles[key] === 'object') {
       for (let name in styles[key]) {
         globalCSSVariable += '__globalObject.__RootCSSVariable["' + name + '"] = "' + normalizeColor(styles[key][name]) + '";';
       }

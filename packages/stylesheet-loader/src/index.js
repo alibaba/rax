@@ -12,7 +12,7 @@ const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
 // example "color: var(--name);" search string "var(" and ")"
 const VAR_KEY_VAL_REG = /"(.*?)"\s*:\s*"var\((.*)\)"/g;
-const GROBAL_CSS_VAR = '__CSSVariable';
+const GLOBAL_CSS_VAR = '__CSSVariable';
 const CSS_VAR_NAME = ':root';
 
 module.exports = function(source) {
@@ -67,7 +67,7 @@ const parse = (parsedQuery, stylesheet) => {
             style = pseudoStyle;
           }
           if (sanitizedSelector == CSS_VAR_NAME && parsedQuery.theme) {
-            sanitizedSelector = GROBAL_CSS_VAR;
+            sanitizedSelector = GLOBAL_CSS_VAR;
           }
 
           styles[sanitizedSelector] = Object.assign(styles[sanitizedSelector] || {}, style);
@@ -107,7 +107,7 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
   resetMessage();
 
-  return `${parsedQuery.theme ? globalCSSVariable(styles) : ''}
+  return `${parsedQuery.theme ? globalCSSVariable({ styles, globalCSSVarName: GLOBAL_CSS_VAR}) : ''}
   var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}
