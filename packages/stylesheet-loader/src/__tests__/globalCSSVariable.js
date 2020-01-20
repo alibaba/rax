@@ -3,7 +3,6 @@
 import loader from '../index';
 import globalCSSVariable from '../globalCSSVariable';
 
-
 jest.mock('loader-utils', () => {
   return {
     getOptions: () => {
