@@ -15,7 +15,7 @@ describe('globalCSSVariable', () => {
 
   it('should be initialized in the runtime inline style', () => {
     const styleString = globalCSSVariable({
-      __CSSVariable: {
+      __CSSVariables: {
         colorName: 'hsl(240, 100%, 50%)'
       },
       text1: {

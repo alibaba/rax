@@ -12,7 +12,7 @@ const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
 // example "color: var(--name);" search string "var(" and ")"
 const VAR_KEY_VAL_REG = /"(.*?)"\s*:\s*"var\((.*)\)"/g;
-const GLOBAL_CSS_VAR = '__CSSVariable';
+const GLOBAL_CSS_VAR = '__CSSVariables';
 const CSS_VAR_NAME = ':root';
 
 module.exports = function(source) {
