@@ -5,22 +5,13 @@ const adapter = require('../../adapter').ali;
 const genCode = require('../../codegen/genCode');
 const genExpression = require('../../codegen/genExpression');
 
-function genInlineCode(ast) {
-  return genCode(ast, {
-    comments: false, // Remove template comments.
-    concise: true, // Reduce whitespace, but not to disable all.
-  });
-}
-
 describe('Transform condition', () => {
   it('transform conditional expression in JSXContainer', () => {
     const ast = parseExpression(`
       <View>{foo ? <View /> : <Text />}</View>
     `);
-    const dynamicValue = _transformTemplate(ast, {}, adapter, {});
-    expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><View /></block><block a:else><Text /></block></View>');
-    expect(dynamicValue[0].name).toEqual('_i0');
-    expect(dynamicValue[0].value.name).toEqual('foo');
+    _transformTemplate(ast, {}, adapter, {});
+    expect(genCode(ast).code).toEqual('<View><block a:if={foo}><View /></block><block a:else><Text /></block></View>');
   });
 
   it("transform conditional's consequent is conditional expression", () => {
@@ -29,11 +20,7 @@ describe('Transform condition', () => {
     `);
     const dynamicValue = _transformTemplate(ast, {}, adapter, {});
 
-    expect(genCode(ast).code).toEqual('<View><block a:if="{{foo}}"><block a:if="{{bar}}"><Bar /></block><block a:else><View /></block></block><block a:else><Text /></block></View>');
-    expect(dynamicValue[0].name).toEqual('_i0');
-    expect(dynamicValue[0].value.name).toEqual('bar');
-    expect(dynamicValue[1].name).toEqual('_i1');
-    expect(dynamicValue[1].value.name).toEqual('foo');
+    expect(genCode(ast).code).toEqual('<View><block a:if={foo}><block a:if={bar}><Bar /></block><block a:else><View /></block></block><block a:else><Text /></block></View>');
   });
 
   it("transform condition's alternate is conditional expression", () => {
@@ -42,11 +29,7 @@ describe('Transform condition', () => {
     `);
     const dynamicValue = _transformTemplate(ast, {}, adapter, {});
 
-    expect(genCode(ast).code).toEqual('<View><block a:if="{{empty}}"><Empty /></block><block a:else><block a:if="{{loading}}"></block><block a:else>xxx</block></block></View>');
-    expect(dynamicValue[0].name).toEqual('_i0');
-    expect(dynamicValue[0].value.name).toEqual('loading');
-    expect(dynamicValue[1].name).toEqual('_i1');
-    expect(dynamicValue[1].value.name).toEqual('empty');
+    expect(genCode(ast).code).toEqual('<View><block a:if={empty}><Empty /></block><block a:else><block a:if={loading}></block><block a:else>xxx</block></block></View>');
   });
 
   it('skip list dynamic value', () => {
@@ -59,8 +42,7 @@ describe('Transform condition', () => {
           })}
         </view>
     `);
-    const dynamicValue = _transformTemplate(ast, {}, adapter, {});
-    expect(Object.keys(dynamicValue)).toEqual([]);
+    _transformTemplate(ast, {}, adapter, {});
     expect(genCode(ast).code).toEqual(
       `<view className=\"content\">
           {list.map(item => {
@@ -77,14 +59,12 @@ describe('Transform condition', () => {
         }) : 123 }
       </View>
     `);
-    const dynamicValue = _transformTemplate(ast, {}, adapter, {});
+    _transformTemplate(ast, {}, adapter, {});
     expect(genCode(ast).code).toEqual(`<View>
-        <block a:if="{{tabList}}">{tabList.map(tab => {
+        <block a:if={tabList}>{tabList.map(tab => {
       return <View>{tab}</View>;
     })}</block><block a:else>123</block>
       </View>`);
-    expect(dynamicValue[0].name).toEqual('_i0');
-    expect(dynamicValue[0].value.name).toEqual('tabList');
   });
 
   it('transform simple logical expression', () => {
@@ -95,7 +75,7 @@ describe('Transform condition', () => {
     `);
     _transformTemplate(ast, {}, adapter, {});
     expect(genCode(ast).code).toEqual(`<View>
-        <block a:if="{{a}}"><View>1</View></block><block a:else>{a}</block>
+        <block a:if={a}><View>1</View></block><block a:else>{a}</block>
       </View>`);
   });
 
@@ -107,7 +87,7 @@ describe('Transform condition', () => {
     `);
     _transformTemplate(ast, {}, adapter, {});
     expect(genCode(ast).code).toEqual(`<View>
-        <block a:if={!a}><block a:if="{{b}}"><View>1</View></block><block a:else>{b}</block></block><block a:else>{a}</block>
+        <block a:if={!a}><block a:if={b}><View>1</View></block><block a:else>{b}</block></block><block a:else>{a}</block>
       </View>`);
   });
 });

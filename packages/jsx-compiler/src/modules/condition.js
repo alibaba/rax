@@ -2,10 +2,8 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
-const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
 const chalk = require('chalk');
-const DynamicBinding = require('../utils/DynamicBinding');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
@@ -72,8 +70,6 @@ function transformRenderFunction(ast, adapter) {
 }
 
 function transformTemplate(ast, templateMap, adapter, code) {
-  const dynamicValue = new DynamicBinding('_i');
-
   traverse(ast, {
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
@@ -83,7 +79,7 @@ function transformTemplate(ast, templateMap, adapter, code) {
       }
 
       if (node.expression.type === 'ConditionalExpression') {
-        const { replacement } = transformConditionalExpression(path, node.expression, { adapter, dynamicValue, code });
+        const { replacement } = transformConditionalExpression(path, node.expression, { adapter, code });
         path.replaceWithMultiple(replacement);
       }
 
@@ -124,7 +120,7 @@ function transformTemplate(ast, templateMap, adapter, code) {
             children.push(t.jsxExpressionContainer(right));
           }
           replacement.push(createJSX('block', {
-            [adapter.if]: generateConditionValue(test, {adapter, dynamicValue})
+            [adapter.if]: generateConditionValue(test, { adapter })
           }, children));
           if (!/Expression$/.test(left.type)) {
             replacement.push(createJSX('block', {
@@ -141,8 +137,6 @@ function transformTemplate(ast, templateMap, adapter, code) {
       }
     }
   });
-
-  return dynamicValue.getStore();
 }
 
 /**
@@ -150,8 +144,8 @@ function transformTemplate(ast, templateMap, adapter, code) {
  *        jsxExpressionContainer
  * @param {Object} expression
  *        Condition Expression
- * @param {{ adapter: Object, dynamicValue: Object, code: String }} options
- * @returns {{ replacement: Object, dynamicValue: Object }}
+ * @param {{ adapter: Object, code: String }} options
+ * @returns {{ replacement: Object }}
  * */
 function transformConditionalExpression(path, expression, options) {
   let { test, consequent, alternate } = expression;
@@ -218,7 +212,7 @@ function transformConditionalExpression(path, expression, options) {
       ),
     );
   }
-  return { replacement, dynamicValue: options.dynamicValue };
+  return { replacement };
 }
 
 module.exports = {
@@ -227,13 +221,7 @@ module.exports = {
       parsed[RENDER_FN_PATH],
       options.adapter,
     );
-    const dynamicValues = transformTemplate(parsed[TEMPLATE_AST], templateMap, options.adapter, code);
-    const dynamicValue = dynamicValues.reduce((prev, curr, vals) => {
-      const name = curr.name;
-      prev[name] = curr.value;
-      return prev;
-    }, {});
-    Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
+    transformTemplate(parsed[TEMPLATE_AST], templateMap, options.adapter, code);
   },
 
   // For test cases.
@@ -243,14 +231,11 @@ module.exports = {
 
 function generateConditionValue(test, options) {
   let conditionValue;
-  if (/Expression$/.test(test.type)) {
-    conditionValue = t.jsxExpressionContainer(test);
-  } else if (t.isStringLiteral(test)) {
+  if (t.isStringLiteral(test)) {
     conditionValue = test;
   } else {
-    // Other literal types or identifier.
-    conditionValue = t.stringLiteral(createBinding(genExpression(test)));
-    if (t.isIdentifier(test)) options.dynamicValue.add({ expression: test });
+    // Other types.
+    conditionValue = t.jsxExpressionContainer(test);
   }
   return conditionValue;
 }
