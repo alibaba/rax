@@ -182,5 +182,5 @@ const getFontFaceContent = (rules) => {
 
 const stringifyData = (data, theme) => {
   const str = JSON.stringify(data, undefined, '  ');
-  return !theme ? str : str.replace(VAR_KEY_VAL_REG, 'get $1(){return _getvar("$2")}');
+  return !theme ? str : str.replace(VAR_KEY_VAL_REG, 'get $1(){return __getValue("$2")}');
 };
