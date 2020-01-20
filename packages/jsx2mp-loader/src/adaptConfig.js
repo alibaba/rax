@@ -64,6 +64,10 @@ function adaptConfig(config, property, platform, originalConfig = {}) {
         }
       });
     });
+    if (appConfigMap.tabBar.items[platform] !== property) {
+      config[appConfigMap.tabBar.items[platform]] = config[property];
+      delete config[property];
+    }
   } else if (property === 'window') {
     Object.keys(config).forEach(c => {
       if (appConfigMap[property][c]) {
