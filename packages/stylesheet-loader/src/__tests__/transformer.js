@@ -77,6 +77,28 @@ describe('transformer', () => {
       }
     });
   });
+
+  it('should be returned the value of css variable', () => {
+    const style = transformer.convert({
+      type: 'rule',
+      selectors: [ ':root' ],
+      declarations: [
+        {
+          type: 'declaration',
+          property: '--color-name',
+          value: 'blue'
+        }
+      ]
+    });
+
+    expect(style.colorName).toEqual('blue');
+  });
+
+  it('shoule change call parameters to runtime parameters', () => {
+    const value = transformer.convertCSSVariableValue('var(--color-name)');
+
+    expect(value).toEqual('var(colorName)');
+  });
 });
 
 function parse(code) {

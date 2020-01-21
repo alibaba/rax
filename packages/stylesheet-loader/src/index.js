@@ -2,6 +2,7 @@
 
 import css from 'css';
 import transformer from './transformer';
+import globalCSSVariable from './globalCSSVariable';
 import loaderUtils from 'loader-utils';
 import { getErrorMessages, getWarnMessages, resetMessage } from './promptMessage';
 
@@ -9,9 +10,14 @@ const RULE = 'rule';
 const FONT_FACE_RULE = 'font-face';
 const MEDIA_RULE = 'media';
 const QUOTES_REG = /['|"]/g;
+// example "color: var(--name);" search string "var(" and ")"
+const VAR_KEY_VAL_REG = /"(.*?)"\s*:\s*"var\((.*)\)"/g;
+const GLOBAL_CSS_VAR = '__CSSVariables';
+const CSS_VAR_NAME = ':root';
 
 module.exports = function(source) {
-  this.cacheable && this.cacheable();
+  let self = typeof this === 'object' ? this : {};
+  self.cacheable && self.cacheable();
 
   const stylesheet = css.parse(source).stylesheet;
 
@@ -20,7 +26,7 @@ module.exports = function(source) {
   }
 
   // getOptions can return null if no query passed.
-  const parsedQuery = loaderUtils.getOptions(this) || {};
+  const parsedQuery = loaderUtils.getOptions(self) || {};
 
   // Compatible with string true.
   if (parsedQuery.log === 'true') {
@@ -47,11 +53,10 @@ const parse = (parsedQuery, stylesheet) => {
 
       rule.selectors.forEach((selector) => {
         let sanitizedSelector = transformer.sanitizeSelector(selector, transformDescendantCombinator, rule.position, parsedQuery.log);
-
         if (sanitizedSelector) {
           // handle pseudo class
           const pseudoIndex = sanitizedSelector.indexOf(':');
-          if (pseudoIndex > -1) {
+          if (pseudoIndex > -1 && !parsedQuery.theme) {
             let pseudoStyle = {};
             const pseudoName = selector.slice(pseudoIndex + 1);
             sanitizedSelector = sanitizedSelector.slice(0, pseudoIndex);
@@ -61,6 +66,9 @@ const parse = (parsedQuery, stylesheet) => {
             });
 
             style = pseudoStyle;
+          }
+          if (sanitizedSelector == CSS_VAR_NAME && parsedQuery.theme) {
+            sanitizedSelector = GLOBAL_CSS_VAR;
           }
 
           styles[sanitizedSelector] = Object.assign(styles[sanitizedSelector] || {}, style);
@@ -98,10 +106,10 @@ const genStyleContent = (parsedData, parsedQuery) => {
   const fontFaceContent = getFontFaceContent(fontFaceRules);
   const mediaContent = getMediaContent(mediaRules);
   const warnMessageOutput = parsedQuery.log ? getWarnMessageOutput() : '';
-
   resetMessage();
 
-  return `var _styles = ${stringifyData(styles)};
+  return `${parsedQuery.theme ? globalCSSVariable({ styles, globalCSSVarName: GLOBAL_CSS_VAR}) : ''}
+  var _styles = ${stringifyData(styles, parsedQuery.theme)};
   ${fontFaceContent}
   ${mediaContent}
   ${warnMessageOutput}
@@ -173,6 +181,7 @@ const getFontFaceContent = (rules) => {
   return content;
 };
 
-const stringifyData = (data) => {
-  return JSON.stringify(data, undefined, '  ');
+const stringifyData = (data, theme) => {
+  const str = JSON.stringify(data, undefined, '  ');
+  return !theme ? str : str.replace(VAR_KEY_VAL_REG, 'get $1(){return __getValue("$2")}');
 };

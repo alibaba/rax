@@ -8,6 +8,7 @@ import { pushErrorMessage } from './promptMessage';
 import chalk from 'chalk';
 
 const QUOTES_REG = /[\\'|\\"]/g;
+const VAR_REGEX = /^var\(\-\-(.*)\)$/g;
 
 const COLOR_PROPERTIES = {
   color: true,
@@ -53,6 +54,12 @@ export default {
     var result = value,
       resultNumber;
 
+    if (typeof value === 'string' && value.search(VAR_REGEX) > -1) {
+      // var(--test-var)
+      result = value;
+      return result;
+    }
+
     if (!Number.isNaN(Number(result))) {
       result = Number(result);
     }
@@ -62,6 +69,12 @@ export default {
     }
 
     return result;
+  },
+
+  convertCSSVariableValue(value) {
+    return value.replace(/\-\-/, '').replace(/\-(\w)/g, function(all, letter) {
+      return letter.toUpperCase();
+    });
   },
 
   convert(rule, log) {
@@ -80,15 +93,22 @@ export default {
       let value = this.convertValue(camelCaseProperty, declaration.value);
       style[camelCaseProperty] = value;
 
-      Validation.validate(camelCaseProperty, declaration.property, declaration.value, rule.selectors.join(', '), declaration.position, log);
-      if (particular[camelCaseProperty]) {
-        let particularResult = particular[camelCaseProperty](value);
-        if (particularResult.isDeleted) {
-          style[camelCaseProperty] = null;
-          delete style[camelCaseProperty];
-          delete particularResult.isDeleted;
+      if (typeof value === 'string' && value.search(VAR_REGEX) > -1) {
+        // var(--test-var)
+        Object.assign(style, {
+          [camelCaseProperty]: this.convertCSSVariableValue(value)
+        });
+      } else {
+        Validation.validate(camelCaseProperty, declaration.property, declaration.value, rule.selectors.join(', '), declaration.position, log);
+        if (particular[camelCaseProperty]) {
+          let particularResult = particular[camelCaseProperty](value);
+          if (particularResult.isDeleted) {
+            style[camelCaseProperty] = null;
+            delete style[camelCaseProperty];
+            delete particularResult.isDeleted;
+          }
+          Object.assign(style, particularResult);
         }
-        Object.assign(style, particularResult);
       }
     });
 

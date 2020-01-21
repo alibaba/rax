@@ -163,6 +163,19 @@ You can use gradient in Weex 0.10.0+.
 background-image: linear-gradient(to right, blue, white);
 ```
 
+### Support global css variables
+
+You can write `var()` in css. Variables need to be defined in `:root`
+
+```css
+:root {
+  --color-error-1: red;
+}
+.text {
+  color: var(--color-error-1);
+}
+```
+
 ## Validation
 
 We followed the [css-layout](https://github.com/facebook/yoga) style standard. There will be a friendly reminder on the console when your code is not standardized.
@@ -170,4 +183,3 @@ We followed the [css-layout](https://github.com/facebook/yoga) style standard. T
 <p align="center">
   <img alt="stylesheet validation" src="https://gw.alicdn.com/tfs/TB1EHgXPXXXXXc3XVXXXXXXXXXX-1324-208.png" width="400">
 </p>
-
