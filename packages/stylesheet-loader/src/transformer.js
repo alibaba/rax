@@ -90,7 +90,7 @@ export default {
       if (typeof value === 'string' && value.search(VAR_REGEX) > -1) {
         // var(--test-var)
         Object.assign(style, {
-          [camelCaseProperty]: value.replace(/--/, '').replace(/\-(\w)/g, function(all, letter) {
+          [camelCaseProperty]: value.replace(/\-\-/, '').replace(/\-(\w)/g, function(all, letter) {
             return letter.toUpperCase();
           })
         });
