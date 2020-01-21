@@ -47,7 +47,7 @@ const mockStyleString = `let __globalObject = typeof window === 'object' ? windo
   `;
 
 describe('globalCSSVariable', () => {
-  it('should be get global css variable in styles', () => {
+  it('shoule build code to create writes and reads to runtime global css variables', () => {
     const styleString = ':root { --color-name: blue; }.text1 { color: var(--color-name); }';
     const createdString = loader(styleString);
 
