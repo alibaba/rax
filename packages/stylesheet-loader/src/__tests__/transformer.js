@@ -93,6 +93,12 @@ describe('transformer', () => {
 
     expect(style.colorName).toEqual('blue');
   });
+
+  it('shoule change call parameters to runtime parameters', () => {
+    const value = transformer.convertCSSVariableValue('var(--color-name)');
+
+    expect(value).toEqual('var(colorName)');
+  });
 });
 
 function parse(code) {
