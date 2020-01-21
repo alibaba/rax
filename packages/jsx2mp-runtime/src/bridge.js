@@ -3,8 +3,7 @@ import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
-import {createMiniAppHistory, getMiniAppHistory} from './history';
+import { createMiniAppHistory, getMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
@@ -64,7 +63,7 @@ function getPageCycles(Klass) {
 }
 
 function getComponentCycles(Klass) {
-  return getComponentLifecycle({
+  return {
     mount: function() {
       const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps);
       this.instance = new Klass(props);
@@ -85,7 +84,7 @@ function getComponentCycles(Klass) {
     unmount: function() {
       this.instance._unmountComponent();
     }
-  });
+  };
 }
 
 function createProxyMethods(events) {
@@ -148,20 +147,22 @@ function createAnonymousClass(render) {
  * Bridge from Rax component class to MiniApp Component constructor.
  * @param {Class|Function} component Rax component definition.
  * @param {Object} options.
+ * @param {Function} getNativeComponentLifecycle
+ * @param componentBaseConfig
  * @return {Object} MiniApp constructor's config.
  */
-function createConfig(component, options) {
+function createConfig(component, options, getNativeComponentLifecycle, componentBaseConfig) {
   const Klass = isClassComponent(component)
     ? component
     : createAnonymousClass(component);
 
   const { events, isPage } = options;
-  const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);
+  const cycles = isPage ? getPageCycles(Klass) : getNativeComponentLifecycle(getComponentCycles(Klass));
 
   const config = {
     data: {},
     ...cycles,
-    ...getComponentBaseConfig()
+    ...componentBaseConfig
   };
 
   const proxiedMethods = createProxyMethods(events);
@@ -175,56 +176,6 @@ function createConfig(component, options) {
   }
 
   return config;
-}
-
-/**
- * Bridge App definition.
- * @param appConfig
- * @param pageProps
- */
-export function runApp(appConfig, pageProps = {}) {
-  if (_appConfig) {
-    throw new Error('runApp can only be called once.');
-  }
-
-  _appConfig = appConfig; // Store raw app config to parse router.
-  _pageProps = pageProps; // Store global page props to inject to every page props
-  __updateRouterMap(appConfig);
-
-  const appOptions = {
-    // Bridge app launch.
-    onLaunch(launchOptions) {
-      executeCallback(this, ON_LAUNCH, launchOptions);
-    },
-    onShow(showOptions) {
-      executeCallback(this, ON_SHOW, showOptions);
-    },
-    onHide() {
-      executeCallback(this, ON_HIDE);
-    },
-    onError(error) {
-      executeCallback(this, ON_ERROR, error);
-    },
-    onShareAppMessage(shareOptions) {
-      // There will be one callback fn for shareAppMessage at most
-      const callbackQueue = appCycles[ON_SHARE_APP_MESSAGE];
-      if (Array.isArray(callbackQueue) && callbackQueue[0]) {
-        return callbackQueue[0].call(this, shareOptions);
-      }
-    }
-  };
-
-  // eslint-disable-next-line
-  App(appOptions);
-}
-
-export function createPage(definition, options = {}) {
-  options.isPage = true;
-  return createConfig(definition, options);
-}
-
-export function createComponent(definition, options = {}) {
-  return createConfig(definition, options);
 }
 
 function isClassComponent(Klass) {
@@ -264,7 +215,6 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
 
 /**
  * Execute App life cycle callback(s)
- *
  * @param {object} instance App instance
  * @param {string} cycle
  * @param {*} [param={}]
@@ -274,4 +224,63 @@ function executeCallback(instance, cycle, param = {}) {
   if (Array.isArray(callbackQueue) && callbackQueue.length > 0) {
     callbackQueue.forEach(fn => fn.call(instance, param));
   }
+}
+
+export default function createBridge(getComponentLifecycle, getComponentBaseConfig) {
+  const componentBaseConfig = getComponentBaseConfig();
+  /**
+   * Bridge App definition.
+   * @param appConfig
+   * @param pageProps
+   */
+  function runApp(appConfig, pageProps = {}) {
+    if (_appConfig) {
+      throw new Error('runApp can only be called once.');
+    }
+
+    _appConfig = appConfig; // Store raw app config to parse router.
+    _pageProps = pageProps; // Store global page props to inject to every page props
+    __updateRouterMap(appConfig);
+
+    const appOptions = {
+      // Bridge app launch.
+      onLaunch(launchOptions) {
+        executeCallback(this, ON_LAUNCH, launchOptions);
+      },
+      onShow(showOptions) {
+        executeCallback(this, ON_SHOW, showOptions);
+      },
+      onHide() {
+        executeCallback(this, ON_HIDE);
+      },
+      onError(error) {
+        executeCallback(this, ON_ERROR, error);
+      },
+      onShareAppMessage(shareOptions) {
+        // There will be one callback fn for shareAppMessage at most
+        const callbackQueue = appCycles[ON_SHARE_APP_MESSAGE];
+        if (Array.isArray(callbackQueue) && callbackQueue[0]) {
+          return callbackQueue[0].call(this, shareOptions);
+        }
+      }
+    };
+
+    // eslint-disable-next-line
+    App(appOptions);
+  }
+
+  function createPage(definition, options = {}) {
+    options.isPage = true;
+    return createConfig(definition, options, getComponentLifecycle, componentBaseConfig);
+  }
+
+  function createComponent(definition, options = {}) {
+    return createConfig(definition, options, getComponentLifecycle, componentBaseConfig);
+  }
+
+  return {
+    runApp,
+    createPage,
+    createComponent
+  };
 }

@@ -1,18 +1,4 @@
-/* global my */
-
-export function redirectTo(options) {
-  my.redirectTo(options);
-}
-
-export function navigateTo(options) {
-  my.navigateTo(options);
-}
-
-export function navigateBack(options) {
-  my.navigateBack(options);
-}
-
-export function getComponentLifecycle({ mount, unmount }) {
+function getComponentLifecycle({ mount, unmount }) {
   return {
     didMount() {
       mount.apply(this, arguments);
@@ -24,13 +10,14 @@ export function getComponentLifecycle({ mount, unmount }) {
   };
 }
 
-export function getComponentBaseConfig() {
+function getComponentBaseConfig() {
   return {
     props: {},
     events: {}
   };
 }
 
-export function getNativeEventsBindTarget(Klass) {
-  return Klass.__config.events;
-}
+export default {
+  getComponentLifecycle,
+  getComponentBaseConfig,
+};

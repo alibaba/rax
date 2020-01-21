@@ -1,18 +1,4 @@
-/* global wx */
-
-export function redirectTo(options) {
-  wx.redirectTo(options);
-}
-
-export function navigateTo(options) {
-  wx.navigateTo(options);
-}
-
-export function navigateBack(options) {
-  wx.navigateBack(options);
-}
-
-export function getComponentLifecycle({ mount, unmount }) {
+function getComponentLifecycle({ mount, unmount }) {
   function attached() {
     return mount.apply(this, arguments);
   }
@@ -32,7 +18,7 @@ export function getComponentLifecycle({ mount, unmount }) {
   };
 }
 
-export function getComponentBaseConfig() {
+function getComponentBaseConfig() {
   return {
     properties: {
       __tagId: null,
@@ -44,6 +30,7 @@ export function getComponentBaseConfig() {
   };
 }
 
-export function getNativeEventsBindTarget(Klass) {
-  return Klass.__config;
-}
+export default {
+  getComponentLifecycle,
+  getComponentBaseConfig,
+};

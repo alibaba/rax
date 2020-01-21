@@ -1,9 +1,15 @@
-import { getNativeEventsBindTarget } from '@@ADAPTER@@';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp } from 'universal-env';
 import { getMiniAppHistory } from './history';
 import { getPageInstance } from './pageInstanceMap';
 
 export function registerEventsInConfig(Klass, events = []) {
-  const eventBindTarget = getNativeEventsBindTarget(Klass);
+  let eventBindTarget;
+  if (isMiniApp) {
+    eventBindTarget = Klass.__config.events;
+  } else {
+    eventBindTarget = Klass.__config;
+  }
   if (!Klass.prototype.__nativeEventQueue) {
     Klass.prototype.__nativeEventQueue = {};
   }
