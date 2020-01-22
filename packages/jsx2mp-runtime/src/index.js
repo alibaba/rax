@@ -1,8 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import aliAdapter from './adapter/ali';
-import wechatAdapter from './adapter/wechat';
-import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
-import createBridge from './bridge';
+import { runApp, createComponent, createPage } from './bridge';
 import { useAppEffect, useAppLaunch, useAppShow, useAppHide, useAppShare, useAppError } from './app';
 import {
   usePageEffect,
@@ -23,18 +20,6 @@ import createContext from './createContext';
 import classnames from './classnames';
 import createRef from './createRef';
 import { addNativeEventListener, registerNativeEventListeners } from './nativeEventListener';
-
-let getComponentLifecycle, getComponentBaseConfig;
-
-if (isMiniApp) {
-  getComponentLifecycle = aliAdapter.getComponentLifecycle;
-  getComponentBaseConfig = aliAdapter.getComponentBaseConfig;
-} else if (isWeChatMiniProgram) {
-  getComponentLifecycle = wechatAdapter.getComponentLifecycle;
-  getComponentBaseConfig = wechatAdapter.getComponentBaseConfig;
-}
-
-const { runApp, createPage, createComponent } = createBridge(getComponentLifecycle, getComponentBaseConfig);
 
 export {
   runApp,

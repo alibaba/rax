@@ -2,14 +2,11 @@
 import { isMiniApp } from 'universal-env';
 import { getMiniAppHistory } from './history';
 import { getPageInstance } from './pageInstanceMap';
+import getNativeEventBindTarget from './adapter/getNativeEventBindTarget';
 
 export function registerEventsInConfig(Klass, events = []) {
-  let eventBindTarget;
-  if (isMiniApp) {
-    eventBindTarget = Klass.__config.events;
-  } else {
-    eventBindTarget = Klass.__config;
-  }
+  console.log(Klass)
+  const eventBindTarget = getNativeEventBindTarget(Klass);
   if (!Klass.prototype.__nativeEventQueue) {
     Klass.prototype.__nativeEventQueue = {};
   }
