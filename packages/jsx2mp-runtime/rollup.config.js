@@ -16,7 +16,7 @@ function getPropsIdentifierName(platform) {
   }
 }
 
-function getBabelConfig({ platform = 'miniapp' }) {
+function getBabelConfig({ platform = 'ali' }) {
   return {
     presets: [
       [
