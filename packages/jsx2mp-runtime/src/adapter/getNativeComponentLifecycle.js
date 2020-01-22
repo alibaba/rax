@@ -1,5 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
-import dutyChain from "./dutyChain";
+import dutyChain from './dutyChain';
 
 export default function({ mount, unmount }) {
   function handleMiniApp() {

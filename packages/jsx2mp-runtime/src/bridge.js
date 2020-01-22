@@ -4,7 +4,7 @@ import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import getNativeComponentLifecycle from './adapter/getNativeComponentLifecycle';
-import getComponentBaseConfig from "./adapter/getComponentBaseConfig";
+import getComponentBaseConfig from './adapter/getComponentBaseConfig';
 import {createMiniAppHistory, getMiniAppHistory} from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';

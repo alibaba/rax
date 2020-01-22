@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import { runApp, createComponent, createPage } from './bridge';
 import { useAppEffect, useAppLaunch, useAppShow, useAppHide, useAppShare, useAppError } from './app';
 import {
