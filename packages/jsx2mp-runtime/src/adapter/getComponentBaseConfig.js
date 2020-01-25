@@ -12,7 +12,7 @@ export default function() {
 
   // For wechat miniprogram
   if (isWeChatMiniProgram) {
-    return  {
+    return {
       properties: {
         __tagId: null,
         __parentId: null,

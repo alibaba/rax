@@ -12,7 +12,7 @@ export default function({ mount, unmount }) {
       didUnmount() {
         unmount.apply(this, arguments);
       },
-    }
+    };
   }
 
   // For wechat miniprogram
