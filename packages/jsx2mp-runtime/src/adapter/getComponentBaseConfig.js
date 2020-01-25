@@ -1,19 +1,18 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
-import dutyChain from './dutyChain';
 
-function handleMiniApp() {
+export default function() {
+  // For alibaba miniapp
   if (isMiniApp) {
     return {
       props: {},
       events: {}
     };
-  } return null;
-}
+  }
 
-function handleWechatMiniProgram() {
+  // For wechat miniprogram
   if (isWeChatMiniProgram) {
-    return {
+    return  {
       properties: {
         __tagId: null,
         __parentId: null,
@@ -22,9 +21,5 @@ function handleWechatMiniProgram() {
         addGlobalClass: true,
       }
     };
-  } return null;
-}
-
-export default function() {
-  return dutyChain(handleMiniApp, handleWechatMiniProgram);
+  }
 }
