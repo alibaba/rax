@@ -32,7 +32,6 @@ function transformTemplate(
     componentDependentProps = {},
     dynamicValue
   },
-  scope = null,
   adapter,
   sourceCode,
 ) {
@@ -634,9 +633,6 @@ function transformIdentifier(expression, dynamicBinding, isDirective) {
     itemNode.__listItem = {
       jsxplus: expression.__listItem.jsxplus,
     };
-    if (expression.name === expression.__listItem.originalIndex) {
-      expression.name = expression.__listItem.index;
-    }
     replaceNode = t.memberExpression(itemNode, expression);
   } else {
     const name = dynamicBinding.add({
@@ -766,7 +762,6 @@ module.exports = {
       parsed.dynamicValue = new DynamicBinding('_d');
       const { dynamicEvents } = transformTemplate(
         parsed,
-        null,
         options.adapter,
         code
       );

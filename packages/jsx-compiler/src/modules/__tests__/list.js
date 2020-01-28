@@ -3,60 +3,66 @@ const { parseExpression } = require('../../parser');
 const adapter = require('../../adapter').ali;
 const genCode = require('../../codegen/genCode');
 
+let count = 0;
+
 describe('Transform list', () => {
   it('transform array.map in JSXContainer with inline return', () => {
-    const ast = parseExpression(`
-      <View>{arr.map((val, idx) => <item data-value={val} data-key={idx} />)}</View>
-    `);
-    _transformList(ast, [], adapter);
-
-    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => ({
+    const code = `
+    <View>{arr.map((val, idx) => <item data-value={val} data-key={idx} />)}</View>
+  `;
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => ({
     val: val,
-    idx: idx
-  }))} a:for-item="val" a:for-index="idx"><item data-value={val} data-key={idx} /></block></View>`);
+    ${index}: ${index}
+  }))} a:for-item="val" a:for-index="${index}"><item data-value={val} data-key={${index}} /></block></View>`);
   });
 
   it('transform array.map in JSXContainer', () => {
-    const ast = parseExpression(`
-      <View>{arr.map((val, idx) => {
-        return <item data-value={val} data-key={idx} />
-      })}</View>
-    `);
-    _transformList(ast, [], adapter);
-
-    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, idx) => {
+    const code = `
+    <View>{arr.map((val, idx) => {
+      return <item data-value={val} data-key={idx} />
+    })}</View>
+  `;
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
     return {
       val: val,
-      idx: idx
+      ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="idx"><item data-value={val} data-key={idx} /></block></View>`);
+  })} a:for-item="val" a:for-index="${index}"><item data-value={val} data-key={${index}} /></block></View>`);
   });
 
   it('bind list variable', () => {
-    const ast = parseExpression(`
-      <View>{arr.map((item, idx) => <View>{item.title}<image source={{ uri: item.picUrl }} resizeMode={resizeMode} /></View>)}</View>
-    `);
-    _transformList(ast, [], adapter);
-
-    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, idx) => ({
-    item: item
-  }))} a:for-item="item" a:for-index="idx"><View>{item.title}<image source={{
+    const code = `
+    <View>{arr.map((item, idx) => <View>{item.title}<image source={{ uri: item.picUrl }} resizeMode={resizeMode} /></View>)}</View>
+  `;
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, ${index}) => ({
+    item: item,
+    ${index}: ${index}
+  }))} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source={{
         uri: item.picUrl
       }} resizeMode={resizeMode} /></View></block></View>`);
   });
 
   it('list elements', () => {
-    const raw = `<View>{[1,2,3].map((val, idx) => {
+    const code = `<View>{[1,2,3].map((val, idx) => {
       return <Text>{idx}</Text>;
     })}</View>`;
-    const ast = parseExpression(raw);
-    _transformList(ast, [], adapter);
-
-    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={[1, 2, 3].map((val, idx) => { return { idx: idx }; })} a:for-item="val" a:for-index="idx"><Text>{idx}</Text></block></View>');
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast, { concise: true }).code).toEqual(`<View><block a:for={[1, 2, 3].map((val, ${index}) => { return { val: val, ${index}: ${index} }; })} a:for-item="val" a:for-index="${index}"><Text>{${index}}</Text></block></View>`);
   });
 
   it('nested list', () => {
-    const raw = `
+    const code = `
 <View
   className="header"
   onClick={() => {
@@ -77,14 +83,15 @@ describe('Transform list', () => {
   <Loading count={count} />
   {props.children}
 </View>`;
-    const ast = parseExpression(raw);
-    _transformList(ast, [], adapter);
-
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index1 = 'index' + count++;
+    const index2 = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View className="header" onClick={() => { setWorkYear(workYear + 1); }}>
   <View style={{ color: 'red' }}>workYear: {workYear}</View>
   <View style={{ color: 'red' }}>count: {count}</View>
-  <block a:for={arr.map((l1, index) => { return { l1: l1, l2: l2, index: index }; })} a:for-item="l1" a:for-index="index"><View>
-        <block a:for={l1.map((l2, index) => { return { l2: l2 }; })} a:for-item="l2" a:for-index="index"><View>{l2}</View></block>
+  <block a:for={arr.map((l1, ${index1}) => { return { l1: l1.map((l2, ${index2}) => { return { l2: l2, ${index2}: ${index2} }; }), ${index1}: ${index1} }; })} a:for-item="l1" a:for-index="${index1}"><View>
+        <block a:for={l1} a:for-item="l2" a:for-index="${index2}"><View>{l2}</View></block>
       </View></block>
   <Loading count={count} />
   {props.children}
@@ -92,12 +99,12 @@ describe('Transform list', () => {
   });
 
   it('list default params', () => {
-    const raw = `<View>{[1,2,3].map(() => {
+    const code = `<View>{[1,2,3].map(() => {
       return <Text>test</Text>;
     })}</View>`;
-    const ast = parseExpression(raw);
-    _transformList(ast, [], adapter);
-
-    expect(genCode(ast, { concise: true }).code).toEqual('<View><block a:for={[1, 2, 3].map((item, index) => { return {}; })} a:for-item="item" a:for-index="index"><Text>test</Text></block></View>');
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast, { concise: true }).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => { return { item: item, ${index}: ${index} }; })} a:for-item="item" a:for-index="${index}"><Text>test</Text></block></View>`);
   });
 });
