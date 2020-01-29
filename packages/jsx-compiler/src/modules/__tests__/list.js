@@ -13,10 +13,12 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList(ast, [], code, adapter);
     const index = 'index' + count++;
-    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => ({
-    val: val,
-    ${index}: ${index}
-  }))} a:for-item="val" a:for-index="${index}"><item data-value={val} data-key={${index}} /></block></View>`);
+    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
+    return {
+      val: val,
+      ${index}: ${index}
+    };
+  })} a:for-item="val" a:for-index="${index}"><item data-value={val} data-key={${index}} /></block></View>`);
   });
 
   it('transform array.map in JSXContainer', () => {
@@ -43,10 +45,12 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList(ast, [], code, adapter);
     const index = 'index' + count++;
-    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, ${index}) => ({
-    item: item,
-    ${index}: ${index}
-  }))} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source={{
+    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, ${index}) => {
+    return {
+      item: item,
+      ${index}: ${index}
+    };
+  })} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source={{
         uri: item.picUrl
       }} resizeMode={resizeMode} /></View></block></View>`);
   });
@@ -106,5 +110,83 @@ describe('Transform list', () => {
     _transformList(ast, [], code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => { return { item: item, ${index}: ${index} }; })} a:for-item="item" a:for-index="${index}"><Text>test</Text></block></View>`);
+  });
+
+  it('list style', () => {
+    const code = `<View>{[1,2,3].map((item, index) => {
+      const style = {
+        height: index * 100 + 'rpx'
+      }
+      return <Text style={style}>test</Text>;
+    })}</View>`;
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => {
+    const style = {
+      height: ${index} * 100 + 'rpx'
+    };
+    return {
+      item: item,
+      ${index}: ${index},
+      _s0: __create_style__(style)
+    };
+  })} a:for-item="item" a:for-index="${index}"><Text style="{{item._s0}}">test</Text></block></View>`);
+  });
+
+  it('nested list style', () => {
+    const code = `<View>
+    {[
+      [1, 2],
+      [3, 4]
+    ].map((item, index) => {
+      return (
+        <View>
+          {item.map((it, idx) => {
+            const style = {
+              height: index * 100 + "rpx"
+            };
+            return <Text style={style}>{it}</Text>;
+          })}
+        </View>
+      );
+    })}
+  </View>`;
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index1 = 'index' + count++;
+    const index2 = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View>
+    <block a:for={[[1, 2], [3, 4]].map((item, ${index1}) => {
+    return {
+      item: item.map((it, ${index2}) => {
+        const style = {
+          height: ${index1} * 100 + "rpx"
+        };
+        return {
+          it: it,
+          ${index2}: ${index2},
+          _s0: __create_style__(style)
+        };
+      }),
+      ${index1}: ${index1}
+    };
+  })} a:for-item="item" a:for-index="${index1}"><View>
+          <block a:for={item} a:for-item="it" a:for-index="${index2}"><Text style="{{it._s0}}">{it}</Text></block>
+        </View></block>
+  </View>`);
+  });
+
+  it("map function hasn't return", () => {
+    const code = '<View>{[1,2,3].map((item, index) => (<Text>test</Text>))}</View>';
+    const ast = parseExpression(code);
+    _transformList(ast, [], code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => {
+    return {
+      item: item,
+      ${index}: ${index}
+    };
+  })} a:for-item="item" a:for-index="${index}"><Text>test</Text></block></View>`);
   });
 });

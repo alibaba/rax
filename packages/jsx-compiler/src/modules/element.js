@@ -454,7 +454,8 @@ function transformTemplate(
       const originalAttrValue = path.node.value;
       if (t.isStringLiteral(originalAttrValue)) {
         let clearBindAttrValue;
-        clearBindAttrValue = dynamicValue.getExpression(originalAttrValue.value.replace(BINDING_REG, ''));
+        clearBindAttrValue = dynamicValue.getExpression(originalAttrValue.value.replace(BINDING_REG, ''))
+        || originalAttrValue.__originalExpression;
         const attrValue = clearBindAttrValue || originalAttrValue;
         collectComponentDependentProps(path, attrValue, null, componentDependentProps);
       }
