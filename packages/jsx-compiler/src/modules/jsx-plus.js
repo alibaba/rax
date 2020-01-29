@@ -8,6 +8,7 @@ const getListIndex = require('../utils/getListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
+const handleListProps = require('../utils/handleListProps');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -296,11 +297,11 @@ function transformSlotDirective(ast, adapter) {
 }
 
 function transformListJSXElement(parsed, path, code, adapter) {
-  let useCreateStyle = false;
   const { node } = path;
   const { attributes } = node.openingElement;
   const dynamicFilter = new DynamicBinding('_f');
   const dynamicStyle = new DynamicBinding('_s');
+  const dynamicValue = new DynamicBinding('_d');
   const filters = [];
   if (node.__jsxlist && !node.__jsxlist.generated) {
     const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
@@ -337,10 +338,13 @@ function transformListJSXElement(parsed, path, code, adapter) {
         }
       },
       JSXAttribute(innerPath) {
+        // Handle style
         const useCreateStyle = handleListStyle(null, innerPath, args[0], originalIndex, args[1].name, properties, dynamicStyle, code);
         if (!parsed.useCreateStyle) {
           parsed.useCreateStyle = useCreateStyle;
         }
+        // Handle props
+        handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue);
       }
     });
     if (args.length === 3) {

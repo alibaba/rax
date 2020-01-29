@@ -9,6 +9,7 @@ const handleParentListReturn = require('../utils/handleParentListReturn');
 const DynamicBinding = require('../utils/DynamicBinding');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
+const handleListProps = require('../utils/handleListProps');
 
 /**
  * Transfrom map method
@@ -19,6 +20,7 @@ const handleListStyle = require('../utils/handleListStyle');
  */
 function transformMapMethod(path, parsed, fnScope, code, adapter) {
   const dynamicStyle = new DynamicBinding('_s');
+  const dynamicValue = new DynamicBinding('_d');
   const renderItemFunctions = parsed.renderItemFunctions;
 
   const { node, parentPath } = path;
@@ -133,6 +135,8 @@ function transformMapMethod(path, parsed, fnScope, code, adapter) {
             if (!parsed.useCreateStyle) {
               parsed.useCreateStyle = useCreateStyle;
             }
+            // Handle props
+            handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
           }
         });
 

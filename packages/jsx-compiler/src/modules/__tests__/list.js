@@ -18,9 +18,11 @@ describe('Transform list', () => {
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
     return {
       val: val,
-      ${index}: ${index}
+      ${index}: ${index},
+      _d0: val,
+      _d1: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}"><item data-value={val} data-key={${index}} /></block></View>`);
+  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val._d0}}" data-key="{{val._d1}}" /></block></View>`);
   });
 
   it('transform array.map in JSXContainer', () => {
@@ -37,9 +39,11 @@ describe('Transform list', () => {
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
     return {
       val: val,
-      ${index}: ${index}
+      ${index}: ${index},
+      _d0: val,
+      _d1: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}"><item data-value={val} data-key={${index}} /></block></View>`);
+  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val._d0}}" data-key="{{val._d1}}" /></block></View>`);
   });
 
   it('bind list variable', () => {
@@ -54,11 +58,13 @@ describe('Transform list', () => {
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, ${index}) => {
     return {
       item: item,
-      ${index}: ${index}
-    };
-  })} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source={{
+      ${index}: ${index},
+      _d0: {
         uri: item.picUrl
-      }} resizeMode={resizeMode} /></View></block></View>`);
+      },
+      _d1: resizeMode
+    };
+  })} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source="{{item._d0}}" resizeMode="{{item._d1}}" /></View></block></View>`);
   });
 
   it('list elements', () => {

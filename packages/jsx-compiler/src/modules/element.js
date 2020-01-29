@@ -10,12 +10,10 @@ const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
 const isSlotScopeNode = require('../utils/isSlotScopeNode');
+const { isDirectiveAttr, isEventHandlerAttr, BINDING_REG } = require('../utils/checkAttr');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
-const isDirectiveAttr = attr => /^(a:|wx:|x-)/.test(attr);
-const isEventHandlerAttr = propKey => /^on[A-Z]/.test(propKey);
-const BINDING_REG = /{{|}}/g;
 
 /**
  * 1. Normalize jsxExpressionContainer to binding var.

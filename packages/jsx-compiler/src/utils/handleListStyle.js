@@ -1,8 +1,6 @@
 const t = require('@babel/types');
-const createBinding = require('./createBinding');
+const handleList = require('./handleList');
 const CodeError = require('./CodeError');
-const genExpression = require('../codegen/genExpression');
-const handleValidIdentifier = require('./handleValidIdentifier');
 
 /**
  * @param {NodePath} mapFnBodyPath - map function path
@@ -15,8 +13,10 @@ const handleValidIdentifier = require('./handleValidIdentifier');
  * @param {string} code - original code
  * @return {boolean} useCreateStyle
  * */
-module.exports = function(mapFnBodyPath, path, forItem, originalIndex, renamedIndex, properties, dynamicStyle, code) {
+module.exports = function(mapFnBodyPath, ...args) {
   let useCreateStyle = false;
+  const path = args[0];
+  const code = args[6];
   const { node } = path;
   if (t.isJSXIdentifier(node.name, {
     name: 'style'
@@ -30,37 +30,8 @@ module.exports = function(mapFnBodyPath, path, forItem, originalIndex, renamedIn
           "Style property's value should be JSXExpressionContainer, like <View style={styles.container}></View>.");
       }
     }
-    const valuePath = path.get('value');
-    // Rename index node in expression
-    const indexNodeVisitor = {
-      Identifier(innerPath) {
-        handleValidIdentifier(innerPath, () => {
-          if (innerPath.node.name === originalIndex) {
-            innerPath.node.name = renamedIndex;
-          }
-        });
-      }
-    };
-    valuePath.traverse(indexNodeVisitor);
-    if (mapFnBodyPath) {
-      mapFnBodyPath.traverse(indexNodeVisitor);
-    }
     useCreateStyle = true;
-    const name = dynamicStyle.add({
-      expression: node.value.expression
-    });
-    properties.push(t.objectProperty(t.identifier(name), t.callExpression(t.identifier('__create_style__'), [node.value.expression])));
-    const replaceNode = t.stringLiteral(
-      createBinding(genExpression(t.memberExpression(forItem, t.identifier(name))))
-    );
-    // Record original expression
-    replaceNode.__originalExpression = node.value.expression;
-    node.value = replaceNode;
-    // Record current properties info
-    replaceNode.__properties = {
-      properties,
-      index: properties.length - 1
-    };
+    handleList(mapFnBodyPath, ...args.splice(0, 6), t.callExpression(t.identifier('__create_style__'), [node.value.expression]));
   }
   return useCreateStyle;
 };

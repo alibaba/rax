@@ -91,19 +91,21 @@ describe('Directives', () => {
       const index2 = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View className="rxpi-coupon">
-        <block key={'test_' + ${index1}} a:for={testList.map((row, ${index1}) => {
+        <block key="{{row._d0}}" a:for={testList.map((row, ${index1}) => {
     return {
       row: row.map((col, ${index2}) => {
         return {
           col: col,
-          ${index2}: ${index2}
+          ${index2}: ${index2},
+          _d0: ${index2}
         };
       }),
-      ${index1}: ${index1}
+      ${index1}: ${index1},
+      _d0: 'test_' + ${index1}
     };
   })} a:for-item="row" a:for-index="${index1}"><View className="rxpi-coupon-row">
           <block a:for={row} a:for-item="col" a:for-index="${index2}"><View>
-            <Text key={${index2}}>{${index2}}</Text>
+            <Text key="{{col._d0}}">{${index2}}</Text>
           </View></block>
         </View></block>
       </View>`);
