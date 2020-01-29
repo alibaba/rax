@@ -20,14 +20,24 @@ module.exports = function(mapCallExpression, forNode, code) {
   if (t.isIdentifier(forNode)) {
     forItem.value = mapCallExpression;
   }
-  if (t.isMemberExpression(forNode)) {
+  if (t.isMemberExpression(forNode) || t.isCallExpression(forNode)) {
     switch (forItem.value.type) {
       case 'Identifier':
         if (t.isIdentifier(forNode.object)) {
           forItem.value = t.objectExpression([
             t.spreadElement(forItem.value),
-            t.objectProperty(forNode.property, mapCallExpression)
+            t.objectProperty(forItem.value, mapCallExpression)
           ]);
+        } else if (t.isCallExpression(forNode)) {
+          // handle list.filter().map()
+          if (!t.isIdentifier(forNode.callee.object)) {
+            throw new CodeError(code, forNode, forNode.loc, "Currently doesn't support render list by multilevel object, like item.info.list.");
+          }
+          forItem.value = t.objectExpression([
+            t.spreadElement(forItem.value),
+            t.objectProperty(forItem.value, mapCallExpression)
+          ]);
+          forNode = listItem;
         } else {
           throw new CodeError(code, forNode, forNode.loc, "Currently doesn't support render list by multilevel object, like item.info.list.");
         }

@@ -81,8 +81,7 @@ function transformMapMethod(path, parsed, code, adapter) {
         };
 
         // map callback function return path;
-        let returnElPath;
-        returnElPath = getReturnElementPath(body).get('argument');
+        const returnElPath = getReturnElementPath(body).get('argument');
 
         returnElPath.traverse({
           Identifier(innerPath) {
