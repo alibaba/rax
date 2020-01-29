@@ -20,7 +20,9 @@ describe('Directives', () => {
       </View>
     `;
       const ast = parseExpression(code);
-      _transformList(ast, code, adapter);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
       const index = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
@@ -43,7 +45,9 @@ describe('Directives', () => {
 </View>
     `;
       const ast = parseExpression(code);
-      _transformList(ast, code, adapter);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
       const index1 = 'index' + count++;
       const index2 = 'index' + count++;
       expect(genExpression(ast))
@@ -80,7 +84,9 @@ describe('Directives', () => {
       </View>
     `;
       const ast = parseExpression(code);
-      _transformList(ast, code, adapter);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
       const index1 = 'index' + count++;
       const index2 = 'index' + count++;
       expect(genExpression(ast))

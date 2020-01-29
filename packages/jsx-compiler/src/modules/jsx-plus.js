@@ -1,12 +1,13 @@
 const t = require('@babel/types');
 const DynamicBinding = require('../utils/DynamicBinding');
 const traverse = require('../utils/traverseNodePath');
-const getListItem = require('../utils/getListItem');
 const CodeError = require('../utils/CodeError');
 const createJSX = require('../utils/createJSX');
 const findIndex = require('../utils/findIndex');
 const getListIndex = require('../utils/getListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
+const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const handleListStyle = require('../utils/handleListStyle');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -151,7 +152,8 @@ function transformDirectiveClass(ast, parsed) {
   }
 }
 
-function transformDirectiveList(ast, code, adapter) {
+function transformDirectiveList(parsed, code, adapter) {
+  const ast = parsed.templateAST;
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
@@ -232,7 +234,7 @@ function transformDirectiveList(ast, code, adapter) {
           jsxplus: true
         };
         parentJSXEl.replaceWith(listEl);
-        transformListJSXElement(parentJSXEl, adapter);
+        transformListJSXElement(parsed, parentJSXEl, code, adapter);
         path.remove();
       }
     }
@@ -293,20 +295,26 @@ function transformSlotDirective(ast, adapter) {
   });
 }
 
-function transformListJSXElement(path, adapter) {
+function transformListJSXElement(parsed, path, code, adapter) {
+  let useCreateStyle = false;
   const { node } = path;
   const { attributes } = node.openingElement;
   const dynamicFilter = new DynamicBinding('_f');
+  const dynamicStyle = new DynamicBinding('_s');
   const filters = [];
   if (node.__jsxlist && !node.__jsxlist.generated) {
-    const { args, forNode, originalIndex } = node.__jsxlist;
+    const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
+    const loopBody = loopFnBody.body;
+    const properties = loopBody[loopBody.length - 1].argument.properties;
     path.traverse({
       Identifier(innerPath) {
         const { node: innerNode } = innerPath;
         // Replace index identifier which is the same as original index in list
-        if (!path.parentPath.isMemberExpression() && originalIndex === innerNode.name) {
-          innerNode.name = args[1].name;
-        }
+        handleValidIdentifier(innerPath, () => {
+          if (originalIndex === innerNode.name) {
+            innerNode.name = args[1].name;
+          }
+        });
         if (args.find(arg => arg.name === innerNode.name)) {
           innerNode.__listItem = {
             jsxplus: true,
@@ -326,6 +334,12 @@ function transformListJSXElement(path, adapter) {
             };
             filters.push(containerPath.node.expression);
           }
+        }
+      },
+      JSXAttribute(innerPath) {
+        const useCreateStyle = handleListStyle(null, innerPath, args[0], originalIndex, args[1].name, properties, dynamicStyle, code);
+        if (!parsed.useCreateStyle) {
+          parsed.useCreateStyle = useCreateStyle;
         }
       }
     });
@@ -357,8 +371,6 @@ function transformListJSXElement(path, adapter) {
       //   "_f1": classnames({ selected: index > 0 })
       //   "_f2": parse(item, index)
       // }
-      const loopBody = node.__jsxlist.loopFnBody.body;
-      const properties = loopBody[loopBody.length - 1].argument.properties;
       filters.forEach(function(f) {
         properties.push(t.objectProperty(t.identifier(f.__listItemFilter.filter), f));
       });
@@ -373,9 +385,9 @@ module.exports = {
     if (parsed.renderFunctionPath) {
       transformDirectiveClass(parsed.templateAST, parsed);
       transformDirectiveCondition(parsed.templateAST, options.adapter);
-      transformDirectiveList(parsed.templateAST, code, options.adapter);
       transformComponentFragment(parsed.templateAST);
       transformSlotDirective(parsed.templateAST, options.adapter);
+      transformDirectiveList(parsed, code, options.adapter);
     }
   },
   _transformList: transformDirectiveList,

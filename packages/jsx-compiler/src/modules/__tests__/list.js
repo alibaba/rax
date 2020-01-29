@@ -11,7 +11,9 @@ describe('Transform list', () => {
     <View>{arr.map((val, idx) => <item data-value={val} data-key={idx} />)}</View>
   `;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
     return {
@@ -28,7 +30,9 @@ describe('Transform list', () => {
     })}</View>
   `;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
     return {
@@ -43,7 +47,9 @@ describe('Transform list', () => {
     <View>{arr.map((item, idx) => <View>{item.title}<image source={{ uri: item.picUrl }} resizeMode={resizeMode} /></View>)}</View>
   `;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((item, ${index}) => {
     return {
@@ -60,7 +66,9 @@ describe('Transform list', () => {
       return <Text>{idx}</Text>;
     })}</View>`;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View><block a:for={[1, 2, 3].map((val, ${index}) => { return { val: val, ${index}: ${index} }; })} a:for-item="val" a:for-index="${index}"><Text>{${index}}</Text></block></View>`);
   });
@@ -88,7 +96,9 @@ describe('Transform list', () => {
   {props.children}
 </View>`;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View className="header" onClick={() => { setWorkYear(workYear + 1); }}>
@@ -107,7 +117,9 @@ describe('Transform list', () => {
       return <Text>test</Text>;
     })}</View>`;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => { return { item: item, ${index}: ${index} }; })} a:for-item="item" a:for-index="${index}"><Text>test</Text></block></View>`);
   });
@@ -120,7 +132,9 @@ describe('Transform list', () => {
       return <Text style={style}>test</Text>;
     })}</View>`;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => {
     const style = {
@@ -153,7 +167,9 @@ describe('Transform list', () => {
     })}
   </View>`;
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View>
@@ -180,7 +196,9 @@ describe('Transform list', () => {
   it("map function hasn't return", () => {
     const code = '<View>{[1,2,3].map((item, index) => (<Text>test</Text>))}</View>';
     const ast = parseExpression(code);
-    _transformList(ast, [], code, adapter);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => {
     return {

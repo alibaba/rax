@@ -2,26 +2,24 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
-const createBinding = require('../utils/createBinding');
 const genExpression = require('../codegen/genExpression');
 const findIndex = require('../utils/findIndex');
 const getListIndex = require('../utils/getListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const DynamicBinding = require('../utils/DynamicBinding');
-const CodeError = require('../utils/CodeError');
-const handleScopeIdentifier = require('../utils/handleScopeIdentifier');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const handleListStyle = require('../utils/handleListStyle');
 
 /**
  * Transfrom map method
  * @param {NodePath} path function or CallExpression path
- * @param {Array} renderItemFunctions render function items
+ * @param {object} parsed render function items
  * @param {Scope} fnScope original function scope
- * @param {Object} adapter
+ * @param {object} adapter
  */
-function transformMapMethod(path, renderItemFunctions, fnScope, code, adapter) {
-  let useCreateStyle = false;
+function transformMapMethod(path, parsed, fnScope, code, adapter) {
   const dynamicStyle = new DynamicBinding('_s');
+  const renderItemFunctions = parsed.renderItemFunctions;
 
   const { node, parentPath } = path;
   if (node.__transformedList) return;
@@ -65,6 +63,12 @@ function transformMapMethod(path, renderItemFunctions, fnScope, code, adapter) {
         // handle parentList
         const [forNode, parentList] = handleParentListReturn(node, iterValue, code);
 
+        if (!t.isBlockStatement(body)) {
+          // create a block return for inline return
+          body = t.blockStatement([t.returnStatement(body)]);
+          argumentsPath[0].get('body').replaceWith(body);
+        }
+
         // __jsxlist
         const jsxList = {
           args: [t.identifier(forItem.name), t.identifier(renamedIndex.name)],
@@ -76,11 +80,6 @@ function transformMapMethod(path, renderItemFunctions, fnScope, code, adapter) {
 
         // map callback function return path;
         let returnElPath;
-        if (!t.isBlockStatement(body)) {
-          // create a block return for inline return
-          body = t.blockStatement([t.returnStatement(body)]);
-          argumentsPath[0].get('body').replaceWith(body);
-        }
         returnElPath = getReturnElementPath(body).get('argument');
 
         returnElPath.traverse({
@@ -117,12 +116,11 @@ function transformMapMethod(path, renderItemFunctions, fnScope, code, adapter) {
           },
           JSXAttribute(innerPath) {
             const { node } = innerPath;
-            if (node.__transformed) return;
             // Handle renderItem
             if (node.name.name === 'data'
                 && t.isStringLiteral(node.value)
             ) {
-              const fnIdx = findIndex(renderItemFunctions, (fn) => node.value.value === `{{...${fn.name}}}`);
+              const fnIdx = findIndex(renderItemFunctions || [], (fn) => node.value.value === `{{...${fn.name}}}`);
               if (fnIdx > -1) {
                 const renderItem = renderItemFunctions[fnIdx];
                 node.value = t.stringLiteral(`${node.value.value.replace('...', `...${forItem.name}.`)}`);
@@ -131,29 +129,9 @@ function transformMapMethod(path, renderItemFunctions, fnScope, code, adapter) {
               }
             }
             // Handle style
-            if (t.isJSXIdentifier(node.name, {
-              name: 'style'
-            })) {
-              if (!t.isJSXExpressionContainer(node.value)) {
-                throw new CodeError(code, node.value, node.loc,
-                  "Style property's value should be JSXExpressionContainer, like <View style={styles.container}></View>.");
-              }
-              handleScopeIdentifier(argumentsPath[0].get('body'), (innerPath) => {
-                if (innerPath.node.name === originalIndex) {
-                  innerPath.node.name = renamedIndex.name;
-                }
-              }, () => {
-                useCreateStyle = true;
-                const name = dynamicStyle.add(node.value.expression);
-                properties.push(t.objectProperty(t.identifier(name), t.callExpression(t.identifier('__create_style__'), [node.value.expression])));
-                const replaceNode = t.stringLiteral(
-                  createBinding(genExpression(t.memberExpression(forItem, t.identifier(name))))
-                );
-                // Record original expression
-                replaceNode.__originalExpression = node.value.expression;
-                node.value = replaceNode;
-                node.__transformed = true;
-              });
+            const useCreateStyle = handleListStyle(argumentsPath[0].get('body'), innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicStyle, code);
+            if (!parsed.useCreateStyle) {
+              parsed.useCreateStyle = useCreateStyle;
             }
           }
         });
@@ -186,18 +164,16 @@ function transformMapMethod(path, renderItemFunctions, fnScope, code, adapter) {
       }
     }
   }
-  return useCreateStyle;
 }
 
-function transformList(ast, renderItemFunctions, code, adapter) {
-  let useCreateStyle = false;
-
+function transformList(parsed, code, adapter) {
+  const ast = parsed.templateAST;
   traverse(ast, {
     ArrowFunctionExpression(path) {
-      useCreateStyle = transformMapMethod(path, renderItemFunctions, path.scope, code, adapter);
+      transformMapMethod(path, parsed, path.scope, code, adapter);
     },
     FunctionExpression(path) {
-      useCreateStyle = transformMapMethod(path, renderItemFunctions, path.scope, code, adapter);
+      transformMapMethod(path, parsed, path.scope, code, adapter);
     },
     CallExpression: {
       enter(path) {
@@ -208,20 +184,15 @@ function transformList(ast, renderItemFunctions, code, adapter) {
             path.node.__bindEvent = true;
           }
         }
-        useCreateStyle = transformMapMethod(path, renderItemFunctions, path.scope, code, adapter);
+        transformMapMethod(path, parsed, path.scope, code, adapter);
       }
     }
   });
-  return useCreateStyle;
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    const useCreateStyle = transformList(parsed.templateAST, parsed.renderItemFunctions, code, options.adapter);
-    // In list item maybe use __create_style__
-    if (!parsed.useCreateStyle) {
-      parsed.useCreateStyle = useCreateStyle;
-    }
+    transformList(parsed, code, options.adapter);
   },
 
   // For test cases.
