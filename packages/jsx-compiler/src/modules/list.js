@@ -15,10 +15,10 @@ const handleListProps = require('../utils/handleListProps');
  * Transfrom map method
  * @param {NodePath} path function or CallExpression path
  * @param {object} parsed render function items
- * @param {Scope} fnScope original function scope
+ * @param {string} code - original code
  * @param {object} adapter
  */
-function transformMapMethod(path, parsed, fnScope, code, adapter) {
+function transformMapMethod(path, parsed, code, adapter) {
   const dynamicStyle = new DynamicBinding('_s');
   const dynamicValue = new DynamicBinding('_d');
   const renderItemFunctions = parsed.renderItemFunctions;
@@ -174,10 +174,10 @@ function transformList(parsed, code, adapter) {
   const ast = parsed.templateAST;
   traverse(ast, {
     ArrowFunctionExpression(path) {
-      transformMapMethod(path, parsed, path.scope, code, adapter);
+      transformMapMethod(path, parsed, code, adapter);
     },
     FunctionExpression(path) {
-      transformMapMethod(path, parsed, path.scope, code, adapter);
+      transformMapMethod(path, parsed, code, adapter);
     },
     CallExpression: {
       enter(path) {
@@ -188,7 +188,7 @@ function transformList(parsed, code, adapter) {
             path.node.__bindEvent = true;
           }
         }
-        transformMapMethod(path, parsed, path.scope, code, adapter);
+        transformMapMethod(path, parsed, code, adapter);
       }
     }
   });
