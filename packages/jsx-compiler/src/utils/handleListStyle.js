@@ -46,7 +46,9 @@ module.exports = function(mapFnBodyPath, path, forItem, originalIndex, renamedIn
       mapFnBodyPath.traverse(indexNodeVisitor);
     }
     useCreateStyle = true;
-    const name = dynamicStyle.add(node.value.expression);
+    const name = dynamicStyle.add({
+      expression: node.value.expression
+    });
     properties.push(t.objectProperty(t.identifier(name), t.callExpression(t.identifier('__create_style__'), [node.value.expression])));
     const replaceNode = t.stringLiteral(
       createBinding(genExpression(t.memberExpression(forItem, t.identifier(name))))
