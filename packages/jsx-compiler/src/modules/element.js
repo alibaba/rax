@@ -10,12 +10,10 @@ const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
 const isSlotScopeNode = require('../utils/isSlotScopeNode');
+const { isDirectiveAttr, isEventHandlerAttr, BINDING_REG } = require('../utils/checkAttr');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
-const isDirectiveAttr = attr => /^(a:|wx:|x-)/.test(attr);
-const isEventHandlerAttr = propKey => /^on[A-Z]/.test(propKey);
-const BINDING_REG = /{{|}}/g;
 
 /**
  * 1. Normalize jsxExpressionContainer to binding var.
@@ -32,7 +30,6 @@ function transformTemplate(
     componentDependentProps = {},
     dynamicValue
   },
-  scope = null,
   adapter,
   sourceCode,
 ) {
@@ -289,23 +286,24 @@ function transformTemplate(
           const { item, filter } = expression.__listItemFilter;
           path.replaceWith(t.stringLiteral(createBinding(`${item}.${filter}`)));
         } else if (type === ATTR) {
-          if (
-            isEventHandler &&
-            t.isMemberExpression(expression.callee) &&
-            t.isIdentifier(expression.callee.property, { name: 'bind' })
-          ) {
+          console.log(genExpression(expression));
+          if (isEventHandler) {
+            const isBindCallExpression = t.isMemberExpression(expression.callee) &&
+            t.isIdentifier(expression.callee.property, { name: 'bind' });
             // function bounds
             const callExp = node.expression;
             const args = callExp.arguments;
             const { attributes } = parentPath.parentPath.node;
             const name = dynamicEvents.add({
-              expression: callExp.callee.object,
+              expression: isBindCallExpression ? callExp.callee.object : callExp.callee,
               isDirective,
             });
             const formatName = formatEventName(name);
             if (Array.isArray(args)) {
               args.forEach((arg, index) => {
-                if (index === 0) {
+                // If is handleClick.bind(this, 1), valid args index should subtract 1
+                const argsIndex = isBindCallExpression ? index - 1 : index;
+                if (isBindCallExpression && index === 0) {
                   // first arg is `this` context.
                   const strValue = t.isThisExpression(arg)
                     ? 'this'
@@ -325,7 +323,7 @@ function transformTemplate(
                   const transformedArg = transformCallExpressionArg(arg, dynamicValue, isDirective);
                   attributes.push(
                     t.jsxAttribute(
-                      t.jsxIdentifier(`data-${formatName}-arg-` + (index - 1)),
+                      t.jsxIdentifier(`data-${formatName}-arg-${argsIndex}`),
                       t.stringLiteral(
                         createBinding(
                           genExpression(transformedArg, {
@@ -455,7 +453,8 @@ function transformTemplate(
       const originalAttrValue = path.node.value;
       if (t.isStringLiteral(originalAttrValue)) {
         let clearBindAttrValue;
-        clearBindAttrValue = dynamicValue.getExpression(originalAttrValue.value.replace(BINDING_REG, ''));
+        clearBindAttrValue = dynamicValue.getExpression(originalAttrValue.value.replace(BINDING_REG, ''))
+        || originalAttrValue.__originalExpression;
         const attrValue = clearBindAttrValue || originalAttrValue;
         collectComponentDependentProps(path, attrValue, null, componentDependentProps);
       }
@@ -634,9 +633,6 @@ function transformIdentifier(expression, dynamicBinding, isDirective) {
     itemNode.__listItem = {
       jsxplus: expression.__listItem.jsxplus,
     };
-    if (expression.name === expression.__listItem.originalIndex) {
-      expression.name = expression.__listItem.index;
-    }
     replaceNode = t.memberExpression(itemNode, expression);
   } else {
     const name = dynamicBinding.add({
@@ -766,7 +762,6 @@ module.exports = {
       parsed.dynamicValue = new DynamicBinding('_d');
       const { dynamicEvents } = transformTemplate(
         parsed,
-        null,
         options.adapter,
         code
       );

@@ -1,10 +1,14 @@
 const t = require('@babel/types');
 const DynamicBinding = require('../utils/DynamicBinding');
 const traverse = require('../utils/traverseNodePath');
-const getListItem = require('../utils/getListItem');
 const CodeError = require('../utils/CodeError');
 const createJSX = require('../utils/createJSX');
 const findIndex = require('../utils/findIndex');
+const getListIndex = require('../utils/getListIndex');
+const handleParentListReturn = require('../utils/handleParentListReturn');
+const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const handleListStyle = require('../utils/handleListStyle');
+const handleListProps = require('../utils/handleListProps');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -14,8 +18,6 @@ const conditionTypes = {
   [directiveElseif]: 'elseif',
   [directiveElse]: 'else',
 };
-
-let listIndexCount = 0;
 
 /**
  * Get condition type, enum of {if|elseif|else|null}
@@ -151,7 +153,8 @@ function transformDirectiveClass(ast, parsed) {
   }
 }
 
-function transformDirectiveList(ast, code, adapter) {
+function transformDirectiveList(parsed, code, adapter) {
+  const ast = parsed.templateAST;
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
@@ -161,30 +164,37 @@ function transformDirectiveList(ast, code, adapter) {
           throw new CodeError(code, node, node.loc, 'Invalid x-for usage');
         }
         const { expression } = node.value;
-        // params[2] is original index identifier
         let params = [];
-        let iterValue;
+        let forNode;
+        let parentList;
+        // original index identifier
+        let originalIndex;
+        // create new index identifier
+        const forIndex = getListIndex();
         if (t.isBinaryExpression(expression, { operator: 'in' })) {
           // x-for={(item, index) in value}
           const { left, right } = expression;
-          iterValue = right;
+          forNode = right;
           if (t.isSequenceExpression(left)) {
             // x-for={(item, key) in value}
-            params = left.expressions.concat(createIndexNode());
+            params = left.expressions;
+            originalIndex = params[1].name;
+            // Repalce index identifier
+            params[1] = forIndex;
           } else if (t.isIdentifier(left)) {
             // x-for={item in value}
-            params = [left, createIndexNode(), createIndexNode()];
+            params = [left, forIndex];
           } else {
             // x-for={??? in value}
             throw new Error('Stynax error of x-for.');
           }
         } else {
           // x-for={value}, x-for={callExp()}, ...
-          iterValue = expression;
-          params = [t.identifier('item'), createIndexNode(), createIndexNode()];
+          forNode = expression;
+          params = [t.identifier('item'), forIndex];
         }
         const parentJSXEl = path.findParent(p => p.isJSXElement());
-        // Transform x-for iterValue to map function
+        // Transform x-for forNode to map function
         const properties = [
           t.objectProperty(params[0], params[0]),
           t.objectProperty(params[1], params[1])
@@ -195,56 +205,11 @@ function transformDirectiveList(ast, code, adapter) {
           )
         ]);
         const mapCallExpression = t.callExpression(
-          t.memberExpression(iterValue, t.identifier('map')),
+          t.memberExpression(forNode, t.identifier('map')),
           [
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
-        const listItem = getListItem(iterValue);
-        let parentList;
-        if (listItem) {
-          parentList = listItem.__listItem.parentList;
-          if (parentList) {
-            // Rename index name
-            if (listItem.__listItem.index === params[1].name) {
-              params[1].name += listIndexCount++;
-            } else {
-              params.splice(2);
-            }
-            /**
-             * Assign an new object to item
-             * item: { ...item, info: item.info.map(i => {})
-             * */
-            const loopFnBodyLength = parentList.loopFnBody.body.length;
-            const properties = parentList.loopFnBody.body[loopFnBodyLength - 1].argument.properties;
-            const forItem = properties.find(({ key }) => key.name === listItem.name);
-            if (t.isIdentifier(iterValue)) {
-              forItem.value = mapCallExpression;
-            }
-            if (t.isMemberExpression(iterValue)) {
-              switch (forItem.value.type) {
-                case 'Identifier':
-                  if (t.isIdentifier(iterValue.object)) {
-                    forItem.value = t.objectExpression([
-                      t.spreadElement(forItem.value),
-                      t.objectProperty(iterValue.property, mapCallExpression)
-                    ]);
-                  } else {
-                    throw new CodeError(code, iterValue, iterValue.loc, "Currently doesn't support x-for={it in item.info.list} in nested list");
-                  }
-                  break;
-                case 'ObjectExpression':
-                  forItem.value.properties.push(
-                    t.objectProperty(iterValue.property, mapCallExpression)
-                  );
-                  break;
-              }
-            }
-          } else {
-            throw new CodeError(code, iterValue, iterValue.loc, 'Nested x-for list only supports MemberExpression and Identifier，like x-for={item.list} or x-for={item}.');
-          }
-        } else {
-          iterValue = mapCallExpression;
-        }
+        [forNode, parentList] = handleParentListReturn(mapCallExpression, forNode, code);
         const parentAttributes = path.parentPath.node.attributes;
         const keyAttrIndex = findIndex(parentAttributes, attr => t.isJSXIdentifier(attr.name, {
           name: 'key'
@@ -257,18 +222,20 @@ function transformDirectiveList(ast, code, adapter) {
             ...parentAttributes.slice(keyAttrIndex + 1)
           ];
         }
+        // <Component x-for={(item in list)} />, insert <Component /> to <block a:for={list} a:for-item="item"></block>
         const listEl = createJSX('block', listAttr, [
           parentJSXEl.node
         ]);
         listEl.__jsxlist = {
           args: params,
-          iterValue,
+          forNode,
           loopFnBody,
           parentList,
+          originalIndex,
           jsxplus: true
         };
         parentJSXEl.replaceWith(listEl);
-        transformListJSXElement(parentJSXEl, adapter);
+        transformListJSXElement(parsed, parentJSXEl, code, adapter);
         path.remove();
       }
     }
@@ -329,23 +296,31 @@ function transformSlotDirective(ast, adapter) {
   });
 }
 
-function transformListJSXElement(path, adapter) {
+function transformListJSXElement(parsed, path, code, adapter) {
   const { node } = path;
   const { attributes } = node.openingElement;
   const dynamicFilter = new DynamicBinding('_f');
+  const dynamicStyle = new DynamicBinding('_s');
+  const dynamicValue = new DynamicBinding('_d');
   const filters = [];
   if (node.__jsxlist && !node.__jsxlist.generated) {
-    const { args, iterValue } = node.__jsxlist;
+    const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
+    const loopBody = loopFnBody.body;
+    const properties = loopBody[loopBody.length - 1].argument.properties;
     path.traverse({
       Identifier(innerPath) {
         const { node: innerNode } = innerPath;
+        // Replace index identifier which is the same as original index in list
+        handleValidIdentifier(innerPath, () => {
+          if (originalIndex === innerNode.name) {
+            innerNode.name = args[1].name;
+          }
+        });
         if (args.find(arg => arg.name === innerNode.name)) {
-          // Rename index node
           innerNode.__listItem = {
             jsxplus: true,
             item: args[0].name,
             index: args[1].name,
-            originalIndex: args[2] ? args[2].name : args[1].name,
             parentList: node.__jsxlist
           };
           // <View x-for={items} data-item={setDataset(item)}>
@@ -361,6 +336,15 @@ function transformListJSXElement(path, adapter) {
             filters.push(containerPath.node.expression);
           }
         }
+      },
+      JSXAttribute(innerPath) {
+        // Handle style
+        const useCreateStyle = handleListStyle(null, innerPath, args[0], originalIndex, args[1].name, properties, dynamicStyle, code);
+        if (!parsed.useCreateStyle) {
+          parsed.useCreateStyle = useCreateStyle;
+        }
+        // Handle props
+        handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue);
       }
     });
     if (args.length === 3) {
@@ -369,7 +353,7 @@ function transformListJSXElement(path, adapter) {
     attributes.push(
       t.jsxAttribute(
         t.jsxIdentifier(adapter.for),
-        t.jsxExpressionContainer(iterValue)
+        t.jsxExpressionContainer(forNode)
       )
     );
     args.forEach((arg, index) => {
@@ -391,8 +375,6 @@ function transformListJSXElement(path, adapter) {
       //   "_f1": classnames({ selected: index > 0 })
       //   "_f2": parse(item, index)
       // }
-      const loopBody = node.__jsxlist.loopFnBody.body;
-      const properties = loopBody[loopBody.length - 1].argument.properties;
       filters.forEach(function(f) {
         properties.push(t.objectProperty(t.identifier(f.__listItemFilter.filter), f));
       });
@@ -402,18 +384,14 @@ function transformListJSXElement(path, adapter) {
   }
 }
 
-function createIndexNode() {
-  return t.identifier('index');
-}
-
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       transformDirectiveClass(parsed.templateAST, parsed);
       transformDirectiveCondition(parsed.templateAST, options.adapter);
-      transformDirectiveList(parsed.templateAST, code, options.adapter);
       transformComponentFragment(parsed.templateAST);
       transformSlotDirective(parsed.templateAST, options.adapter);
+      transformDirectiveList(parsed, code, options.adapter);
     }
   },
   _transformList: transformDirectiveList,
