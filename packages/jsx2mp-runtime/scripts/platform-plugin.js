@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-// Collector import specifiers
+// Collect import specifiers
 const specified = [];
 const platformEnvValues = ['isMiniApp', 'isWeChatMiniProgram'];
 const platformMap = {
@@ -14,9 +14,9 @@ function variableDeclarationMethod(name, value) {
 }
 
 /**
- * generator object expression
+ * Generate object expression
  *
- * @param  {string} platformName specified platform value it true
+ * @param  {string} platformName Set corresponding specified platform value to true
  * @return {objectExpression}
  * @example
  *   objectExpressionMethod('isMiniApp')
@@ -100,7 +100,7 @@ module.exports = function({ types: t }, { platform = 'ali' }) {
 
                   path.insertAfter(newNode);
 
-                  // Support custom alise import:
+                  // Support custom alias import:
                   // import { isMiniApp as iw } from 'universal-env';
                   // const isMiniApp = true;
                   // const iw = true;
