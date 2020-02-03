@@ -286,23 +286,24 @@ function transformTemplate(
           const { item, filter } = expression.__listItemFilter;
           path.replaceWith(t.stringLiteral(createBinding(`${item}.${filter}`)));
         } else if (type === ATTR) {
-          if (
-            isEventHandler &&
-            t.isMemberExpression(expression.callee) &&
-            t.isIdentifier(expression.callee.property, { name: 'bind' })
-          ) {
+          console.log(genExpression(expression));
+          if (isEventHandler) {
+            const isBindCallExpression = t.isMemberExpression(expression.callee) &&
+            t.isIdentifier(expression.callee.property, { name: 'bind' });
             // function bounds
             const callExp = node.expression;
             const args = callExp.arguments;
             const { attributes } = parentPath.parentPath.node;
             const name = dynamicEvents.add({
-              expression: callExp.callee.object,
+              expression: isBindCallExpression ? callExp.callee.object : callExp.callee,
               isDirective,
             });
             const formatName = formatEventName(name);
             if (Array.isArray(args)) {
               args.forEach((arg, index) => {
-                if (index === 0) {
+                // If is handleClick.bind(this, 1), valid args index should subtract 1
+                const argsIndex = isBindCallExpression ? index - 1 : index;
+                if (isBindCallExpression && index === 0) {
                   // first arg is `this` context.
                   const strValue = t.isThisExpression(arg)
                     ? 'this'
@@ -322,7 +323,7 @@ function transformTemplate(
                   const transformedArg = transformCallExpressionArg(arg, dynamicValue, isDirective);
                   attributes.push(
                     t.jsxAttribute(
-                      t.jsxIdentifier(`data-${formatName}-arg-` + (index - 1)),
+                      t.jsxIdentifier(`data-${formatName}-arg-${argsIndex}`),
                       t.stringLiteral(
                         createBinding(
                           genExpression(transformedArg, {
