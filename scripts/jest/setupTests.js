@@ -1,10 +1,12 @@
+/* global jasmine */
 const shouldIgnoreConsoleError = require('./shouldIgnoreConsoleError');
 const util = require('util');
-const chalk = require('chalk');
+const chalk = require('chalk'); // eslint-disable-line import/no-extraneous-dependencies
 
 expect.extend({
   ...require('./toWarnDev')
 });
+
 
 const env = jasmine.getEnv();
 

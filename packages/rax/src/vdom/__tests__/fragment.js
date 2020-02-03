@@ -195,7 +195,7 @@ describe('FragmentComponent', function() {
 
     class MyComponent extends Component {
       render() {
-        let {condition} = this.props;
+        let { condition } = this.props;
         return condition ? <Hello key="a" /> :
           [<Hello key="a" />, <div key="b">World</div>];
       }
@@ -224,7 +224,7 @@ describe('FragmentComponent', function() {
 
     class MyComponent extends Component {
       render() {
-        let {condition} = this.props;
+        let { condition } = this.props;
         return condition ? <Hello key="a" /> :
           [[<Hello key="a" />, <div key="b">World</div>], <div key={'c'} />];
       }
@@ -256,7 +256,7 @@ describe('FragmentComponent', function() {
 
     class MyComponent extends Component {
       render() {
-        let {condition} = this.props;
+        let { condition } = this.props;
         return condition ? [null, <Hello key={'a'} />] :
           [<div key={'b'}>Hello</div>, <Hello key={'c'} />];
       }
@@ -302,7 +302,7 @@ describe('FragmentComponent', function() {
 
     class MyComponent extends Component {
       render() {
-        let {condition} = this.props;
+        let { condition } = this.props;
         return condition ? [[<div key="b">World</div>, <Hello key="a" />]] :
           [[<Hello key="a" />, <div key="b">World</div>], <div key={'c'} />];
       }
@@ -387,7 +387,7 @@ describe('FragmentComponent', function() {
     }
 
     class App extends Component {
-      state = {count: 0};
+      state = { count: 0 };
       render() {
         return (
           <div>
@@ -422,7 +422,7 @@ describe('FragmentComponent', function() {
     }
 
     class App extends Component {
-      state = {count: 0};
+      state = { count: 0 };
       render() {
         return (
           <div>
@@ -473,7 +473,7 @@ describe('FragmentComponent', function() {
     }
 
     class App extends Component {
-      state = {count: 0};
+      state = { count: 0 };
       render() {
         return (
           <div>
@@ -506,5 +506,40 @@ describe('FragmentComponent', function() {
 
     jest.runAllTimers();
     expect(el.childNodes[0].childNodes).toEqual([]);
+  });
+
+  it('should unmount all children', function() {
+    let el = createNodeElement('div');
+
+    class App extends Component {
+      state = {
+        list: [],
+      };
+
+      componentDidMount() {
+        // eslint-disable-next-line
+        this.setState({
+          list: [1, 2, 3]
+        });
+      }
+
+      render() {
+        const { list } = this.state;
+        return list.map(item => <div key={item}>{item}</div>);
+      }
+    }
+
+    let instance = render(<App />, el);
+    jest.runAllTimers();
+    expect(el.childNodes.length).toBe(3);
+
+    Host.driver.removeChildren = (node) => {
+      node.childNodes = [];
+    };
+    instance.setState({ list: [] });
+    jest.runAllTimers();
+
+    delete Host.driver.removeChildren; // Reset driver
+    expect(el.childNodes.length).toBe(0);
   });
 });
