@@ -10,13 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^2.4.2",
-    "chrome-launcher": "^0.10.5",
-    "chromedriver": "^75.0.0",
+    "chrome-launcher": "latest",
+    "chromedriver": "latest",
     "cli-table": "^0.3.1",
     "debug": "^4.1.1",
     "http-server": "^0.10.0",
     "jstat": "^1.7.1",
-    "lighthouse": "^4.2.0",
+    "lighthouse": "latest",
     "ramda": "^0.26.1",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "yargs": "^13.2.2"

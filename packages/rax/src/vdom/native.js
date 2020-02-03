@@ -347,6 +347,8 @@ export default class NativeComponent extends BaseComponent {
       driver.removeChildren
       // nextChildElements == null or nextChildElements is empty
       && (isNull(nextChildrenElements) || nextChildrenElements && !nextChildrenElements.length)
+      // Fragment parent can not remove parentNode's all child nodes directly.
+      && !isFragmentParent
     );
 
     // Unmount children that are no longer present.

@@ -122,8 +122,8 @@ function extractRawValue(results, id) {
   if (!audits) return null;
   let audit_with_id = audits[id];
   if (typeof audit_with_id === 'undefined') return null;
-  if (typeof audit_with_id.rawValue === 'undefined') return null;
-  return audit_with_id.rawValue;
+  if (typeof audit_with_id.numericValue === 'undefined') return null;
+  return audit_with_id.numericValue;
 }
 
 function rmDir(dirPath) {
@@ -257,14 +257,14 @@ async function computeResultsCPU(
       console.log('# of paint events ', paints.length);
       if (paints.length > 2) {
         warnings.push(
-          `For framework ${framework.name} and benchmark ${
+          `For framework ${framework} and benchmark ${
             benchmark.id
           } the number of paint calls is higher than expected. There were ${
             paints.length
           } paints though at most 2 are expected. Please consider re-running and check the results`
         );
         console.log(
-          `For framework ${framework.name} and benchmark ${
+          `For framework ${framework} and benchmark ${
             benchmark.id
           } the number of paint calls is higher than expected. There were ${
             paints.length
