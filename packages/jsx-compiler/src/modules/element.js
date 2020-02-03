@@ -286,7 +286,6 @@ function transformTemplate(
           const { item, filter } = expression.__listItemFilter;
           path.replaceWith(t.stringLiteral(createBinding(`${item}.${filter}`)));
         } else if (type === ATTR) {
-          console.log(genExpression(expression));
           if (isEventHandler) {
             const isBindCallExpression = t.isMemberExpression(expression.callee) &&
             t.isIdentifier(expression.callee.property, { name: 'bind' });
