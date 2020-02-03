@@ -8,8 +8,8 @@ export function registerEventsInConfig(Klass, events = []) {
     Klass.prototype.__nativeEventQueue = {};
   }
   events.forEach(eventName => {
-    const returnConfig = eventName !== ON_SHARE_APP_MESSAGE;
-    const eventBindTarget = getNativeEventBindTarget(Klass, returnConfig);
+    const shouldReturnConfig = eventName !== ON_SHARE_APP_MESSAGE;
+    const eventBindTarget = getNativeEventBindTarget(Klass, shouldReturnConfig);
     eventBindTarget[eventName] = function(...args) {
       // onShareAppMessage need receive callback execute return
       let ret;
