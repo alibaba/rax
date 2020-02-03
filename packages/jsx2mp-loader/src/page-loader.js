@@ -1,11 +1,11 @@
 const { readJSONSync, writeJSONSync, writeFileSync, readFileSync, existsSync, mkdirpSync } = require('fs-extra');
-const { relative, join, dirname, resolve, sep, extname } = require('path');
+const { relative, join, dirname, resolve } = require('path');
 const { getOptions } = require('loader-utils');
 const compiler = require('jsx-compiler');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash, addRelativePathPrefix } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
@@ -76,8 +76,7 @@ module.exports = async function pageLoader(content) {
     Object.keys(config.usingComponents).forEach(key => {
       const value = config.usingComponents[key];
       if (/^c-/.test(key)) {
-        let result = `.${sep}` + relative(dirname(this.resourcePath), value); // components/Repo.jsx
-        result = removeExt(result); // components/Repo
+        const result = removeExt(addRelativePathPrefix(relative(dirname(this.resourcePath), value)));
         usingComponents[key] = replaceBackSlashWithSlash(result);
       } else {
         usingComponents[key] = replaceBackSlashWithSlash(value);

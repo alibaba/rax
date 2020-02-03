@@ -12,7 +12,16 @@ function normalizeFileName(filename) {
   return filename.replace(/@/g, '_');
 }
 
+/**
+ * Add ./ (Linux/Unix) or .\ (Windows) at the start of filepath
+ * @param {string} filepath
+ * @returns {string}
+ */
+function addRelativePathPrefix(filepath) {
+  return filepath[0] !== '.' ? `.${sep}${filepath}` : filepath;
+}
 module.exports = {
   getNpmName,
-  normalizeFileName
+  normalizeFileName,
+  addRelativePathPrefix
 };
