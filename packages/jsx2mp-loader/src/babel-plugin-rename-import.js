@@ -1,15 +1,15 @@
-const { join, relative, dirname, resolve, sep } = require('path');
+const { join, relative, dirname, resolve } = require('path');
 const enhancedResolve = require('enhanced-resolve');
-const { existsSync } = require('fs-extra');
 const chalk = require('chalk');
 
 const { isNpmModule, isWeexModule, isRaxModule, isJsx2mpRuntimeModule, isNodeNativeModule } = require('./utils/judgeModule');
+const { addRelativePathPrefix } = require('./utils/pathHelper');
 
 const RUNTIME = 'jsx2mp-runtime';
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 
-const getRuntimeRelativePath = (distSourcePath, outputPath) => `.${sep}` + join(relative(dirname(distSourcePath), join(outputPath, 'npm')), RUNTIME);
+const getRuntimeRelativePath = (distSourcePath, outputPath) => addRelativePathPrefix(join(relative(dirname(distSourcePath), join(outputPath, 'npm')), RUNTIME));
 
 const defaultOptions = {
   normalizeNpmFileName: (s) => s,
@@ -30,14 +30,14 @@ module.exports = function visitor({ types: t }, options) {
 
     const rootNodeModulePath = join(rootContext, 'node_modules');
     const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target)));
-    return t.stringLiteral(normalizeNpmFileName(`.${sep}` + filePath));
+    return t.stringLiteral(normalizeNpmFileName(addRelativePathPrefix(filePath)));
   };
 
   // In WeChat miniapp, `require` can't get index file if index is omitted
   const ensureIndexInPath = (value, resourcePath) => {
     const target = require.resolve(resolve(dirname(resourcePath), value));
     const result = relative(dirname(resourcePath), target);
-    return result[0] === '.' ? result : `.${sep}` + result;
+    return addRelativePathPrefix(result);
   };
 
   return {

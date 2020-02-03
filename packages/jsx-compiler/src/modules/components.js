@@ -12,7 +12,7 @@ const Expression = require('../utils/Expression');
 const compiledComponents = require('../compiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
-const { getNpmName, normalizeFileName } = require('../utils/pathHelper');
+const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
@@ -361,12 +361,11 @@ function getComponentPath(alias, options) {
     const pkgName = getNpmName(alias.from);
     const realPkgName = getRealNpmPkgName(realNpmFile);
     const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
-    let npmRelativePath = relative(targetFileDir, join(options.outputPath, 'npm'));
-    npmRelativePath = npmRelativePath[0] !== '.' ? `.${sep}${npmRelativePath}` : npmRelativePath;
+    const npmRelativePath = relative(targetFileDir, join(options.outputPath, 'npm'));
 
     // Use specific path to import native miniapp component
     if (pkgName !== alias.from) {
-      return normalizeFileName(`.${sep}` + join(npmRelativePath, alias.from.replace(pkgName, realPkgName)));
+      return normalizeFileName(addRelativePathPrefix(join(npmRelativePath, alias.from.replace(pkgName, realPkgName))));
     }
     // Use miniappConfig in package.json to import native miniapp component
     const pkg = getComponentConfig(alias.from, options.resourcePath);
@@ -396,7 +395,7 @@ function getComponentPath(alias, options) {
       const miniappConfigRelativePath = relative(pkg.main, miniappComponentPath);
       const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath);
       const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(realPkgName) + realPkgName.length);
-      return normalizeFileName(`.${sep}` + join(npmRelativePath, realPkgName, realMiniappRelativePath));
+      return normalizeFileName(addRelativePathPrefix(join(npmRelativePath, realPkgName, realMiniappRelativePath)));
     }
   }
 }

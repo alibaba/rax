@@ -85,10 +85,20 @@ function replaceBackSlashWithSlash(filePath) {
   return filePath.replace(/\\/g, '/');
 }
 
+/**
+ * Add ./ (Linux/Unix) or .\ (Windows) at the start of filepath
+ * @param {string} filepath
+ * @returns {string}
+ */
+function addRelativePathPrefix(filepath) {
+  return filepath[0] !== '.' ? `.${sep}${filepath}` : filepath;
+}
+
 module.exports = {
   removeExt,
   isFromTargetDirs,
   replaceExtension,
   doubleBackslash,
-  replaceBackSlashWithSlash
+  replaceBackSlashWithSlash,
+  addRelativePathPrefix
 };

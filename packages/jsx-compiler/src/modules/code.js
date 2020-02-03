@@ -1,12 +1,12 @@
 const t = require('@babel/types');
-const { join, relative, dirname, resolve, extname, sep } = require('path');
+const { join, relative, dirname, resolve, extname } = require('path');
 const resolveModule = require('resolve');
 const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
-const { getNpmName, normalizeFileName } = require('../utils/pathHelper');
+const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
@@ -202,8 +202,7 @@ function genTagIdExp(expressions) {
 function getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm) {
   let runtimePath = getRuntimeByPlatform(platform.type);
   if (!disableCopyNpm) {
-    runtimePath = relative(targetFileDir, join(outputPath, 'npm', RUNTIME));
-    runtimePath = runtimePath[0] !== '.' ? `.${sep}${runtimePath}` : runtimePath;
+    runtimePath = addRelativePathPrefix(relative(targetFileDir, join(outputPath, 'npm', RUNTIME)));
   }
   return runtimePath;
 }
@@ -296,7 +295,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     } else {
       ret = join(prefix, value.replace(npmName, realNpmName));
     }
-    if (ret[0] !== '.') ret = `.${sep}` + ret;
+    ret = addRelativePathPrefix(ret);
     // ret => '../npm/_ali/universal-toast/lib/index.js
 
     return t.stringLiteral(normalizeFileName(ret));
@@ -565,7 +564,7 @@ function ensureIndexInPath(value, resourcePath) {
     extensions: ['.js', '.ts']
   });
   const result = relative(dirname(resourcePath), target);
-  return removeJSExtension(result[0] === '.' ? result : `.${sep}${result}`);
+  return removeJSExtension(addRelativePathPrefix(result));
 };
 
 function removeJSExtension(filePath) {
