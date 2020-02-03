@@ -1,13 +1,13 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* global my, wx */
 import { getMiniAppHistory } from './history';
-import { isMiniApp, isWechatMiniProgram } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
 
 let apiCore;
 
 if (isMiniApp) {
   apiCore = my;
-} else if (isWechatMiniProgram) {
+} else if (isWeChatMiniProgram) {
   apiCore = wx;
 }
 
