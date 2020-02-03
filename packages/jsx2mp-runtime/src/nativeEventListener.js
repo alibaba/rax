@@ -1,9 +1,9 @@
-import { getNativeEventsBindTarget } from '@@ADAPTER@@';
 import { getMiniAppHistory } from './history';
 import { getPageInstance } from './pageInstanceMap';
+import getNativeEventBindTarget from './adapter/getNativeEventBindTarget';
 
 export function registerEventsInConfig(Klass, events = []) {
-  const eventBindTarget = getNativeEventsBindTarget(Klass);
+  const eventBindTarget = getNativeEventBindTarget(Klass);
   if (!Klass.prototype.__nativeEventQueue) {
     Klass.prototype.__nativeEventQueue = {};
   }

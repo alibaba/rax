@@ -3,7 +3,8 @@ import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
+import getNativeComponentLifecycle from './adapter/getNativeComponentLifecycle';
+import getComponentBaseConfig from './adapter/getComponentBaseConfig';
 import {createMiniAppHistory, getMiniAppHistory} from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';
@@ -64,7 +65,7 @@ function getPageCycles(Klass) {
 }
 
 function getComponentCycles(Klass) {
-  return getComponentLifecycle({
+  return getNativeComponentLifecycle({
     mount: function() {
       const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps);
       this.instance = new Klass(props);

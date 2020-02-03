@@ -1,6 +1,5 @@
-const pageInstanceMap = {
-  // pageId -> rax page instance
-};
+// pageId -> rax page instance
+const pageInstanceMap = {};
 
 
 export function setPageInstance(pageInstance) {

@@ -1,4 +1,4 @@
-import { runApp, createPage, createComponent } from './bridge';
+import { runApp, createComponent, createPage } from './bridge';
 import { useAppEffect, useAppLaunch, useAppShow, useAppHide, useAppShare, useAppError } from './app';
 import {
   usePageEffect,
