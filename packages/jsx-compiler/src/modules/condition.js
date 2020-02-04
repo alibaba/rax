@@ -253,21 +253,22 @@ function isJSX(node) {
  * @param path IfStatement
  * @param expressionPath consequent expression path
  * @param templateMap variable => jsx template
- * @param rootScope render function scope
+ * @param renderScope render function scope
  * @param adapter
  * */
-function handleConsequent(path, expressionPath, templateMap, rootScope, adapter) {
+function handleConsequent(path, expressionPath, templateMap, renderScope, adapter) {
   const testPath = path.get('test');
   let shouldTransfrom = true;
+  // This expression can be replaced only if the identifiers in test expression exist in the render scope
   if (testPath.isIdentifier()) {
-    if (rootScope && !rootScope.hasBinding(testPath.node.name)) {
+    if (renderScope && !renderScope.hasBinding(testPath.node.name)) {
       shouldTransfrom = false;
     }
   } else {
     testPath.traverse({
       Identifier(innerPath) {
         handleValidIdentifier(innerPath, () => {
-          if (rootScope && !rootScope.hasBinding(innerPath.node.name)) {
+          if (renderScope && !renderScope.hasBinding(innerPath.node.name)) {
             shouldTransfrom = false;
           }
         });
