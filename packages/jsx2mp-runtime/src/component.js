@@ -240,7 +240,7 @@ export default class Component {
       if (isFunction(hook.destory)) hook.destory();
     });
     // Clean up page cycle callbacks
-    this.__proto__.__nativeEventQueue = {};
+    this.__proto__.__nativeEventMap = {};
     this._internal.instance = null;
     this._internal = null;
     this.__mounted = false;
