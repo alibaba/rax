@@ -1,24 +1,13 @@
 import { runApp, createComponent, createPage } from './bridge';
-import { useAppEffect, useAppLaunch, useAppShow, useAppHide, useAppShare, useAppError } from './app';
-import {
-  usePageEffect,
-  usePageShow,
-  usePageHide,
-  usePagePullDownRefresh,
-  usePageReachBottom,
-  usePageScroll,
-  useShareAppMessage,
-  usePageShare,
-  useTabItemTap,
-  useTitleClick
-} from './page';
+import { useAppLaunch, useAppShow, useAppHide, useAppShare, useAppError } from './app';
+import { usePageShow, usePageHide} from './page';
 import { withRouter } from './router';
 import Component from './component';
 import createStyle from './createStyle';
 import createContext from './createContext';
 import classnames from './classnames';
 import createRef from './createRef';
-import { addNativeEventListener, registerNativeEventListeners } from './nativeEventListener';
+import { addNativeEventListener, removeNativeEventListener, registerNativeEventListeners } from './nativeEventListener';
 
 export {
   runApp,
@@ -40,23 +29,13 @@ export {
 
   usePageShow,
   usePageHide,
-  usePagePullDownRefresh,
-  usePageReachBottom,
-  usePageScroll,
-  useShareAppMessage,
-  usePageShare,
-  useTabItemTap,
-  useTitleClick,
-
-  // Compatible old version of cycles.
-  useAppEffect,
-  usePageEffect,
 
   // Router
   withRouter,
 
   // Native events
   addNativeEventListener,
+  removeNativeEventListener,
   registerNativeEventListeners
 };
 
