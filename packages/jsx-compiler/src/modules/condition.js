@@ -4,6 +4,7 @@ const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
 const chalk = require('chalk');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
@@ -337,20 +338,20 @@ function handleAlternate(expressionPath, templateMap, adapter) {
     const varName = expression.left.name;
     const rightPath = expressionPath.get('right');
     const rightNode = rightPath.node;
-    if (hasJSX(rightPath)) {
-      const containerNode = createJSX(
-        'block',
-        {
-          [adapter.else]: null,
-        },
-        [rightNode],
-      );
+    const containerNode = createJSX(
+      'block',
+      {
+        [adapter.else]: null,
+      },
+      [hasJSX(rightPath) ? rightNode : t.jsxExpressionContainer(rightNode) ],
+    );
 
-      if (templateMap[varName]) {
-        templateMap[varName].children.push(containerNode);
-      } else {
-        templateMap[varName] = containerNode;
-      }
+    if (templateMap[varName]) {
+      templateMap[varName].children.push(containerNode);
+    } else {
+      templateMap[varName] = containerNode;
+    }
+    if (hasJSX(rightPath)) {
       expressionPath.remove();
     }
   }
