@@ -1,5 +1,5 @@
 // https://github.com/facebook/react/blob/master/scripts/jest/matchers/toWarnDev.js
-const jestDiff = require('jest-diff');
+const jestDiff = require('jest-diff'); // eslint-disable-line import/no-extraneous-dependencies
 const util = require('util');
 const shouldIgnoreConsoleError = require('./shouldIgnoreConsoleError');
 
