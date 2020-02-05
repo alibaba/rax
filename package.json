@@ -29,7 +29,7 @@
     "conventional-commit-types": "^2.2.0",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^6.8.0",
-    "eslint-config-rax": "0.0.1",
+    "eslint-config-rax": "^0.0.2",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-react": "^7.18.0",
     "findup": "^0.1.5",
