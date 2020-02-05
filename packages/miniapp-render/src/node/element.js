@@ -372,7 +372,7 @@ class Element extends Node {
       if (this.tagName === 'CANVAS') {
         // TODO，为了兼容基础库的一个 bug，暂且如此实现
         CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
-                    .exec();
+          .exec();
       } else {
         window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject()).exec();
       }

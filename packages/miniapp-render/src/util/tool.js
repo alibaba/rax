@@ -91,14 +91,14 @@ function completeURL(url, defaultOrigin, notTransHttps) {
  */
 function decodeContent(content) {
   return content
-        .replace(/&nbsp;/g, '\u00A0')
-        .replace(/&ensp;/g, '\u2002')
-        .replace(/&emsp;/g, '\u2003')
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"')
-        .replace(/&apos;/g, '\'')
-        .replace(/&amp;/g, '&');
+    .replace(/&nbsp;/g, '\u00A0')
+    .replace(/&ensp;/g, '\u2002')
+    .replace(/&emsp;/g, '\u2003')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, '\'')
+    .replace(/&amp;/g, '&');
 }
 
 /**

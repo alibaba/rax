@@ -87,7 +87,7 @@ function tokenize(content, handler) {
         if (handler.text) handler.text(text);
       }
     } else {
-      const execRes = (new RegExp(`</${stack.last()}[^>]*>`)).exec(content);
+      const execRes = new RegExp(`</${stack.last()}[^>]*>`).exec(content);
 
       if (execRes) {
         const text = content.substring(0, execRes.index);
