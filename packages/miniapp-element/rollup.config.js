@@ -19,8 +19,7 @@ function getBabelConfig(platform) {
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
-      // Support different adatpers replacement.
-      ['./scripts/import-adapter-replace-plugin', { platform }]
+      ['./scripts/platform-plugin', { platform }]
     ]
   };
 }
