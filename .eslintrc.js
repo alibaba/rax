@@ -4,6 +4,12 @@ module.exports = {
   ],
   'root': true,
   rules: {
-    'import/no-unresolved': ['error', { commonjs: true }],
+    'import/no-unresolved': ['error', { 
+      commonjs: true,
+      ignore: [
+        '**/examples/**',
+        '**/scripts/**',
+      ]
+    }],
   }
 };
