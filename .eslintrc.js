@@ -3,13 +3,9 @@ module.exports = {
     'rax'
   ],
   'root': true,
-  rules: {
+  'rules': {
     'import/no-unresolved': ['error', { 
-      commonjs: true,
-      ignore: [
-        '**/examples/**',
-        '**/scripts/**',
-      ]
+      'commonjs': true
     }],
   }
 };
