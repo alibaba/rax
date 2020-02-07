@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "driver-dom": "^2.0.5",
-    "driver-kraken": "^0.1.0",
+    "driver-kraken": "^0.2.0",
     "driver-miniapp": "^0.1.0",
     "driver-weex": "^2.0.0",
     "style-unit": "^2.0.0",
