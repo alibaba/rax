@@ -6,9 +6,9 @@ Rax driver for kraken.
 
 ```jsx
 import { render, createElement } from 'rax';
-import createDriver from 'driver-kraken';
+import * as KrakenDriver from 'driver-kraken';
 
 render(<App />, null, {
-  driver: createDriver(),
-})
+  driver: KrakenDriver,
+});
 ```
