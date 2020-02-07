@@ -3,8 +3,6 @@
  **/
 const EVENT_PREFIX_REG = /^on[A-Z]/;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
-const HTML = '__html';
-const INNER_HTML = 'innerHTML';
 const CLASS_NAME = 'className';
 const CLASS = 'class';
 const STYLE = 'style';
@@ -15,8 +13,6 @@ const CREATE_COMMENT = 'createComment';
 const CREATE_TEXT_NODE = 'createTextNode';
 const SET_ATTRIBUTE = 'setAttribute';
 const REMOVE_ATTRIBUTE = 'removeAttribute';
-const TEXT_NODE = 3;
-const COMMENT_NODE = 8;
 const EMPTY = '';
 
 /**
@@ -47,8 +43,8 @@ export function updateText(node, text) {
   node[TEXT_CONTENT_ATTR] = text;
 }
 
-export function createElement(type, props, component, __shouldConvertUnitlessToRpx) {
-  let node = document[CREATE_ELEMENT](type);
+export function createElement(type, props, component) {
+  const node = document[CREATE_ELEMENT](type);
 
   for (let prop in props) {
     const value = props[prop];
@@ -56,7 +52,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyle(node, value, __shouldConvertUnitlessToRpx);
+        setStyle(node, value);
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
@@ -69,7 +65,6 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 }
 
 export function appendChild(node, parent) {
-  console.log(`append ${node.id} to ${parent.id}`);
   return parent.appendChild(node);
 }
 
@@ -113,9 +108,7 @@ export function removeEventListener(node, eventName, eventHandler) {
 }
 
 export function removeAttribute(node, propKey) {
-  if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-    return node[INNER_HTML] = null;
-  }
+  if (propKey === DANGEROUSLY_SET_INNER_HTML) return;
 
   if (propKey === CLASS_NAME) propKey = CLASS;
 
@@ -131,8 +124,9 @@ export function removeAttribute(node, propKey) {
 
 export function setAttribute(node, propKey, propValue) {
   // For reduce innerHTML operation to improve performance.
-  if (propKey === DANGEROUSLY_SET_INNER_HTML && node[INNER_HTML] !== propValue[HTML]) {
-    return node[INNER_HTML] = propValue[HTML];
+  if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+    warnUnsupport(DANGEROUSLY_SET_INNER_HTML);
+    return;
   }
 
   if (propKey === CLASS_NAME) propKey = CLASS;
@@ -156,9 +150,6 @@ export function setStyle(node, style) {
   }
 }
 
-export function beforeRender({ hydrate }) {
+function warnUnsupport(message) {
+  console.warn(`[DriverKraken]: ${message} is not supported.`);
 }
-
-export function afterRender({ container }) {
-}
-
