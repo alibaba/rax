@@ -17,7 +17,7 @@ describe('Children', () => {
 
   it('should support identity for simple', () => {
     var context = {};
-    var callback = jasmine.createSpy().and.callFake(function(kid, index) {
+    var callback = jest.fn(function(kid, index) {
       expect(this).toBe(context);
       return kid;
     });
@@ -27,14 +27,17 @@ describe('Children', () => {
     var instance = <div>{simpleKid}</div>;
     Children.forEach(instance.props.children, callback, context);
     expect(callback).toHaveBeenCalledWith(simpleKid, 0);
-    callback.calls.reset();
 
-    var mappedChildren = Children.map(
+    var callback2 = jest.fn(function(kid, index) {
+      expect(this).toBe(context);
+      return kid;
+    });
+    Children.map(
       instance.props.children,
-      callback,
+      callback2,
       context,
     );
-    expect(callback).toHaveBeenCalledWith(simpleKid, 0);
+    expect(callback2).toHaveBeenCalledWith(simpleKid, 0);
   });
 
 
