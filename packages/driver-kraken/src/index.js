@@ -31,10 +31,6 @@ function cached(fn) {
 
 const isEventProp = cached(prop => EVENT_PREFIX_REG.test(prop));
 
-export function setTagNamePrefix(prefix) {
-  tagNamePrefix = prefix;
-}
-
 export function createBody() {
   return document.body;
 }
