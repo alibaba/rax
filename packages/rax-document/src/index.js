@@ -37,9 +37,14 @@ function Script(props, context) {
   );
 }
 
+function usePageName(context) {
+  return context.__pageName;
+}
+
 export {
   Root,
   Data,
   Style,
   Script,
+  usePageName
 };
