@@ -1,12 +1,13 @@
 <import src="./template/subtree.axml"/>
 <import src="./template/subtree-cover.axml"/>
-<!-- 视图容器 -->
+<!-- Container -->
 <cover-image
     a:if="{{builtinComponentName === 'cover-image'}}"
     id="{{id}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
+    animation="{{animation}}"
     src="{{src}}"
     onLoad="onCoverImageLoad"
     onError="onCoverImageError"
@@ -17,6 +18,7 @@
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
+    animation="{{animation}}"
     scroll-top="{{scrollTop}}"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></cover-view>
 <movable-area
@@ -25,6 +27,7 @@
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
+    animation="{{animation}}"
     scale-area="{{scaleArea}}"
 ><block a:for="{{innerChildNodes}}" a:key="nodeId">
     <movable-view
@@ -60,6 +63,7 @@
 <scroll-view
     a:elif="{{builtinComponentName === 'scroll-view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -80,6 +84,7 @@
 <swiper
     a:elif="{{builtinComponentName === 'swiper'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -120,6 +125,7 @@
 <view
     a:elif="{{builtinComponentName === 'view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -128,10 +134,11 @@
     hover-start-time="{{hoverStayTime}}"
     hover-stay-time="{{hoverStayTime}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></view>
-<!-- 基础内容 -->
+<!-- Base content -->
 <icon
     a:elif="{{builtinComponentName === 'icon'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -142,6 +149,7 @@
 <progress
     a:elif="{{builtinComponentName === 'progress'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -160,6 +168,7 @@
 <text
     a:elif="{{builtinComponentName === 'text'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -167,10 +176,11 @@
     space="{{space}}"
     decode="{{decode}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></text>
-<!-- 表单组件 -->
+<!-- Form component -->
 <button
     a:elif="{{builtinComponentName === 'button'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -203,6 +213,7 @@
 <editor
     a:elif="{{builtinComponentName === 'editor'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -220,6 +231,7 @@
 <form
     a:elif="{{builtinComponentName === 'form'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -232,6 +244,7 @@
     <radio-group a:if="{{type === 'radio'}}" onChange="onRadioChange"><radio
         id="{{id}}"
         class="{{class}}"
+        animation="{{animation}}"
         style="{{style}}"
         hidden="{{hidden}}"
         value="{{value}}"
@@ -282,6 +295,7 @@
 <picker
     a:elif="{{builtinComponentName === 'picker'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -301,6 +315,7 @@
 <picker-view
     a:elif="{{builtinComponentName === 'picker-view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -318,6 +333,7 @@
         data-private-node-id="{{item.nodeId}}"
         data-private-page-id="{{item.pageId}}"
         id="{{item.id}}"
+        animation="{{animation}}"
         class="{{item.class || ''}}"
         style="{{item.style || ''}}"
         onTouchStart="onTouchStart"
@@ -331,6 +347,7 @@
 <slider
     a:elif="{{builtinComponentName === 'slider'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -352,6 +369,7 @@
 <switch
     a:elif="{{builtinComponentName === 'switch'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -364,6 +382,7 @@
 <textarea
     a:elif="{{builtinComponentName === 'textarea'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -390,10 +409,11 @@
     onConfirm="onTextareaConfirm"
     onKeyboardHeightChange="onTextareaKeyBoardHeightChange"
 ></textarea>
-<!-- 导航 -->
+<!-- Navigator -->
 <navigator
     a:elif="{{builtinComponentName === 'navigator'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -413,10 +433,11 @@
     onFail="onNavigatorFail"
     onComplete="onNavigatorComplete"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></navigator>
-<!-- 媒体组件 -->
+<!-- Media -->
 <camera
     a:elif="{{builtinComponentName === 'camera'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -432,6 +453,7 @@
 <image
     a:elif="{{builtinComponentName === 'image'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -446,6 +468,7 @@
 <live-player
     a:elif="{{builtinComponentName === 'live-player'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -468,6 +491,7 @@
 <live-pusher
     a:elif="{{builtinComponentName === 'live-pusher'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -499,6 +523,7 @@
 <video
     a:elif="{{builtinComponentName === 'video'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -537,10 +562,11 @@
     onError="onVideoError"
     onProgress="onVideoProgress"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></video>
-<!-- 地图 -->
+<!-- Map -->
 <map
     a:elif="{{builtinComponentName === 'map'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -573,10 +599,11 @@
     onUpdated="onMapUpdated"
     onRegionChange="onMapRegionChange"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></map>
-<!-- 画布 -->
+<!-- Canvas -->
 <canvas
     a:elif="{{builtinComponentName === 'canvas'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -590,10 +617,11 @@
     onLongTap="onCanvasLongTap"
     onError="onCanvasError"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></canvas>
-<!-- 开放能力 -->
+<!-- Open data -->
 <ad
     a:elif="{{builtinComponentName === 'ad'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -606,6 +634,7 @@
 <official-account
     a:elif="{{builtinComponentName === 'official-account'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -615,6 +644,7 @@
 <open-data
     a:elif="{{builtinComponentName === 'open-data'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -625,6 +655,7 @@
 <web-view
     a:elif="{{builtinComponentName === 'web-view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -633,16 +664,17 @@
     onLoad="onWebviewLoad"
     onError="onWebviewError"
 ></web-view>
-<!-- 其他 -->
+<!-- Others -->
 <block
     a:elif="{{builtinComponentName === 'not-support'}}"
 >{{content}}</block>
-<!-- 自定义组件 -->
+<!-- Custom component -->
 <custom-component
     a:elif="{{!!CustomComponentName}}"
+    animation="{{animation}}"
     name="{{CustomComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></custom-component>
-<!-- 子节点 -->
+<!-- Child Node -->
 <template a:else is="subtree" data="{{childNodes, inCover}}"/>

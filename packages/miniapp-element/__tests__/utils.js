@@ -1,6 +1,5 @@
 const path = require('path');
-const mp = require('miniapp-render/dist/ali');
-// eslint-disable-next-line import/no-extraneous-dependencies
+const render = require('miniapp-render/dist/wechat');
 const simulate = require('miniprogram-simulate');
 
 /**
@@ -64,7 +63,7 @@ const pageConfig = {
 };
 function createPage(type = 'home', realUrl) {
   const route = `pages/${type}/index`;
-  global.$$page = mp.createPage(route, pageConfig);
+  global.$$page = render.createPage(route, pageConfig);
   realUrl = realUrl || (type === 'home' ? '/' : type === 'list' ? '/index/aaa/list/123' : 'index/aaa/detail/123');
   global.$$page.window.$$miniprogram.init(realUrl);
 }
