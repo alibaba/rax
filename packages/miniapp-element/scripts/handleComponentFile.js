@@ -7,7 +7,7 @@ export default function(platform) {
   const distPath = path.resolve('dist', platform);
   fs.ensureDirSync(distPath);
   // Copy index file
-  fs.copySync(path.resolve('src', `index.${adapter[platform].xml}`), path.join(distPath, `index.${adapter[platform].xml}`));
+  fs.copySync(path.resolve('src', 'templates', `index.${adapter[platform].xml}`), path.join(distPath, `index.${adapter[platform].xml}`));
   fs.copySync(path.resolve('src', 'index.json'), path.join(distPath, 'index.json'));
   // Generate custom component file
   const customPath = path.resolve(distPath, 'custom-component');

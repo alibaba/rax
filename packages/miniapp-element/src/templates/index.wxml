@@ -4,6 +4,7 @@
 <cover-image
     wx:if="{{builtinComponentName === 'cover-image'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -14,6 +15,7 @@
 <cover-view
     wx:elif="{{builtinComponentName === 'cover-view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -22,6 +24,7 @@
 <movable-area
     wx:elif="{{builtinComponentName === 'movable-area'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -32,6 +35,7 @@
         data-private-node-id="{{item.nodeId}}"
         data-private-page-id="{{item.pageId}}"
         id="{{item.id}}"
+        animation="{{animation}}"
         class="{{item.class || ''}}"
         style="{{item.style || ''}}"
         bindtouchstart="onTouchStart"
@@ -62,6 +66,7 @@
 <scroll-view
     wx:elif="{{builtinComponentName === 'scroll-view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -82,6 +87,7 @@
 <swiper
     wx:elif="{{builtinComponentName === 'swiper'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -109,6 +115,7 @@
         data-private-node-id="{{item.nodeId}}"
         data-private-page-id="{{item.pageId}}"
         id="{{item.id}}"
+        animation="{{animation}}"
         class="{{item.class || ''}}"
         bindtouchstart="onTouchStart"
         bindtouchmove="onTouchMove"
@@ -122,6 +129,7 @@
 <view
     wx:elif="{{builtinComponentName === 'view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -134,6 +142,7 @@
 <icon
     wx:elif="{{builtinComponentName === 'icon'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -144,6 +153,7 @@
 <progress
     wx:elif="{{builtinComponentName === 'progress'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -162,6 +172,7 @@
 <text
     wx:elif="{{builtinComponentName === 'text'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -173,6 +184,7 @@
 <button
     wx:elif="{{builtinComponentName === 'button'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -205,6 +217,7 @@
 <editor
     wx:elif="{{builtinComponentName === 'editor'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -222,6 +235,7 @@
 <form
     wx:elif="{{builtinComponentName === 'form'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -233,6 +247,7 @@
 <block wx:elif="{{builtinComponentName === 'input'}}">
     <radio-group wx:if="{{type === 'radio'}}" bindchange="onRadioChange"><radio
         id="{{id}}"
+        animation="{{animation}}"
         class="{{class}}"
         style="{{style}}"
         hidden="{{hidden}}"
@@ -243,6 +258,7 @@
     ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></radio></radio-group>
     <checkbox-group wx:elif="{{type === 'checkbox'}}" bindchange="onCheckboxChange"><checkbox
         id="{{id}}"
+        animation="{{animation}}"
         class="{{class}}"
         style="{{style}}"
         hidden="{{hidden}}"
@@ -254,6 +270,7 @@
     <input
         wx:elif="{{type !== 'hidden'}}"
         id="{{id}}"
+        animation="{{animation}}"
         class="{{class}}"
         style="{{style}}"
         hidden="{{hidden}}"
@@ -284,6 +301,7 @@
 <picker
     wx:elif="{{builtinComponentName === 'picker'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -303,6 +321,7 @@
 <picker-view
     wx:elif="{{builtinComponentName === 'picker-view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -320,6 +339,7 @@
         data-private-node-id="{{item.nodeId}}"
         data-private-page-id="{{item.pageId}}"
         id="{{item.id}}"
+        animation="{{animation}}"
         class="{{item.class || ''}}"
         style="{{item.style || ''}}"
         bindtouchstart="onTouchStart"
@@ -333,6 +353,7 @@
 <slider
     wx:elif="{{builtinComponentName === 'slider'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -354,6 +375,7 @@
 <switch
     wx:elif="{{builtinComponentName === 'switch'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -366,6 +388,7 @@
 <textarea
     wx:elif="{{builtinComponentName === 'textarea'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -396,6 +419,7 @@
 <navigator
     wx:elif="{{builtinComponentName === 'navigator'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -419,6 +443,7 @@
 <camera
     wx:elif="{{builtinComponentName === 'camera'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -434,6 +459,7 @@
 <image
     wx:elif="{{builtinComponentName === 'image'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -448,6 +474,7 @@
 <live-player
     wx:elif="{{builtinComponentName === 'live-player'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -470,6 +497,7 @@
 <live-pusher
     wx:elif="{{builtinComponentName === 'live-pusher'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -501,6 +529,7 @@
 <video
     wx:elif="{{builtinComponentName === 'video'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -543,6 +572,7 @@
 <map
     wx:elif="{{builtinComponentName === 'map'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -580,6 +610,7 @@
 <canvas
     wx:elif="{{builtinComponentName === 'canvas'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -597,6 +628,7 @@
 <ad
     wx:elif="{{builtinComponentName === 'ad'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -609,6 +641,7 @@
 <official-account
     wx:elif="{{builtinComponentName === 'official-account'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -618,6 +651,7 @@
 <open-data
     wx:elif="{{builtinComponentName === 'open-data'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
@@ -628,6 +662,7 @@
 <web-view
     wx:elif="{{builtinComponentName === 'web-view'}}"
     id="{{id}}"
+    animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"

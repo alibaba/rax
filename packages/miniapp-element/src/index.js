@@ -3,16 +3,16 @@ import filterNodes from './vdom/filterNodes';
 import checkDiffChildNodes from './vdom/checkDiffChildNodes';
 import checkComponentAttr from './vdom/checkComponentAttr';
 import dealWithLeafAndSimple from './vdom/dealWithLeafAndSimple';
-import checkEventAccessDomNode from './vdom/checkEventAccessDomNode';
-import findParentNode from './vdom/findParentNode';
-import initHandle from './utils/initHandle';
+import init from './init';
 import { componentNameMap, handlesMap } from './component';
-import { NOT_SUPPORT } from './utils/constants';
+import { NOT_SUPPORT } from './constants';
 import getInitialProps from './adapter/getInitialProps';
 import getId from './adapter/getId';
 import getLifeCycle from './adapter/getLifeCycle';
+import callEvent from './events/callEvent';
+import callSimpleEvent from './events/callSimpleEvent';
 
-const { cache, EventTarget, tool } = render.$$adapter;
+const { cache, tool } = render.$$adapter;
 
 // The number of levels of dom subtrees rendered as custom components
 const MAX_DOM_SUB_TREE_LEVEL = 10;
@@ -27,7 +27,7 @@ const config = {
   },
   ...getInitialProps(),
   options: {
-    addGlobalClass: true // 开启全局样式
+    addGlobalClass: true // global style
   },
   methods: {
     // Watch child nodes update
@@ -35,7 +35,7 @@ const config = {
       // Node unomunted
       if (!this.pageId || !this.nodeId) return;
 
-      // 儿子节点有变化
+      // child nodes update
       const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1);
       const oldChildNodes =
         this.data.builtinComponentName || this.data.customComponentName
@@ -56,7 +56,6 @@ const config = {
           newData.innerChildNodes = [];
           newData.childNodes = dataChildNodes;
         }
-
         this.setData(newData);
       }
 
@@ -89,14 +88,19 @@ const config = {
       const domNode = this.domNode;
       const data = this.data;
       const tagName = domNode.tagName;
+      let newAttrData = newData;
+
+      if (!this.__ready) {
+        this.__readyData = newAttrData = {};
+      }
 
       if (tagName === 'BUILTIN-COMPONENT') {
-        // 内置组件
+        // BuiltIn component
         if (data.builtinComponentName !== domNode.behavior)
           newData.builtinComponentName = domNode.behavior;
         const builtinComponentName = componentNameMap[domNode.behavior];
         if (builtinComponentName)
-          checkComponentAttr(builtinComponentName, domNode, newData, data);
+          checkComponentAttr(this, builtinComponentName, newAttrData);
       } else if (tagName === 'CUSTOM-COMPONENT') {
         // Custom component
         if (data.customComponentName !== domNode.behavior)
@@ -112,260 +116,36 @@ const config = {
         // Replaced html tag
         const builtinComponentName = componentNameMap[tagName];
         if (builtinComponentName)
-          checkComponentAttr(builtinComponentName, domNode, newData, data);
+          checkComponentAttr(this, builtinComponentName, newAttrData);
       }
 
       this.setData(newData);
     },
 
-    // call event
-    callEvent(eventName, evt, extra) {
-      const pageId = this.pageId;
-      const originNodeId =
-        evt.currentTarget.dataset.privateNodeId || this.nodeId;
-      const originNode = cache.getNode(pageId, originNodeId);
-
-      if (!originNode) return;
-
-      EventTarget.$$process(
-        originNode,
-        eventName,
-        evt,
-        extra,
-        (domNode, evt, isCapture) => {
-          // Delay triggering the jump until all synchronous callback processing is complete
-          setTimeout(() => {
-            if (evt.cancelable) return;
-            const window = cache.getWindow(this.pageId);
-
-            // Handle special node event
-            if (domNode.tagName === 'A' && evt.type === 'click' && !isCapture) {
-              // Handle a tag
-              const href = domNode.href;
-              const target = domNode.target;
-
-              if (!href || href.indexOf('javascript') !== -1) return;
-
-              if (target === '_blank') window.open(href);
-              else window.location.href = href;
-            } else if (
-              domNode.tagName === 'LABEL' &&
-              evt.type === 'click' &&
-              !isCapture
-            ) {
-              // Handle label
-              const forValue = domNode.getAttribute('for');
-              let targetDomNode;
-              if (forValue) {
-                targetDomNode = window.document.getElementById(forValue);
-              } else {
-                targetDomNode = domNode.querySelector('input');
-
-                // Find switch node
-                if (!targetDomNode)
-                  targetDomNode = domNode.querySelector(
-                    'builtin-component[behavior=switch]'
-                  );
-              }
-
-              if (!targetDomNode || !!targetDomNode.getAttribute('disabled'))
-                return;
-
-              // Find target node
-              if (targetDomNode.tagName === 'INPUT') {
-                if (checkEventAccessDomNode(evt, targetDomNode, domNode))
-                  return;
-
-                const type = targetDomNode.type;
-                if (type === 'radio') {
-                  targetDomNode.checked = true;
-                  const name = targetDomNode.name;
-                  const otherDomNodes =
-                    window.document.querySelectorAll(`input[name=${name}]`) ||
-                    [];
-                  for (const otherDomNode of otherDomNodes) {
-                    if (
-                      otherDomNode.type === 'radio' &&
-                      otherDomNode !== targetDomNode
-                    ) {
-                      otherDomNode.checked = false;
-                    }
-                  }
-                  this.callSimpleEvent(
-                    'change',
-                    { detail: { value: targetDomNode.value } },
-                    targetDomNode
-                  );
-                } else if (type === 'checkbox') {
-                  targetDomNode.checked = !targetDomNode.checked;
-                  this.callSimpleEvent(
-                    'change',
-                    {
-                      detail: {
-                        value: targetDomNode.checked
-                          ? [targetDomNode.value]
-                          : []
-                      }
-                    },
-                    targetDomNode
-                  );
-                } else {
-                  targetDomNode.focus();
-                }
-              } else if (targetDomNode.tagName === 'BUILTIN-COMPONENT') {
-                if (checkEventAccessDomNode(evt, targetDomNode, domNode))
-                  return;
-
-                const behavior = targetDomNode.behavior;
-                if (behavior === 'switch') {
-                  const checked = !targetDomNode.getAttribute('checked');
-                  targetDomNode.setAttribute('checked', checked);
-                  this.callSimpleEvent(
-                    'change',
-                    { detail: { value: checked } },
-                    targetDomNode
-                  );
-                }
-              }
-            } else if (
-              (domNode.tagName === 'BUTTON' ||
-                domNode.tagName === 'BUILTIN-COMPONENT' &&
-                  domNode.behavior === 'button') &&
-              evt.type === 'click' &&
-              !isCapture
-            ) {
-              // Handle button click
-              const type =
-                domNode.tagName === 'BUTTON'
-                  ? domNode.getAttribute('type')
-                  : domNode.getAttribute('form-type');
-              const formAttr = domNode.getAttribute('form');
-              const form = formAttr
-                ? window.document.getElementById('formAttr')
-                : findParentNode(domNode, 'FORM');
-
-              if (!form) return;
-              if (type !== 'submit' && type !== 'reset') return;
-
-              const inputList = form.querySelectorAll('input[name]');
-              const textareaList = form.querySelectorAll('textarea[name]');
-              const switchList = form
-                .querySelectorAll('builtin-component[behavior=switch]')
-                .filter(item => !!item.getAttribute('name'));
-              const sliderList = form
-                .querySelectorAll('builtin-component[behavior=slider]')
-                .filter(item => !!item.getAttribute('name'));
-              const pickerList = form
-                .querySelectorAll('builtin-component[behavior=picker]')
-                .filter(item => !!item.getAttribute('name'));
-
-              if (type === 'submit') {
-                const formData = {};
-                if (inputList.length) {
-                  inputList.forEach(item => {
-                    if (item.type === 'radio') {
-                      if (item.checked) formData[item.name] = item.value;
-                    } else if (item.type === 'checkbox') {
-                      formData[item.name] = formData[item.name] || [];
-                      if (item.checked) formData[item.name].push(item.value);
-                    } else {
-                      formData[item.name] = item.value;
-                    }
-                  });
-                }
-                if (textareaList.length)
-                  textareaList.forEach(
-                    item => formData[item.getAttribute('name')] = item.value
-                  );
-                if (switchList.length)
-                  switchList.forEach(
-                    item =>
-                      formData[
-                        item.getAttribute('name')
-                      ] = !!item.getAttribute('checked')
-                  );
-                if (sliderList.length)
-                  sliderList.forEach(
-                    item =>
-                      formData[item.getAttribute('name')] =
-                        +item.getAttribute('value') || 0
-                  );
-                if (pickerList.length)
-                  pickerList.forEach(
-                    item =>
-                      formData[item.getAttribute('name')] = item.getAttribute(
-                        'value'
-                      )
-                  );
-
-                this.callSimpleEvent(
-                  'submit',
-                  { detail: { value: formData }, extra: { $$from: 'button' } },
-                  form
-                );
-              } else if (type === 'reset') {
-                if (inputList.length) {
-                  inputList.forEach(item => {
-                    if (item.type === 'radio') {
-                      item.checked = false;
-                    } else if (item.type === 'checkbox') {
-                      item.checked = false;
-                    } else {
-                      item.value = '';
-                    }
-                  });
-                }
-                if (textareaList.length)
-                  textareaList.forEach(item => item.value = '');
-                if (switchList.length)
-                  switchList.forEach(item =>
-                    item.setAttribute('checked', undefined)
-                  );
-                if (sliderList.length)
-                  sliderList.forEach(item =>
-                    item.setAttribute('value', undefined)
-                  );
-                if (pickerList.length)
-                  pickerList.forEach(item =>
-                    item.setAttribute('value', undefined)
-                  );
-
-                this.callSimpleEvent(
-                  'reset',
-                  { extra: { $$from: 'button' } },
-                  form
-                );
-              }
-            }
-          }, 0);
-        }
-      );
-    },
-
     // Dom event
     onTouchStart(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        this.callEvent('touchstart', evt);
+        callEvent('touchstart', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchMove(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        this.callEvent('touchmove', evt);
+        callEvent('touchmove', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchEnd(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        this.callEvent('touchend', evt);
+        callEvent('touchend', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchCancel(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        this.callEvent('touchcancel', evt);
+        callEvent('touchcancel', evt, null, this.pageId, this.nodeId);
       }
     },
     onTap(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        this.callEvent('click', evt, { button: 0 }); // 默认左键
+        callEvent('click', evt, { button: 0 }, this.pageId, this.nodeId); // 默认左键
       }
     },
     onImgLoad(evt) {
@@ -376,7 +156,7 @@ const config = {
 
       if (!originNode) return;
 
-      this.callSimpleEvent('load', evt, originNode);
+      callSimpleEvent('load', evt, originNode);
     },
     onImgError(evt) {
       const pageId = this.pageId;
@@ -386,11 +166,8 @@ const config = {
 
       if (!originNode) return;
 
-      this.callSimpleEvent('error', evt, originNode);
+      callSimpleEvent('error', evt, originNode);
     },
-    init: initHandle.init,
-    callSimpleEvent: initHandle.callSimpleEvent,
-
     ...handlesMap
   }
 };
@@ -411,18 +188,18 @@ const lifeCycles = getLifeCycle({
     this.nodeId = nodeId;
     this.pageId = pageId;
 
-    // 记录 dom
+    // Record dom
     this.domNode = cache.getNode(pageId, nodeId);
     if (!this.domNode) return;
 
-    // TODO，为了兼容基础库的一个 bug，暂且如此实现
+    // TODO, for the sake of compatibility with a bug in the underlying library, is implemented as follows
     if (this.domNode.tagName === 'CANVAS')
       this.domNode._builtInComponent = this;
 
-    // 存储 document
+    // Store document
     this.document = cache.getDocument(pageId);
 
-    // 监听全局事件
+    // Listen global event
     this.onChildNodesUpdate = tool.throttle(this.onChildNodesUpdate.bind(this));
     this.domNode.$$clearEvent('$$childNodesUpdate');
     this.domNode.addEventListener(
@@ -433,29 +210,33 @@ const lifeCycles = getLifeCycle({
     this.domNode.$$clearEvent('$$domNodeUpdate');
     this.domNode.addEventListener('$$domNodeUpdate', this.onSelfNodeUpdate);
 
-    // 初始化
-    this.init(data);
+    // init
+    init(this, data);
 
-    // 初始化孩子节点
+    // init child nodes
     const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1);
     const dataChildNodes = dealWithLeafAndSimple(
       childNodes,
       this.onChildNodesUpdate
     );
     if (data.builtinComponentName || data.customComponentName) {
-      // 内置组件/自定义组件
+      // builtIn component/custom component
       data.innerChildNodes = dataChildNodes;
       data.childNodes = [];
     } else {
-      // 普通标签
+      // normal tag
       data.innerChildNodes = [];
       data.childNodes = dataChildNodes;
     }
-
-    // 执行一次 setData
-    if (Object.keys(data).length) this.setData(data);
+    this.setData(data);
   },
-  ready() {},
+  ready() {
+    this.__ready = true;
+    if (this.__readyData) {
+      this.setData(this.__readyData);
+      this.__readyData = null;
+    }
+  },
   unmount() {
     this.nodeId = null;
     this.pageId = null;

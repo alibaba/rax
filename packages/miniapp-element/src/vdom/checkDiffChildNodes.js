@@ -1,4 +1,4 @@
-import { ELEMENT_DIFF_KEYS, TEXT_NODE_DIFF_KEYS } from '../utils/constants';
+import { ELEMENT_DIFF_KEYS, TEXT_NODE_DIFF_KEYS } from '../constants';
 
 export default function checkDiffChildNodes(newChildNodes, oldChildNodes) {
   if (newChildNodes.length !== oldChildNodes.length) return true;

@@ -3,7 +3,7 @@ import { propsMap } from '../component';
 import {
   NOT_SUPPORT, NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT,
   NEET_BEHAVIOR_NORMAL_CUSTOM_ELEMENT, NEET_RENDER_TO_CUSTOM_ELEMENT
-} from '../utils/constants';
+} from '../constants';
 
 const { cache, tool } = render.$$adapter;
 
