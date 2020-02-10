@@ -1,5 +1,3 @@
-<import src="./template/subtree.axml"/>
-<import src="./template/subtree-cover.axml"/>
 <!-- Container -->
 <cover-image
     a:if="{{builtinComponentName === 'cover-image'}}"
@@ -20,7 +18,7 @@
     hidden="{{hidden}}"
     animation="{{animation}}"
     scroll-top="{{scrollTop}}"
-><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></cover-view>
+><subtree-cover childNodes="{{innerChildNodes}}"></subtree-cover></cover-view>
 <movable-area
     a:elif="{{builtinComponentName === 'movable-area'}}"
     id="{{id}}"
@@ -58,7 +56,7 @@
         animation="{{item.extra.animation}}"
         onChange="onMovableViewChange"
         onScale="onMovableViewScale"
-    ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></movable-view>
+    ><subtree childNodes="{{item.childNodes}}" inCover="{{inCover}}"></subtree></movable-view>
 </block></movable-area>
 <scroll-view
     a:elif="{{builtinComponentName === 'scroll-view'}}"
@@ -80,7 +78,7 @@
     onScrollToUpper="onScrollViewScrolltoupper"
     onScrollToLower="onScrollViewScrolltolower"
     onScroll="onScrollViewScroll"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></scroll-view>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></scroll-view>
 <swiper
     a:elif="{{builtinComponentName === 'swiper'}}"
     id="{{id}}"
@@ -120,7 +118,7 @@
         onTap="onTap"
         hidden="{{item.extra.hidden}}"
         item-id="{{item.extra.itemId}}"
-    ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></swiper-item>
+    ><subtree childNodes="{{item.childNodes}}" inCover="{{inCover}}"></subtree></swiper-item>
 </block></swiper>
 <view
     a:elif="{{builtinComponentName === 'view'}}"
@@ -133,7 +131,7 @@
     hover-stop-propagation="{{hoverStopPropagation}}"
     hover-start-time="{{hoverStayTime}}"
     hover-stay-time="{{hoverStayTime}}"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></view>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></view>
 <!-- Base content -->
 <icon
     a:elif="{{builtinComponentName === 'icon'}}"
@@ -175,7 +173,7 @@
     selectable="{{selectable}}"
     space="{{space}}"
     decode="{{decode}}"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></text>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></text>
 <!-- Form component -->
 <button
     a:elif="{{builtinComponentName === 'button'}}"
@@ -209,7 +207,7 @@
     onError="onButtonError"
     onOpenSetting="onButtonOpenSetting"
     onLaunchApp="onButtonLaunchApp"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></button>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></button>
 <editor
     a:elif="{{builtinComponentName === 'editor'}}"
     id="{{id}}"
@@ -239,7 +237,7 @@
     report-submit-timeout="{{reportSubmitTimeout}}"
     onSubmit="onFormSubmit"
     onReset="onFormReset"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></form>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></form>
 <block a:elif="{{builtinComponentName === 'input'}}">
     <radio-group a:if="{{type === 'radio'}}" onChange="onRadioChange"><radio
         id="{{id}}"
@@ -251,7 +249,7 @@
         disabled="{{disabled}}"
         checked="{{checked}}"
         color="{{color}}"
-    ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></radio></radio-group>
+    ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></radio></radio-group>
     <checkbox-group a:elif="{{type === 'checkbox'}}" onChange="onCheckboxChange"><checkbox
         id="{{id}}"
         class="{{class}}"
@@ -261,7 +259,7 @@
         disabled="{{disabled}}"
         checked="{{checked}}"
         color="{{color}}"
-    ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></checkbox></checkbox-group>
+    ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></checkbox></checkbox-group>
     <input
         a:elif="{{type !== 'hidden'}}"
         id="{{id}}"
@@ -311,7 +309,7 @@
     onChange="onPickerChange"
     onColumnChange="onPickerColumnChange"
     onCancel="onPickerCancel"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></picker>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></picker>
 <picker-view
     a:elif="{{builtinComponentName === 'picker-view'}}"
     id="{{id}}"
@@ -342,7 +340,7 @@
         onTouchCancel="onTouchCancel"
         onTap="onTap"
         hidden="{{item.extra.hidden}}"
-    ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></picker-view-column>
+    ><subtree childNodes="{{item.childNodes}}" inCover="{{inCover}}"></subtree></picker-view-column>
 </block></picker-view>
 <slider
     a:elif="{{builtinComponentName === 'slider'}}"
@@ -432,7 +430,7 @@
     onSuccess="onNavigatorSuccess"
     onFail="onNavigatorFail"
     onComplete="onNavigatorComplete"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></navigator>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></navigator>
 <!-- Media -->
 <camera
     a:elif="{{builtinComponentName === 'camera'}}"
@@ -449,7 +447,7 @@
     onError="onCameraError"
     onInitDone="onCameraInitDone"
     onScanCode="onCameraScanCode"
-><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></camera>
+><subtree-cover childNodes="{{innerChildNodes}}"></subtree-cover></camera>
 <image
     a:elif="{{builtinComponentName === 'image'}}"
     id="{{id}}"
@@ -487,7 +485,7 @@
     onStateChange="onLivePlayerStateChange"
     onFullScreenChange="onLivePlayerFullScreenChange"
     onNetStatus="onLivePlayerNetStatus"
-><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></live-player>
+><subtree-cover childNodes="{{innerChildNodes}}"></subtree-cover></live-player>
 <live-pusher
     a:elif="{{builtinComponentName === 'live-pusher'}}"
     id="{{id}}"
@@ -519,7 +517,7 @@
     onBgmStart="onLivePusherBgmStart"
     onBgmProgress="onLivePusherBgmProgress"
     onBgmComplete="onLivePusherBgmComplete"
-><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></live-pusher>
+><subtree-cover childNodes="{{innerChildNodes}}"></subtree-cover></live-pusher>
 <video
     a:elif="{{builtinComponentName === 'video'}}"
     id="{{id}}"
@@ -561,7 +559,7 @@
     onWaiting="onVideoWaiting"
     onError="onVideoError"
     onProgress="onVideoProgress"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></video>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></video>
 <!-- Map -->
 <map
     a:elif="{{builtinComponentName === 'map'}}"
@@ -598,7 +596,7 @@
     onCalloutTap="onMapCalloutTap"
     onUpdated="onMapUpdated"
     onRegionChange="onMapRegionChange"
-><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></map>
+><subtree-cover childNodes="{{innerChildNodes}}"></subtree-cover></map>
 <!-- Canvas -->
 <canvas
     a:elif="{{builtinComponentName === 'canvas'}}"
@@ -616,7 +614,7 @@
     onTouchCancel="onTouchCancel"
     onLongTap="onCanvasLongTap"
     onError="onCanvasError"
-><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></canvas>
+><subtree-cover childNodes="{{innerChildNodes}}"></subtree-cover></canvas>
 <!-- Open data -->
 <ad
     a:elif="{{builtinComponentName === 'ad'}}"
@@ -675,6 +673,6 @@
     name="{{CustomComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
-><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></custom-component>
+><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}"></subtree></custom-component>
 <!-- Child Node -->
-<template a:else is="subtree" data="{{childNodes, inCover}}"/>
+<subtree a:else childNodes="{{childNodes}}" inCover="{{inCover}}"></subtree>

@@ -1,7 +1,10 @@
 {
   "component": true,
   "usingComponents": {
-    "element": "./index"
+    "element": "./index",
+    "custom-component": "./custom-component/index",
+    "subtree": "./template/subtree/index",
+    "subtree-cover": "./template/subtree-cover/index"
   },
   "componentGenerics": {
     "custom-component": {

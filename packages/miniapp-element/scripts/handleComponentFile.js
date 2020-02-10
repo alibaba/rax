@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import generateTemplate from './generateTemplate';
+import generateCustomComponent from './generateCustomComponent';
 import adapter from './adapter';
 
 export default function(platform) {
@@ -15,5 +16,9 @@ export default function(platform) {
   fs.writeFileSync(path.join(customPath, 'index.js'), 'Component({});');
   fs.writeFileSync(path.join(customPath, 'index.json'), '{ "component": true }');
   fs.writeFileSync(path.join(customPath, `index.${adapter[platform].xml}`), '<slot></slot>');
-  generateTemplate(distPath, platform);
+  if (platform === 'ali') {
+    generateCustomComponent(distPath, 'ali');
+  } else if (platform === 'wechat') {
+    generateTemplate(distPath, 'wechat');
+  }
 }
