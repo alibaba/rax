@@ -1,3 +1,4 @@
+// eslint-disable-next-line rax/no-implicit-dependencies
 import { navigateTo, redirectTo, navigateBack } from '@@ADAPTER@@';
 import { getMiniAppHistory } from './history';
 
