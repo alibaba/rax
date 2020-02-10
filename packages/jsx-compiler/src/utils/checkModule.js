@@ -1,3 +1,5 @@
+const { sep } = require('path');
+
 const WEEX_MODULE_REG = /^@?weex-/;
 
 function isWeexModule(value) {
@@ -5,7 +7,7 @@ function isWeexModule(value) {
 }
 
 function isNpmModule(value) {
-  return !(value[0] === '.' || value[0] === '/');
+  return !(value[0] === '.' || value[0] === sep);
 }
 
 module.exports = {

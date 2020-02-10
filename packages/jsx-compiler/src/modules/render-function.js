@@ -24,6 +24,7 @@ function transformRenderFunction(ast, renderFnPath) {
             const renderFunctionPath = renderFnParentPath.get('body').find(path => path.isClassMethod()
               && path.node.key.name === methodName);
             const returnStatementPath = getReturnElementPath(renderFunctionPath);
+            if (!returnStatementPath) return;
             const returnArgumentPath = returnStatementPath.get('argument');
             if (!renderItemFunctions.some(fn => fn.originName === methodName)) {
               if (!returnArgumentPath.isJSXElement()) {

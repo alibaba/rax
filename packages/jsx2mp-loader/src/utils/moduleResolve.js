@@ -15,6 +15,10 @@ function startsWith(prevString, nextString) {
   return prevString.indexOf(nextString) === 0;
 }
 
+function startsWithArr(prevString, nextStringArr = []) {
+  return nextStringArr.some(nextString => startsWith(prevString, nextString));
+}
+
 function loadAsFile(module, extensions) {
   if (existsSync(module) && statSync(module).isFile()) {
     return removeExt(module);
@@ -33,8 +37,9 @@ function loadAsDirectory(module, extensions) {
   let stat = statSync(module);
   if (stat.isDirectory()) {
     for (let e of extensions) {
-      if (existsSync(module + `/index${e}`) && statSync(module + `/index${e}`).isFile()) {
-        return join(module, '/index');
+      const indexFile = join(module, `index${e}`);
+      if (existsSync(indexFile) && statSync(indexFile).isFile()) {
+        return join(module, 'index');
       }
     }
   } else if (stat.isFile()) {
@@ -87,7 +92,7 @@ function loadNpmModules(module, start, extension) {
 */
 module.exports = function resolve(script, dependency, extensions = ['.js', '.jsx', '.ts', '.tsx']) {
   let target;
-  if (startsWith(dependency, './') || startsWith(dependency, '/') || startsWith(dependency, '../')) {
+  if (startsWithArr(dependency, ['./', '../', '/', '.\\', '..\\', '\\'])) {
     let dependencyPath = join(script, dependency);
     target = loadAsFile(dependencyPath, extensions) || loadAsDirectory(dependencyPath, extensions);
     target = relative(script, target);

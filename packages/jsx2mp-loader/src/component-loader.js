@@ -5,8 +5,9 @@ const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash, addRelativePathPrefix } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
+const { isTypescriptFile } = require('./utils/judgeModule');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
 
@@ -68,12 +69,10 @@ module.exports = async function componentLoader(content) {
       const value = config.usingComponents[key];
 
       if (/^c-/.test(key)) {
-        let result = './' + relative(dirname(this.resourcePath), value); // ./components/Repo.jsx
-        result = removeExt(result); // ./components/Repo
-
-        usingComponents[key] = result;
+        const result = removeExt(addRelativePathPrefix(relative(dirname(this.resourcePath), value))); // ./components/Repo
+        usingComponents[key] = replaceBackSlashWithSlash(result);
       } else {
-        usingComponents[key] = value;
+        usingComponents[key] = replaceBackSlashWithSlash(value);
       }
     });
     config.usingComponents = usingComponents;
@@ -98,7 +97,8 @@ module.exports = async function componentLoader(content) {
       template: distFileWithoutExt + platform.extension.xml,
       assets: outputPath
     },
-    mode
+    mode,
+    isTypescriptFile: isTypescriptFile(this.resourcePath)
   };
 
   output(outputContent, rawContent, outputOption);
@@ -166,5 +166,5 @@ function generateDependencies(dependencies) {
 }
 
 function createImportStatement(req) {
-  return `import '${req}';`;
+  return `import '${doubleBackslash(req)}';`;
 }
