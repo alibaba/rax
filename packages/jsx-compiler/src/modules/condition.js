@@ -1,17 +1,18 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
-const createBinding = require('../utils/createBinding');
 const CodeError = require('../utils/CodeError');
 const chalk = require('chalk');
+const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
 
-function transformRenderFunction(ast, adapter) {
+function transformRenderFunction(renderPath, adapter) {
   // Identifier name & jsx map
   const templateMap = {};
-  traverse(ast, {
+  traverse(renderPath, {
     IfStatement: {
       enter(path) {
         const consequentPath = path.get('consequent');
@@ -24,6 +25,7 @@ function transformRenderFunction(ast, adapter) {
               path,
               statementPath.get('expression'),
               templateMap,
+              renderPath.scope,
               adapter
             );
           });
@@ -33,10 +35,11 @@ function transformRenderFunction(ast, adapter) {
               path,
               consequentPath.get('expression'),
               templateMap,
+              renderPath.scope,
               adapter
             );
           } else {
-            handleConsequent(path, consequentPath, templateMap, adapter);
+            handleConsequent(path, consequentPath, templateMap, renderPath.scope, adapter);
           }
         }
 
@@ -56,10 +59,11 @@ function transformRenderFunction(ast, adapter) {
                 path,
                 alternatePath.get('expression'),
                 templateMap,
+                renderPath.scope,
                 adapter
               );
             } else {
-              handleConsequent(path, alternatePath, templateMap, adapter);
+              handleConsequent(path, alternatePath, templateMap, renderPath.scope, adapter);
             }
           }
         }
@@ -217,11 +221,13 @@ function transformConditionalExpression(path, expression, options) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const templateMap = transformRenderFunction(
-      parsed[RENDER_FN_PATH],
-      options.adapter,
-    );
-    transformTemplate(parsed[TEMPLATE_AST], templateMap, options.adapter, code);
+    if (parsed[RENDER_FN_PATH]) {
+      const templateMap = transformRenderFunction(
+        parsed[RENDER_FN_PATH],
+        options.adapter,
+      );
+      transformTemplate(parsed[TEMPLATE_AST], templateMap, options.adapter, code);
+    }
   },
 
   // For test cases.
@@ -248,50 +254,71 @@ function isJSX(node) {
  * @param path IfStatement
  * @param expressionPath consequent expression path
  * @param templateMap variable => jsx template
+ * @param renderScope render function scope
  * @param adapter
  * */
-function handleConsequent(path, expressionPath, templateMap, adapter) {
-  const { node } = path;
-  const { test, start, end } = node;
-  const expression = expressionPath.node;
-  if (
-    t.isAssignmentExpression(expression) &&
-    expression.operator === '=' &&
-    t.isIdentifier(expression.left)
-  ) {
-    const rightPath = expressionPath.get('right');
-    const varName = expression.left.name;
-    if (!templateMap[varName]) {
-      templateMap[varName] = createJSX('block');
+function handleConsequent(path, expressionPath, templateMap, renderScope, adapter) {
+  const testPath = path.get('test');
+  let shouldTransfrom = true;
+  // This expression can be replaced only if the identifiers in test expression exist in the render scope
+  if (testPath.isIdentifier()) {
+    if (renderScope && !renderScope.hasBinding(testPath.node.name)) {
+      shouldTransfrom = false;
     }
-    let testAttrName = adapter.if;
-    const parentPathAlternate = path.parent.alternate;
-    /**
-     * Condition:
-     * 1. parentPath is IfStatement
-     * 2. parentNode's alternate start & end is same as current path start & end
-     */
+  } else {
+    testPath.traverse({
+      Identifier(innerPath) {
+        handleValidIdentifier(innerPath, () => {
+          if (renderScope && !renderScope.hasBinding(innerPath.node.name)) {
+            shouldTransfrom = false;
+          }
+        });
+      }
+    });
+  }
+  if (shouldTransfrom) {
+    const { node } = path;
+    const { test, start, end } = node;
+    const expression = expressionPath.node;
     if (
-      path.parentPath.isIfStatement() &&
-        t.isIfStatement(parentPathAlternate) &&
-        parentPathAlternate.start === start &&
-        parentPathAlternate.end === end
+      t.isAssignmentExpression(expression) &&
+      expression.operator === '=' &&
+      t.isIdentifier(expression.left)
     ) {
-      testAttrName = adapter.elseif;
-    }
-    const rightNode = rightPath.node;
-    const containerNode = createJSX(
-      'block',
-      {
-        [testAttrName]: t.jsxExpressionContainer(Object.assign({}, test)),
-      },
-      [isJSX(rightNode) ? rightNode : t.jsxExpressionContainer(rightNode)],
-    );
+      const rightPath = expressionPath.get('right');
+      const varName = expression.left.name;
+      if (!templateMap[varName]) {
+        templateMap[varName] = createJSX('block');
+      }
+      let testAttrName = adapter.if;
+      const parentPathAlternate = path.parent.alternate;
+      /**
+       * Condition:
+       * 1. parentPath is IfStatement
+       * 2. parentNode's alternate start & end is same as current path start & end
+       */
+      if (
+        path.parentPath.isIfStatement() &&
+          t.isIfStatement(parentPathAlternate) &&
+          parentPathAlternate.start === start &&
+          parentPathAlternate.end === end
+      ) {
+        testAttrName = adapter.elseif;
+      }
+      const rightNode = rightPath.node;
+      const containerNode = createJSX(
+        'block',
+        {
+          [testAttrName]: t.jsxExpressionContainer(Object.assign({}, test)),
+        },
+        [isJSX(rightNode) ? rightNode : t.jsxExpressionContainer(rightNode)],
+      );
 
-    templateMap[varName].children.push(containerNode);
-    if (hasJSX(rightPath)) {
-      // Remove only if the expression contains JSX
-      expressionPath.remove();
+      templateMap[varName].children.push(containerNode);
+      if (hasJSX(rightPath)) {
+        // Remove only if the expression contains JSX
+        expressionPath.remove();
+      }
     }
   }
 }
@@ -311,20 +338,20 @@ function handleAlternate(expressionPath, templateMap, adapter) {
     const varName = expression.left.name;
     const rightPath = expressionPath.get('right');
     const rightNode = rightPath.node;
-    if (hasJSX(rightPath)) {
-      const containerNode = createJSX(
-        'block',
-        {
-          [adapter.else]: null,
-        },
-        [rightNode],
-      );
+    const containerNode = createJSX(
+      'block',
+      {
+        [adapter.else]: null,
+      },
+      [hasJSX(rightPath) ? rightNode : t.jsxExpressionContainer(rightNode) ],
+    );
 
-      if (templateMap[varName]) {
-        templateMap[varName].children.push(containerNode);
-      } else {
-        templateMap[varName] = containerNode;
-      }
+    if (templateMap[varName]) {
+      templateMap[varName].children.push(containerNode);
+    } else {
+      templateMap[varName] = containerNode;
+    }
+    if (hasJSX(rightPath)) {
       expressionPath.remove();
     }
   }
