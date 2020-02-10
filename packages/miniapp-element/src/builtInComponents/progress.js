@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'progress',
   props: [{
@@ -58,7 +60,7 @@ export default {
   }],
   handles: {
     onProgressActiveEnd(evt) {
-      this.callSimpleEvent('activeend', evt);
+      callSimpleEvent('activeend', evt, this.domNode);
     },
   },
 };

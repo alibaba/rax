@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'button',
   props: [{
@@ -105,22 +107,22 @@ export default {
   }],
   handles: {
     onButtonGetUserInfo(evt) {
-      this.callSimpleEvent('getuserinfo', evt);
+      callSimpleEvent('getuserinfo', evt, this.domNode);
     },
     onButtonContact(evt) {
-      this.callSimpleEvent('contact', evt);
+      callSimpleEvent('contact', evt, this.domNode);
     },
     onButtonGetPhoneNumber(evt) {
-      this.callSimpleEvent('getphonenumber', evt);
+      callSimpleEvent('getphonenumber', evt, this.domNode);
     },
     onButtonError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
     onButtonOpenSetting(evt) {
-      this.callSimpleEvent('opensetting', evt);
+      callSimpleEvent('opensetting', evt, this.domNode);
     },
     onButtonLaunchApp(evt) {
-      this.callSimpleEvent('launchapp', evt);
+      callSimpleEvent('launchapp', evt, this.domNode);
     },
 
   },

@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'editor',
   props: [{
@@ -33,19 +35,19 @@ export default {
   }],
   handles: {
     onEditorReady(evt) {
-      this.callSimpleEvent('ready', evt);
+      callSimpleEvent('ready', evt, this.domNode);
     },
     onEditorFocus(evt) {
-      this.callSimpleEvent('focus', evt);
+      callSimpleEvent('focus', evt, this.domNode);
     },
     onEditorBlur(evt) {
-      this.callSimpleEvent('blur', evt);
+      callSimpleEvent('blur', evt, this.domNode);
     },
     onEditorInput(evt) {
-      this.callSimpleEvent('input', evt);
+      callSimpleEvent('input', evt, this.domNode);
     },
     onEditorStatusChange(evt) {
-      this.callSimpleEvent('statuschange', evt);
+      callSimpleEvent('statuschange', evt, this.domNode);
     },
   },
 };

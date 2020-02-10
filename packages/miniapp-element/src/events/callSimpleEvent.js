@@ -1,4 +1,6 @@
-import { Event } from 'miniapp-render';
+import { $$adapter } from 'miniapp-render';
+
+const { Event } = $$adapter;
 
 // Call simple node event
 export default function(eventName, evt, domNode) {

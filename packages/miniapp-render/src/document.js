@@ -17,12 +17,12 @@ import BuiltInComponent from './node/element/builtin-component';
 import CustomComponent from './node/element/custom-component';
 
 const CONSTRUCTOR_MAP = {
-  A,
-  IMG: Image,
-  INPUT: Input,
-  TEXTAREA: Textarea,
-  VIDEO: Video,
-  CANVAS: Canvas,
+  a: A,
+  img: Image,
+  input: Input,
+  textarea: Textarea,
+  video: Video,
+  canvas: Canvas,
   'BUILTIN-COMPONENT': BuiltInComponent,
 };
 const BUILTIN_COMPONENT_MAP = {};

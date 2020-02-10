@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'live-pusher',
   props: [{
@@ -102,22 +104,22 @@ export default {
   }],
   handles: {
     onLivePusherStateChange(evt) {
-      this.callSimpleEvent('statechange', evt);
+      callSimpleEvent('statechange', evt, this.domNode);
     },
     onLivePusherNetStatus(evt) {
-      this.callSimpleEvent('netstatus', evt);
+      callSimpleEvent('netstatus', evt, this.domNode);
     },
     onLivePusherError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
     onLivePusherBgmStart(evt) {
-      this.callSimpleEvent('bgmstart', evt);
+      callSimpleEvent('bgmstart', evt, this.domNode);
     },
     onLivePusherBgmProgress(evt) {
-      this.callSimpleEvent('bgmprogress', evt);
+      callSimpleEvent('bgmprogress', evt, this.domNode);
     },
     onLivePusherBgmComplete(evt) {
-      this.callSimpleEvent('bgmcomplete', evt);
+      callSimpleEvent('bgmcomplete', evt, this.domNode);
     },
   },
 };

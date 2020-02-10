@@ -1,4 +1,6 @@
-const render = require('miniapp-render');
+import render from 'miniapp-render';
+import callEvent from '../events/callEvent';
+import callSimpleEvent from '../events/callSimpleEvent';
 
 const { cache } = render.$$adapter;
 
@@ -116,11 +118,11 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.value = evt.detail.value;
-      this.callEvent('input', evt);
+      callEvent('input', evt, this.pageId, this.nodeId);
     },
     onInputFocus(evt) {
       this._inputOldValue = this.domNode.value;
-      this.callSimpleEvent('focus', evt);
+      callSimpleEvent('focus', evt, this.domNode);
     },
     onInputBlur(evt) {
       if (!this.domNode) return;
@@ -128,15 +130,15 @@ export default {
       this.domNode.setAttribute('focus', false);
       if (this._inputOldValue !== undefined && this.domNode.value !== this._inputOldValue) {
         this._inputOldValue = undefined;
-        this.callEvent('change', evt);
+        callEvent('change', evt, this.pageId, this.nodeId);
       }
-      this.callSimpleEvent('blur', evt);
+      callSimpleEvent('blur', evt, this.domNode);
     },
     onInputConfirm(evt) {
-      this.callSimpleEvent('confirm', evt);
+      callSimpleEvent('confirm', evt, this.domNode);
     },
     onInputKeyBoardHeightChange(evt) {
-      this.callSimpleEvent('keyboardheightchange', evt);
+      callSimpleEvent('keyboardheightchange', evt, this.domNode);
     },
     onRadioChange(evt) {
       const window = cache.getWindow(this.pageId);
@@ -153,7 +155,7 @@ export default {
           }
         }
       }
-      this.callEvent('change', evt);
+      callEvent('change', evt, this.pageId, this.nodeId);
     },
     onCheckboxChange(evt) {
       const domNode = this.domNode;
@@ -163,7 +165,7 @@ export default {
       } else {
         domNode.checked = false;
       }
-      this.callEvent('change', evt);
+      callEvent('change', evt, this.pageId, this.nodeId);
     },
   },
 };

@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'camera',
   props: [{
@@ -28,16 +30,16 @@ export default {
   }],
   handles: {
     onCameraStop(evt) {
-      this.callSimpleEvent('stop', evt);
+      callSimpleEvent('stop', evt, this.domNode);
     },
     onCameraError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt);
     },
     onCameraInitDone(evt) {
-      this.callSimpleEvent('initdone', evt);
+      callSimpleEvent('initdone', evt, this.domNode);
     },
     onCameraScanCode(evt) {
-      this.callSimpleEvent('scancode', evt);
+      callSimpleEvent('scancode', evt, this.domNode);
     },
   },
 };

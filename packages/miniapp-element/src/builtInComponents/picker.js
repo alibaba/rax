@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'picker',
   props: [{
@@ -69,13 +71,13 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
-      this.callSimpleEvent('change', evt);
+      callSimpleEvent('change', evt, this.domNode);
     },
     onPickerColumnChange(evt) {
-      this.callSimpleEvent('columnchange', evt);
+      callSimpleEvent('columnchange', evt, this.domNode);
     },
     onPickerCancel(evt) {
-      this.callSimpleEvent('cancel', evt);
+      callSimpleEvent('cancel', evt, this.domNode);
     },
   },
 };

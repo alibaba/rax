@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'switch',
   props: [{
@@ -31,7 +33,7 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.setAttribute('checked', evt.detail.value);
-      this.callSimpleEvent('change', evt);
+      callSimpleEvent('change', evt, this.domNode);
     },
   },
 };

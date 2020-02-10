@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'web-view',
   props: [{
@@ -13,13 +15,13 @@ export default {
   }],
   handles: {
     onWebviewMessage(evt) {
-      this.callSimpleEvent('message', evt);
+      callSimpleEvent('message', evt, this.domNode);
     },
     onWebviewLoad(evt) {
-      this.callSimpleEvent('load', evt);
+      callSimpleEvent('load', evt, this.domNode);
     },
     onWebviewError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
   },
 };

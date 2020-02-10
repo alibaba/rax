@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'ad',
   props: [{
@@ -18,13 +20,13 @@ export default {
   }],
   handles: {
     onAdLoad(evt) {
-      this.callSimpleEvent('load', evt);
+      callSimpleEvent('load', evt, this.domNode);
     },
     onAdError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
     onAdClose(evt) {
-      this.callSimpleEvent('close', evt);
+      callSimpleEvent('close', evt, this.domNode);
     },
   },
 };

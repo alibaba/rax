@@ -1,4 +1,5 @@
-const render = require('miniapp-render');
+import render from 'miniapp-render';
+import callSimpleEvent from '../events/callSimpleEvent';
 
 const { cache } = render.$$adapter;
 
@@ -90,7 +91,7 @@ export default {
 
       domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
       domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
-      this.callSimpleEvent('change', evt, domNode);
+      callSimpleEvent('change', evt, domNode);
     },
     onMovableViewScale(evt) {
       const nodeId = evt.currentTarget.dataset.privateNodeId;
@@ -101,7 +102,7 @@ export default {
       domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
       domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
       domNode.$$setAttributeWithoutUpdate('scale-value', evt.detail.scale);
-      this.callSimpleEvent('scale', evt, domNode);
+      callSimpleEvent('scale', evt, domNode);
     },
     onMovableViewHtouchmove(evt) {
       const nodeId = evt.currentTarget.dataset.privateNodeId;
@@ -109,7 +110,7 @@ export default {
 
       if (!domNode) return;
 
-      this.callSimpleEvent('htouchmove', evt, domNode);
+      callSimpleEvent('htouchmove', evt, domNode);
     },
     onMovableViewVtouchmove(evt) {
       const nodeId = evt.currentTarget.dataset.privateNodeId;
@@ -117,7 +118,7 @@ export default {
 
       if (!domNode) return;
 
-      this.callSimpleEvent('vtouchmove', evt, domNode);
+      callSimpleEvent('vtouchmove', evt, domNode);
     },
   },
 };

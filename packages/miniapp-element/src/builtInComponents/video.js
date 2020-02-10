@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'video',
   props: [{
@@ -148,34 +150,34 @@ export default {
   }],
   handles: {
     onVideoPlay(evt) {
-      this.callSimpleEvent('play', evt);
+      callSimpleEvent('play', evt, this.domNode);
     },
     onVideoPause(evt) {
-      this.callSimpleEvent('pause', evt);
+      callSimpleEvent('pause', evt, this.domNode);
     },
     onVideoEnded(evt) {
-      this.callSimpleEvent('ended', evt);
+      callSimpleEvent('ended', evt, this.domNode);
     },
     onVideoTimeUpdate(evt) {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
-      this.callSimpleEvent('timeupdate', evt);
+      callSimpleEvent('timeupdate', evt, this.domNode);
     },
     onVideoFullScreenChange(evt) {
-      this.callSimpleEvent('fullscreenchange', evt);
+      callSimpleEvent('fullscreenchange', evt, this.domNode);
     },
     onVideoWaiting(evt) {
-      this.callSimpleEvent('waiting', evt);
+      callSimpleEvent('waiting', evt, this.domNode);
     },
     onVideoError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
     onVideoProgress(evt) {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('buffered', evt.detail.buffered);
-      this.callSimpleEvent('progress', evt);
+      callSimpleEvent('progress', evt, this.domNode);
     },
   },
 };

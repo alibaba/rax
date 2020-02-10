@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'form',
   props: [{
@@ -18,10 +20,10 @@ export default {
   }],
   handles: {
     onFormSubmit(evt) {
-      this.callSimpleEvent('submit', evt);
+      callSimpleEvent('submit', evt, this.domNode);
     },
     onFormReset(evt) {
-      this.callSimpleEvent('reset', evt);
+      callSimpleEvent('reset', evt, this.domNode);
     },
   },
 };

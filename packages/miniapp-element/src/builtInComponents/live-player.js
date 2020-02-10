@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'live-player',
   props: [{
@@ -72,13 +74,13 @@ export default {
   }],
   handles: {
     onLivePlayerStateChange(evt) {
-      this.callSimpleEvent('statechange', evt);
+      callSimpleEvent('statechange', evt, this.domNode);
     },
     onLivePlayerFullScreenChange(evt) {
-      this.callSimpleEvent('fullscreenchange', evt);
+      callSimpleEvent('fullscreenchange', evt, this.domNode);
     },
     onLivePlayerNetStatus(evt) {
-      this.callSimpleEvent('netstatus', evt);
+      callSimpleEvent('netstatus', evt, this.domNode);
     },
   },
 };

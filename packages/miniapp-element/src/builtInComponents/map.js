@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'map',
   props: [{
@@ -130,25 +132,25 @@ export default {
   }],
   handles: {
     onMapTap(evt) {
-      this.callSimpleEvent('tap', evt);
+      callSimpleEvent('tap', evt, this.domNode);
     },
     onMapMarkerTap(evt) {
-      this.callSimpleEvent('markertap', evt);
+      callSimpleEvent('markertap', evt, this.domNode);
     },
     onMapControlTap(evt) {
-      this.callSimpleEvent('controltap', evt);
+      callSimpleEvent('controltap', evt, this.domNode);
     },
     onMapCalloutTap(evt) {
-      this.callSimpleEvent('callouttap', evt);
+      callSimpleEvent('callouttap', evt, this.domNode);
     },
     onMapUpdated(evt) {
-      this.callSimpleEvent('updated', evt);
+      callSimpleEvent('updated', evt, this.domNode);
     },
     onMapRegionChange(evt) {
-      this.callSimpleEvent('regionchange', evt);
+      callSimpleEvent('regionchange', evt, this.domNode);
     },
     onMapPoiTap(evt) {
-      this.callSimpleEvent('poitap', evt);
+      callSimpleEvent('poitap', evt, this.domNode);
     },
   },
 };

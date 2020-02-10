@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'swiper',
   props: [{
@@ -84,13 +86,13 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('current', evt.detail.current);
-      this.callSimpleEvent('change', evt);
+      callSimpleEvent('change', evt, this.domNode);
     },
     onSwiperTransition(evt) {
-      this.callSimpleEvent('transition', evt);
+      callSimpleEvent('transition', evt, this.domNode);
     },
     onSwiperAnimationfinish(evt) {
-      this.callSimpleEvent('animationfinish', evt);
+      callSimpleEvent('animationfinish', evt, this.domNode);
     },
   },
 };

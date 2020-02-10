@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'official-account',
   props: [{
@@ -8,10 +10,10 @@ export default {
   }],
   handles: {
     onOfficialAccountLoad(evt) {
-      this.callSimpleEvent('load', evt);
+      callSimpleEvent('load', evt, this.domNode);
     },
     onOfficialAccountError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
   },
 };

@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'image',
   props: [{
@@ -33,10 +35,10 @@ export default {
   }],
   handles: {
     onImageLoad(evt) {
-      this.callSimpleEvent('load', evt);
+      callSimpleEvent('load', evt, this.domNode);
     },
     onImageError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
   },
 };

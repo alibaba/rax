@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'slider',
   props: [{
@@ -74,10 +76,10 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
-      this.callSimpleEvent('change', evt);
+      callSimpleEvent('change', evt, this.domNode);
     },
     onSliderChanging(evt) {
-      this.callSimpleEvent('changing', evt);
+      callSimpleEvent('changing', evt, this.domNode);
     },
   },
 };

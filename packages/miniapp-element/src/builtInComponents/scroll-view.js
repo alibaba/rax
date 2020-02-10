@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'scroll-view',
   props: [{
@@ -62,13 +64,13 @@ export default {
   }],
   handles: {
     onScrollViewScrolltoupper(evt) {
-      this.callSimpleEvent('scrolltoupper', evt);
+      callSimpleEvent('scrolltoupper', evt, this.domNode);
     },
     onScrollViewScrolltolower(evt) {
-      this.callSimpleEvent('scrolltolower', evt);
+      callSimpleEvent('scrolltolower', evt, this.domNode);
     },
     onScrollViewScroll(evt) {
-      this.callSimpleEvent('scroll', evt);
+      callSimpleEvent('scroll', evt, this.domNode);
     },
   },
 };

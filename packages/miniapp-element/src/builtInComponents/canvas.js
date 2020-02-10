@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'canvas',
   props: [{
@@ -23,10 +25,10 @@ export default {
   }],
   handles: {
     onCanvasLongTap(evt) {
-      this.callSimpleEvent('longtap', evt);
+      callSimpleEvent('longtap', evt, this.domNode);
     },
     onCanvasError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
   },
 };

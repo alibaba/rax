@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'picker-view',
   props: [{
@@ -37,13 +39,13 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
-      this.callSimpleEvent('change', evt);
+      callSimpleEvent('change', evt, this.domNode);
     },
     onPickerViewPickstart(evt) {
-      this.callSimpleEvent('pickstart', evt);
+      callSimpleEvent('pickstart', evt, this.domNode);
     },
     onPickerViewPickend(evt) {
-      this.callSimpleEvent('pickend', evt);
+      callSimpleEvent('pickend', evt, this.domNode);
     },
   },
 };

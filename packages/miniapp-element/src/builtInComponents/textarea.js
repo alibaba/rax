@@ -1,3 +1,6 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+import callEvent from '../events/callEvent';
+
 export default {
   name: 'textarea',
   props: [{
@@ -94,28 +97,28 @@ export default {
   }],
   handles: {
     onTextareaFocus(evt) {
-      this.callSimpleEvent('focus', evt);
+      callSimpleEvent('focus', evt, this.domNode);
     },
     onTextareaBlur(evt) {
       if (!this.domNode) return;
 
       this.domNode.setAttribute('focus', false);
-      this.callSimpleEvent('blur', evt);
+      callSimpleEvent('blur', evt, this.domNode);
     },
     onTextareaLineChange(evt) {
-      this.callSimpleEvent('linechange', evt);
+      callSimpleEvent('linechange', evt, this.domNode);
     },
     onTextareaInput(evt) {
       if (!this.domNode) return;
 
       this.domNode.value = evt.detail.value;
-      this.callEvent('input', evt);
+      callEvent('input', evt, this.pageId, this.nodeId);
     },
     onTextareaConfirm(evt) {
-      this.callSimpleEvent('confirm', evt);
+      callSimpleEvent('confirm', evt, this.domNode);
     },
     onTextareaKeyBoardHeightChange(evt) {
-      this.callSimpleEvent('keyboardheightchange', evt);
+      callSimpleEvent('keyboardheightchange', this.domNode);
     },
   },
 };

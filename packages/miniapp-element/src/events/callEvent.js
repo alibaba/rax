@@ -57,7 +57,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
             return;
 
           // Find target node
-          if (targetDomNode.tagName === 'INPUT') {
+          if (targetDomNode.tagName === 'input') {
             if (checkEventAccessDomNode(evt, targetDomNode, domNode))
               return;
 

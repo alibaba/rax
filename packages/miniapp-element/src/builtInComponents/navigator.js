@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'navigator',
   props: [{
@@ -71,13 +73,13 @@ export default {
   }],
   handles: {
     onNavigatorSuccess(evt) {
-      this.callSimpleEvent('success', evt);
+      callSimpleEvent('success', evt, this.domNode);
     },
     onNavigatorFail(evt) {
-      this.callSimpleEvent('fail', evt);
+      callSimpleEvent('fail', evt, this.domNode);
     },
     onNavigatorComplete(evt) {
-      this.callSimpleEvent('complete', evt);
+      callSimpleEvent('complete', evt, this.domNode);
     },
   },
 };

@@ -1,3 +1,5 @@
+import callSimpleEvent from '../events/callSimpleEvent';
+
 export default {
   name: 'cover-image',
   props: [{
@@ -13,10 +15,10 @@ export default {
   }],
   handles: {
     onCoverImageLoad(evt) {
-      this.callSimpleEvent('load', evt);
+      callSimpleEvent('load', evt, this.domNode);
     },
     onCoverImageError(evt) {
-      this.callSimpleEvent('error', evt);
+      callSimpleEvent('error', evt, this.domNode);
     },
   },
 };
