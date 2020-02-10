@@ -2,7 +2,7 @@ import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram } from 'univers
 import createDOMDriver from './dom';
 import MiniAppDriver from 'driver-miniapp';
 import * as WeexDriver from 'driver-weex';
-import createKrakenDriver from 'driver-kraken';
+import * as KrakenDriver from 'driver-kraken';
 
 let currentDriver;
 if (isWeex) {
@@ -10,7 +10,7 @@ if (isWeex) {
 } else if (isWeb) {
   currentDriver = createDOMDriver();
 } else if (isKraken) {
-  currentDriver = createKrakenDriver();
+  currentDriver = KrakenDriver;
 } else if (isMiniApp || isWeChatMiniProgram) {
   currentDriver = MiniAppDriver;
 } else {
