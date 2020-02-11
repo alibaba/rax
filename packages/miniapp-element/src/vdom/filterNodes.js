@@ -51,12 +51,6 @@ export default function filterNodes(domNode, level) {
       domInfo.style = '';
     }
 
-    // Check animation attribute
-    const animation = child.getAttribute('animation');
-    if (animation) {
-      domInfo.animation = animation;
-    }
-
     // Check image node
     domInfo.isImage = domInfo.type === 'element' && domInfo.tagName === 'img';
     if (domInfo.isImage) {
