@@ -17,7 +17,7 @@ const UMD = 'umd';
 const ESM = 'esm';
 const CJS = 'cjs';
 
-function transformBundleFormat({input, name, format, entry, shouldExportDefault}) {
+function transformBundleFormat({ input, name, format, entry, shouldExportDefault }) {
   return format === IIFE ? memory({
     path: input,
     contents: `
@@ -130,6 +130,7 @@ function buildCorePackages(packageName, name) {
 
 buildCorePackages('rax', 'Rax');
 buildCorePackages('driver-dom', 'DriverDOM');
+buildCorePackages('driver-kraken', 'DriverKraken');
 buildCorePackages('driver-weex', 'DriverWeex');
 
 build({ package: 'driver-worker', name: 'DriverWorker' });

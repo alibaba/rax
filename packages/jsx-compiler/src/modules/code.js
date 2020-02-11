@@ -6,7 +6,7 @@ const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
-const { getNpmName, normalizeFileName } = require('../utils/pathHelper');
+const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
@@ -63,7 +63,7 @@ function getConstructor(type) {
 module.exports = {
   parse(parsed, code, options) {
     const { ast, programPath, defaultExportedPath, exportComponentPath, renderFunctionPath,
-      useCreateStyle, useClassnames, dynamicValue, dynamicEvents, imported,
+      useCreateStyle, useClassnames, dynamicValue, dynamicRef, dynamicStyle, dynamicEvents, imported,
       contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
     const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
     if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
@@ -178,7 +178,7 @@ module.exports = {
           parentNode && parentNode.remove && parentNode.remove();
         }
       });
-      addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath);
+      addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath);
       addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
       addProviderIniter(contextList, renderFunctionPath);
       addRegisterRefs(refs, renderFunctionPath);
@@ -202,8 +202,7 @@ function genTagIdExp(expressions) {
 function getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm) {
   let runtimePath = getRuntimeByPlatform(platform.type);
   if (!disableCopyNpm) {
-    runtimePath = relative(targetFileDir, join(outputPath, 'npm', RUNTIME));
-    runtimePath = runtimePath[0] !== '.' ? './' + runtimePath : runtimePath;
+    runtimePath = addRelativePathPrefix(relative(targetFileDir, join(outputPath, 'npm', RUNTIME)));
   }
   return runtimePath;
 }
@@ -296,7 +295,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     } else {
       ret = join(prefix, value.replace(npmName, realNpmName));
     }
-    if (ret[0] !== '.') ret = './' + ret;
+    ret = addRelativePathPrefix(ret);
     // ret => '../npm/_ali/universal-toast/lib/index.js
 
     return t.stringLiteral(normalizeFileName(ret));
@@ -449,11 +448,13 @@ function collectCoreMethods(raxExported) {
   return vaildList;
 }
 
-function addUpdateData(dynamicValue, renderItemFunctions, renderFunctionPath) {
+function addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath) {
   const dataProperties = [];
-
-  Object.keys(dynamicValue).forEach(name => {
-    dataProperties.push(t.objectProperty(t.stringLiteral(name), dynamicValue[name]));
+  const dataStore = dynamicValue.getStore();
+  const refStore = dynamicRef.getStore();
+  const styleStore = dynamicStyle.getStore();
+  [...dataStore, ...refStore, ...styleStore].forEach(({name, value}) => {
+    dataProperties.push(t.objectProperty(t.stringLiteral(name), value));
   });
 
   renderItemFunctions.map(renderItemFn => {
@@ -497,8 +498,8 @@ function addProviderIniter(contextList, renderFunctionPath) {
         t.identifier('Provider')
       );
       const fnBody = renderFunctionPath.node.body.body;
-
-      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, [ctx.contextInitValue])));
+      const args = ctx.contextInitValue ? [ctx.contextInitValue] : [];
+      fnBody.push(t.expressionStatement(t.callExpression(ProviderIniter, args)));
     });
   }
 }
@@ -563,7 +564,7 @@ function ensureIndexInPath(value, resourcePath) {
     extensions: ['.js', '.ts']
   });
   const result = relative(dirname(resourcePath), target);
-  return removeJSExtension(result[0] === '.' ? result : './' + result);
+  return removeJSExtension(addRelativePathPrefix(result));
 };
 
 function removeJSExtension(filePath) {

@@ -30,9 +30,12 @@ class Location {
     this.hash = '';
   }
 
-  __updatePageOption(pageId, pageOptions) {
-    this._pageId = pageId;
+  __updatePageOption(pageOptions) {
     this._currentPageOptions = pageOptions;
+  }
+
+  __updatePageId(pageId) {
+    this._pageId = pageId;
   }
 
   get href() {

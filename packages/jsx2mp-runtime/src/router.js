@@ -1,6 +1,27 @@
-// eslint-disable-next-line module/no-implicit-dependencies
-import { navigateTo, redirectTo, navigateBack } from '@@ADAPTER@@';
+/* eslint-disable import/no-extraneous-dependencies */
+/* global my, wx */
 import { getMiniAppHistory } from './history';
+import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
+
+let apiCore;
+
+if (isMiniApp) {
+  apiCore = my;
+} else if (isWeChatMiniProgram) {
+  apiCore = wx;
+}
+
+function redirectTo(options) {
+  apiCore.redirectTo(options);
+}
+
+function navigateTo(options) {
+  apiCore.navigateTo(options);
+}
+
+function navigateBack(options) {
+  apiCore.navigateBack(options);
+}
 
 let __routerMap = {};
 
