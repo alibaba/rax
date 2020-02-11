@@ -114,6 +114,27 @@ class HTMLInputElement extends Element {
     this.$_attrs.set('value', value);
   }
 
+  get defaultValue() {
+    const type = this.$_attrs.get('type');
+    const value = this.$_attrs.get('defaultValue');
+
+    if ((type === 'radio' || type === 'checkbox') && value === undefined) return 'on';
+    return value || '';
+  }
+
+  set defaultValue(value) {
+    value = '' + value;
+    this.$_attrs.set('defaultValue', value);
+  }
+
+  get readOnly() {
+    return !!this.$_attrs.get('readOnly');
+  }
+
+  set readOnly(value) {
+    this.$_attrs.set('readOnly', !!value);
+  }
+
   get disabled() {
     return !!this.$_attrs.get('disabled');
   }

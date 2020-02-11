@@ -9,7 +9,7 @@ export default {
   props: [{
     name: 'value',
     get(domNode) {
-      return domNode.value || '';
+      return domNode.value || domNode.defaultValue || '';
     },
   }, {
     name: 'type',
@@ -28,6 +28,11 @@ export default {
       return domNode.placeholder;
     },
   }, {
+    name: 'placeholderColor',
+    get(domNode) {
+      return domNode.getAttribute('placeholderColor') || '#999999';
+    },
+  }, {
     name: 'placeholderStyle',
     get(domNode) {
       return domNode.getAttribute('placeholder-style') || '';
@@ -40,7 +45,7 @@ export default {
   }, {
     name: 'disabled',
     get(domNode) {
-      return domNode.disabled;
+      return domNode.disabled || domNode.readOnly;
     },
   }, {
     name: 'maxlength',
