@@ -112,7 +112,7 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.value = evt.detail.value;
-      callEvent('input', evt, this.pageId, this.nodeId);
+      callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onTextareaConfirm(evt) {
       callSimpleEvent('confirm', evt, this.domNode);

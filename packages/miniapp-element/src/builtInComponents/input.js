@@ -118,10 +118,10 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.value = evt.detail.value;
-      callEvent('input', evt, this.pageId, this.nodeId);
+      callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onInputFocus(evt) {
-      this._inputOldValue = this.domNode.value;
+      this._inputOldValue = this.domNode.value || '';
       callSimpleEvent('focus', evt, this.domNode);
     },
     onInputBlur(evt) {
@@ -130,7 +130,7 @@ export default {
       this.domNode.setAttribute('focus', false);
       if (this._inputOldValue !== undefined && this.domNode.value !== this._inputOldValue) {
         this._inputOldValue = undefined;
-        callEvent('change', evt, this.pageId, this.nodeId);
+        callEvent('change', evt, null, this.pageId, this.nodeId);
       }
       callSimpleEvent('blur', evt, this.domNode);
     },
@@ -155,7 +155,7 @@ export default {
           }
         }
       }
-      callEvent('change', evt, this.pageId, this.nodeId);
+      callEvent('change', evt, null, this.pageId, this.nodeId);
     },
     onCheckboxChange(evt) {
       const domNode = this.domNode;
@@ -165,7 +165,7 @@ export default {
       } else {
         domNode.checked = false;
       }
-      callEvent('change', evt, this.pageId, this.nodeId);
+      callEvent('change', evt, null, this.pageId, this.nodeId);
     },
   },
 };

@@ -90,9 +90,7 @@ class HTMLTextAreaElement extends Element {
     };
   }
 
-  /**
-     * 对外属性和方法
-     */
+  // Attribute
   get type() {
     return this.$_attrs.get('type');
   }
@@ -103,7 +101,7 @@ class HTMLTextAreaElement extends Element {
   }
 
   get value() {
-    return this.$_attrs.get('value');
+    return this.$_attrs.get('value') || '';
   }
 
   set value(value) {
