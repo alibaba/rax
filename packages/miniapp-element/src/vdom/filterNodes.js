@@ -23,7 +23,7 @@ export default function filterNodes(domNode, level) {
     domInfo.class = `h5-${domInfo.tagName} node-${domInfo.nodeId} ${domInfo.class || ''}`; // 增加默认 class
     domInfo.domNode = child;
 
-    // 特殊节点
+    // Special node
     if (NEET_SPLIT_CLASS_STYLE_FROM_CUSTOM_ELEMENT.indexOf(child.tagName) >= 0) {
       if (domInfo.tagName === 'builtin-component' && NEET_BEHAVIOR_NORMAL_CUSTOM_ELEMENT.indexOf(child.behavior) !== -1) {
         domInfo.compName = child.behavior;
@@ -51,7 +51,13 @@ export default function filterNodes(domNode, level) {
       domInfo.style = '';
     }
 
-    // 判断图片节点
+    // Check animation attribute
+    const animation = child.getAttribute('animation');
+    if (animation) {
+      domInfo.animation = animation;
+    }
+
+    // Check image node
     domInfo.isImage = domInfo.type === 'element' && domInfo.tagName === 'img';
     if (domInfo.isImage) {
       domInfo.src = child.src ? tool.completeURL(child.src, window.location.origin, true) : '';
@@ -65,13 +71,13 @@ export default function filterNodes(domNode, level) {
       domInfo.showMenuByLongpress = false;
     }
 
-    // 判断叶子节点
+    // Check child nodes
     domInfo.isLeaf = !domInfo.isImage && domInfo.type === 'element' && !child.children.length && NEET_RENDER_TO_CUSTOM_ELEMENT.indexOf(child.tagName.toUpperCase()) === -1;
     if (domInfo.isLeaf) {
       domInfo.content = child.childNodes.map(childNode => childNode.$$domInfo.type === 'text' ? childNode.textContent : '').join('');
     }
 
-    // 判断可直接用 view 渲染的简单子节点
+    // Check simple node that can be rendered as view
     domInfo.isSimple = !domInfo.isLeaf && domInfo.type === 'element' && NEET_RENDER_TO_CUSTOM_ELEMENT.indexOf(child.tagName.toUpperCase()) === -1 && level > 0;
     if (domInfo.isSimple) {
       domInfo.content = '';

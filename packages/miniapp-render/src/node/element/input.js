@@ -5,9 +5,7 @@ import Pool from '../../util/pool';
 const pool = new Pool();
 
 class HTMLInputElement extends Element {
-  /**
-     * 创建实例
-     */
+  // Create instance
   static $$create(options, tree) {
     const config = cache.getConfig();
 
@@ -24,9 +22,7 @@ class HTMLInputElement extends Element {
     return new HTMLInputElement(options, tree);
   }
 
-  /**
-     * 覆写父类的回收实例方法
-     */
+  // Override parent class recycle method
   $$recycle() {
     this.$$destroy();
 
@@ -38,9 +34,7 @@ class HTMLInputElement extends Element {
     }
   }
 
-  /**
-     * 调用 $_generateHtml 接口时用于处理额外的属性，
-     */
+  // $_generateHtml handle other attributes
   $$dealWithAttrsForGenerateHtml(html, node) {
     const type = node.type;
     if (type) html += ` type="${type}"`;
@@ -60,9 +54,7 @@ class HTMLInputElement extends Element {
     return html;
   }
 
-  /**
-     * 调用 outerHTML 的 setter 时用于处理额外的属性
-     */
+  // outerHtml
   $$dealWithAttrsForOuterHTML(node) {
     this.type = node.type || '';
     this.value = node.value || '';

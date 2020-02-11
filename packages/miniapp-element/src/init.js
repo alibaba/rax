@@ -23,7 +23,7 @@ export default function(instance, data) {
     data.content = domNode.textContent;
   } else {
     // Could be replaced html tag
-    const builtinComponentName = componentNameMap[tagName];
+    const builtinComponentName = componentNameMap[tagName.toLowerCase()];
     if (builtinComponentName) checkComponentAttr(instance, builtinComponentName, data);
   }
 }

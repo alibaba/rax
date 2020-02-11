@@ -11,14 +11,11 @@ import parser from '../tree/parser';
 const pool = new Pool();
 
 class Element extends Node {
-  /**
-     * 创建实例
-     */
   static $$create(options, tree) {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reusing element node
       const instance = pool.get();
 
       if (instance) {
@@ -30,9 +27,7 @@ class Element extends Node {
     return new Element(options, tree);
   }
 
-  /**
-     * 覆写父类的 $$init 方法
-     */
+  // Override the $$init method of the parent class
   $$init(options, tree) {
     options.type = 'element';
 
@@ -50,7 +45,6 @@ class Element extends Node {
 
     this.$_initAttrs(options.attrs);
 
-    // 补充实例的属性，用于 'xxx' in XXX 判断
     this.onclick = null;
     this.ontouchstart = null;
     this.ontouchmove = null;
@@ -60,9 +54,7 @@ class Element extends Node {
     this.onerror = null;
   }
 
-  /**
-     * 覆写父类的 $$destroy 方法
-     */
+  // Override the $$destroy method of the parent class
   $$destroy() {
     super.$$destroy();
 
@@ -77,9 +69,7 @@ class Element extends Node {
     this.$_attrs = null;
   }
 
-  /**
-     * 回收实例
-     */
+  // Recycling instance
   $$recycle() {
     this.$_children.forEach(child => child.$$recycle());
     this.$$destroy();
@@ -87,14 +77,11 @@ class Element extends Node {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reusing element node
       pool.add(this);
     }
   }
 
-  /**
-     * 延迟创建内部属性对象
-     */
   set $_dataset(value) {
     this.$__dataset = value;
   }
@@ -134,9 +121,7 @@ class Element extends Node {
     return this.$__attrs;
   }
 
-  /**
-     * 初始化属性
-     */
+  // Init attribute
   $_initAttrs(attrs = {}) {
     // 防止一开始就创建 $_attrs
     const attrKeys = Object.keys(attrs);
@@ -155,28 +140,23 @@ class Element extends Node {
       }
     });
 
-    this.$_notTriggerUpdate = false; // 重启触发更新
+    // 重启触发更新
+    this.$_notTriggerUpdate = false;
   }
 
-  /**
-     * 监听 class 或 style 属性值变化
-     */
+  // Listen for class or style attribute values to change
   $_onClassOrStyleUpdate() {
     if (this.$__attrs) this.$_attrs.triggerUpdate();
     this.$_triggerParentUpdate();
   }
 
-  /**
-     * 更新父组件树
-     */
+  // Update parent tree
   $_triggerParentUpdate() {
     if (this.parentNode && !this.$_notTriggerUpdate) this.parentNode.$$trigger('$$childNodesUpdate');
     if (!this.$_notTriggerUpdate) this.$$trigger('$$domNodeUpdate');
   }
 
-  /**
-     * 更新子组件树
-     */
+  // Update child nodes
   $_triggerMeUpdate() {
     if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
   }
@@ -187,14 +167,14 @@ class Element extends Node {
   $_updateChildrenExtra(node, isRemove) {
     const id = node.id;
 
-    // 更新 nodeId - dom 映射表
+    // Update nodeId - dom map
     if (isRemove) {
       cache.setNode(this.$_pageId, node.$$nodeId, null);
     } else {
       cache.setNode(this.$_pageId, node.$$nodeId, node);
     }
 
-    // 更新 id - dom 映射表
+    // Update id - dom map
     if (id) {
       if (isRemove) {
         this.$_tree.updateIdMap(id, null);
@@ -210,19 +190,17 @@ class Element extends Node {
     }
   }
 
-  /**
-     * 遍历 dom 树，生成 html
-     */
+  // Traverse the dom tree to generate the HTML
   $_generateHtml(node) {
     if (node.nodeType === Node.TEXT_NODE) {
-      // 文本节点
+      // Text node
       return node.textContent;
     } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // 元素
+      // Element
       const tagName = node.tagName.toLowerCase();
       let html = `<${tagName}`;
 
-      // 属性
+      // Attribute
       if (node.id) html += ` id="${node.id}"`;
       if (node.className) html += ` class="${node.className}"`;
 
@@ -232,6 +210,9 @@ class Element extends Node {
       const src = node.src;
       if (src) html += ` src=${src}`;
 
+      const animation = node.animation;
+      if (node.animation) html += `animation=${animation}`;
+
       const dataset = node.dataset;
       Object.keys(dataset).forEach(name => {
         html += ` data-${tool.toDash(name)}="${dataset[name]}"`;
@@ -240,7 +221,7 @@ class Element extends Node {
       html = this.$$dealWithAttrsForGenerateHtml(html, node);
 
       if (node.$$isUnary) {
-        // 空标签
+        // Empty tag
         return `${html} />`;
       } else {
         const childrenHtml = node.childNodes.map(child => this.$_generateHtml(child)).join('');
@@ -249,9 +230,7 @@ class Element extends Node {
     }
   }
 
-  /**
-     * 遍历 ast，生成 dom 树
-     */
+  // Traverse the ast to generate the dom tree
   $_generateDomTree(node) {
     const {
       type,
@@ -264,10 +243,10 @@ class Element extends Node {
     const nodeId = `b-${tool.getId()}`; // 运行时生成，使用 b- 前缀
 
     if (type === 'element') {
-      // 元素
+      // Element
       const attrsMap = {};
 
-      // 属性列表转化成 map
+      // The property list is converted to a map
       for (const attr of attrs) {
         const name = attr.name;
         let value = attr.value;
@@ -289,16 +268,14 @@ class Element extends Node {
 
       return element;
     } else if (type === 'text') {
-      // 文本
+      // Text node
       return this.ownerDocument.$$createTextNode({
         content: tool.decodeContent(content), nodeId
       });
     }
   }
 
-  /**
-     * 对应的 dom 信息
-     */
+  // Dom info
   get $$domInfo() {
     return {
       nodeId: this.$$nodeId,
@@ -308,44 +285,30 @@ class Element extends Node {
       id: this.id,
       class: this.className,
       style: this.$__style ? this.style.cssText : '',
+      animation: this.animation
     };
   }
 
-  /**
-     * 是否空标签
-     */
+  // Check Empty tag
   get $$isUnary() {
     return this.$_unary;
   }
 
-  /**
-     * 调用 $_generateHtml 接口时用于处理额外的属性
-     */
+  // The $_generateHtml interface is called to handle additional attributes
   $$dealWithAttrsForGenerateHtml(html) {
-    // 具体实现逻辑由子类实现
+    // The concrete implementation logic is implemented by subclasses
     return html;
   }
 
-  /**
-     * 调用 outerHTML 的 setter 时用于处理额外的属性
-     */
+  // The setter for outerHTML is called to handle the extra properties
   $$dealWithAttrsForOuterHTML() {
-    // ignore，具体实现逻辑由子类实现
   }
 
-  /**
-     * 调用 cloneNode 接口时用于处理额外的属性
-     */
+  // The cloneNode interface is called to process additional properties
   $$dealWithAttrsForCloneNode() {
-    // 具体实现逻辑由子类实现
     return {};
   }
 
-  /**
-     * 小程序端的 getBoundingClientRect 实现
-     * https://developers.weixin.qq.com/miniprogram/dev/api/wxml/NodesRef.scrollOffset.html
-     * https://developers.weixin.qq.com/miniprogram/dev/api/wxml/NodesRef.boundingClientRect.html
-     */
   $$getBoundingClientRect() {
     tool.flushThrottleCache(); // 先清空 setData
     const window = cache.getWindow(this.$_pageId);
@@ -360,9 +323,7 @@ class Element extends Node {
     });
   }
 
-  /**
-     * 获取对应小程序组件的 context 对象
-     */
+  // Gets the context object of the corresponding widget component
   $$getContext() {
     tool.flushThrottleCache(); // 先清空 setData
     const window = cache.getWindow(this.$_pageId);
@@ -379,20 +340,16 @@ class Element extends Node {
     });
   }
 
-  /**
-     * 获取对应节点的 NodesRef 对象
-     * https://developers.weixin.qq.com/miniprogram/dev/api/wxml/NodesRef.html
-     */
+  // Gets the NodesRef object for the corresponding node
   $$getNodesRef() {
-    tool.flushThrottleCache(); // 先清空 setData
+    // Clears out setData
+    tool.flushThrottleCache();
     const window = cache.getWindow(this.$_pageId);
     return new Promise((resolve, reject) => {
       if (!window) reject();
 
       if (this.tagName === 'CANVAS') {
         // TODO，为了兼容基础库的一个 bug，暂且如此实现
-        const config = cache.getConfig();
-        const target = { config };
         resolve(CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
       } else {
         resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
@@ -400,18 +357,13 @@ class Element extends Node {
     });
   }
 
-  /**
-     * 设置属性，但不触发更新
-     */
+  // Sets properties, but does not trigger updates
   $$setAttributeWithoutUpdate(name, value) {
     this.$_notTriggerUpdate = true;
     this.setAttribute(name, value);
     this.$_notTriggerUpdate = false;
   }
 
-  /**
-     * 对外属性和方法
-     */
   get id() {
     if (!this.$__attrs) return '';
 
@@ -427,7 +379,7 @@ class Element extends Node {
 
     if (id === oldId) return;
 
-    // 更新 tree
+    // update tree
     if (this.$_tree.getById(oldId) === this) this.$_tree.updateIdMap(oldId, null);
     if (id) this.$_tree.updateIdMap(id, this);
     this.$_triggerParentUpdate();
@@ -486,11 +438,11 @@ class Element extends Node {
 
     const fragment = this.ownerDocument.$$createElement({
       tagName: 'documentfragment',
-      nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+      nodeId: `b-${tool.getId()}`,
       nodeType: Node.DOCUMENT_FRAGMENT_NODE,
     });
 
-    // 解析成 ast
+    // parse to ast
     let ast = null;
     try {
       ast = parser.parse(html);
@@ -500,24 +452,24 @@ class Element extends Node {
 
     if (!ast) return;
 
-    // 生成 dom 树
+    // Generate dom tree
     ast.forEach(item => {
       const node = this.$_generateDomTree(item);
       if (node) fragment.appendChild(node);
     });
 
-    // 删除所有子节点
+    // Delete all child nodes
     this.$_children.forEach(node => {
       node.$$updateParent(null);
 
-      // 更新映射表
+      // Update the mapping table
       this.$_updateChildrenExtra(node, true);
     });
     this.$_children.length = 0;
 
-    // 追加新子节点
+    // Appends the new child node
     if (this.$_tagName === 'table') {
-      // table 节点需要判断是否存在 tbody
+      // The table node needs to determine whether a tbody exists
       let hasTbody = false;
 
       for (const child of fragment.childNodes) {
@@ -532,7 +484,7 @@ class Element extends Node {
           tagName: 'tbody',
           attrs: {},
           nodeType: Node.ELEMENT_NODE,
-          nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+          nodeId: `b-${tool.getId()}`,
         });
 
         tbody.appendChild(fragment);
@@ -550,7 +502,7 @@ class Element extends Node {
   set outerHTML(html) {
     if (typeof html !== 'string') return;
 
-    // 解析成 ast，只取第一个作为当前节点
+    // Resolve to ast, taking only the first as the current node
     let ast = null;
     try {
       ast = parser.parse(html)[0];
@@ -676,7 +628,7 @@ class Element extends Node {
     });
 
     if (deep) {
-      // 深克隆
+      // Deep clone
       for (const child of this.$_children) {
         newNode.appendChild(child.cloneNode(deep));
       }
@@ -703,15 +655,16 @@ class Element extends Node {
       if (node.parentNode) node.parentNode.removeChild(node);
 
       this.$_children.push(node);
-      node.$$updateParent(this); // 设置 parentNode
+      // Set parentNode
+      node.$$updateParent(this);
 
-      // 更新映射表
+      // Update map
       this.$_updateChildrenExtra(node);
 
       hasUpdate = true;
     }
 
-    // 触发 webview 端更新
+    // Trigger webview update
     if (hasUpdate) this.$_triggerMeUpdate();
 
     return this;
@@ -723,15 +676,15 @@ class Element extends Node {
     const index = this.$_children.indexOf(node);
 
     if (index >= 0) {
-      // 已经插入，需要删除
+      // Inserted, need to delete
       this.$_children.splice(index, 1);
 
       node.$$updateParent(null);
 
-      // 更新映射表
+      // Update map
       this.$_updateChildrenExtra(node, true);
 
-      // 触发 webview 端更新
+      // Trigger webview update
       this.$_triggerMeUpdate();
     }
 
@@ -749,7 +702,7 @@ class Element extends Node {
       // documentFragment
       nodes = [];
       for (let i = 0; i < node.childNodes.length; i++) {
-        // 因为是逐个插入，所以需要逆序
+        // Need to invert them
         nodes.push(node.childNodes[i]);
       }
     } else {

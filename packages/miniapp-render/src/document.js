@@ -17,15 +17,14 @@ import BuiltInComponent from './node/element/builtin-component';
 import CustomComponent from './node/element/custom-component';
 
 const CONSTRUCTOR_MAP = {
-  a: A,
-  img: Image,
-  input: Input,
-  textarea: Textarea,
-  video: Video,
-  canvas: Canvas,
+  A,
+  IMG: Image,
+  INPUT: Input,
+  TEXTAREA: Textarea,
+  VIDEO: Video,
+  CANVAS: Canvas,
   'BUILTIN-COMPONENT': BuiltInComponent,
 };
-const BUILTIN_COMPONENT_MAP = {};
 const BUILTIN_COMPONENT_LIST = [
   'movable-view', 'cover-image', 'cover-view', 'movable-area', 'scroll-view', 'swiper', 'swiper-item', 'view',
   'icon', 'progress', 'rich-text', 'text',
@@ -36,14 +35,14 @@ const BUILTIN_COMPONENT_LIST = [
   'canvas',
   'ad', 'official-account', 'open-data', 'web-view'
 ];
-BUILTIN_COMPONENT_LIST.forEach(name => BUILTIN_COMPONENT_MAP[name] = name);
-let CUSTOM_COMPONENT_MAP = {};
 
 /**
- * 判断是否是内置组件
+ * Check this component is builtIn component
+ * @param {string} tagName - component tag name
+ * @return {boolean}
  */
 function checkIsBuiltInComponent(tagName) {
-  return BUILTIN_COMPONENT_MAP[tagName];
+  return BUILTIN_COMPONENT_LIST.indexOf(tagName) > -1;
 }
 
 class Document extends EventTarget {
@@ -52,18 +51,16 @@ class Document extends EventTarget {
 
     const config = cache.getConfig();
     const runtime = config.runtime || {};
-    CUSTOM_COMPONENT_MAP = runtime.usingComponents || {};
+    this.usingComponents = runtime.usingComponents || {};
 
     this.$_pageId = pageId;
-    const pageRoute = tool.getPageRoute(pageId);
-    const pageName = tool.getPageName(pageRoute);
 
-    // 用于封装特殊标签和对应构造器
+    // Used to encapsulate special tag and corresponding constructors
     const that = this;
     this.$_imageConstructor = function HTMLImageElement(width, height) {
       return Image.$$create({
         tagName: 'img',
-        nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+        nodeId: `b-${tool.getId()}`,
         attrs: {},
         width,
         height,
@@ -85,22 +82,21 @@ class Document extends EventTarget {
     this.$_node = this.$$createElement({
       tagName: 'html',
       attrs: {},
-      nodeId: `a-${tool.getId()}`, // 运行前生成，使用 a- 前缀
+      nodeId: `a-${tool.getId()}`,
       type: Node.DOCUMENT_NODE,
     });
-    this.$_node.$$updateParent(this); // documentElement 的 parentNode 是 document
+    // documentElement's parentNode is document
+    this.$_node.$$updateParent(this);
     this.$_node.scrollTop = 0;
 
-    // head 元素
+    // head
     this.$_head = this.createElement('head');
 
-    // 更新 body 的 parentNode
+    // update body's parentNode
     this.$_tree.root.$$updateParent(this.$_node);
   }
 
-  /**
-     * Image 构造器
-     */
+  // Image constructor
   get $$imageConstructor() {
     return this.$_imageConstructor;
   }
@@ -109,34 +105,28 @@ class Document extends EventTarget {
     return this.$_pageId;
   }
 
-  /**
-     * 触发节点事件
-     */
+  // Event trigger
   $$trigger(eventName, options) {
     this.documentElement.$$trigger(eventName, options);
   }
 
-  /**
-     * 内部所有节点创建都走此接口，统一把控
-     */
   $$createElement(options, tree) {
     const originTagName = options.tagName;
     const tagName = originTagName.toUpperCase();
-    let componentName = null;
+    const componentName = checkIsBuiltInComponent(originTagName) ? originTagName : null;
     tree = tree || this.$_tree;
 
     const constructorClass = CONSTRUCTOR_MAP[tagName];
     if (constructorClass) {
       return constructorClass.$$create(options, tree);
-      // eslint-disable-next-line no-cond-assign
-    } else if (componentName = checkIsBuiltInComponent(originTagName)) {
-      // 内置组件的特殊写法，转成 builtin-component 节点
+    } else if (componentName) {
+      // Transform to builtin-component
       options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
       options.attrs.behavior = componentName;
       return BuiltInComponent.$$create(options, tree);
-    } else if (CUSTOM_COMPONENT_MAP[originTagName]) {
-      // 自定义组件的特殊写法，转成 custom-component 节点
+    } else if (this.usingComponents[originTagName]) {
+      // Transform to custom-component
       options.tagName = 'custom-component';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
@@ -148,23 +138,17 @@ class Document extends EventTarget {
     }
   }
 
-  /**
-     * 内部所有文本节点创建都走此接口，统一把控
-     */
+  // Create text node
   $$createTextNode(options, tree) {
     return TextNode.$$create(options, tree || this.$_tree);
   }
 
-  /**
-     * 内部所有注释节点创建都走此接口，统一把控
-     */
+  // Create comment node
   $$createComment(options, tree) {
     return Comment.$$create(options, tree || this.$_tree);
   }
 
-  /**
-     * 对外属性和方法
-     */
+  // Node type
   get nodeType() {
     return Node.DOCUMENT_NODE;
   }
@@ -233,12 +217,12 @@ class Document extends EventTarget {
 
     return this.$$createElement({
       tagName,
-      nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+      nodeId: `b-${tool.getId()}`,
     });
   }
 
   createElementNS(ns, tagName) {
-    // 不支持真正意义上的 createElementNS，转成调用 createElement
+    // Actually use createElement
     return this.createElement(tagName);
   }
 
@@ -247,21 +231,21 @@ class Document extends EventTarget {
 
     return this.$$createTextNode({
       content,
-      nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+      nodeId: `b-${tool.getId()}`,
     });
   }
 
   createComment() {
     // 忽略注释内容的传入
     return this.$$createComment({
-      nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+      nodeId: `b-${tool.getId()}`,
     });
   }
 
   createDocumentFragment() {
     return Element.$$create({
       tagName: 'documentfragment',
-      nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+      nodeId: `b-${tool.getId()}`,
       nodeType: Node.DOCUMENT_FRAGMENT_NODE,
     }, this.$_tree);
   }

@@ -114,7 +114,7 @@ const config = {
           newData.content = domNode.textContent;
       } else {
         // Replaced html tag
-        const builtinComponentName = componentNameMap[tagName];
+        const builtinComponentName = componentNameMap[tagName.toLowerCase()];
         if (builtinComponentName)
           checkComponentAttr(this, builtinComponentName, newAttrData);
       }

@@ -4,18 +4,14 @@ class Pool {
     this.$_cache = [];
   }
 
-  /**
-     * 添加一个对象
-     */
+  // Add an object
   add(object) {
     if (this.$_cache.length >= this.$_size) return;
 
     this.$_cache.push(object);
   }
 
-  /**
-     * 取出一个对象
-     */
+  // Get an object
   get() {
     return this.$_cache.pop();
   }
