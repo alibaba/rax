@@ -67,9 +67,10 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getNativeComponentLifecycle({
     mount: function() {
-      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps);
+      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, Klass.__highestLevelProps);
       this.instance = new Klass(props);
-      this.instance.defaultProps = Klass.defaultProps;
+      this.instance.defaultProps = Klass.defaultProps || {};
+      this.instance.__highestLevelProps = Klass.__highestLevelProps;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
       this.instance._internal = this;
