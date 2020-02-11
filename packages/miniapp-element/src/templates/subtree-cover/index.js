@@ -32,4 +32,4 @@ Component({
       this.props.onError && this.props.onError(e);
     },
   }
-})
+});
