@@ -138,11 +138,16 @@ function createProxyMethods(events) {
 }
 
 function createAnonymousClass(render) {
-  return class extends Component {
+  const Klass = class extends Component {
     render(props) {
       return render.call(this, props);
     }
   };
+  // Set functional component properties to the Klass
+  Object.keys(render).forEach(key => {
+    Klass[key] = render[key];
+  });
+  return Klass;
 }
 
 /**
