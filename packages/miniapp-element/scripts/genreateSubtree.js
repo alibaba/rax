@@ -4,40 +4,6 @@ import adapter from './adapter';
 
 const DOM_SUBTREE_LEVEL = 10;
 
-const CUSTOM_COMPONENT_CONTENT = {
-  subtree: {
-    jsContent: `Component({
-      props: {
-        childNodes: [],
-        inCover: false
-      }
-    })`,
-    jsonContent: `{
-      "component": true,
-      "usingComponents": {
-        "element": "../../index",
-        "subtree": "./index",
-        "subtree-cover": "../subtree-cover/index"
-      }
-    }`
-  },
-  subtreeCover: {
-    jsContent: `Component({
-      props: {
-        childNodes: []
-      }
-    })`,
-    jsonContent: `{
-      "component": true,
-      "usingComponents": {
-        "element": "../../index",
-        "subtree": "../subtree/index",
-        "subtree-cover": "./index"
-      }
-    }`
-  }
-}
-
 /**
  * Get subtree, to generate single loop content
  */
@@ -144,41 +110,15 @@ function createSubtreeCustomComponent(type = 'subtree', customComponentPath, pla
   const content = type === 'subtree' ? getSubtreeSimple(1, platform) : getSubtreeCoverSimple(1, platform);
 
   // Write file
-  const xmlPath = path.join(customComponentPath, `index.${adapter[platform].xml}`);
-  const jsPath = path.join(customComponentPath, 'index.js');
-  const jsonPath = path.join(customComponentPath, 'index.json');
+  const sourecJSPath = path.resolve('src', 'templates', type, 'index.js');
+  const sourceJSONPath = path.resolve('src', 'templates', type, 'index.json');
+  const distJSPath = path.join(customComponentPath, 'index.js');
+  const distJSONPath = path.join(customComponentPath, 'index.json');
+  const distXMLPath = path.join(customComponentPath, `index.${adapter[platform].xml}`);
 
-  fs.writeFileSync(xmlPath, content.join(''), 'utf8');
-  fs.writeFileSync(jsPath, CUSTOM_COMPONENT_CONTENT[type].jsContent, 'utf8');
-  fs.writeFileSync(jsonPath, CUSTOM_COMPONENT_CONTENT[type].jsonContent, 'utf8');
-}
-
-/**
- * Generate subtree cover custom component (for alipay)
- */
-function createSubtreeCoverCustomComponent(customComponentPath, platform) {
-  const content = getSubtreeCoverSimple(1, platform)
-
-  // Write file
-  const xmlPath = path.join(customComponentPath, `index.${adapter[platform].xml}`);
-  const jsPath = path.join(customComponentPath, 'index.js');
-  const jsonPath = path.join(customComponentPath, 'index.json');
-
-  fs.writeFileSync(xmlPath, content.join(''), 'utf8');
-  fs.writeFileSync(jsPath, `Component({
-    props: {
-      childNodes: []
-    }
-  })`, 'utf8');
-  fs.writeFileSync(jsonPath, `{
-    "component": true,
-    "usingComponents": {
-      "element": "../../index",
-      "subtree": "../subtree/index",
-      "subtree-cover": "./index"
-    }
-  }
-  `, 'utf8');
+  fs.writeFileSync(distXMLPath, content.join(''), 'utf8');
+  fs.copySync(sourecJSPath, distJSPath);
+  fs.copySync(sourceJSONPath, distJSONPath);
 }
 
 export default function (distPath, platform) {
@@ -193,7 +133,7 @@ export default function (distPath, platform) {
       fs.ensureDirSync(subtreeCoverPath);
 
       createSubtreeCustomComponent('subtree', subtreePath, platform);
-      createSubtreeCustomComponent('subtreeCover', subtreeCoverPath, platform);
+      createSubtreeCustomComponent('subtree-cover', subtreeCoverPath, platform);
       break;
     case 'wechat':
       createSubtreeTemplate(templatePath, platform);
