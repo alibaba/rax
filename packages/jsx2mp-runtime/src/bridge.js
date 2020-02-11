@@ -3,7 +3,7 @@ import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-// eslint-disable-next-line rax/no-implicit-dependencies
+// eslint-disable-next-line module/no-implicit-dependencies
 import { getComponentLifecycle, getComponentBaseConfig } from '@@ADAPTER@@';
 import { createMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
