@@ -14,10 +14,7 @@ module.exports = function(...args) {
   const path = args[0];
   const { node } = path;
   const attrName = node.name.name;
-  if (attrName !== 'style'
-    && !isEventHandlerAttr(attrName)
-    && !isDirectiveAttr(attrName)
-  ) {
+  if (attrName !== 'style' && attrName !== 'x-for') {
     if (t.isJSXExpressionContainer(node.value)) {
       handleList(null, ...args, node.value.expression);
     } else if (t.isStringLiteral(node.value)) {

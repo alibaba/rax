@@ -61,10 +61,9 @@ describe('Transform list', () => {
       ${index}: ${index},
       _d0: {
         uri: item.picUrl
-      },
-      _d1: resizeMode
+      }
     };
-  })} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source="{{item._d0}}" resizeMode="{{item._d1}}" /></View></block></View>`);
+  })} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source="{{item._d0}}" resizeMode={resizeMode} /></View></block></View>`);
   });
 
   it('list elements', () => {
@@ -212,5 +211,25 @@ describe('Transform list', () => {
       ${index}: ${index}
     };
   })} a:for-item="item" a:for-index="${index}"><Text>test</Text></block></View>`);
+  });
+
+  it('use expression in map fn', () => {
+    const code = `<View>{[1,2,3].map((item, index) => {
+      const a = index * 2 + 10;
+      return <Text>{a}</Text>;
+    })}</View>`;
+    const ast = parseExpression(code);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => {
+    const a = ${index} * 2 + 10;
+    return {
+      item: item,
+      ${index}: ${index},
+      a: a
+    };
+  })} a:for-item="item" a:for-index="${index}"><Text>{a}</Text></block></View>`);
   });
 });

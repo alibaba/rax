@@ -1,8 +1,9 @@
 const t = require('@babel/types');
 const createBinding = require('./createBinding');
-const CodeError = require('./CodeError');
 const genExpression = require('../codegen/genExpression');
 const handleValidIdentifier = require('./handleValidIdentifier');
+const getListItem = require('./getListItem');
+const findIndex = require('./findIndex');
 
 /**
  * @param {NodePath} containerPath - container node path
@@ -32,22 +33,29 @@ module.exports = function(containerPath, path, forItem, originalIndex, renamedIn
   if (containerPath) {
     containerPath.traverse(indexNodeVisitor);
   }
-  const name = dynamicBinding.add({
-    expression: node.value.expression
-  });
-  if (!properties.some(
-    pty => pty.key.name === name)) {
-    properties.push(t.objectProperty(t.identifier(name), valueNode));
+  // Avoid replace normal expression
+  if (getListItem(valuePath, true)) {
+    const name = dynamicBinding.add({
+      expression: node.value.expression
+    });
+    if (!properties.some(
+      pty => pty.key.name === name)) {
+      const addedNodeIndex = findIndex(properties, ({ value }) => value === node.value.expression);
+      if (addedNodeIndex > -1) {
+        properties.splice(addedNodeIndex, 1);
+      }
+      properties.push(t.objectProperty(t.identifier(name), valueNode));
+    }
+    const replaceNode = t.stringLiteral(
+      createBinding(genExpression(t.memberExpression(forItem, t.identifier(name))))
+    );
+    // Record original expression
+    replaceNode.__originalExpression = node.value.expression;
+    node.value = replaceNode;
+    // Record current properties info
+    replaceNode.__properties = {
+      properties,
+      index: properties.length - 1
+    };
   }
-  const replaceNode = t.stringLiteral(
-    createBinding(genExpression(t.memberExpression(forItem, t.identifier(name))))
-  );
-  // Record original expression
-  replaceNode.__originalExpression = node.value.expression;
-  node.value = replaceNode;
-  // Record current properties info
-  replaceNode.__properties = {
-    properties,
-    index: properties.length - 1
-  };
 };
