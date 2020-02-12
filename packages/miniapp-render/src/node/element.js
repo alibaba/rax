@@ -285,7 +285,7 @@ class Element extends Node {
       id: this.id,
       class: this.className,
       style: this.$__style ? this.style.cssText : '',
-      animation: this.animation
+      animation: this.$__attrs.get('animation')
     };
   }
 
