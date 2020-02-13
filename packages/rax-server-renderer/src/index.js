@@ -339,7 +339,7 @@ function renderElementToString(element, context, options) {
         currentComponent.__getName = () => componetName;
       }
 
-      // Rax will use owner during rendering
+      // Rax will use owner during rendering, eg: hooks, render error info.
       shared.Host.owner = currentComponent;
 
       if (process.env.NODE_ENV !== 'production') {
