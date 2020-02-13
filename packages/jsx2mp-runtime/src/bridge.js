@@ -34,7 +34,6 @@ function getPageCycles(Klass) {
         location: history.location
       }, _pageProps);
       this.instance = new Klass(props);
-      this.instance.defaultProps = Klass.defaultProps;
       // Reverse sync from state to data.
       this.instance.instanceId = instanceId;
       setPageInstance(this.instance);
@@ -69,7 +68,6 @@ function getComponentCycles(Klass) {
     mount: function() {
       const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, Klass.__highestLevelProps);
       this.instance = new Klass(props);
-      this.instance.defaultProps = Klass.defaultProps || {};
       this.instance.__highestLevelProps = Klass.__highestLevelProps;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
@@ -144,10 +142,8 @@ function createAnonymousClass(render) {
       return render.call(this, props);
     }
   };
-  // Set functional component properties to the Klass
-  Object.keys(render).forEach(key => {
-    Klass[key] = render[key];
-  });
+  // Transfer __highestLevelProps
+  Klass.__highestLevelProps = render.__highestLevelProps;
   return Klass;
 }
 
