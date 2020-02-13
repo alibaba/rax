@@ -37,8 +37,8 @@ function Script(props, context) {
   );
 }
 
-function usePageName(context) {
-  return context.__pageName;
+function getPagePath(context) {
+  return context.__pagePath;
 }
 
 export {
@@ -46,5 +46,5 @@ export {
   Data,
   Style,
   Script,
-  usePageName
+  getPagePath
 };
