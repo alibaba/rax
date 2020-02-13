@@ -146,7 +146,7 @@ describe('Directives', () => {
         <View className="home" x-class={classNames}></View>
       `);
       _transformClass(ast, adapter);
-      expect(genExpression(ast)).toEqual('<View className={"home" + " " + __classnames__(classNames)}></View>');
+      expect(genExpression(ast)).toEqual('<View className={`home${" "}${__classnames__(classNames)}`}></View>');
     });
   });
 

@@ -734,6 +734,14 @@ function collectComponentDependentProps(path, attrValue, attrPath, componentDepe
     && attrValue.type
     && jsxEl.__tagId
   ) {
+    // Replace list render replaced node
+    traverse(attrPath, {
+      StringLiteral(innerPath) {
+        if (BINDING_REG.test(innerPath.node.value)) {
+          attrValue = innerPath.node.__originalExpression;
+        }
+      }
+    });
     if (attrPath) {
       attrValue = parseExpression('(' + attrPath.toString() + ')'); // deep clone
     }

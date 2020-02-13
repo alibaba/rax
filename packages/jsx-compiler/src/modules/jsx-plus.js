@@ -9,6 +9,7 @@ const handleParentListReturn = require('../utils/handleParentListReturn');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
+const { BINDING_REG } = require('../utils/checkAttr');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -113,8 +114,16 @@ function transformDirectiveClass(ast, parsed) {
         const { node } = path;
         if (t.isJSXIdentifier(node.name, { name: 'x-class' })) {
           const params = [];
+          let replaced = false;
           if (t.isJSXExpressionContainer(node.value)) params.push(node.value.expression);
-          else if (t.isStringLiteral(node.value)) params.push(node.value);
+          else if (t.isStringLiteral(node.value)) {
+            if (BINDING_REG.test(node.value.value)) {
+              replaced = true;
+              params.push(node.value.__originalExpression);
+            } else {
+              params.push(node.value);
+            }
+          }
 
           const callExp = t.callExpression(t.identifier('__classnames__'), params);
 
@@ -123,19 +132,29 @@ function transformDirectiveClass(ast, parsed) {
             if (t.isJSXIdentifier(attributes[i].name, { name: 'className' })) classNameAttribute = attributes[i];
           }
 
+          const spaceNode = t.stringLiteral(' ');
+          const replaceNode = replaced ? node.value : callExp;
           if (classNameAttribute) {
-            let prevVal;
-            if (t.isJSXExpressionContainer(classNameAttribute.value)) prevVal = classNameAttribute.value.expression;
-            else if (t.isStringLiteral(classNameAttribute.value)) prevVal = classNameAttribute.value;
-            else prevVal = t.stringLiteral('');
-
-            classNameAttribute.value = t.jsxExpressionContainer(
-              t.binaryExpression('+', t.binaryExpression('+', prevVal, t.stringLiteral(' ')), callExp)
-            );
+            if (t.isJSXExpressionContainer(classNameAttribute.value)) {
+              // className={'container-el'}
+              classNameAttribute.value =
+                t.jsxExpressionContainer(t.templateLiteral(
+                  [createHolderTemplateEl(), createHolderTemplateEl(),
+                    createHolderTemplateEl(), createHolderTemplateEl()],
+                  [classNameAttribute.value.expression, spaceNode, replaceNode]));
+            } else {
+              const prevVal = t.isStringLiteral(classNameAttribute.value) ? classNameAttribute.value.value : '';
+              classNameAttribute.value =
+                t.jsxExpressionContainer(t.templateLiteral(
+                  [t.templateElement(
+                    { raw: prevVal, cooked: prevVal }, true
+                  ), createHolderTemplateEl(), createHolderTemplateEl()],
+                  [spaceNode, replaceNode]));
+            }
           } else {
             attributes.push(t.jsxAttribute(
               t.jsxIdentifier('className'),
-              t.jsxExpressionContainer(callExp)
+              t.jsxExpressionContainer(replaceNode)
             ));
           }
 
@@ -376,3 +395,10 @@ module.exports = {
   _transformFragment: transformComponentFragment,
   _transformSlotDirective: transformSlotDirective
 };
+
+// Create place holder template element
+function createHolderTemplateEl() {
+  return t.templateElement(
+    { raw: '' }, false
+  );
+}
