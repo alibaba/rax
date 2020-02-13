@@ -1,5 +1,5 @@
 const t = require('@babel/types');
-const { isDirectiveAttr, isEventHandlerAttr, BINDING_REG } = require('./checkAttr');
+const { isEventHandlerAttr, BINDING_REG } = require('./checkAttr');
 const handleList = require('./handleList');
 
 /**
@@ -14,7 +14,7 @@ module.exports = function(...args) {
   const path = args[0];
   const { node } = path;
   const attrName = node.name.name;
-  if (attrName !== 'style' && attrName !== 'x-for') {
+  if (attrName !== 'style' && attrName !== 'x-for' && !isEventHandlerAttr(attrName)) {
     if (t.isJSXExpressionContainer(node.value)) {
       handleList(null, ...args, node.value.expression);
     } else if (t.isStringLiteral(node.value)) {
