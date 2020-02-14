@@ -101,9 +101,7 @@ function transformMapMethod(path, parsed, code, adapter) {
 
                 if (isIndex) {
                   // Use renamed index instead of original value
-                  if (originalIndex === innerNode.name) {
-                    innerNode.name = renamedIndex.name;
-                  }
+                  innerNode.name = renamedIndex.name;
                 }
 
                 if (isScope) {
@@ -149,9 +147,7 @@ function transformMapMethod(path, parsed, code, adapter) {
             handleValidIdentifier(innerPath, () => {
               if (innerNode.name === forIndex.name) {
                 // Use renamed index instead of original value
-                if (originalIndex === innerNode.name) {
-                  innerNode.name = renamedIndex.name;
-                }
+                innerNode.name = renamedIndex.name;
               }
             });
           }

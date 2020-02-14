@@ -136,13 +136,14 @@ function transformDirectiveClass(ast, parsed) {
           const replaceNode = replaced ? node.value : callExp;
           if (classNameAttribute) {
             if (t.isJSXExpressionContainer(classNameAttribute.value)) {
-              // className={'container-el'}
+              // ClassName is {'container-el'} => className={`${'container-el'}${' '}${x-class-value}`}
               classNameAttribute.value =
                 t.jsxExpressionContainer(t.templateLiteral(
                   [createHolderTemplateEl(), createHolderTemplateEl(),
                     createHolderTemplateEl(), createHolderTemplateEl()],
                   [classNameAttribute.value.expression, spaceNode, replaceNode]));
             } else {
+              // ClassName is "container-el" => className={`container-el ${x-class-value}`}
               const prevVal = t.isStringLiteral(classNameAttribute.value) ? classNameAttribute.value.value : '';
               classNameAttribute.value =
                 t.jsxExpressionContainer(t.templateLiteral(
