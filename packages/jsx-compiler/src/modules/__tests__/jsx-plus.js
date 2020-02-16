@@ -10,6 +10,7 @@ const genExpression = require('../../codegen/genExpression');
 const adapter = require('../../adapter').ali;
 
 let count = 0;
+let id = 0;
 
 describe('Directives', () => {
   describe('list', () => {
@@ -179,17 +180,18 @@ describe('Directives', () => {
       expect(genExpression(ast)).toEqual(`<View>
         <block a:for={data.map((item, ${index}) => {
     this._registerRefs([{
-      "name": "0" + "${index}",
+      "name": "${id}" + "${index}",
       "method": refs[${index}]
     }]);
 
     return {
       item: item,
       ${index}: ${index},
-      _d0: "0" + "${index}"
+      _d0: "${id}" + "${index}"
     };
   })} a:for-item="item" a:for-index="${index}"><View ref="{{item._d0}}">test</View></block>
       </View>`);
+      id++;
     });
   });
 
@@ -209,16 +211,16 @@ describe('Directives', () => {
         <block a:for={data.map((item, ${index1}) => {
     return {
       item: { ...item,
-        list: item.list.map((item, index1) => {
+        list: item.list.map((item, ${index2}) => {
           this._registerRefs([{
-            "name": "0" + "${index2}",
+            "name": "${id}" + "${index2}",
             "method": refs[${index2}]
           }]);
 
           return {
             item: item,
             ${index2}: ${index2},
-            _d0: "0" + "${index2}"
+            _d0: "${id}" + "${index2}"
           };
         })
       },
@@ -228,5 +230,6 @@ describe('Directives', () => {
             <block a:for={item.list} a:for-item="item" a:for-index="${index2}"><View ref="{{item._d0}}">test</View></block>
         </View></block>
       </View>`);
+    id++;
   });
 });
