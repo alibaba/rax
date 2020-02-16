@@ -4,7 +4,7 @@ const traverse = require('../utils/traverseNodePath');
 const CodeError = require('../utils/CodeError');
 const createJSX = require('../utils/createJSX');
 const findIndex = require('../utils/findIndex');
-const getListIndex = require('../utils/getListIndex');
+const createListIndex = require('../utils/createListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
@@ -190,7 +190,7 @@ function transformDirectiveList(parsed, code, adapter) {
         // original index identifier
         let originalIndex;
         // create new index identifier
-        const forIndex = getListIndex();
+        const forIndex = createListIndex();
         if (t.isBinaryExpression(expression, { operator: 'in' })) {
           // x-for={(item, index) in value}
           const { left, right } = expression;
@@ -351,7 +351,7 @@ function transformListJSXElement(parsed, path, code, adapter) {
             parsed.useCreateStyle = useCreateStyle;
           }
           // Handle props
-          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue);
+          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code);
         }
       }
     });

@@ -4,7 +4,7 @@ const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
 const genExpression = require('../codegen/genExpression');
 const findIndex = require('../utils/findIndex');
-const getListIndex = require('../utils/getListIndex');
+const createListIndex = require('../utils/createListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const DynamicBinding = require('../utils/DynamicBinding');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
@@ -45,7 +45,7 @@ function transformMapMethod(path, parsed, code, adapter) {
           params[0] = t.identifier('item');
         }
         // Create increasing new index identifier
-        const renamedIndex = getListIndex();
+        const renamedIndex = createListIndex();
 
         // record original index identifier
         if (params[1]) {
@@ -136,7 +136,7 @@ function transformMapMethod(path, parsed, code, adapter) {
                 parsed.useCreateStyle = useCreateStyle;
               }
               // Handle props
-              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
+              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code);
             }
           }
         });

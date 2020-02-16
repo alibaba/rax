@@ -98,7 +98,9 @@ export default class Component {
   }
 
   _registerRefs(refs) {
-    this.refs = {};
+    if (!this.refs) {
+      this.refs = {};
+    }
     refs.forEach(({name, method}) => {
       if (!method) {
         const target = {

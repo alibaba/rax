@@ -23,7 +23,7 @@ module.exports = function(mapFnBodyPath, ...args) {
   })) {
     if (!t.isJSXExpressionContainer(node.value)) {
       if (node.value.__originalExpression) {
-        node.value.__properties.properties.splice(node.value.__properties.index, 1);
+        node.value.__properties.value.splice(node.value.__properties.index, 1);
         node.value = t.jsxExpressionContainer(node.value.__originalExpression);
       } else {
         throw new CodeError(code, node.value, node.loc,
@@ -31,7 +31,7 @@ module.exports = function(mapFnBodyPath, ...args) {
       }
     }
     useCreateStyle = true;
-    handleList(mapFnBodyPath, ...args.splice(0, 6), t.callExpression(t.identifier('__create_style__'), [node.value.expression]));
+    handleList(mapFnBodyPath, t.callExpression(t.identifier('__create_style__'), [node.value.expression]), ...args.splice(0, 6));
   }
   return useCreateStyle;
 };

@@ -7,6 +7,7 @@ const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
 const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
+const { BINDING_REG } = require('../utils/checkAttr');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
@@ -527,7 +528,10 @@ function addRegisterRefs(refs, renderFunctionPath) {
   const stringRefs = [];
   refs.map(ref => {
     if (t.isStringLiteral(ref.method)) {
-      stringRefs.push(ref);
+      // Exclude expressions that have already been processed
+      if (!BINDING_REG.test(ref.method.value)) {
+        stringRefs.push(ref);
+      }
     } else if (t.isIdentifier(ref.method) && !renderFunctionPath.scope.hasBinding(ref.name.value)) {
       stringRefs.push(ref);
     } else {
