@@ -77,7 +77,7 @@ module.exports = function(
 
 /**
  * @param {Node} loopFnBody - current loop function body
- * @param {Node} propertyValue - the node which shoudl be
+ * @param {Node} propertyValue - the node which should be
  * inserted into current list return properties
  * @param {NodePath} attrValuePath - the attr value path
  */
