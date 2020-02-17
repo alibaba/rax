@@ -10,6 +10,7 @@ const genExpression = require('../../codegen/genExpression');
 const adapter = require('../../adapter').ali;
 
 let count = 0;
+let id = 0;
 
 describe('Directives', () => {
   describe('list', () => {
@@ -146,7 +147,7 @@ describe('Directives', () => {
         <View className="home" x-class={classNames}></View>
       `);
       _transformClass(ast, adapter);
-      expect(genExpression(ast)).toEqual('<View className={"home" + " " + __classnames__(classNames)}></View>');
+      expect(genExpression(ast)).toEqual('<View className={`home${" "}${__classnames__(classNames)}`}></View>');
     });
   });
 
@@ -164,5 +165,71 @@ describe('Directives', () => {
       _transformSlotDirective(ast, adapter);
       expect(genExpression(ast)).toEqual('<View slot="item" slot-scope="__defaultScopeName">{props.text}</View>');
     });
+  });
+
+  describe('ref', () => {
+    it('should transform ref in x-for', () => {
+      const code = `<View>
+        <View x-for={(item, index) in data} ref={refs[index]}>test</View>
+      </View>`;
+      const ast = parseExpression(code);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
+      const index = 'index' + count++;
+      expect(genExpression(ast)).toEqual(`<View>
+        <block a:for={data.map((item, ${index}) => {
+    this._registerRefs([{
+      "name": "${id}" + "${index}",
+      "method": refs[${index}]
+    }]);
+
+    return {
+      item: item,
+      ${index}: ${index},
+      _d0: "${id}" + "${index}"
+    };
+  })} a:for-item="item" a:for-index="${index}"><View ref="{{item._d0}}">test</View></block>
+      </View>`);
+      id++;
+    });
+  });
+
+  it('should transform ref in nested x-for', () => {
+    const code = `<View>
+        <View x-for={(item, index) in data}>
+            <View x-for={(item, idx) in item.list} ref={refs[idx]}>test</View>
+        </View>
+      </View>`;
+    const ast = parseExpression(code);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
+    const index1 = 'index' + count++;
+    const index2 = 'index' + count++;
+    expect(genExpression(ast)).toEqual(`<View>
+        <block a:for={data.map((item, ${index1}) => {
+    return {
+      item: { ...item,
+        list: item.list.map((item, ${index2}) => {
+          this._registerRefs([{
+            "name": "${id}" + "${index2}",
+            "method": refs[${index2}]
+          }]);
+
+          return {
+            item: item,
+            ${index2}: ${index2},
+            _d0: "${id}" + "${index2}"
+          };
+        })
+      },
+      ${index1}: ${index1}
+    };
+  })} a:for-item="item" a:for-index="${index1}"><View>
+            <block a:for={item.list} a:for-item="item" a:for-index="${index2}"><View ref="{{item._d0}}">test</View></block>
+        </View></block>
+      </View>`);
+    id++;
   });
 });

@@ -4,7 +4,7 @@ const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
 const genExpression = require('../codegen/genExpression');
 const findIndex = require('../utils/findIndex');
-const getListIndex = require('../utils/getListIndex');
+const createListIndex = require('../utils/createListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const DynamicBinding = require('../utils/DynamicBinding');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
@@ -31,6 +31,7 @@ function transformMapMethod(path, parsed, code, adapter) {
     if (t.isIdentifier(callee.property, { name: 'map' })) {
       const argumentsPath = path.get('arguments');
       const mapCallbackFn = argumentsPath[0].node;
+      const mapCallbackFnBodyPath = argumentsPath[0].get('body');
       /*
       * params is item & index
       * <block a:for-item="params[0]" a:for-index="params[1]" ></block>
@@ -44,7 +45,7 @@ function transformMapMethod(path, parsed, code, adapter) {
           params[0] = t.identifier('item');
         }
         // Create increasing new index identifier
-        const renamedIndex = getListIndex();
+        const renamedIndex = createListIndex();
 
         // record original index identifier
         if (params[1]) {
@@ -68,7 +69,7 @@ function transformMapMethod(path, parsed, code, adapter) {
         if (!t.isBlockStatement(body)) {
           // create a block return for inline return
           body = t.blockStatement([t.returnStatement(body)]);
-          argumentsPath[0].get('body').replaceWith(body);
+          mapCallbackFnBodyPath.replaceWith(body);
         }
 
         // __jsxlist
@@ -100,42 +101,55 @@ function transformMapMethod(path, parsed, code, adapter) {
 
                 if (isIndex) {
                   // Use renamed index instead of original value
-                  if (originalIndex === innerNode.name) {
-                    innerNode.name = renamedIndex.name;
-                  }
+                  innerNode.name = renamedIndex.name;
                 }
 
                 if (isScope) {
                   // Skip duplicate keys.
-                  if (!properties.some(
-                    pty => pty.key.name === innerNode.name)) {
+                  if (
+                    !properties.some(
+                      pty => pty.key.name === innerNode.name)) {
                     properties.push(t.objectProperty(innerNode, innerNode));
                   }
                 }
               }
             });
           },
-          JSXAttribute(innerPath) {
-            const { node } = innerPath;
-            // Handle renderItem
-            if (node.name.name === 'data'
-                && t.isStringLiteral(node.value)
-            ) {
-              const fnIdx = findIndex(renderItemFunctions || [], (fn) => node.value.value === `{{...${fn.name}}}`);
-              if (fnIdx > -1) {
-                const renderItem = renderItemFunctions[fnIdx];
-                node.value = t.stringLiteral(`${node.value.value.replace('...', `...${forItem.name}.`)}`);
-                properties.push(t.objectProperty(t.identifier(renderItem.name), renderItem.node));
-                renderItemFunctions.splice(fnIdx, 1);
+          JSXAttribute: {
+            exit(innerPath) {
+              const { node } = innerPath;
+              // Handle renderItem
+              if (node.name.name === 'data'
+                  && t.isStringLiteral(node.value)
+              ) {
+                const fnIdx = findIndex(renderItemFunctions || [], (fn) => node.value.value === `{{...${fn.name}}}`);
+                if (fnIdx > -1) {
+                  const renderItem = renderItemFunctions[fnIdx];
+                  node.value = t.stringLiteral(`${node.value.value.replace('...', `...${forItem.name}.`)}`);
+                  properties.push(t.objectProperty(t.identifier(renderItem.name), renderItem.node));
+                  renderItemFunctions.splice(fnIdx, 1);
+                }
               }
+              // Handle style
+              const useCreateStyle = handleListStyle(mapCallbackFnBodyPath, innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicStyle, code);
+              if (!parsed.useCreateStyle) {
+                parsed.useCreateStyle = useCreateStyle;
+              }
+              // Handle props
+              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code);
             }
-            // Handle style
-            const useCreateStyle = handleListStyle(argumentsPath[0].get('body'), innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicStyle, code);
-            if (!parsed.useCreateStyle) {
-              parsed.useCreateStyle = useCreateStyle;
-            }
-            // Handle props
-            handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
+          }
+        });
+
+        mapCallbackFnBodyPath.traverse({
+          Identifier(innerPath) {
+            const innerNode = innerPath.node;
+            handleValidIdentifier(innerPath, () => {
+              if (innerNode.name === forIndex.name) {
+                // Use renamed index instead of original value
+                innerNode.name = renamedIndex.name;
+              }
+            });
           }
         });
 

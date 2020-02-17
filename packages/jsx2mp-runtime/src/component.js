@@ -24,6 +24,7 @@ export default class Component {
   constructor(props) {
     this.state = {};
     this.props = props;
+    this.refs = {};
 
     this.__dependencies = {}; // for context
 
@@ -98,7 +99,6 @@ export default class Component {
   }
 
   _registerRefs(refs) {
-    this.refs = {};
     refs.forEach(({name, method}) => {
       if (!method) {
         const target = {

@@ -4,7 +4,6 @@ const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
 const chalk = require('chalk');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
-const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
