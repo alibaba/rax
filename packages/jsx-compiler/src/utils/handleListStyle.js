@@ -31,7 +31,7 @@ module.exports = function(mapFnBodyPath, ...args) {
       }
     }
     useCreateStyle = true;
-    handleList(mapFnBodyPath, t.callExpression(t.identifier('__create_style__'), [node.value.expression]), ...args.splice(0, 6));
+    handleList(mapFnBodyPath, t.callExpression(t.identifier('__create_style__'), [node.value.expression]), ...args);
   }
   return useCreateStyle;
 };
