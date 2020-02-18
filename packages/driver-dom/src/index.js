@@ -178,6 +178,13 @@ function findHydrationChild(parent) {
   return parent.childNodes[parent[HYDRATION_INDEX]++];
 }
 
+/**
+ * @param {string} type node type
+ * @param {object} props elemement properties
+ * @param {object} component component instance
+ * @param {boolean} __shouldConvertUnitlessToRpx should add unit when missing
+ * @param {boolean} __shouldTransformRpx should transfrom rpx to vw
+ */
 export function createElement(type, props, component, __shouldConvertUnitlessToRpx, __shouldTransformRpx = true) {
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
@@ -341,6 +348,13 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
+/**
+ * @param {object} node target node
+ * @param {object} style target node style value
+ * @param {boolean} __shouldConvertUnitlessToRpx
+ * @param {boolean} __shouldConvertUnitlessToRpx should add unit when missing
+ * @param {boolean} __shouldTransformRpx should transfrom rpx to vw
+ */
 export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldTransformRpx = true) {
   for (let prop in style) {
     const value = style[prop];
