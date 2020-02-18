@@ -178,7 +178,7 @@ function findHydrationChild(parent) {
   return parent.childNodes[parent[HYDRATION_INDEX]++];
 }
 
-export function createElement(type, props, component, __shouldConvertUnitlessToRpx) {
+export function createElement(type, props, component, __shouldConvertUnitlessToRpx, __shouldTransformRpx = true) {
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
   let node;
@@ -247,7 +247,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyle(node, value, __shouldConvertUnitlessToRpx);
+        setStyle(node, value, __shouldConvertUnitlessToRpx, __shouldTransformRpx);
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
@@ -341,14 +341,18 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
-export function setStyle(node, style, __shouldConvertUnitlessToRpx) {
+export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldTransformRpx = true) {
   for (let prop in style) {
     const value = style[prop];
     let convertedValue;
     if (typeof value === 'number' && isDimensionalProp(prop)) {
-      convertedValue = __shouldConvertUnitlessToRpx ? convertUnit(value + 'rpx') : value + 'px';
+      convertedValue = value + __shouldConvertUnitlessToRpx ? 'rpx' : 'px';
+
+      if (__shouldTransformRpx) {
+        convertedValue = convertUnit(convertedValue);
+      }
     } else {
-      convertedValue = convertUnit(value);
+      convertedValue = __shouldTransformRpx ? convertUnit(value) : value;
     }
 
     // Support CSS custom properties (variables) like { --main-color: "black" }
