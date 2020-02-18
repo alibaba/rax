@@ -346,10 +346,14 @@ export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldTran
     const value = style[prop];
     let convertedValue;
     if (typeof value === 'number' && isDimensionalProp(prop)) {
-      convertedValue = value + __shouldConvertUnitlessToRpx ? 'rpx' : 'px';
-
-      if (__shouldTransformRpx) {
-        convertedValue = convertUnit(convertedValue);
+      if (__shouldConvertUnitlessToRpx) {
+        convertedValue = value + 'rpx';
+        if (__shouldTransformRpx) {
+          // Transfrom rpx to vw
+          convertedValue = convertUnit(convertedValue);
+        }
+      } else {
+        convertedValue = value + 'px';
       }
     } else {
       convertedValue = __shouldTransformRpx ? convertUnit(value) : value;
