@@ -668,9 +668,9 @@
 >{{content}}</block>
 <!-- Custom component -->
 <custom-component
-    a:elif="{{!!CustomComponentName}}"
+    a:elif="{{!!customComponentName}}"
     animation="{{animation}}"
-    name="{{CustomComponentName}}"
+    name="{{customComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
 ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></custom-component>

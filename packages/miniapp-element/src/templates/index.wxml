@@ -677,8 +677,8 @@
 >{{content}}</block>
 <!-- 自定义组件 -->
 <custom-component
-    wx:elif="{{!!CustomComponentName}}"
-    name="{{CustomComponentName}}"
+    wx:elif="{{!!customComponentName}}"
+    name="{{customComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></custom-component>
