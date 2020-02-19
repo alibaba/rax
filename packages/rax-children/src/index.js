@@ -1,9 +1,8 @@
 import { shared } from 'rax';
 
-const { flattenChildren } = shared;
-
 function convertChildrenToArray(children) {
   // flatten children
+  const { flattenChildren } = shared;
   children = flattenChildren(children, []);
   return Array.isArray(children) ? children : [].concat(children);
 }
