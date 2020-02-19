@@ -697,7 +697,7 @@ function transformCallExpressionArg(ast, dynamicValue, isDirective) {
                 );
               }
             }
-          })
+          });
         },
       });
       break;
