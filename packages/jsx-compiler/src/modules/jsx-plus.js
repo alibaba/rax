@@ -9,7 +9,6 @@ const handleParentListReturn = require('../utils/handleParentListReturn');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
-const { BINDING_REG } = require('../utils/checkAttr');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -114,16 +113,8 @@ function transformDirectiveClass(ast, parsed) {
         const { node } = path;
         if (t.isJSXIdentifier(node.name, { name: 'x-class' })) {
           const params = [];
-          let replaced = false;
           if (t.isJSXExpressionContainer(node.value)) params.push(node.value.expression);
-          else if (t.isStringLiteral(node.value)) {
-            if (BINDING_REG.test(node.value.value)) {
-              replaced = true;
-              params.push(node.value.__originalExpression);
-            } else {
-              params.push(node.value);
-            }
-          }
+          else if (t.isStringLiteral(node.value)) params.push(node.value);
 
           const callExp = t.callExpression(t.identifier('__classnames__'), params);
 
@@ -133,7 +124,6 @@ function transformDirectiveClass(ast, parsed) {
           }
 
           const spaceNode = t.stringLiteral(' ');
-          const replaceNode = replaced ? node.value : callExp;
           if (classNameAttribute) {
             if (t.isJSXExpressionContainer(classNameAttribute.value)) {
               // ClassName is {'container-el'} => className={`${'container-el'}${' '}${x-class-value}`}
@@ -141,7 +131,7 @@ function transformDirectiveClass(ast, parsed) {
                 t.jsxExpressionContainer(t.templateLiteral(
                   [createHolderTemplateEl(), createHolderTemplateEl(),
                     createHolderTemplateEl(), createHolderTemplateEl()],
-                  [classNameAttribute.value.expression, spaceNode, replaceNode]));
+                  [classNameAttribute.value.expression, spaceNode, callExp]));
             } else {
               // ClassName is "container-el" => className={`container-el ${x-class-value}`}
               const prevVal = t.isStringLiteral(classNameAttribute.value) ? classNameAttribute.value.value : '';
@@ -150,12 +140,12 @@ function transformDirectiveClass(ast, parsed) {
                   [t.templateElement(
                     { raw: prevVal, cooked: prevVal }, true
                   ), createHolderTemplateEl(), createHolderTemplateEl()],
-                  [spaceNode, replaceNode]));
+                  [spaceNode, callExp]));
             }
           } else {
             attributes.push(t.jsxAttribute(
               t.jsxIdentifier('className'),
-              t.jsxExpressionContainer(replaceNode)
+              t.jsxExpressionContainer(callExp)
             ));
           }
 
@@ -383,8 +373,8 @@ module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       // x-for must be first.
-      transformDirectiveList(parsed, code, options.adapter);
       transformDirectiveClass(parsed.templateAST, parsed);
+      transformDirectiveList(parsed, code, options.adapter);
       transformDirectiveCondition(parsed.templateAST, options.adapter);
       transformComponentFragment(parsed.templateAST);
       transformSlotDirective(parsed.templateAST, options.adapter);

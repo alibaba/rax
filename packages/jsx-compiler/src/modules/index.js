@@ -19,10 +19,10 @@ module.exports = [
   require('./style'),
   // Handle Rax base components.
   require('./components'),
-  // JSX+ Directives
-  require('./jsx-plus'),
   // Directive a:for
   require('./list'),
+  // JSX+ Directives
+  require('./jsx-plus'),
   // Directive a:if
   require('./condition'),
   // Handle render function

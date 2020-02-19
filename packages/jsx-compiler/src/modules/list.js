@@ -91,7 +91,8 @@ function transformMapMethod(path, parsed, code, adapter) {
             handleValidIdentifier(innerPath, () => {
               const isScope = returnElPath.scope.hasBinding(innerNode.name);
               const isItem = innerNode.name === forItem.name;
-              const isIndex = innerNode.name === forIndex.name;
+              // Ensure inner node's name is original name
+              const isIndex = innerNode.loc.identifierName === forIndex.name;
               if (isScope || isItem || isIndex) {
                 innerNode.__listItem = {
                   jsxplus: false,
@@ -145,7 +146,8 @@ function transformMapMethod(path, parsed, code, adapter) {
           Identifier(innerPath) {
             const innerNode = innerPath.node;
             handleValidIdentifier(innerPath, () => {
-              if (innerNode.name === forIndex.name) {
+              // Ensure inner node's name is original name
+              if (innerNode.loc.identifierName === forIndex.name) {
                 // Use renamed index instead of original value
                 innerNode.name = renamedIndex.name;
               }

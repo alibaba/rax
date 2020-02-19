@@ -21,12 +21,13 @@ function transformStyle(ast) {
       const { node } = path;
       if (shouldReplace(path)) {
         const styleObjectExpression = node.value.expression;
-
         // <tag style="{{ _s0 }}" />
         const name = dynamicStyle.add({
           expression: t.callExpression(t.identifier('__create_style__'), [styleObjectExpression]),
         });
         node.value = t.stringLiteral('{{' + name + '}}');
+        // Record original expression
+        node.value.__originalExpression = styleObjectExpression;
         useCreateStyle = true;
       }
     },
