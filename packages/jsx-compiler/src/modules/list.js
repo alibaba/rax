@@ -87,7 +87,7 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         // map callback function return path;
         const returnElPath = getReturnElementPath(body).get('argument');
-        let containerTransformed = false;
+        const transformedContainerMap = {};
         returnElPath.traverse({
           Identifier(innerPath) {
             const innerNode = innerPath.node;
@@ -137,8 +137,8 @@ function transformMapMethod(path, parsed, code, adapter) {
           },
           JSXExpressionContainer: {
             exit(innerPath) {
-              if (!innerPath.findParent(p => p.isJSXAttribute()) && !containerTransformed) {
-                containerTransformed = true;
+              if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[innerPath.node.expression]) {
+                transformedContainerMap[innerPath.node.expression] = true;
                 handleListJSXExpressionContainer(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
               }
             }

@@ -10,6 +10,7 @@ const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
+const genExpression = require('../codegen/genExpression');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -316,7 +317,7 @@ function transformListJSXElement(parsed, path, code, adapter) {
     const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
     const loopBody = loopFnBody.body;
     const properties = loopBody[loopBody.length - 1].argument.properties;
-    let containerTransformed = false;
+    const transformedContainerMap = {};
     path.traverse({
       Identifier(innerPath) {
         const { node: innerNode } = innerPath;
@@ -348,8 +349,8 @@ function transformListJSXElement(parsed, path, code, adapter) {
       },
       JSXExpressionContainer: {
         exit(innerPath) {
-          if (!innerPath.findParent(p => p.isJSXAttribute()) && !containerTransformed) {
-            containerTransformed = true;
+          if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[innerPath.node.expression]) {
+            transformedContainerMap[innerPath.node.expression] = true;
             handleListJSXExpressionContainer(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue);
           }
         }
