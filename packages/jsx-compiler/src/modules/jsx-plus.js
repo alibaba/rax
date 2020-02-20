@@ -10,7 +10,6 @@ const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
-const genExpression = require('../codegen/genExpression');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
