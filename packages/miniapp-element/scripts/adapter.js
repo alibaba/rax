@@ -15,7 +15,8 @@ export default {
     touchEnd: 'onTouchEnd',
     touchCancel: 'onTouchCancel',
     load: 'onLoad',
-    error: 'onError'
+    error: 'onError',
+    supportComponentGenerics: false
   },
   wechat: {
     xml: 'wxml',
@@ -33,6 +34,7 @@ export default {
     touchEnd: 'bindtouchend',
     touchCancel: 'bindtouchcancel',
     load: 'bindload',
-    error: 'binderror'
+    error: 'binderror',
+    supportComponentGenerics: true
   }
 };
