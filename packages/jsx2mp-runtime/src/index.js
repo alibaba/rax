@@ -9,6 +9,9 @@ import classnames from './classnames';
 import createRef from './createRef';
 import { addNativeEventListener, removeNativeEventListener, registerNativeEventListeners } from './nativeEventListener';
 
+// Adapter rax core
+const shared = {};
+
 export {
   runApp,
   createPage,
@@ -36,7 +39,10 @@ export {
   // Native events
   addNativeEventListener,
   removeNativeEventListener,
-  registerNativeEventListeners
+  registerNativeEventListeners,
+
+  // Shared
+  shared
 };
 
 /* hooks */
