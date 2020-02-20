@@ -11,6 +11,7 @@ const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
 const isSlotScopeNode = require('../utils/isSlotScopeNode');
 const { isDirectiveAttr, isEventHandlerAttr, BINDING_REG } = require('../utils/checkAttr');
+const handleValidIdentifier = require('../utils/handleValidIdentifier');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -683,18 +684,20 @@ function transformCallExpressionArg(ast, dynamicValue, isDirective) {
     default:
       traverse(ast, {
         Identifier(innerPath) {
-          const { node: innerNode } = innerPath;
-          if (innerNode.__listItem) {
-            const item = innerNode.__listItem.item;
-            if (item) {
-              innerPath.parentPath.replaceWith(
-                t.memberExpression(
-                  t.identifier(item),
-                  t.identifier(innerNode.name),
-                ),
-              );
+          handleValidIdentifier(innerPath, () => {
+            const { node: innerNode } = innerPath;
+            if (innerNode.__listItem && !innerPath.parentPath.isMemberExpression()) {
+              const item = innerNode.__listItem.item;
+              if (item) {
+                innerPath.replaceWith(
+                  t.memberExpression(
+                    t.identifier(item),
+                    t.identifier(innerNode.name),
+                  ),
+                );
+              }
             }
-          }
+          });
         },
       });
       break;

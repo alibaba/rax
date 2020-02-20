@@ -32,7 +32,9 @@ describe('Directives', () => {
       val: val,
       ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}"><View>{val}</View></block>
+  })} a:for-item="val" a:for-index="${index}"><View>{{
+        val.val
+      }}</View></block>
       </View>`);
     });
 
@@ -40,8 +42,7 @@ describe('Directives', () => {
       const code = `
       <View>
         <View x-for={item in array}>
-          <View x-for={item2 in item}>{item2}
-        </View>
+          <View x-for={item2 in item}>{item2}</View>
       </View>
 </View>
     `;
@@ -64,8 +65,9 @@ describe('Directives', () => {
       ${index1}: ${index1}
     };
   })} a:for-item="item" a:for-index="${index1}"><View>
-          <block a:for={item} a:for-item="item2" a:for-index="${index2}"><View>{item2}
-        </View></block>
+          <block a:for={item} a:for-item="item2" a:for-index="${index2}"><View>{{
+            item2.item2
+          }}</View></block>
       </View></block>
 </View>`);
     });
@@ -97,8 +99,7 @@ describe('Directives', () => {
       row: row.map((col, ${index2}) => {
         return {
           col: col,
-          ${index2}: ${index2},
-          _d0: ${index2}
+          ${index2}: ${index2}
         };
       }),
       ${index1}: ${index1},
@@ -106,9 +107,36 @@ describe('Directives', () => {
     };
   })} a:for-item="row" a:for-index="${index1}"><View className="rxpi-coupon-row">
           <block a:for={row} a:for-item="col" a:for-index="${index2}"><View>
-            <Text key="{{col._d0}}">{${index2}}</Text>
+            <Text key="{{col.${index2}}}">{{
+              col.${index2}
+            }}</Text>
           </View></block>
         </View></block>
+      </View>`);
+    });
+
+    it('use format function in x-for', () => {
+      const code = `
+      <View>
+        <View x-for={val in array}>{format(val)}</View>
+      </View>
+    `;
+      const ast = parseExpression(code);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
+      const index = 'index' + count++;
+      expect(genExpression(ast))
+        .toEqual(`<View>
+        <block a:for={array.map((val, ${index}) => {
+    return {
+      val: val,
+      ${index}: ${index},
+      _d0: format(val)
+    };
+  })} a:for-item="val" a:for-index="${index}"><View>{{
+        val._d0
+      }}</View></block>
       </View>`);
     });
   });

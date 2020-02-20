@@ -10,6 +10,7 @@ const DynamicBinding = require('../utils/DynamicBinding');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
+const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
 
 /**
  * Transfrom map method
@@ -22,6 +23,9 @@ function transformMapMethod(path, parsed, code, adapter) {
   const dynamicStyle = new DynamicBinding('_s');
   const dynamicValue = new DynamicBinding('_d');
   const renderItemFunctions = parsed.renderItemFunctions;
+
+  // Avoid transfrom x-for result
+  if (path.findParent(p => p.isJSXAttribute())) return;
 
   const { node, parentPath } = path;
   if (node.__transformedList) return;
@@ -83,7 +87,7 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         // map callback function return path;
         const returnElPath = getReturnElementPath(body).get('argument');
-
+        const transformedContainerMap = {};
         returnElPath.traverse({
           Identifier(innerPath) {
             const innerNode = innerPath.node;
@@ -91,7 +95,8 @@ function transformMapMethod(path, parsed, code, adapter) {
             handleValidIdentifier(innerPath, () => {
               const isScope = returnElPath.scope.hasBinding(innerNode.name);
               const isItem = innerNode.name === forItem.name;
-              const isIndex = innerNode.name === forIndex.name;
+              // Ensure inner node's name is original name
+              const isIndex = innerNode.loc.identifierName === forIndex.name;
               if (isScope || isItem || isIndex) {
                 innerNode.__listItem = {
                   jsxplus: false,
@@ -102,15 +107,6 @@ function transformMapMethod(path, parsed, code, adapter) {
                 if (isIndex) {
                   // Use renamed index instead of original value
                   innerNode.name = renamedIndex.name;
-                }
-
-                if (isScope) {
-                  // Skip duplicate keys.
-                  if (
-                    !properties.some(
-                      pty => pty.key.name === innerNode.name)) {
-                    properties.push(t.objectProperty(innerNode, innerNode));
-                  }
                 }
               }
             });
@@ -138,6 +134,14 @@ function transformMapMethod(path, parsed, code, adapter) {
               // Handle props
               handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code);
             }
+          },
+          JSXExpressionContainer: {
+            exit(innerPath) {
+              if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[innerPath.node.expression]) {
+                transformedContainerMap[innerPath.node.expression] = true;
+                handleListJSXExpressionContainer(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
+              }
+            }
           }
         });
 
@@ -145,7 +149,8 @@ function transformMapMethod(path, parsed, code, adapter) {
           Identifier(innerPath) {
             const innerNode = innerPath.node;
             handleValidIdentifier(innerPath, () => {
-              if (innerNode.name === forIndex.name) {
+              // Ensure inner node's name is original name
+              if (innerNode.loc.identifierName === forIndex.name) {
                 // Use renamed index instead of original value
                 innerNode.name = renamedIndex.name;
               }
@@ -155,7 +160,6 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         // Use renamed index instead of original params[1]
         params[1] = renamedIndex;
-
         const listBlock = createJSX('block', {
           [adapter.for]: t.jsxExpressionContainer(forNode),
           [adapter.forItem]: t.stringLiteral(forItem.name),

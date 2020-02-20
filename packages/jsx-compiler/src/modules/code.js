@@ -11,6 +11,7 @@ const { BINDING_REG } = require('../utils/checkAttr');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
+const SHARED = 'shared';
 
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
@@ -39,7 +40,7 @@ const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
 const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, CREATE_REF,
-  USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT];
+  USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT, SHARED];
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
