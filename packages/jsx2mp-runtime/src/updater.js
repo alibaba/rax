@@ -50,6 +50,7 @@ export function updateChildProps(trigger, instanceId, nextUpdateProps) {
         },
         targetComponent.props,
         nextUpdateProps,
+        targetComponent.__highestLevelProps
       );
       if (targetComponent.__mounted) {
         targetComponent.nextProps = nextPropsMap[instanceId] = nextProps;

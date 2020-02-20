@@ -34,7 +34,6 @@ function getPageCycles(Klass) {
         location: history.location
       }, _pageProps);
       this.instance = new Klass(props);
-      this.instance.defaultProps = Klass.defaultProps;
       // Reverse sync from state to data.
       this.instance.instanceId = instanceId;
       setPageInstance(this.instance);
@@ -67,9 +66,9 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getNativeComponentLifecycle({
     mount: function() {
-      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps);
+      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, Klass.__highestLevelProps);
       this.instance = new Klass(props);
-      this.instance.defaultProps = Klass.defaultProps;
+      this.instance.__highestLevelProps = Klass.__highestLevelProps;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
       this.instance._internal = this;
@@ -138,11 +137,14 @@ function createProxyMethods(events) {
 }
 
 function createAnonymousClass(render) {
-  return class extends Component {
+  const Klass = class extends Component {
     render(props) {
       return render.call(this, props);
     }
   };
+  // Transfer __highestLevelProps
+  Klass.__highestLevelProps = render.__highestLevelProps;
+  return Klass;
 }
 
 /**
