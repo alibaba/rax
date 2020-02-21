@@ -19,7 +19,7 @@ Rax is a progressive React framework for building universal application.
 
 💌 **Write Once, Run Anywhere:** write one codebase, run with `Web`, [`Weex`](https://weex.apache.org/), [`Node.js`](https://nodejs.org/), `Alibaba MiniApp`, `WeChat MiniProgram` and could work with more container that implements [driver specification](./docs/en-US/driver-spec.md).
 
-⏱ **Fast:** use better performance and tinier size(📦~6KB) alternative to [React](http://reactjs.org/) with the some API.
+⏱ **Fast:** use better performance and tinier size(📦~6KB) alternative to [React](http://reactjs.org/) with the same API.
 
 📤 **Easy:** quick start with zero configuration, all features like `Progressive Web App(PWA)`, `Server-Side Rendering(SSR)` and `Function as a service(FaaS)` can be used out of the box.
 

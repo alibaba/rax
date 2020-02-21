@@ -1,14 +1,15 @@
 const { join, relative, dirname, resolve } = require('path');
-const { existsSync } = require('fs-extra');
+const enhancedResolve = require('enhanced-resolve');
 const chalk = require('chalk');
 
-const { isNpmModule, isWeexModule, isRaxModule, isJsx2mpRuntimeModule } = require('./utils/judgeModule');
+const { isNpmModule, isWeexModule, isRaxModule, isJsx2mpRuntimeModule, isNodeNativeModule } = require('./utils/judgeModule');
+const { addRelativePathPrefix } = require('./utils/pathHelper');
 
 const RUNTIME = 'jsx2mp-runtime';
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 
-const getRuntimeRelativePath = (distSourcePath, outputPath) => './' + join(relative(dirname(distSourcePath), join(outputPath, 'npm')), RUNTIME);
+const getRuntimeRelativePath = (distSourcePath, outputPath) => addRelativePathPrefix(join(relative(dirname(distSourcePath), join(outputPath, 'npm')), RUNTIME));
 
 const defaultOptions = {
   normalizeNpmFileName: (s) => s,
@@ -18,27 +19,25 @@ const transformPathMap = {};
 
 module.exports = function visitor({ types: t }, options) {
   options = Object.assign({}, defaultOptions, options);
-  const { normalizeNpmFileName, nodeModulesPathList, distSourcePath, resourcePath, outputPath, disableCopyNpm, platform } = options;
-  const source = (value, npmList, rootContext) => {
+  const { normalizeNpmFileName, distSourcePath, resourcePath, outputPath, disableCopyNpm, platform } = options;
+  const source = (value, rootContext) => {
     // Example:
     // value => '@ali/universal-goldlog' or '@ali/xxx/foo/lib'
-    // npmList => ['/Users/xxx/node_modules/xxx', '/Users/xxx/node_modules/aaa/node_modules/bbb']
     // filename => '/Users/xxx/workspace/yyy/src/utils/logger.js'
     // rootContext => '/Users/xxx/workspace/yyy/'
 
-    const searchPaths = npmList.reverse();
-    const target = require.resolve(value, { paths: searchPaths });
+    const target = enhancedResolve.sync(resourcePath, value);
 
     const rootNodeModulePath = join(rootContext, 'node_modules');
     const filePath = relative(dirname(distSourcePath), join(outputPath, 'npm', relative(rootNodeModulePath, target)));
-    return t.stringLiteral(normalizeNpmFileName('./' + filePath));
+    return t.stringLiteral(normalizeNpmFileName(addRelativePathPrefix(filePath)));
   };
 
   // In WeChat miniapp, `require` can't get index file if index is omitted
   const ensureIndexInPath = (value, resourcePath) => {
     const target = require.resolve(resolve(dirname(resourcePath), value));
     const result = relative(dirname(resourcePath), target);
-    return result[0] === '.' ? result : './' + result;
+    return addRelativePathPrefix(result);
   };
 
   return {
@@ -49,6 +48,10 @@ module.exports = function visitor({ types: t }, options) {
         if (isNpmModule(value)) {
           if (isWeexModule(value)) {
             path.remove();
+            return;
+          }
+          if (isNodeNativeModule(value)) {
+            path.skip();
             return;
           }
 
@@ -67,7 +70,7 @@ module.exports = function visitor({ types: t }, options) {
           }
 
           if (!disableCopyNpm) {
-            const processedSource = source(value, nodeModulesPathList, state.cwd);
+            const processedSource = source(value, state.cwd);
             // Add lock to avoid repeatly transformed in CallExpression if @babel/preset-env invoked
             transformPathMap[processedSource.value] = true;
             path.node.source = processedSource;
@@ -93,6 +96,15 @@ module.exports = function visitor({ types: t }, options) {
                 path.replaceWith(t.nullLiteral());
                 return;
               }
+              if (isNodeNativeModule(moduleName)) {
+                path.skip();
+                return;
+              }
+
+              // if (['http', 'https', 'url', 'zlib', 'stream', 'tty'].includes(moduleName)) {
+              //   path.replaceWith(t.nullLiteral());
+              //   return;
+              // }
 
               if (isRaxModule(moduleName)) {
                 const runtimePath = disableCopyNpm ? getRuntimeByPlatform(platform.type) : getRuntimeRelativePath(distSourcePath, outputPath);
@@ -111,7 +123,7 @@ module.exports = function visitor({ types: t }, options) {
               }
 
               if (!disableCopyNpm) {
-                const processedSource = source(moduleName, nodeModulesPathList, state.cwd);
+                const processedSource = source(moduleName, state.cwd);
                 transformPathMap[processedSource.value] = true;
                 path.node.arguments = [ processedSource ];
               }

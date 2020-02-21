@@ -37,9 +37,29 @@ function Script(props, context) {
   );
 }
 
+function App(props, context) {
+  const config = props.config || {};
+  const routes = config.routes || [];
+
+  const pagePath = context.__pagePath;
+
+  const currentPageInfo = routes.find((route) => {
+    return route.path == pagePath;
+  });
+
+  const consumer = Array.isArray(props.children) ? props.children[0] : props.children;
+
+  if (typeof consumer === 'function') {
+    return consumer(currentPageInfo);
+  }
+
+  return props.children;
+}
+
 export {
   Root,
   Data,
   Style,
   Script,
+  App
 };

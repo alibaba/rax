@@ -9,6 +9,8 @@ const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
 const adapter = require('../../adapter').ali;
 
+let count = 0;
+
 describe('Directives', () => {
   describe('list', () => {
     it('simple', () => {
@@ -18,15 +20,18 @@ describe('Directives', () => {
       </View>
     `;
       const ast = parseExpression(code);
-      _transformList(ast, code, adapter);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
+      const index = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
-        <block a:for={array.map((val, index) => {
+        <block a:for={array.map((val, ${index}) => {
     return {
       val: val,
-      index: index
+      ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="index"><View>{val}</View></block>
+  })} a:for-item="val" a:for-index="${index}"><View>{val}</View></block>
       </View>`);
     });
 
@@ -40,21 +45,25 @@ describe('Directives', () => {
 </View>
     `;
       const ast = parseExpression(code);
-      _transformList(ast, code, adapter);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
+      const index1 = 'index' + count++;
+      const index2 = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
-        <block a:for={array.map((item, index) => {
+        <block a:for={array.map((item, ${index1}) => {
     return {
-      item: item.map((item2, index0) => {
+      item: item.map((item2, ${index2}) => {
         return {
           item2: item2,
-          index0: index0
+          ${index2}: ${index2}
         };
       }),
-      index: index
+      ${index1}: ${index1}
     };
-  })} a:for-item="item" a:for-index="index"><View>
-          <block a:for={item} a:for-item="item2" a:for-index="index0"><View>{item2}
+  })} a:for-item="item" a:for-index="${index1}"><View>
+          <block a:for={item} a:for-item="item2" a:for-index="${index2}"><View>{item2}
         </View></block>
       </View></block>
 </View>`);
@@ -75,22 +84,28 @@ describe('Directives', () => {
       </View>
     `;
       const ast = parseExpression(code);
-      _transformList(ast, code, adapter);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
+      const index1 = 'index' + count++;
+      const index2 = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View className="rxpi-coupon">
-        <block key={'test_' + rowIndex} a:for={testList.map((row, rowIndex) => {
+        <block key="{{row._d0}}" a:for={testList.map((row, ${index1}) => {
     return {
-      row: row.map((col, colIndex) => {
+      row: row.map((col, ${index2}) => {
         return {
           col: col,
-          colIndex: colIndex
+          ${index2}: ${index2},
+          _d0: ${index2}
         };
       }),
-      rowIndex: rowIndex
+      ${index1}: ${index1},
+      _d0: 'test_' + ${index1}
     };
-  })} a:for-item="row" a:for-index="rowIndex"><View className="rxpi-coupon-row">
-          <block a:for={row} a:for-item="col" a:for-index="colIndex"><View>
-            <Text key={colIndex}>{colIndex}</Text>
+  })} a:for-item="row" a:for-index="${index1}"><View className="rxpi-coupon-row">
+          <block a:for={row} a:for-item="col" a:for-index="${index2}"><View>
+            <Text key="{{col._d0}}">{${index2}}</Text>
           </View></block>
         </View></block>
       </View>`);
@@ -141,6 +156,13 @@ describe('Directives', () => {
       const ast = parseExpression(code);
       _transformSlotDirective(ast, adapter);
       expect(genExpression(ast)).toEqual('<View slot="item" slot-scope="props">{props.text}</View>');
+    });
+
+    it('should add default scope name', () => {
+      const code = '<View x-slot:item>{props.text}</View>';
+      const ast = parseExpression(code);
+      _transformSlotDirective(ast, adapter);
+      expect(genExpression(ast)).toEqual('<View slot="item" slot-scope="__defaultScopeName">{props.text}</View>');
     });
   });
 });

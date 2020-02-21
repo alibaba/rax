@@ -2,7 +2,6 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
-const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
 const chalk = require('chalk');
 
@@ -10,88 +9,67 @@ const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
 
 function transformRenderFunction(ast, adapter) {
-  const templateVariables = {};
+  // Identifier name & jsx map
+  const templateMap = {};
   traverse(ast, {
-    VariableDeclaration: {
-      enter(path) {
-        const { node } = path;
-        const { declarations } = node;
-        declarations.map(declaration => {
-          const { id, init } = declaration;
-
-          switch (id.type) {
-            case 'Identifier':
-              const value = init ? init.value : null;
-              templateVariables[id.name] = { value };
-              break;
-
-            case 'ObjectPattern':
-              if (Array.isArray(id.properties)) {
-                id.properties.forEach(objProperty => {
-                  templateVariables[t.isRestElement(objProperty) ?
-                    objProperty.argument.name :
-                    objProperty.value.name
-                  ] = {
-                    source: t.isMemberExpression(init)
-                      ? init.property.name
-                      : init.name,
-                  };
-                });
-              }
-              break;
-
-            case 'ArrayPattern':
-              if (Array.isArray(id.elememts)) {
-                id.elememts.forEach((el, index) => {
-                  if (t.isIdentifier(el)) {
-                    templateVariables[el.name] = init.elememts[index].value;
-                  }
-                });
-              }
-              break;
-          }
-        });
-      },
-    },
     IfStatement: {
       enter(path) {
-        const { node } = path;
-        const { consequent, alternate } = node;
+        const consequentPath = path.get('consequent');
+        const alternatePath = path.get('alternate');
+        const consequentBodyPath = consequentPath.get('body');
         // parse consequent
-        if (consequent.body) {
-          consequent.body.map(({ expression }) => {
-            handleConsequent(path, expression, templateVariables, adapter);
+        if (consequentBodyPath.length > 0) {
+          consequentBodyPath.map((statementPath) => {
+            handleConsequent(
+              path,
+              statementPath.get('expression'),
+              templateMap,
+              adapter
+            );
           });
         } else {
-          if (t.isExpressionStatement(consequent)) {
-            handleConsequent(path, consequent.expression, templateVariables, adapter);
+          if (consequentPath.isExpressionStatement()) {
+            handleConsequent(
+              path,
+              consequentPath.get('expression'),
+              templateMap,
+              adapter
+            );
           } else {
-            handleConsequent(path, consequent, templateVariables, adapter);
+            handleConsequent(path, consequentPath, templateMap, adapter);
           }
         }
 
-        if (!t.isIfStatement(alternate) && alternate) {
-          if (alternate.body) {
-            alternate.body.map(({ expression }) => {
-              handleAlternate(expression, templateVariables, adapter);
+        if (!alternatePath.isIfStatement() && alternatePath.node) {
+          const alternateBodyPath = alternatePath.get('body');
+          if (alternateBodyPath) {
+            alternateBodyPath.map((statementPath) => {
+              handleAlternate(
+                statementPath.get('expression'),
+                templateMap,
+                adapter
+              );
             });
           } else {
-            if (t.isExpressionStatement(alternate)) {
-              handleConsequent(path, alternate.expression, templateVariables, adapter);
+            if (alternatePath.isExpressionStatement()) {
+              handleConsequent(
+                path,
+                alternatePath.get('expression'),
+                templateMap,
+                adapter
+              );
             } else {
-              handleConsequent(path, alternate, templateVariables, adapter);
+              handleConsequent(path, alternatePath, templateMap, adapter);
             }
           }
         }
       },
     },
   });
-  return templateVariables;
+  return templateMap;
 }
 
-function transformTemplate(ast, adapter, templateVariables, code) {
-  const dynamicValue = {};
-
+function transformTemplate(ast, templateMap, adapter, code) {
   traverse(ast, {
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
@@ -100,27 +78,19 @@ function transformTemplate(ast, adapter, templateVariables, code) {
         return;
       }
 
-      switch (node.expression.type) {
-        case 'ConditionalExpression': {
-          const { replacement } = transformConditionalExpression(path, node.expression, { adapter, dynamicValue, code });
-          path.replaceWithMultiple(replacement);
-          break;
-        }
-
-        // { foo }
-        case 'Identifier': {
-          const id = node.expression.name.trim();
-          if (
-            templateVariables[id] &&
-            t.isJSXElement(templateVariables[id].value)
-          ) {
-            // => <block a:if="xxx">
-            path.replaceWith(templateVariables[id].value);
-          }
-
-          break;
-        }
+      if (node.expression.type === 'ConditionalExpression') {
+        const { replacement } = transformConditionalExpression(path, node.expression, { adapter, code });
+        path.replaceWithMultiple(replacement);
       }
+
+      path.traverse({
+        Identifier(innerPath) {
+          const template = templateMap[innerPath.node.name];
+          if (template) {
+            path.replaceWith(template);
+          }
+        }
+      });
     },
     LogicalExpression(path) {
       if (path.parentPath.isJSXExpressionContainer()) {
@@ -150,7 +120,7 @@ function transformTemplate(ast, adapter, templateVariables, code) {
             children.push(t.jsxExpressionContainer(right));
           }
           replacement.push(createJSX('block', {
-            [adapter.if]: generateConditionValue(test, {adapter, dynamicValue})
+            [adapter.if]: generateConditionValue(test, { adapter })
           }, children));
           if (!/Expression$/.test(left.type)) {
             replacement.push(createJSX('block', {
@@ -167,8 +137,6 @@ function transformTemplate(ast, adapter, templateVariables, code) {
       }
     }
   });
-
-  return dynamicValue;
 }
 
 /**
@@ -176,8 +144,8 @@ function transformTemplate(ast, adapter, templateVariables, code) {
  *        jsxExpressionContainer
  * @param {Object} expression
  *        Condition Expression
- * @param {{ adapter: Object, dynamicValue: Object, code: String }} options
- * @returns {{ replacement: Object, dynamicValue: Object }}
+ * @param {{ adapter: Object, code: String }} options
+ * @returns {{ replacement: Object }}
  * */
 function transformConditionalExpression(path, expression, options) {
   let { test, consequent, alternate } = expression;
@@ -244,21 +212,16 @@ function transformConditionalExpression(path, expression, options) {
       ),
     );
   }
-  return { replacement, dynamicValue: options.dynamicValue };
+  return { replacement };
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    const templateVariables = transformRenderFunction(
+    const templateMap = transformRenderFunction(
       parsed[RENDER_FN_PATH],
       options.adapter,
     );
-    if (t.isIdentifier(parsed[TEMPLATE_AST]) && parsed[TEMPLATE_AST].name in templateVariables) {
-      parsed[TEMPLATE_AST] = templateVariables[parsed[TEMPLATE_AST].name].value;
-    } else {
-      const dynamicValue = transformTemplate(parsed[TEMPLATE_AST], options.adapter, templateVariables, code);
-      Object.assign(parsed.dynamicValue = parsed.dynamicValue || {}, dynamicValue);
-    }
+    transformTemplate(parsed[TEMPLATE_AST], templateMap, options.adapter, code);
   },
 
   // For test cases.
@@ -268,14 +231,11 @@ module.exports = {
 
 function generateConditionValue(test, options) {
   let conditionValue;
-  if (/Expression$/.test(test.type)) {
-    conditionValue = t.jsxExpressionContainer(test);
-  } else if (t.isStringLiteral(test)) {
+  if (t.isStringLiteral(test)) {
     conditionValue = test;
   } else {
-    // Other literal types or identifier.
-    conditionValue = t.stringLiteral(createBinding(genExpression(test)));
-    if (t.isIdentifier(test)) options.dynamicValue[test.name] = test;
+    // Other types.
+    conditionValue = t.jsxExpressionContainer(test);
   }
   return conditionValue;
 }
@@ -286,25 +246,23 @@ function isJSX(node) {
 
 /**
  * @param path IfStatement
- * @param expression consequent node
- * @param templateVariables dynamic value
+ * @param expressionPath consequent expression path
+ * @param templateMap variable => jsx template
  * @param adapter
  * */
-function handleConsequent(path, expression, templateVariables, adapter) {
+function handleConsequent(path, expressionPath, templateMap, adapter) {
   const { node } = path;
   const { test, start, end } = node;
-  const testValue = genExpression(test);
+  const expression = expressionPath.node;
   if (
     t.isAssignmentExpression(expression) &&
     expression.operator === '=' &&
     t.isIdentifier(expression.left)
   ) {
-    let shouldRemove = false;
+    const rightPath = expressionPath.get('right');
     const varName = expression.left.name;
-    if (templateVariables[varName] && !templateVariables[varName].value) {
-      templateVariables[expression.left.name].value = createJSX(
-        'block',
-      );
+    if (!templateMap[varName]) {
+      templateMap[varName] = createJSX('block');
     }
     let testAttrName = adapter.if;
     const parentPathAlternate = path.parent.alternate;
@@ -315,48 +273,45 @@ function handleConsequent(path, expression, templateVariables, adapter) {
      */
     if (
       path.parentPath.isIfStatement() &&
-      t.isIfStatement(parentPathAlternate) &&
-      parentPathAlternate.start === start &&
-      parentPathAlternate.end === end
+        t.isIfStatement(parentPathAlternate) &&
+        parentPathAlternate.start === start &&
+        parentPathAlternate.end === end
     ) {
       testAttrName = adapter.elseif;
     }
-    const rightNode = expression.right;
-    if (t.isJSXElement(rightNode)) {
-      const containerNode = createJSX(
-        'block',
-        {
-          [testAttrName]: t.stringLiteral(
-            '{{' + testValue + '}}',
-          ),
-        },
-        [rightNode],
-      );
+    const rightNode = rightPath.node;
+    const containerNode = createJSX(
+      'block',
+      {
+        [testAttrName]: t.jsxExpressionContainer(Object.assign({}, test)),
+      },
+      [isJSX(rightNode) ? rightNode : t.jsxExpressionContainer(rightNode)],
+    );
 
-      templateVariables[varName].value.children.push(containerNode);
-      shouldRemove = true;
-    }
-
-    if (shouldRemove) {
-      path.remove();
+    templateMap[varName].children.push(containerNode);
+    if (hasJSX(rightPath)) {
+      // Remove only if the expression contains JSX
+      expressionPath.remove();
     }
   }
 }
 
 /**
- * @param expression alternate node
- * @param templateVariables dynamic value
+ * @param expressionPath alternate expression path
+ * @param templateMap variable => jsx template
  * @param adapter
  * */
-function handleAlternate(expression, templateVariables, adapter) {
+function handleAlternate(expressionPath, templateMap, adapter) {
+  const expression = expressionPath.node;
   if (
     t.isAssignmentExpression(expression) &&
     expression.operator === '=' &&
     t.isIdentifier(expression.left)
   ) {
     const varName = expression.left.name;
-    const rightNode = expression.right;
-    if (t.isJSXElement(rightNode)) {
+    const rightPath = expressionPath.get('right');
+    const rightNode = rightPath.node;
+    if (hasJSX(rightPath)) {
       const containerNode = createJSX(
         'block',
         {
@@ -365,11 +320,31 @@ function handleAlternate(expression, templateVariables, adapter) {
         [rightNode],
       );
 
-      if (templateVariables[varName].value) {
-        templateVariables[varName].value.children.push(containerNode);
+      if (templateMap[varName]) {
+        templateMap[varName].children.push(containerNode);
       } else {
-        templateVariables[varName].value = containerNode;
+        templateMap[varName] = containerNode;
       }
+      expressionPath.remove();
     }
   }
+}
+
+/**
+ * @param target path
+ * */
+function hasJSX(path) {
+  let exist = false;
+  path.traverse({
+    JSXElement() {
+      exist = true;
+    },
+    JSXText() {
+      exist = true;
+    },
+    JSXFragment() {
+      exist = true;
+    }
+  });
+  return exist;
 }

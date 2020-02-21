@@ -1,10 +1,10 @@
-const { join, dirname, relative, resolve, extname, sep } = require('path');
+const { join, dirname, relative, resolve, sep } = require('path');
 
-const { copySync, existsSync, mkdirpSync, writeJSONSync, statSync, readFileSync, readJSONSync } = require('fs-extra');
+const { copySync, existsSync, mkdirpSync, writeJSONSync, readFileSync, readJSONSync } = require('fs-extra');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs, replaceExtension } = require('./utils/pathHelper');
-const { isNpmModule } = require('./utils/judgeModule');
+const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash, addRelativePathPrefix } = require('./utils/pathHelper');
+const { isNpmModule, isJSONFile, isTypescriptFile } = require('./utils/judgeModule');
 const isMiniappComponent = require('./utils/isMiniappComponent');
 const output = require('./output');
 
@@ -21,6 +21,7 @@ module.exports = function scriptLoader(content) {
   const rootContext = this.rootContext;
   const absoluteConstantDir = constantDir.map(dir => join(rootContext, dir));
   const isFromConstantDir = cached(isFromTargetDirs(absoluteConstantDir));
+  const isAppJSon = this.resourcePath === join(rootContext, 'src', 'app.json');
 
   const loaderHandled = this.loaders.some(
     ({ path }) => [AppLoader, PageLoader, ComponentLoader].indexOf(path) !== -1
@@ -42,11 +43,11 @@ module.exports = function scriptLoader(content) {
     return relativeNpmPath.split(sep).slice(0, isScopedNpm ? 2 : 1).join(sep);
   });
 
-  const outputFile = (rawContent, isFromNpm = true) => {
+  const outputFile = (rawContent, { isFromNpm = true, isJSON = false}) => {
     let distSourcePath;
     if (isFromNpm) {
       const relativeNpmPath = relative(currentNodeModulePath, this.resourcePath);
-      const splitedNpmPath = relativeNpmPath.split('/');
+      const splitedNpmPath = relativeNpmPath.split(sep);
       if (/^_?@/.test(relativeNpmPath)) splitedNpmPath.shift(); // Extra shift for scoped npm.
       splitedNpmPath.shift(); // Skip npm module package, for cnpm/tnpm will rewrite this.
       distSourcePath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath)));
@@ -58,32 +59,42 @@ module.exports = function scriptLoader(content) {
       distSourcePath = join(outputPath, relativeFilePath);
     }
 
-    const outputContent = { code: rawContent };
-    const outputOption = {
-      outputPath: {
-        code: distSourcePath
-      },
-      mode,
-      externalPlugins: [
-        [
-          require('./babel-plugin-rename-import'),
-          { normalizeNpmFileName,
-            nodeModulesPathList,
-            distSourcePath,
-            resourcePath: this.resourcePath,
-            outputPath,
-            disableCopyNpm,
-            platform
-          }
-        ]
-      ]
-    };
+    let outputContent = {};
+    let outputOption = {};
 
-    // If typescript
-    if (extname(this.resourcePath) === '.ts') {
-      outputOption.externalPlugins.unshift(require('@babel/plugin-transform-typescript'));
-      outputOption.outputPath.code = replaceExtension(outputOption.outputPath.code, '.js');
+    if (isJSON) {
+      outputContent = {
+        json: JSON.parse(rawContent)
+      };
+      outputOption = {
+        outputPath: {
+          json: distSourcePath
+        },
+        mode
+      };
+    } else {
+      outputContent = { code: rawContent };
+      outputOption = {
+        outputPath: {
+          code: removeExt(distSourcePath) + '.js'
+        },
+        mode,
+        externalPlugins: [
+          [
+            require('./babel-plugin-rename-import'),
+            { normalizeNpmFileName,
+              distSourcePath,
+              resourcePath: this.resourcePath,
+              outputPath,
+              disableCopyNpm,
+              platform
+            }
+          ]
+        ],
+        isTypescriptFile: isTypescriptFile(this.resourcePath)
+      };
     }
+
     output(outputContent, null, outputOption);
   };
 
@@ -109,14 +120,14 @@ module.exports = function scriptLoader(content) {
               const realComponentPath = require.resolve(componentPath, {
                 paths: [this.resourcePath]
               });
-              const relativeComponentPath = normalizeNpmFileName('./' + relative(dirname(sourceNativeMiniappScriptFile), realComponentPath));
-              componentConfig.usingComponents[key] = removeExt(relativeComponentPath);
+              const relativeComponentPath = normalizeNpmFileName(addRelativePathPrefix(relative(dirname(sourceNativeMiniappScriptFile), realComponentPath)));
+              componentConfig.usingComponents[key] = replaceBackSlashWithSlash(removeExt(relativeComponentPath));
               dependencies.push({
                 name: realComponentPath,
                 loader: ScriptLoader, // Native miniapp component js file will loaded by script-loader
                 options: loaderOptions
               });
-            } else if (componentPath.indexOf('/npm/') === -1) { // Exclude the path that has been modified by jsx-compiler
+            } else if (componentPath.indexOf(`${sep}npm${sep}`) === -1) { // Exclude the path that has been modified by jsx-compiler
               const absComponentPath = resolve(dirname(sourceNativeMiniappScriptFile), componentPath);
               dependencies.push({
                 name: absComponentPath,
@@ -193,7 +204,7 @@ module.exports = function scriptLoader(content) {
         const source = dirname(this.resourcePath);
         const target = dirname(normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, this.resourcePath))));
         outputDir(source, target);
-        outputFile(rawContent);
+        outputFile(rawContent, {});
 
         const originalComponentConfigPath = removeExt(this.resourcePath) + '.json';
         const distComponentConfigPath = normalizeNpmFileName(join(outputPath, 'npm', relative(rootNodeModulePath, removeExt(this.resourcePath) + '.json')));
@@ -206,10 +217,15 @@ module.exports = function scriptLoader(content) {
         content
       ].join('\n');
     } else {
-      outputFile(rawContent);
+      outputFile(rawContent, {
+        isJSON: isJSONFile(this.resourcePath)
+      });
     }
   } else {
-    outputFile(rawContent, false);
+    !isAppJSon && outputFile(rawContent, {
+      isFromNpm: false,
+      isJSON: isJSONFile(this.resourcePath)
+    });
   }
 
   return content;
@@ -223,11 +239,11 @@ function normalizeNpmFileName(filename) {
 }
 
 function getNearestNodeModulesPath(root, current) {
-  const relativePathArray = relative(root, current).split('/');
+  const relativePathArray = relative(root, current).split(sep);
   let index = root;
   const result = [];
   while (index !== current) {
-    const ifNodeModules = join(index, '/node_modules');
+    const ifNodeModules = join(index, 'node_modules');
     if (existsSync(ifNodeModules)) {
       result.push(ifNodeModules);
     }
@@ -247,5 +263,5 @@ function generateDependencies(dependencies) {
 }
 
 function createImportStatement(req) {
-  return `import '${req}';`;
+  return `import '${doubleBackslash(req)}';`;
 }

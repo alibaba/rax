@@ -1,13 +1,12 @@
 import nextTick from './nextTick';
 import { enqueueRender } from './enqueueRender';
 
-const propsMap = {
-  // instanceId -> props
-};
+// instanceId -> props
+const propsMap = {};
 
-const nextPropsMap = {
-  // instanceId -> props
-};
+// instanceId -> props
+const nextPropsMap = {};
+
 const componentIntances = {};
 
 const updateChildPropsCallbacks = {};

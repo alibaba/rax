@@ -5,10 +5,12 @@ const compiler = require('jsx-compiler');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash, addRelativePathPrefix } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const processCSS = require('./styleProcessor');
 const output = require('./output');
+const adaptPageConfig = require('./adaptConfig');
+const { isTypescriptFile } = require('./utils/judgeModule');
 
 const ComponentLoader = require.resolve('./component-loader');
 const ScriptLoader = require.resolve('./script-loader');
@@ -60,6 +62,7 @@ module.exports = async function pageLoader(content) {
   if (!existsSync(pageDistDir)) mkdirpSync(pageDistDir);
 
   const distFileWithoutExt = removeExt(join(outputPath, relativeSourcePath), platform.type);
+  adaptPageConfig(pageConfig, 'window', platform.type);
 
   const config = Object.assign(pageConfig, transformed.config);
   if (Array.isArray(transformed.dependencies)) {
@@ -73,11 +76,10 @@ module.exports = async function pageLoader(content) {
     Object.keys(config.usingComponents).forEach(key => {
       const value = config.usingComponents[key];
       if (/^c-/.test(key)) {
-        let result = './' + relative(dirname(this.resourcePath), value); // components/Repo.jsx
-        result = removeExt(result); // components/Repo
-        usingComponents[key] = result;
+        const result = removeExt(addRelativePathPrefix(relative(dirname(this.resourcePath), value)));
+        usingComponents[key] = replaceBackSlashWithSlash(result);
       } else {
-        usingComponents[key] = value;
+        usingComponents[key] = replaceBackSlashWithSlash(value);
       }
     });
     config.usingComponents = usingComponents;
@@ -99,7 +101,8 @@ module.exports = async function pageLoader(content) {
       template: distFileWithoutExt + platform.extension.xml,
       assets: outputPath
     },
-    mode
+    mode,
+    isTypescriptFile: isTypescriptFile(this.resourcePath)
   };
 
   output(outputContent, rawContent, outputOption);
@@ -154,7 +157,7 @@ module.exports = async function pageLoader(content) {
 };
 
 function createImportStatement(req) {
-  return `import '${req}';`;
+  return `import '${doubleBackslash(req)}';`;
 }
 
 function generateDependencies(dependencies, loaderOptions) {

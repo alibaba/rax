@@ -1,3 +1,7 @@
 coverage
 .idea
 example
+__tests__
+demo
+es/*
+lib/*

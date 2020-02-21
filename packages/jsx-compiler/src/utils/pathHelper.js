@@ -1,6 +1,8 @@
+const { sep } = require('path');
+
 function getNpmName(value) {
   const isScopedNpm = /^_?@/.test(value);
-  return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
+  return value.split(sep).slice(0, isScopedNpm ? 2 : 1).join(sep);
 }
 
 /**
@@ -10,7 +12,16 @@ function normalizeFileName(filename) {
   return filename.replace(/@/g, '_');
 }
 
+/**
+ * Add ./ (Linux/Unix) or .\ (Windows) at the start of filepath
+ * @param {string} filepath
+ * @returns {string}
+ */
+function addRelativePathPrefix(filepath) {
+  return filepath[0] !== '.' ? `.${sep}${filepath}` : filepath;
+}
 module.exports = {
   getNpmName,
-  normalizeFileName
+  normalizeFileName,
+  addRelativePathPrefix
 };

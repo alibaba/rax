@@ -328,11 +328,19 @@ function renderElementToString(element, context, options) {
     if (type.prototype && type.prototype.render || typeof type === 'function') {
       const instance = createInstance(element, context);
 
-      shared.Host.owner = {
-        // Give the component name in render error info (only for development)
-        __getName: () => type.displayName || type.name || element,
+      const currentComponent = {
+        // For hooks to get current instance
         _instance: instance
       };
+
+      if (process.env.NODE_ENV !== 'production') {
+        const componetName = type.displayName || type.name || element;
+        // Give the component name in render error info (only for development)
+        currentComponent.__getName = () => componetName;
+      }
+
+      // Rax will use owner during rendering, eg: hooks, render error info.
+      shared.Host.owner = currentComponent;
 
       if (process.env.NODE_ENV !== 'production') {
         checkContext(type);
@@ -354,6 +362,10 @@ function renderElementToString(element, context, options) {
       }
 
       const renderedElement = instance.render();
+
+      // Reset owner after render, or it will casue memory leak.
+      shared.Host.owner = null;
+
       return renderElementToString(renderedElement, currentContext, options);
     } else if (typeof type === 'string') {
       const props = element.props || EMPTY_OBJECT;
