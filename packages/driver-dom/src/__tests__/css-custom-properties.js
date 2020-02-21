@@ -1,5 +1,5 @@
 import { createElement, render } from 'rax';
-import * as DriverDOM from '../../';
+import * as DriverDOM from '../';
 
 describe('Support CSS custom properties', () => {
   let container;
