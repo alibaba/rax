@@ -1,3 +1,5 @@
+import { isString, isNumber, isArray, isObject } from './types';
+
 /*!
   Copyright (c) 2017 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -14,14 +16,14 @@ export default function classNames() {
 
     const argType = typeof arg;
 
-    if (argType === 'string' || argType === 'number') {
+    if (isString(argType) || isNumber(argType)) {
       classes.push(arg);
-    } else if (Array.isArray(arg) && arg.length) {
+    } else if (isArray(arg) && arg.length) {
       const inner = classNames.apply(null, arg);
       if (inner) {
         classes.push(inner);
       }
-    } else if (argType === 'object') {
+    } else if (isObject(argType)) {
       for (let key in arg) {
         if (hasOwn.call(arg, key) && arg[key]) {
           classes.push(key);

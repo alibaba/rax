@@ -1,4 +1,4 @@
-import isFunction from './isFunction';
+import { isFunction } from './types';
 import {
   ON_SHOW,
   ON_HIDE,
