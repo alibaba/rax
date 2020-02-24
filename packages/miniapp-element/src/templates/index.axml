@@ -75,9 +75,10 @@
     scroll-with-animation="{{scrollWithAnimation}}"
     enable-back-to-top="{{enableBackToTop}}"
     enable-flex="{{enableFlex}}"
-    onScrollToUpper="onScrollViewScrolltoupper"
-    onScrollToLower="onScrollViewScrolltolower"
-    onScroll="onScrollViewScroll"
+    scroll-animation-duration="{{scrollAnimationDuration}}"
+    onScrollToUpper="onScrolltoupper"
+    onScrollToLower="onScrolltolower"
+    onScroll="onScroll"
 ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></scroll-view>
 <swiper
     a:elif="{{builtinComponentName === 'swiper'}}"
@@ -297,17 +298,11 @@
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
-    mode="{{mode}}"
     disabled="{{disabled}}"
     range="{{range}}"
     range-key="{{rangeKey}}"
     value="{{value}}"
-    start="{{start}}"
-    end="{{end}}"
-    fields="{{fields}}"
-    custom-item="{{customItem}}"
     onChange="onPickerChange"
-    onColumnChange="onPickerColumnChange"
     onCancel="onPickerCancel"
 ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></picker>
 <picker-view

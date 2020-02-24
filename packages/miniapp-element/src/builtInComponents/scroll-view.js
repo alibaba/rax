@@ -47,6 +47,11 @@ export default {
       return !!domNode.getAttribute('scroll-with-animation');
     },
   }, {
+    name: 'scrollAnimationDuration',
+    get(domNode) {
+      return domNode.getAttribute('scroll-animation-duration');
+    },
+  }, {
     name: 'enableBackToTop',
     get(domNode) {
       return !!domNode.getAttribute('enable-back-to-top');
@@ -63,13 +68,13 @@ export default {
     }
   }],
   handles: {
-    onScrollViewScrolltoupper(evt) {
+    onScrolltoupper(evt) {
       callSimpleEvent('scrolltoupper', evt, this.domNode);
     },
-    onScrollViewScrolltolower(evt) {
+    onScrolltolower(evt) {
       callSimpleEvent('scrolltolower', evt, this.domNode);
     },
-    onScrollViewScroll(evt) {
+    onScroll(evt) {
       callSimpleEvent('scroll', evt, this.domNode);
     },
   },
