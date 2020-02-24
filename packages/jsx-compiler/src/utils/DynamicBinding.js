@@ -51,6 +51,11 @@ module.exports = class DynamicBinding {
     }
   }
 
+  getExpression(name) {
+    const target = this._store.find(dynamicItem => dynamicItem.name === name);
+    return target ? target.value : null;
+  }
+
   getStore() {
     return this._store;
   }

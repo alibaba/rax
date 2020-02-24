@@ -42,7 +42,7 @@ module.exports = {
     traverse(parsed.ast, {
       ImportDeclaration(path) {
         const { node } = path;
-        if (t.isStringLiteral(node.source) && cssFileMap[node.source.value]) {
+        if (t.isStringLiteral(node.source) && cssFileMap[node.source.value.replace(/\\/g, '/')]) {
           path.remove();
         }
       }
