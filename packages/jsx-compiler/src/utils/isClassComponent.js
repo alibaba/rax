@@ -10,7 +10,7 @@ const RAX_COMPONENT = 'Component';
  *  1. class xxx extends *.Component {}
  *  2. class xxx extends Component {}
  */
-module.exports = function isClassComponent(path, flag) {
+module.exports = function isClassComponent(path) {
   if (!path) return false;
 
   const { node, scope } = path;
