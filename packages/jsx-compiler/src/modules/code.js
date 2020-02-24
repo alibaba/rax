@@ -8,7 +8,6 @@ const traverse = require('../utils/traverseNodePath');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
 const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
 const { BINDING_REG } = require('../utils/checkAttr');
-const genExpression = require('../codegen/genExpression');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
