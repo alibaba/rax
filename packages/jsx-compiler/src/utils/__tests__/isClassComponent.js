@@ -8,7 +8,7 @@ describe('isClassComponent', () => {
       import { createElement, Component } from 'rax';
       import View from 'rax-view';
       import './index.css';
-      
+
       export default class extends Component {
         render() {
           return (
@@ -41,7 +41,7 @@ describe('isClassComponent', () => {
     `;
 
     const defaultExportedPath = getDefaultExportedPath(parseCode(code));
-    expect(isClassComponent(defaultExportedPath)).toBeFalsy();
+    expect(isClassComponent(defaultExportedPath)).toBeTruthy();
   });
 
   it('#4', () => {

@@ -10,7 +10,7 @@ const RAX_COMPONENT = 'Component';
  *  1. class xxx extends *.Component {}
  *  2. class xxx extends Component {}
  */
-module.exports = function isClassComponent(path) {
+module.exports = function isClassComponent(path, flag) {
   if (!path) return false;
 
   const { node, scope } = path;
@@ -22,26 +22,23 @@ module.exports = function isClassComponent(path) {
       return isClassComponent(binding.path);
     }
   } else {
-    let importModuleBinding;
-
     if (t.isMemberExpression(node.superClass)) {
       // Case 1
       // Step 1: judge property name is Component.
       if (!t.isIdentifier(node.superClass.property, { name: RAX_COMPONENT })) return false;
-
       // Step2: find `object` is import from 'rax'.
-      importModuleBinding = scope.getBinding(node.superClass.object.name);
+      const importModuleBinding = scope.getBinding(node.superClass.object.name);
+      if (importModuleBinding && importModuleBinding.kind === 'module') {
+        const bindingPath = importModuleBinding.path.parentPath;
+        if (t.isImportDeclaration(bindingPath.node)) {
+          return t.isStringLiteral(bindingPath.node.source, { value: RAX_PACKAGE });
+        }
+      }
     } else if (t.isIdentifier(node.superClass)) {
       // Case 2
-      importModuleBinding = scope.getBinding(node.superClass.name);
+      return path.isClassDeclaration() || path.isClassExpression();
     }
 
-    if (importModuleBinding && importModuleBinding.kind === 'module') {
-      const bindingPath = importModuleBinding.path.parentPath;
-      if (t.isImportDeclaration(bindingPath.node)) {
-        return t.isStringLiteral(bindingPath.node.source, { value: RAX_PACKAGE });
-      }
-    }
     return false;
   }
 };
