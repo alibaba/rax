@@ -18,7 +18,7 @@ import {
 import { cycles as pageCycles } from './page';
 import getId from './getId';
 import shallowEqual, { is } from './shallowEqual';
-import { isNull, isFunction, isEmptyObj, isArray } from './types';
+import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
 
 export default class Component {
   constructor(props) {
@@ -321,7 +321,7 @@ export default class Component {
           useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
           if (diffData(this.state[key], data[key])) {
-            if (Object.prototype.toString.call(data[key]) === '[object Object]') {
+            if (isPlainObject(data[key])) {
               useSetData[key] = Object.assign({}, this.state[key], data[key]);
             } else {
               useSetData[key] = data[key];
