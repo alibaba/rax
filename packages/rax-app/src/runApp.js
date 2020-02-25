@@ -142,7 +142,7 @@ export default function runApp(appConfig, pageProps = {}) {
         rootEl,
         { driver, hydrate }
       );
-    })
+    });
 }
 
 function matchInitialComponent(fullpath, routes) {
