@@ -143,9 +143,6 @@ export default function runApp(appConfig, pageProps = {}) {
         { driver, hydrate }
       );
     })
-    .catch((err) => {
-      console.error(err);
-    });
 }
 
 function matchInitialComponent(fullpath, routes) {
