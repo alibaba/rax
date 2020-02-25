@@ -314,43 +314,45 @@ export default class Component {
     let $ready = false;
     // In alibaba miniapp can use $spliceData optimize long list
     if (this._internal.$spliceData) {
-      const useSpliceData = {};
-      const useSetData = {};
+      // Use $spliceData update
+      const arrayData = {};
+      // Use setData update
+      const normalData = {};
       for (let key in data) {
         if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
+          arrayData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
           if (diffData(this.state[key], data[key])) {
             if (Object.prototype.toString.call(data[key]) === '[object Object]') {
-              useSetData[key] = Object.assign({}, this.state[key], data[key]);
+              normalData[key] = Object.assign({}, this.state[key], data[key]);
             } else {
-              useSetData[key] = data[key];
+              normalData[key] = data[key];
             }
           }
         }
       }
-      if (!isEmptyObj(useSetData)) {
-        $ready = useSetData.$ready;
+      if (!isEmptyObj(normalData)) {
+        $ready = normalData.$ready;
         setDataTask.push(new Promise(resolve => {
-          this._internal.setData(useSetData, resolve);
+          this._internal.setData(normalData, resolve);
         }));
       }
-      if (!isEmptyObj(useSpliceData)) {
+      if (!isEmptyObj(arrayData)) {
         setDataTask.push(new Promise(resolve => {
-          this._internal.$spliceData(useSpliceData, resolve);
+          this._internal.$spliceData(arrayData, resolve);
         }));
       }
     } else {
-      const useSetData = {};
+      const normalData = {};
       for (let key in data) {
         if (diffData(this.state[key], data[key])) {
-          useSetData[key] = data[key];
+          normalData[key] = data[key];
         }
       }
-      if (!isEmptyObj(useSetData)) {
+      if (!isEmptyObj(normalData)) {
         setDataTask.push(new Promise(resolve => {
-          $ready = useSetData.$ready;
-          this._internal.setData(useSetData, resolve);
+          $ready = normalData.$ready;
+          this._internal.setData(normalData, resolve);
         }));
       }
     }
