@@ -137,8 +137,9 @@ function transformMapMethod(path, parsed, code, adapter) {
           },
           JSXExpressionContainer: {
             exit(innerPath) {
-              if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[innerPath.node.expression]) {
-                transformedContainerMap[innerPath.node.expression] = true;
+              const epxressionCode = genExpression(innerPath.node.expression);
+              if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[epxressionCode]) {
+                transformedContainerMap[epxressionCode] = true;
                 handleListJSXExpressionContainer(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
               }
             }
