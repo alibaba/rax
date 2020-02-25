@@ -341,22 +341,32 @@ export default class Component {
         }));
       }
     } else {
-      setDataTask.push(new Promise(resolve => {
-        $ready = data.$ready;
-        this._internal.setData(data, resolve);
-      }));
+      const useSetData = {};
+      for (let key in data) {
+        if (diffData(this.state[key], data[key])) {
+          useSetData[key] = data[key];
+        }
+      }
+      if (!isEmptyObj(useSetData)) {
+        setDataTask.push(new Promise(resolve => {
+          $ready = useSetData.$ready;
+          this._internal.setData(useSetData, resolve);
+        }));
+      }
     }
-    Promise.all(setDataTask).then(() => {
-      if ($ready) {
-        // trigger did mount
-        this._trigger(COMPONENT_DID_MOUNT);
-      }
-      let callback;
-      while (callback = this._pendingCallbacks.pop()) {
-        callback();
-      }
-    });
-    Object.assign(this.state, data);
+    if (setDataTask.length > 0) {
+      Promise.all(setDataTask).then(() => {
+        if ($ready) {
+          // trigger did mount
+          this._trigger(COMPONENT_DID_MOUNT);
+        }
+        let callback;
+        while (callback = this._pendingCallbacks.pop()) {
+          callback();
+        }
+      });
+      Object.assign(this.state, data);
+    }
   }
 }
 
