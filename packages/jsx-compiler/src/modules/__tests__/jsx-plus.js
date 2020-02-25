@@ -27,14 +27,14 @@ describe('Directives', () => {
       const index = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
-        <block a:for={array.map((val, ${index}) => {
+        <View a:for={array.map((val, ${index}) => {
     return {
       val: val,
       ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}"><View>{{
-        val.val
-      }}</View></block>
+  })} a:for-item="val" a:for-index="${index}">{{
+      val.val
+    }}</View>
       </View>`);
     });
 
@@ -54,7 +54,7 @@ describe('Directives', () => {
       const index2 = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
-        <block a:for={array.map((item, ${index1}) => {
+        <View a:for={array.map((item, ${index1}) => {
     return {
       item: item.map((item2, ${index2}) => {
         return {
@@ -64,11 +64,11 @@ describe('Directives', () => {
       }),
       ${index1}: ${index1}
     };
-  })} a:for-item="item" a:for-index="${index1}"><View>
-          <block a:for={item} a:for-item="item2" a:for-index="${index2}"><View>{{
-            item2.item2
-          }}</View></block>
-      </View></block>
+  })} a:for-item="item" a:for-index="${index1}">
+          <View a:for={item} a:for-item="item2" a:for-index="${index2}">{{
+        item2.item2
+      }}</View>
+      </View>
 </View>`);
     });
 
@@ -94,7 +94,7 @@ describe('Directives', () => {
       const index2 = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View className="rxpi-coupon">
-        <block key="{{row._d0}}" a:for={testList.map((row, ${index1}) => {
+        <View className="rxpi-coupon-row" key="{{row._d0}}" a:for={testList.map((row, ${index1}) => {
     return {
       row: row.map((col, ${index2}) => {
         return {
@@ -105,13 +105,13 @@ describe('Directives', () => {
       ${index1}: ${index1},
       _d0: 'test_' + ${index1}
     };
-  })} a:for-item="row" a:for-index="${index1}"><View className="rxpi-coupon-row">
-          <block a:for={row} a:for-item="col" a:for-index="${index2}"><View>
+  })} a:for-item="row" a:for-index="${index1}">
+          <View a:for={row} a:for-item="col" a:for-index="${index2}">
             <Text key="{{col.${index2}}}">{{
-              col.${index2}
-            }}</Text>
-          </View></block>
-        </View></block>
+          col.${index2}
+        }}</Text>
+          </View>
+        </View>
       </View>`);
     });
 
@@ -128,15 +128,15 @@ describe('Directives', () => {
       const index = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
-        <block a:for={array.map((val, ${index}) => {
+        <View a:for={array.map((val, ${index}) => {
     return {
       val: val,
       ${index}: ${index},
       _d0: format(val)
     };
-  })} a:for-item="val" a:for-index="${index}"><View>{{
-        val._d0
-      }}</View></block>
+  })} a:for-item="val" a:for-index="${index}">{{
+      val._d0
+    }}</View>
       </View>`);
     });
   });
@@ -206,7 +206,7 @@ describe('Directives', () => {
       }, code, adapter);
       const index = 'index' + count++;
       expect(genExpression(ast)).toEqual(`<View>
-        <block a:for={data.map((item, ${index}) => {
+        <View ref="{{item._d0}}" a:for={data.map((item, ${index}) => {
     this._registerRefs([{
       "name": "${id}" + "${index}",
       "method": refs[${index}]
@@ -217,7 +217,7 @@ describe('Directives', () => {
       ${index}: ${index},
       _d0: "${id}" + "${index}"
     };
-  })} a:for-item="item" a:for-index="${index}"><View ref="{{item._d0}}">test</View></block>
+  })} a:for-item="item" a:for-index="${index}">test</View>
       </View>`);
       id++;
     });
@@ -236,7 +236,7 @@ describe('Directives', () => {
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genExpression(ast)).toEqual(`<View>
-        <block a:for={data.map((item, ${index1}) => {
+        <View a:for={data.map((item, ${index1}) => {
     return {
       item: { ...item,
         list: item.list.map((item, ${index2}) => {
@@ -254,9 +254,9 @@ describe('Directives', () => {
       },
       ${index1}: ${index1}
     };
-  })} a:for-item="item" a:for-index="${index1}"><View>
-            <block a:for={item.list} a:for-item="item" a:for-index="${index2}"><View ref="{{item._d0}}">test</View></block>
-        </View></block>
+  })} a:for-item="item" a:for-index="${index1}">
+            <View ref="{{item._d0}}" a:for={item.list} a:for-item="item" a:for-index="${index2}">test</View>
+        </View>
       </View>`);
     id++;
   });

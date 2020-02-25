@@ -222,23 +222,9 @@ function transformDirectiveList(parsed, code, adapter) {
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
         [forNode, parentList] = handleParentListReturn(mapCallExpression, forNode, code);
-        const parentAttributes = path.parentPath.node.attributes;
-        const keyAttrIndex = findIndex(parentAttributes, attr => t.isJSXIdentifier(attr.name, {
-          name: 'key'
-        }));
-        const listAttr = {};
-        if (keyAttrIndex > -1) {
-          listAttr.key = parentAttributes[keyAttrIndex].value;
-          path.parentPath.node.attributes = [
-            ...parentAttributes.slice(0, keyAttrIndex),
-            ...parentAttributes.slice(keyAttrIndex + 1)
-          ];
-        }
-        // <Component x-for={(item in list)} />, insert <Component /> to <block a:for={list} a:for-item="item"></block>
-        const listEl = createJSX('block', listAttr, [
-          parentJSXEl.node
-        ]);
-        listEl.__jsxlist = {
+
+        // <Component x-for={(item in list)} /> => <Component a:for={list} a:for-item="item" />
+        parentJSXEl.node.__jsxlist = {
           args: params,
           forNode,
           loopFnBody,
@@ -246,7 +232,6 @@ function transformDirectiveList(parsed, code, adapter) {
           originalIndex,
           jsxplus: true
         };
-        parentJSXEl.replaceWith(listEl);
         transformListJSXElement(parsed, parentJSXEl, code, adapter);
         path.remove();
       }
@@ -317,7 +302,6 @@ function transformListJSXElement(parsed, path, code, adapter) {
     const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
     const loopBody = loopFnBody.body;
     const properties = loopBody[loopBody.length - 1].argument.properties;
-    const transformedContainerMap = {};
     path.traverse({
       Identifier(innerPath) {
         const { node: innerNode } = innerPath;
@@ -349,9 +333,7 @@ function transformListJSXElement(parsed, path, code, adapter) {
       },
       JSXExpressionContainer: {
         exit(innerPath) {
-          const epxressionCode = genExpression(innerPath.node.expression);
-          if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[epxressionCode]) {
-            transformedContainerMap[epxressionCode] = true;
+          if (!innerPath.findParent(p => p.isJSXAttribute()) && !(innerPath.node.__index === args[1].name)) {
             handleListJSXExpressionContainer(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue);
           }
         }

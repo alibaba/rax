@@ -13,6 +13,8 @@ module.exports = function(path, ...args) {
   const node = path.node;
   // Out of the map
   if (!(t.isCallExpression(node.expression) && t.isIdentifier(node.expression.callee.property, { name: 'map' }))) {
+    // Mark current loop
+    path.node.__index = args[2];
     if (node.__originalExpression) {
       node.__properties.value.splice(node.__properties.index, 1);
       node.expression = node.__originalExpression;

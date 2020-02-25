@@ -6,7 +6,7 @@ const wxAdapter = require('../../adapter').wechat;
 const genCode = require('../../codegen/genCode');
 
 describe('Transform JSX Attribute', () => {
-  it('should transform attribute name is key', () => {
+  it('should transform alibaba miniapp attribute name is key', () => {
     const code = '<View key={1}>test</View>';
     const ast = parseExpression(code);
     _transformAttribute(ast, code, adapter);

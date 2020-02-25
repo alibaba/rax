@@ -71,6 +71,7 @@ module.exports = function(
       : createJSXBinding(replaceVariable);
     // Record original expression
     replaceNode.__originalExpression = originalExpression;
+    replaceNode.__index = targetPath.node.__index;
     node.value = replaceNode;
     // Record current properties info
     replaceNode.__properties = {
