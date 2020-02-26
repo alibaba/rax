@@ -1,4 +1,4 @@
-/* global PROPS */
+/* global PROPS, TAGID, PARENTID, DATA */
 /**
  * Base Component class definition.
  */

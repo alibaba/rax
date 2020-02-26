@@ -60,6 +60,7 @@ class Location {
 
   get pathname() {
     if (isQuickapp) {
+      const router = require('@system.router');
       const path = router.getState().path;
       return addLeadingSlash(path);
     } else {

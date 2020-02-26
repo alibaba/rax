@@ -1,3 +1,4 @@
+/* global TAGID */
 import nextTick from './nextTick';
 import { enqueueRender } from './enqueueRender';
 

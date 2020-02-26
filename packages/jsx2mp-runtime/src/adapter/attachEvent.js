@@ -1,3 +1,4 @@
+/* global PROPS */
 import { isQuickapp } from 'universal-env';
 
 export default function(eventName, ...args) {

@@ -1,6 +1,6 @@
+/* global PROPS, TAGID, PARENTID */
 import { isQuickapp } from 'universal-env';
 
-/* global PROPS */
 let _customId = 0;
 
 /**
