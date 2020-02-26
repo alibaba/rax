@@ -1,4 +1,5 @@
 /* global getCurrentPages, PROPS */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickapp } from 'universal-env';
 import { push, replace, go, goBack, canGo, goForward } from './router';
 

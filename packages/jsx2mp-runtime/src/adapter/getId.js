@@ -1,4 +1,5 @@
 /* global PROPS, TAGID, PARENTID */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickapp } from 'universal-env';
 
 let _customId = 0;

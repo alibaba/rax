@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickapp } from 'universal-env';
 import {
   COMPONENT_DID_MOUNT,

@@ -1,4 +1,5 @@
 /* global PROPS */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickapp } from 'universal-env';
 import { cycles as appCycles } from './app';
 import Component from './component';
