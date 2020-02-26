@@ -87,7 +87,6 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         // map callback function return path;
         const returnElPath = getReturnElementPath(body).get('argument');
-        const transformedContainerMap = {};
         returnElPath.traverse({
           Identifier(innerPath) {
             const innerNode = innerPath.node;
@@ -96,7 +95,7 @@ function transformMapMethod(path, parsed, code, adapter) {
               const isScope = returnElPath.scope.hasBinding(innerNode.name);
               const isItem = innerNode.name === forItem.name;
               // Ensure inner node's name is original name
-              const isIndex = innerNode.loc.identifierName === forIndex.name;
+              const isIndex = (innerNode.loc && innerNode.loc.identifierName || innerNode.name) === forIndex.name;
               if (isScope || isItem || isIndex) {
                 innerNode.__listItem = {
                   jsxplus: false,
@@ -137,8 +136,7 @@ function transformMapMethod(path, parsed, code, adapter) {
           },
           JSXExpressionContainer: {
             exit(innerPath) {
-              if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[innerPath.node.expression]) {
-                transformedContainerMap[innerPath.node.expression] = true;
+              if (!innerPath.findParent(p => p.isJSXAttribute()) && !(innerPath.node.__index === renamedIndex.name)) {
                 handleListJSXExpressionContainer(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
               }
             }
@@ -158,13 +156,26 @@ function transformMapMethod(path, parsed, code, adapter) {
           }
         });
 
-        // Use renamed index instead of original params[1]
-        params[1] = renamedIndex;
-        const listBlock = createJSX('block', {
+        const listAttr = {
           [adapter.for]: t.jsxExpressionContainer(forNode),
           [adapter.forItem]: t.stringLiteral(forItem.name),
           [adapter.forIndex]: t.stringLiteral(renamedIndex.name),
-        }, [returnElPath.node]);
+        };
+
+        if (adapter.needTransformKey && t.isJSXElement(returnElPath.node)) {
+          const attributes = returnElPath.node.openingElement.attributes;
+          const keyIndex = findIndex(attributes, attr => t.isJSXIdentifier(attr.name, { name: 'key' }));
+          if (keyIndex > -1) {
+            listAttr.key = attributes[keyIndex].value;
+            attributes.splice(keyIndex, 1);
+          } else {
+            listAttr.key = t.stringLiteral('*this');
+          }
+        }
+
+        // Use renamed index instead of original params[1]
+        params[1] = renamedIndex;
+        const listBlock = createJSX('block', listAttr, [returnElPath.node]);
 
         // Mark forItem __listItem
         forItem.__listItem = {

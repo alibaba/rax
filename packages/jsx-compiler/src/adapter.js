@@ -23,7 +23,9 @@ const parserAdapters = {
     styleKeyword: false,
     // Need transform onClick -> bindonclick
     needTransformEvent: false,
-    slotScope: true
+    slotScope: true,
+    // Need transform key
+    needTransformKey: false
   },
   'wechat': {
     if: 'wx:if',
@@ -47,7 +49,8 @@ const parserAdapters = {
     compatibleText: true,
     styleKeyword: true,
     needTransformEvent: true,
-    slotScope: false
+    slotScope: false,
+    needTransformKey: true
   },
 };
 
