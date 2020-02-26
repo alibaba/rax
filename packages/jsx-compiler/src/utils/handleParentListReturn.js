@@ -16,7 +16,13 @@ module.exports = function(mapCallExpression, forNode, code) {
   const { loopFnBody } = parentList;
   const loopFnBodyLength = loopFnBody.body.length;
   const properties = loopFnBody.body[loopFnBodyLength - 1].argument.properties;
-  const forItem = properties.find(({ key }) => key.name === listItem.__listItem.item);
+  let forItem;
+  if (t.isIdentifier(forNode)) {
+    // parentList.map(() => { const a = []; a.map(item => <View/>) })
+    forItem = properties.find(({ key, value }) => key.name === listItem.name);
+  } else {
+    forItem = properties.find(({ key }) => key.name === listItem.__listItem.item);
+  }
   if (t.isIdentifier(forNode)) {
     forItem.value = mapCallExpression;
   }
