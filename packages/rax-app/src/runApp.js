@@ -142,9 +142,6 @@ export default function runApp(appConfig, pageProps = {}) {
         rootEl,
         { driver, hydrate }
       );
-    })
-    .catch((err) => {
-      console.error(err);
     });
 }
 
