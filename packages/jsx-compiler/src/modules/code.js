@@ -6,7 +6,7 @@ const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
-const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
+const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 const { BINDING_REG } = require('../utils/checkAttr');
 
 const RAX_PACKAGE = 'rax';
@@ -204,7 +204,7 @@ function genTagIdExp(expressions) {
 function getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm) {
   let runtimePath = getRuntimeByPlatform(platform.type);
   if (!disableCopyNpm) {
-    runtimePath = addRelativePathPrefix(relative(targetFileDir, join(outputPath, 'npm', RUNTIME)));
+    runtimePath = addRelativePathPrefix(normalizeOutputFilePath(relative(targetFileDir, join(outputPath, 'npm', RUNTIME))));
   }
   return runtimePath;
 }
@@ -297,7 +297,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     } else {
       ret = join(prefix, value.replace(npmName, realNpmName));
     }
-    ret = addRelativePathPrefix(ret);
+    ret = addRelativePathPrefix(normalizeOutputFilePath(ret));
     // ret => '../npm/_ali/universal-toast/lib/index.js
 
     return t.stringLiteral(normalizeFileName(ret));
@@ -569,7 +569,7 @@ function ensureIndexInPath(value, resourcePath) {
     extensions: ['.js', '.ts']
   });
   const result = relative(dirname(resourcePath), target);
-  return removeJSExtension(addRelativePathPrefix(result));
+  return removeJSExtension(addRelativePathPrefix(normalizeOutputFilePath(result)));
 };
 
 function removeJSExtension(filePath) {

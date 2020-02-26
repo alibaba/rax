@@ -5,7 +5,7 @@ const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const moduleResolve = require('./utils/moduleResolve');
-const { removeExt, doubleBackslash, replaceBackSlashWithSlash } = require('./utils/pathHelper');
+const { removeExt, doubleBackslash, normalizeOutputFilePath } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const defaultStyle = require('./defaultStyle');
 const processCSS = require('./styleProcessor');
@@ -118,10 +118,10 @@ function transformAppConfig(entryPath, originalConfig, platform) {
           value.forEach(({ component, source, targets }) => {
             // Compatible with old version definition of `component`.
             if (!Array.isArray(targets)) {
-              pages.push(replaceBackSlashWithSlash(moduleResolve(entryPath, getRelativePath(source || component))));
+              pages.push(normalizeOutputFilePath(moduleResolve(entryPath, getRelativePath(source || component))));
             }
             if (Array.isArray(targets) && targets.indexOf('miniapp') > -1) {
-              pages.push(replaceBackSlashWithSlash(moduleResolve(entryPath, getRelativePath(source || component))));
+              pages.push(normalizeOutputFilePath(moduleResolve(entryPath, getRelativePath(source || component))));
             }
           });
         }
