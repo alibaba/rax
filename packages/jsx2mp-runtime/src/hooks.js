@@ -5,7 +5,7 @@ import isFunction from './isFunction';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 import { enqueueRender } from './enqueueRender';
 import { createMiniAppHistory } from './history';
-import createRef from './createRef';
+import { getRef } from './adapter/index';
 
 const history = createMiniAppHistory();
 
@@ -165,17 +165,9 @@ export function useImperativeHandle(ref, create, inputs) {
   }, nextInputs);
 }
 
-export function useRef(initialValue) {
-  const currentInstance = getCurrentRenderingInstance();
-  const hookID = currentInstance.getHookID();
-  const hooks = currentInstance.getHooks();
-
-  if (!hooks[hookID]) {
-    // currentInstance._internal.,
-    hooks[hookID] = createRef(initialValue);
-  }
-
-  return hooks[hookID];
+export function useRef(initialValue, name) {
+  var currentInstance = getCurrentRenderingInstance();
+  return getRef.call(currentInstance, initialValue, name);
 }
 
 export function useCallback(callback, inputs) {

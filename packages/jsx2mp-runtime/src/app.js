@@ -1,3 +1,4 @@
+const LAUNCH = 'create';
 import {
   ON_SHOW,
   ON_HIDE,

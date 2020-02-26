@@ -2,6 +2,7 @@
 /**
  * Base Component class definition.
  */
+import { getId, updateData, registerRef } from './adapter/index';
 import Host from './host';
 import {updateChildProps, removeComponentProps, getComponentProps, setComponentProps} from './updater';
 import {enqueueRender} from './enqueueRender';
@@ -17,6 +18,8 @@ import {
   ON_SHARE_APP_MESSAGE,
   ON_TAB_ITEM_TAP,
   ON_TITLE_CLICK,
+  ON_BACK_PRESS,
+  ON_MENU_PRESS,
   COMPONENT_DID_MOUNT,
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
@@ -24,7 +27,6 @@ import {
   COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
 import { cycles as pageCycles } from './page';
-import getId from './getId';
 
 export default class Component {
   constructor(props) {
@@ -89,7 +91,7 @@ export default class Component {
   _updateData(data) {
     if (!this._internal) return;
     data.$ready = true;
-    data.__tagId = this.props.__tagId;
+    data[TAGID] = this.props[TAGID];
     this.__updating = true;
     this._setData(data);
   }
@@ -99,25 +101,14 @@ export default class Component {
   }
 
   _updateChildProps(tagId, props) {
-    const chlidInstanceId = `${this.props.__tagId}-${tagId}`;
+    const chlidInstanceId = `${this.props[TAGID]}-${tagId}`;
     updateChildProps(this, chlidInstanceId, props);
   }
 
   _registerRefs(refs) {
     this.refs = {};
     refs.forEach(({name, method}) => {
-      if (!method) {
-        const target = {
-          current: null
-        };
-        this._internal[name] = ref => {
-          target.current = ref;
-        };
-        this.refs[name] = target;
-      } else {
-        this._internal[name] = method;
-        this.refs[name] = method;
-      }
+      registerRef.call(this, name, method);
     });
   }
 
@@ -275,6 +266,8 @@ export default class Component {
       case ON_TAB_ITEM_TAP:
       case ON_TITLE_CLICK:
       case ON_PULL_DOWN_REFRESH:
+      case ON_BACK_PRESS:
+      case ON_MENU_PRESS:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
@@ -319,63 +312,18 @@ export default class Component {
     const tagId = getId('tag', internal);
     this.instanceId = `${parentId}-${tagId}`;
     this.props = Object.assign({}, internal[PROPS], {
-      __tagId: tagId,
-      __parentId: parentId
+      TAGID: tagId,
+      PARENTID: parentId
     }, getComponentProps(this.instanceId));
     if (!this.state) this.state = {};
-    Object.assign(this.state, internal.data);
+    Object.assign(this.state, internal[DATA]);
   }
   /**
    * Internal set data method
    * @param data {Object}
    * */
   _setData(data) {
-    const setDataTask = [];
-    let $ready = false;
-    // In alibaba miniapp can use $spliceData optimize long list
-    if (this._internal.$spliceData) {
-      const useSpliceData = {};
-      const useSetData = {};
-      for (let key in data) {
-        if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
-        } else {
-          if (diffData(this.state[key], data[key])) {
-            if (Object.prototype.toString.call(data[key]) === '[object Object]') {
-              useSetData[key] = Object.assign({}, this.state[key], data[key]);
-            } else {
-              useSetData[key] = data[key];
-            }
-          }
-        }
-      }
-      if (!isEmptyObj(useSetData)) {
-        $ready = useSetData.$ready;
-        setDataTask.push(new Promise(resolve => {
-          this._internal.setData(useSetData, resolve);
-        }));
-      }
-      if (!isEmptyObj(useSpliceData)) {
-        setDataTask.push(new Promise(resolve => {
-          this._internal.$spliceData(useSpliceData, resolve);
-        }));
-      }
-    } else {
-      setDataTask.push(new Promise(resolve => {
-        $ready = data.$ready;
-        this._internal.setData(data, resolve);
-      }));
-    }
-    Promise.all(setDataTask).then(() => {
-      if ($ready) {
-        // trigger did mount
-        this._trigger(COMPONENT_DID_MOUNT);
-      }
-      let callback;
-      while (callback = this._pendingCallbacks.pop()) {
-        callback();
-      }
-    });
+    updateData.call(this, data);
     Object.assign(this.state, data);
   }
 }
@@ -385,34 +333,4 @@ function diffProps(prev, next) {
     if (next[key] !== prev[key]) return true;
   }
   return false;
-}
-
-function diffArray(prev, next) {
-  if (!Array.isArray(prev)) return false;
-  // Only concern about list append case
-  if (next.length === 0) return false;
-  if (prev.length === 0) return false;
-  return next.slice(0, prev.length).every((val, index) => prev[index] === val);
-}
-
-function diffData(prevData, nextData) {
-  const prevType = typeof prevData;
-  const nextType = typeof nextData;
-  if (prevType !== nextType) return true;
-  if (prevType === 'object' && prevData !== null && nextData !== null) {
-    const prevKeys = Object.keys(prevData);
-    const nextKeys = Object.keys(nextData);
-    if (prevKeys.length !== nextKeys.length) return true;
-    if (prevKeys.length === 0) return false;
-    return !prevKeys.every(key => prevData[key] === nextData[key] );
-  } else {
-    return prevData !== nextData;
-  }
-}
-
-function isEmptyObj(obj) {
-  for (let key in obj) {
-    return false;
-  }
-  return true;
 }

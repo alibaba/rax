@@ -1,3 +1,4 @@
+import { isQuickapp } from 'universal-env';
 import isFunction from './isFunction';
 import {
   ON_SHOW,
@@ -7,7 +8,9 @@ import {
   ON_REACH_BOTTOM,
   ON_PULL_DOWN_REFRESH,
   ON_TAB_ITEM_TAP,
-  ON_TITLE_CLICK
+  ON_TITLE_CLICK,
+  ON_BACK_PRESS,
+  ON_MENU_PRESS
 } from './cycles';
 import { useEffect } from './hooks';
 import { getMiniAppHistory } from './history';
@@ -28,6 +31,12 @@ export function usePageEffect(cycle, callback) {
       case ON_PULL_DOWN_REFRESH:
       case ON_TAB_ITEM_TAP:
       case ON_TITLE_CLICK:
+      case ON_BACK_PRESS:
+      case ON_MENU_PRESS:
+        // ON_SHOW is before than Component init
+        if (isQuickapp && cycle === ON_SHOW) {
+          return callback();
+        }
         const pageId = history && history.location._pageId;
         useEffect(() => {
           if (!cycles[pageId]) {
@@ -92,4 +101,12 @@ export function useTabItemTap(callback) {
 
 export function useTitleClick(callback) {
   return usePageEffect(ON_TITLE_CLICK, callback);
+}
+
+export function useBackPress(callback) {
+  return usePageEffect(ON_BACK_PRESS, callback);
+}
+
+export function useMenuPress(callback) {
+  return usePageEffect(ON_MENU_PRESS, callback);
 }

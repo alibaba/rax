@@ -1,13 +1,18 @@
 /* global PROPS */
+import { isQuickapp } from 'universal-env';
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_LAUNCH, ON_ERROR, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK, ON_BACK_PRESS, ON_MENU_PRESS } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-import getNativeComponentLifecycle from './adapter/getNativeComponentLifecycle';
-import getComponentBaseConfig from './adapter/getComponentBaseConfig';
-import {createMiniAppHistory, getMiniAppHistory} from './history';
+import {
+  getNativePageLifecycle,
+  getNativeComponentLifecycle,
+  getComponentBaseConfig,
+  attachEvent,
+  getId
+} from './adapter/index';
+import { createMiniAppHistory, getMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
-import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
 import { registerEventsInConfig } from './nativeEventListener';
 
@@ -25,8 +30,8 @@ let _pageProps = {};
  *    setData     <--------------    setState
  */
 function getPageCycles(Klass) {
-  let config = {
-    onLoad(options) {
+  let config = getNativePageLifecycle({
+    mount(options) {
       // Ensure page has loaded
       const history = createMiniAppHistory();
       const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, {
@@ -49,18 +54,21 @@ function getPageCycles(Klass) {
       this.instance.__ready = true;
       this.instance._mountComponent();
     },
-    onUnload() {
+    unmount() {
       this.instance._unmountComponent();
     },
-    onShow() {
+    show() {
       if (this.instance && this.instance.__mounted) {
         // Update current location pageId
         const history = getMiniAppHistory();
         history.location.__updatePageId(this.instance.instanceId);
         this.instance._trigger(ON_SHOW);
       }
+    },
+    hide() {
+      if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
-  };
+  });
   return config;
 }
 
@@ -94,43 +102,7 @@ function createProxyMethods(events) {
   if (Array.isArray(events)) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
-        // `this` point to page/component instance.
-        const event = args[0];
-        let context = this.instance; // Context default to Rax component instance.
-
-        const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
-        const datasetArgs = [];
-        // Universal event args
-        const datasetKeys = Object.keys(dataset);
-        if (datasetKeys.length > 0) {
-          datasetKeys.forEach((key) => {
-            if ('argContext' === key || 'arg-context' === key) {
-              context = dataset[key] === 'this' ? this.instance : dataset[key];
-            } else if (isDatasetArg(key)) {
-              // eg. arg0, arg1, arg-0, arg-1
-              const index = DATASET_ARG_REG.exec(key)[1];
-              datasetArgs[index] = dataset[key];
-            }
-          });
-        } else {
-          const formatName = formatEventName(eventName);
-          Object.keys(this[PROPS]).forEach(key => {
-            if (`data-${formatName}-arg-context` === key) {
-              context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
-            } else if (isDatasetKebabArg(key)) {
-              // `data-arg-` length is 9.
-              const len = `data-${formatName}-arg-`.length;
-              datasetArgs[key.slice(len)] = this[PROPS][key];
-            }
-          });
-        }
-        // Concat args.
-        args = datasetArgs.concat(args);
-        if (this.instance._methods[eventName]) {
-          return this.instance._methods[eventName].apply(context, args);
-        } else {
-          console.warn(`instance._methods['${eventName}'] not exists.`);
-        }
+        attachEvent.apply(this, [eventName].concat(args));
       };
     });
   }
@@ -166,7 +138,7 @@ function createConfig(component, options) {
   };
 
   const proxiedMethods = createProxyMethods(events);
-  if (isPage) {
+  if (isPage || isQuickapp) {
     Object.assign(config, proxiedMethods);
     // Bind config to instance
     Klass.__proto__.__config = config;
@@ -187,13 +159,27 @@ export function runApp(appConfig, pageProps = {}) {
   if (_appConfig) {
     throw new Error('runApp can only be called once.');
   }
+  const globalRoutes = __updateRouterMap(appConfig);
 
   _appConfig = appConfig; // Store raw app config to parse router.
-  _pageProps = pageProps; // Store global page props to inject to every page props
-  __updateRouterMap(appConfig);
 
-  const appOptions = {
+  _pageProps = pageProps; // Store global page props to inject to every page props
+
+  var _onCreate = appConfig.onCreate;
+  var appOptions = Object.assign({}, appConfig, {
     // Bridge app launch.
+    onCreate: function onCreate(launchOptions) {
+      var launchQueue = appCycles.create;
+      _onCreate && _onCreate();
+      if (Array.isArray(launchQueue) && launchQueue.length > 0) {
+        var fn;
+
+        while (fn = launchQueue.pop()) {
+          // eslint-disable-line
+          fn.call(this, launchOptions);
+        }
+      }
+    },
     onLaunch(launchOptions) {
       executeCallback(this, ON_LAUNCH, launchOptions);
     },
@@ -212,11 +198,11 @@ export function runApp(appConfig, pageProps = {}) {
       if (Array.isArray(callbackQueue) && callbackQueue[0]) {
         return callbackQueue[0].call(this, shareOptions);
       }
-    }
-  };
+    },
+    globalRoutes
+  }); // eslint-disable-next-line
 
-  // eslint-disable-next-line
-  App(appOptions);
+  return appOptions;
 }
 
 export function createPage(definition, options = {}) {
@@ -232,30 +218,19 @@ function isClassComponent(Klass) {
   return Klass.prototype.__proto__ === Component.prototype;
 }
 
-const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;
-
-function isDatasetKebabArg(str) {
-  return DATASET_KEBAB_ARG_REG.test(str);
-}
-
-const DATASET_ARG_REG = /\w+-?[aA]rg?-?(\d+)/;
-
-function isDatasetArg(str) {
-  return DATASET_ARG_REG.test(str);
-}
-
-function formatEventName(name) {
-  return name.replace('_', '');
-}
-
 function generateBaseOptions(internal, defaultProps, ...restProps) {
   const tagId = getId('tag', internal);
   const parentId = getId('parent', internal);
-  const instanceId = tagId;
+  let instanceId = '';
+  if (isQuickapp) {
+    instanceId = `${parentId}-${tagId}`;
+  } else {
+    instanceId = tagId;
+  }
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
-    __tagId: tagId,
-    __parentId: parentId
+    TAGID: tagId,
+    PARENTID: parentId
   }, getComponentProps(instanceId), ...restProps);
   return {
     instanceId,

@@ -10,7 +10,9 @@ import {
   useShareAppMessage,
   usePageShare,
   useTabItemTap,
-  useTitleClick
+  useTitleClick,
+  useBackPress,
+  useMenuPress
 } from './page';
 import { withRouter } from './router';
 import Component from './component';
@@ -47,6 +49,8 @@ export {
   usePageShare,
   useTabItemTap,
   useTitleClick,
+  useBackPress,
+  useMenuPress,
 
   // Compatible old version of cycles.
   useAppEffect,

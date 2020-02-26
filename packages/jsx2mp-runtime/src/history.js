@@ -1,4 +1,5 @@
 /* global getCurrentPages, PROPS */
+import { isQuickapp } from 'universal-env';
 import { push, replace, go, goBack, canGo, goForward } from './router';
 
 let history;
@@ -20,7 +21,12 @@ class MiniAppHistory {
   }
 
   get length() {
-    return getCurrentPages().length;
+    if (isQuickapp) {
+      const router = require('@system.router');
+      return router.getLength();
+    } else {
+      return getCurrentPages().length;
+    }
   }
 }
 
@@ -53,10 +59,15 @@ class Location {
   }
 
   get pathname() {
-    const pages = getCurrentPages();
-    if (pages.length === 0) return '';
-    const currentPage = pages[pages.length - 1];
-    return addLeadingSlash(currentPage.route);
+    if (isQuickapp) {
+      const path = router.getState().path;
+      return addLeadingSlash(path);
+    } else {
+      const pages = getCurrentPages();
+      if (pages.length === 0) return '';
+      const currentPage = pages[pages.length - 1];
+      return addLeadingSlash(currentPage.route);
+    }
   }
 }
 
