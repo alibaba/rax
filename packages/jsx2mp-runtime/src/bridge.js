@@ -231,7 +231,7 @@ export function createComponent(definition, options = {}) {
 }
 
 function isClassComponent(Klass) {
-  return Klass.prototype.__proto__ === Component.prototype;
+  return Klass.prototype instanceof Component;
 }
 
 const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;

@@ -81,8 +81,7 @@ module.exports = {
       let { id, body } = exportComponentPath.node;
       if (!id) {
         // Check fn is anonymous
-        if (exportComponentPath.isArrowFunctionExpression()
-          && exportComponentPath.parentPath.isVariableDeclarator()) {
+        if (exportComponentPath.parentPath.isVariableDeclarator()) {
           id = exportComponentPath.parent.id;
         } else {
           id = t.identifier(SAFT_DEFAULT_NAME);
@@ -98,14 +97,12 @@ module.exports = {
         }
       } else if (isClassComponent(exportComponentPath)) {
         userDefineType = 'class';
-
-        const { decorators } = exportComponentPath.node;
-        // @NOTE: Remove superClass due to useless of Component base class.
-        if (replacer) {
-          replacer.replaceWith(
-            t.classDeclaration(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
-          );
+        if (id.name === SAFT_DEFAULT_NAME) {
+          // Suport export default class extends Component {}
+          exportComponentPath.node.id = id;
         }
+        // Replace Component use __component__
+        renameComponentClassDeclaration(ast);
       }
       replacer.insertAfter(t.variableDeclaration('let', [
         t.variableDeclarator(
@@ -215,6 +212,19 @@ function renameCoreModule(ast, runtimePath) {
       const source = path.get('source');
       if (source.isStringLiteral() && isAppRuntime(source.node.value)) {
         source.replaceWith(t.stringLiteral(runtimePath));
+      }
+    }
+  });
+}
+
+function renameComponentClassDeclaration(ast) {
+  traverse(ast, {
+    ClassDeclaration(path) {
+      const superClassPath = path.get('superClass');
+      if (superClassPath && t.isIdentifier(superClassPath.node, {
+        name: SUPER_COMPONENT
+      })) {
+        superClassPath.replaceWith(t.identifier(SAFE_SUPER_COMPONENT));
       }
     }
   });
@@ -408,7 +418,7 @@ function removeDefaultImports(ast) {
       if (/Expression$/.test(declaration.type)) {
         path.replaceWith(t.assignmentExpression('=', t.identifier(EXPORTED_DEF), declaration));
       } else {
-        path.remove();
+        path.replaceWith(declaration);
       }
     },
   });

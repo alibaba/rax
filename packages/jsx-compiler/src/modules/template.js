@@ -69,7 +69,6 @@ module.exports = {
  */
 function getRenderMethodPath(path) {
   let renderMethodPath = null;
-
   traverse(path, {
     /**
      * Example:
