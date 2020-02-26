@@ -95,7 +95,7 @@ function transformMapMethod(path, parsed, code, adapter) {
               const isScope = returnElPath.scope.hasBinding(innerNode.name);
               const isItem = innerNode.name === forItem.name;
               // Ensure inner node's name is original name
-              const isIndex = innerNode.loc.identifierName === forIndex.name;
+              const isIndex = (innerNode.loc && innerNode.loc.identifierName || innerNode.name) === forIndex.name;
               if (isScope || isItem || isIndex) {
                 innerNode.__listItem = {
                   jsxplus: false,
