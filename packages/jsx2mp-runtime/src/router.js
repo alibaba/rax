@@ -51,17 +51,19 @@ export function __updateRouterMap(appConfig) {
 /**
  * With router decorator.
  * Inject history and location.
- * @param Klass
+ * @param Component
  */
-export function withRouter(Klass) {
-  if (Klass) Klass.props = Klass.props || {};
+export function withRouter(Component) {
+  if (!Component.__highestLevelProps) {
+    Component.__highestLevelProps = {};
+  }
   const history = getMiniAppHistory();
-  Object.assign(Klass.props, {
+  Object.assign(Component.__highestLevelProps, {
     history: history,
     location: history.location,
   });
 
-  return Klass;
+  return Component;
 }
 
 /**

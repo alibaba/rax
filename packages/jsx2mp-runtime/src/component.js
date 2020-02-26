@@ -12,14 +12,6 @@ import {
   RENDER,
   ON_SHOW,
   ON_HIDE,
-  ON_PAGE_SCROLL,
-  ON_REACH_BOTTOM,
-  ON_PULL_DOWN_REFRESH,
-  ON_SHARE_APP_MESSAGE,
-  ON_TAB_ITEM_TAP,
-  ON_TITLE_CLICK,
-  ON_BACK_PRESS,
-  ON_MENU_PRESS,
   COMPONENT_DID_MOUNT,
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
@@ -32,6 +24,7 @@ export default class Component {
   constructor(props) {
     this.state = {};
     this.props = props;
+    this.refs = {};
 
     this.__dependencies = {}; // for context
 
@@ -106,7 +99,6 @@ export default class Component {
   }
 
   _registerRefs(refs) {
-    this.refs = {};
     refs.forEach(({name, method}) => {
       registerRef.call(this, name, method);
     });
@@ -236,6 +228,8 @@ export default class Component {
     this.hooks.forEach(hook => {
       if (isFunction(hook.destory)) hook.destory();
     });
+    // Clean up page cycle callbacks
+    this.__proto__.__nativeEventMap = {};
     this._internal.instance = null;
     this._internal = null;
     this.__mounted = false;
@@ -249,7 +243,6 @@ export default class Component {
    * @private
    */
   _trigger(cycle, ...args) {
-    let ret;
     const pageId = this.instanceId;
 
     switch (cycle) {
@@ -261,13 +254,6 @@ export default class Component {
       case COMPONENT_WILL_UNMOUNT:
       case ON_SHOW:
       case ON_HIDE:
-      case ON_PAGE_SCROLL:
-      case ON_REACH_BOTTOM:
-      case ON_TAB_ITEM_TAP:
-      case ON_TITLE_CLICK:
-      case ON_PULL_DOWN_REFRESH:
-      case ON_BACK_PRESS:
-      case ON_MENU_PRESS:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
@@ -288,17 +274,7 @@ export default class Component {
 
         this.render(this.props = nextProps, this.state = nextState);
         break;
-
-      case ON_SHARE_APP_MESSAGE:
-        if (isFunction(this[cycle])) ret = this[cycle](...args);
-        if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
-          // There will be one callback fn for shareAppMessage at most
-          const fn = pageCycles[pageId][cycle][0];
-          ret = fn(...args);
-        }
-        break;
     }
-    return ret;
   }
 
   /**

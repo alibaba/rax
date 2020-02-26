@@ -4,11 +4,12 @@ const traverse = require('../utils/traverseNodePath');
 const CodeError = require('../utils/CodeError');
 const createJSX = require('../utils/createJSX');
 const findIndex = require('../utils/findIndex');
-const getListIndex = require('../utils/getListIndex');
+const createListIndex = require('../utils/createListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
+const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -123,15 +124,25 @@ function transformDirectiveClass(ast, parsed) {
             if (t.isJSXIdentifier(attributes[i].name, { name: 'className' })) classNameAttribute = attributes[i];
           }
 
+          const spaceNode = t.stringLiteral(' ');
           if (classNameAttribute) {
-            let prevVal;
-            if (t.isJSXExpressionContainer(classNameAttribute.value)) prevVal = classNameAttribute.value.expression;
-            else if (t.isStringLiteral(classNameAttribute.value)) prevVal = classNameAttribute.value;
-            else prevVal = t.stringLiteral('');
-
-            classNameAttribute.value = t.jsxExpressionContainer(
-              t.binaryExpression('+', t.binaryExpression('+', prevVal, t.stringLiteral(' ')), callExp)
-            );
+            if (t.isJSXExpressionContainer(classNameAttribute.value)) {
+              // ClassName is {'container-el'} => className={`${'container-el'}${' '}${x-class-value}`}
+              classNameAttribute.value =
+                t.jsxExpressionContainer(t.templateLiteral(
+                  [createHolderTemplateEl(), createHolderTemplateEl(),
+                    createHolderTemplateEl(), createHolderTemplateEl()],
+                  [classNameAttribute.value.expression, spaceNode, callExp]));
+            } else {
+              // ClassName is "container-el" => className={`container-el ${x-class-value}`}
+              const prevVal = t.isStringLiteral(classNameAttribute.value) ? classNameAttribute.value.value : '';
+              classNameAttribute.value =
+                t.jsxExpressionContainer(t.templateLiteral(
+                  [t.templateElement(
+                    { raw: prevVal, cooked: prevVal }, true
+                  ), createHolderTemplateEl(), createHolderTemplateEl()],
+                  [spaceNode, callExp]));
+            }
           } else {
             attributes.push(t.jsxAttribute(
               t.jsxIdentifier('className'),
@@ -170,7 +181,7 @@ function transformDirectiveList(parsed, code, adapter) {
         // original index identifier
         let originalIndex;
         // create new index identifier
-        const forIndex = getListIndex();
+        const forIndex = createListIndex();
         if (t.isBinaryExpression(expression, { operator: 'in' })) {
           // x-for={(item, index) in value}
           const { left, right } = expression;
@@ -299,14 +310,13 @@ function transformSlotDirective(ast, adapter) {
 function transformListJSXElement(parsed, path, code, adapter) {
   const { node } = path;
   const { attributes } = node.openingElement;
-  const dynamicFilter = new DynamicBinding('_f');
   const dynamicStyle = new DynamicBinding('_s');
   const dynamicValue = new DynamicBinding('_d');
-  const filters = [];
   if (node.__jsxlist && !node.__jsxlist.generated) {
     const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
     const loopBody = loopFnBody.body;
     const properties = loopBody[loopBody.length - 1].argument.properties;
+    const transformedContainerMap = {};
     path.traverse({
       Identifier(innerPath) {
         const { node: innerNode } = innerPath;
@@ -323,28 +333,26 @@ function transformListJSXElement(parsed, path, code, adapter) {
             index: args[1].name,
             parentList: node.__jsxlist
           };
-          // <View x-for={items} data-item={setDataset(item)}>
-          //   <Text class={classnames({ selected: index > 0 })}>{parse(item, index)}</Text>
-          // </View>
-          const containerPath = innerPath.findParent(p => p.isJSXExpressionContainer());
-          if (containerPath && t.isCallExpression(containerPath.node.expression)) {
-            const filterName = dynamicFilter.add({ expression: containerPath.node.expression });
-            containerPath.node.expression.__listItemFilter = {
-              item: args[0].name, // item
-              filter: filterName // _f0
-            };
-            filters.push(containerPath.node.expression);
-          }
         }
       },
-      JSXAttribute(innerPath) {
-        // Handle style
-        const useCreateStyle = handleListStyle(null, innerPath, args[0], originalIndex, args[1].name, properties, dynamicStyle, code);
-        if (!parsed.useCreateStyle) {
-          parsed.useCreateStyle = useCreateStyle;
+      JSXAttribute: {
+        exit(innerPath) {
+          // Handle style
+          const useCreateStyle = handleListStyle(null, innerPath, args[0], originalIndex, args[1].name, properties, dynamicStyle, code);
+          if (!parsed.useCreateStyle) {
+            parsed.useCreateStyle = useCreateStyle;
+          }
+          // Handle props
+          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code);
         }
-        // Handle props
-        handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue);
+      },
+      JSXExpressionContainer: {
+        exit(innerPath) {
+          if (!innerPath.findParent(p => p.isJSXAttribute()) && !transformedContainerMap[innerPath.node.expression]) {
+            transformedContainerMap[innerPath.node.expression] = true;
+            handleListJSXExpressionContainer(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue);
+          }
+        }
       }
     });
     if (args.length === 3) {
@@ -367,19 +375,6 @@ function transformListJSXElement(parsed, path, code, adapter) {
       const skipIds = node.skipIds = node.skipIds || new Map();
       skipIds.set(arg.name, true);
     });
-    if (filters.length) {
-      // return {
-      //   item: item,
-      //   index: index,
-      //   "_f0": setDataset(item),
-      //   "_f1": classnames({ selected: index > 0 })
-      //   "_f2": parse(item, index)
-      // }
-      filters.forEach(function(f) {
-        properties.push(t.objectProperty(t.identifier(f.__listItemFilter.filter), f));
-      });
-    }
-
     node.__jsxlist.generated = true;
   }
 }
@@ -387,11 +382,12 @@ function transformListJSXElement(parsed, path, code, adapter) {
 module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
+      // x-for must be first.
       transformDirectiveClass(parsed.templateAST, parsed);
+      transformDirectiveList(parsed, code, options.adapter);
       transformDirectiveCondition(parsed.templateAST, options.adapter);
       transformComponentFragment(parsed.templateAST);
       transformSlotDirective(parsed.templateAST, options.adapter);
-      transformDirectiveList(parsed, code, options.adapter);
     }
   },
   _transformList: transformDirectiveList,
@@ -400,3 +396,10 @@ module.exports = {
   _transformFragment: transformComponentFragment,
   _transformSlotDirective: transformSlotDirective
 };
+
+// Create place holder template element
+function createHolderTemplateEl() {
+  return t.templateElement(
+    { raw: '' }, false
+  );
+}

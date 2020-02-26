@@ -11,6 +11,7 @@ const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
 const isSlotScopeNode = require('../utils/isSlotScopeNode');
 const { isDirectiveAttr, isEventHandlerAttr, BINDING_REG } = require('../utils/checkAttr');
+const handleValidIdentifier = require('../utils/handleValidIdentifier');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -280,12 +281,8 @@ function transformTemplate(
 
       // <tag foo={fn()} /> => <tag foo="{{_d0}} /> _d0 = fn();
       // <tag>{fn()}</tag> => <tag>{{ _d0 }}</tag> _d0 = fn();
-      // <tag x-for={item in items}>{fn(item)}</tag> => <tag a:for={item in items}>{{ item._f0 }}</tag> item._f0 = fn();
       case 'CallExpression':
-        if (expression.__listItemFilter) {
-          const { item, filter } = expression.__listItemFilter;
-          path.replaceWith(t.stringLiteral(createBinding(`${item}.${filter}`)));
-        } else if (type === ATTR) {
+        if (type === ATTR) {
           if (isEventHandler) {
             const isBindCallExpression = t.isMemberExpression(expression.callee) &&
             t.isIdentifier(expression.callee.property, { name: 'bind' });
@@ -687,18 +684,20 @@ function transformCallExpressionArg(ast, dynamicValue, isDirective) {
     default:
       traverse(ast, {
         Identifier(innerPath) {
-          const { node: innerNode } = innerPath;
-          if (innerNode.__listItem) {
-            const item = innerNode.__listItem.item;
-            if (item) {
-              innerPath.parentPath.replaceWith(
-                t.memberExpression(
-                  t.identifier(item),
-                  t.identifier(innerNode.name),
-                ),
-              );
+          handleValidIdentifier(innerPath, () => {
+            const { node: innerNode } = innerPath;
+            if (innerNode.__listItem && !innerPath.parentPath.isMemberExpression()) {
+              const item = innerNode.__listItem.item;
+              if (item) {
+                innerPath.replaceWith(
+                  t.memberExpression(
+                    t.identifier(item),
+                    t.identifier(innerNode.name),
+                  ),
+                );
+              }
             }
-          }
+          });
         },
       });
       break;
@@ -738,6 +737,14 @@ function collectComponentDependentProps(path, attrValue, attrPath, componentDepe
     && attrValue.type
     && jsxEl.__tagId
   ) {
+    // Replace list render replaced node
+    traverse(attrPath, {
+      StringLiteral(innerPath) {
+        if (BINDING_REG.test(innerPath.node.value)) {
+          attrValue = innerPath.node.__originalExpression;
+        }
+      }
+    });
     if (attrPath) {
       attrValue = parseExpression('(' + attrPath.toString() + ')'); // deep clone
     }

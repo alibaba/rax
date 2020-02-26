@@ -26,7 +26,7 @@ module.exports = function(mapCallExpression, forNode, code) {
         if (t.isIdentifier(forNode.object)) {
           forItem.value = t.objectExpression([
             t.spreadElement(forItem.value),
-            t.objectProperty(forItem.value, mapCallExpression)
+            t.objectProperty(forNode.property, mapCallExpression)
           ]);
         } else if (t.isCallExpression(forNode)) {
           // handle list.filter().map()
@@ -35,7 +35,7 @@ module.exports = function(mapCallExpression, forNode, code) {
           }
           forItem.value = t.objectExpression([
             t.spreadElement(forItem.value),
-            t.objectProperty(forItem.value, mapCallExpression)
+            t.objectProperty(forNode.property, mapCallExpression)
           ]);
           forNode = listItem;
         } else {

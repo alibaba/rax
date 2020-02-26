@@ -191,4 +191,39 @@ describe('Transiform condition render function', () => {
   return vdom;
 }`);
   });
+
+  it('local variable and render value are the same', () => {
+    const ast = parseExpression(`(function render(props) {
+        const [a, setState] = useState(1);
+        useEffect(() => {
+          const { isLogin } = app;
+          let a = 2;
+          if (isLogin) {
+            a = 3;
+          }
+          setState(a);
+        }, [])
+        return <View>{a}</View>;
+      })
+    `);
+
+    const tmpVars = _transformRenderFunction(ast, adapter);
+    expect(genExpression(tmpVars.vdom)).toEqual('');
+    expect(genExpression(ast)).toEqual(`function render(props) {
+  const [a, setState] = useState(1);
+  useEffect(() => {
+    const {
+      isLogin
+    } = app;
+    let a = 2;
+
+    if (isLogin) {
+      a = 3;
+    }
+
+    setState(a);
+  }, []);
+  return <View>{a}</View>;
+}`);
+  });
 });

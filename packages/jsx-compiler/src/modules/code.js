@@ -7,9 +7,11 @@ const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
 const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
+const { BINDING_REG } = require('../utils/checkAttr');
 
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
+const SHARED = 'shared';
 
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
@@ -38,7 +40,7 @@ const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
 const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, CREATE_REF,
-  USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT];
+  USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT, SHARED];
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
@@ -527,7 +529,10 @@ function addRegisterRefs(refs, renderFunctionPath) {
   const stringRefs = [];
   refs.map(ref => {
     if (t.isStringLiteral(ref.method)) {
-      stringRefs.push(ref);
+      // Exclude expressions that have already been processed
+      if (!BINDING_REG.test(ref.method.value)) {
+        stringRefs.push(ref);
+      }
     } else if (t.isIdentifier(ref.method) && !renderFunctionPath.scope.hasBinding(ref.name.value)) {
       stringRefs.push(ref);
     } else {

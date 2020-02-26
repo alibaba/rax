@@ -254,11 +254,3 @@ export function useReducer(reducer, initialArg, init) {
   queue.actions.length = 0;
   return hooks[hookID];
 }
-
-export function useHistory() {
-  return history;
-}
-
-export function useLocation() {
-  return history.location;
-}
