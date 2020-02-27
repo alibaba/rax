@@ -314,49 +314,61 @@ export default class Component {
     let $ready = false;
     // In alibaba miniapp can use $spliceData optimize long list
     if (this._internal.$spliceData) {
-      const useSpliceData = {};
-      const useSetData = {};
+      // Use $spliceData update
+      const arrayData = {};
+      // Use setData update
+      const normalData = {};
       for (let key in data) {
-        if (isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
+        if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
+          arrayData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
           if (diffData(this.state[key], data[key])) {
             if (isPlainObject(data[key])) {
-              useSetData[key] = Object.assign({}, this.state[key], data[key]);
+              normalData[key] = Object.assign({}, this.state[key], data[key]);
             } else {
-              useSetData[key] = data[key];
+              normalData[key] = data[key];
             }
           }
         }
       }
-      if (!isEmptyObj(useSetData)) {
-        $ready = useSetData.$ready;
+      if (!isEmptyObj(normalData)) {
+        $ready = normalData.$ready;
         setDataTask.push(new Promise(resolve => {
-          this._internal.setData(useSetData, resolve);
+          this._internal.setData(normalData, resolve);
         }));
       }
-      if (!isEmptyObj(useSpliceData)) {
+      if (!isEmptyObj(arrayData)) {
         setDataTask.push(new Promise(resolve => {
-          this._internal.$spliceData(useSpliceData, resolve);
+          this._internal.$spliceData(arrayData, resolve);
         }));
       }
     } else {
-      setDataTask.push(new Promise(resolve => {
-        $ready = data.$ready;
-        this._internal.setData(data, resolve);
-      }));
+      const normalData = {};
+      for (let key in data) {
+        if (diffData(this.state[key], data[key])) {
+          normalData[key] = data[key];
+        }
+      }
+      if (!isEmptyObj(normalData)) {
+        setDataTask.push(new Promise(resolve => {
+          $ready = normalData.$ready;
+          this._internal.setData(normalData, resolve);
+        }));
+      }
     }
-    Promise.all(setDataTask).then(() => {
-      if ($ready) {
-        // trigger did mount
-        this._trigger(COMPONENT_DID_MOUNT);
-      }
-      let callback;
-      while (callback = this._pendingCallbacks.pop()) {
-        callback();
-      }
-    });
-    Object.assign(this.state, data);
+    if (setDataTask.length > 0) {
+      Promise.all(setDataTask).then(() => {
+        if ($ready) {
+          // trigger did mount
+          this._trigger(COMPONENT_DID_MOUNT);
+        }
+        let callback;
+        while (callback = this._pendingCallbacks.pop()) {
+          callback();
+        }
+      });
+      Object.assign(this.state, data);
+    }
   }
 }
 
