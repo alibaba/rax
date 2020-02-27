@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* global my, wx */
 import { getMiniAppHistory } from './history';
-import { isMiniApp, isWeChatMiniProgram, isQuickapp } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isQuickApp } from 'universal-env';
 
 let apiCore;
 
@@ -9,12 +9,12 @@ if (isMiniApp) {
   apiCore = my;
 } else if (isWeChatMiniProgram) {
   apiCore = wx;
-} else if (isQuickapp) {
+} else if (isQuickApp) {
   apiCore = require('@system.router');
 }
 
 function redirectTo(options) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     options.uri = options.url;
     apiCore.replace(options);
   } else {
@@ -23,7 +23,7 @@ function redirectTo(options) {
 }
 
 function navigateTo(options) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     options.uri = options.url;
     apiCore.push(options);
   } else {
@@ -32,7 +32,7 @@ function navigateTo(options) {
 }
 
 function navigateBack(options) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     apiCore.back();
   } else {
     apiCore.navigateBack(options);

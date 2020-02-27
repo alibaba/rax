@@ -1,9 +1,9 @@
 /* global PROPS */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 
 export default function(eventName, ...args) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     // `this` point to page/component instance.
     const event = args[0];
     const et = event && (event.currentTarget || event._target);

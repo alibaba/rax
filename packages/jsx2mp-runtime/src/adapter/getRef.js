@@ -1,9 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 import createRef from '../createRef';
 
 export default function(initialValue) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     return this._internal.$element(name) || {};
   } else {
     const hookID = this.getHookID();

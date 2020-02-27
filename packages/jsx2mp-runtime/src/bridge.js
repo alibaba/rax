@@ -1,6 +1,6 @@
 /* global PROPS */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_LAUNCH, ON_ERROR, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK, ON_BACK_PRESS, ON_MENU_PRESS } from './cycles';
@@ -141,7 +141,7 @@ function createConfig(component, options) {
   };
 
   const proxiedMethods = createProxyMethods(events);
-  if (isPage || isQuickapp) {
+  if (isPage || isQuickApp) {
     Object.assign(config, proxiedMethods);
     // Bind config to instance
     Klass.__proto__.__config = config;
@@ -225,7 +225,7 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
   const tagId = getId('tag', internal);
   const parentId = getId('parent', internal);
   let instanceId = '';
-  if (isQuickapp) {
+  if (isQuickApp) {
     instanceId = `${parentId}-${tagId}`;
   } else {
     instanceId = tagId;

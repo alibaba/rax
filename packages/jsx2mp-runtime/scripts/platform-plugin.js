@@ -1,11 +1,11 @@
 const t = require('@babel/types');
 // Collect import specifiers
 const specified = [];
-const platformEnvValues = ['isMiniApp', 'isWeChatMiniProgram', 'isQuickapp'];
+const platformEnvValues = ['isMiniApp', 'isWeChatMiniProgram', 'isQuickApp'];
 const platformMap = {
   ali: 'isMiniApp',
   wechat: 'isWeChatMiniProgram',
-  quickapp: 'isQuickapp'
+  quickapp: 'isQuickApp'
 };
 
 function variableDeclarationMethod(name, value) {

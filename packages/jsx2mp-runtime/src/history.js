@@ -1,6 +1,6 @@
 /* global getCurrentPages, PROPS */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 import { push, replace, go, goBack, canGo, goForward } from './router';
 
 let history;
@@ -22,7 +22,7 @@ class MiniAppHistory {
   }
 
   get length() {
-    if (isQuickapp) {
+    if (isQuickApp) {
       const router = require('@system.router');
       return router.getLength();
     } else {
@@ -60,7 +60,7 @@ class Location {
   }
 
   get pathname() {
-    if (isQuickapp) {
+    if (isQuickApp) {
       const router = require('@system.router');
       const path = router.getState().path;
       return addLeadingSlash(path);

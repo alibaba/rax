@@ -1,6 +1,6 @@
 /* global PROPS, TAGID, PARENTID */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 
 let _customId = 0;
 
@@ -8,7 +8,7 @@ let _customId = 0;
  * Get instance TAGID or PARENTID
  * */
 export default function(type, internal) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     switch (type) {
       case 'tag':
         if (internal.tagId) {

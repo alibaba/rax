@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 import {
   COMPONENT_DID_MOUNT,
 } from '../cycles';
 
 export default function(data) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     let $ready = false;
     const useSetData = {};
 

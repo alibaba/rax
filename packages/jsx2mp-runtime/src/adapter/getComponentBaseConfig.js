@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram, isQuickapp } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isQuickApp } from 'universal-env';
 
 export default function() {
   // For alibaba miniapp
@@ -24,7 +24,7 @@ export default function() {
   }
 
   // For quickapp
-  if (isQuickapp) {
+  if (isQuickApp) {
     return {
       props: ['tagId', 'parentId'],
     };

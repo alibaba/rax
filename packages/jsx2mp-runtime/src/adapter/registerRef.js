@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 
 export default function(name, method) {
-  if (isQuickapp) {
+  if (isQuickApp) {
     setTimeout(() => {
       Object.assign(method, {
         current: this._internal.$element(name)

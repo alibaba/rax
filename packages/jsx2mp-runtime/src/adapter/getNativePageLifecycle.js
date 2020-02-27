@@ -1,10 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickapp } from 'universal-env';
+import { isQuickApp } from 'universal-env';
 import { setRoutes } from '../router';
 
 export default function({ mount, unmount, show, hide }) {
   // For quickapp
-  if (isQuickapp) {
+  if (isQuickApp) {
     return {
       onInit() {
         mount.apply(this, arguments);
@@ -15,7 +15,7 @@ export default function({ mount, unmount, show, hide }) {
       },
       onShow() {
         const routes = this.$app.$def.globalRoutes || {};
-        // 重写全局router，避免页面初始化时覆盖
+        // rewrite global router，avoid overriding when page inited
         setRoutes(routes);
         show.apply(this, arguments);
       },
