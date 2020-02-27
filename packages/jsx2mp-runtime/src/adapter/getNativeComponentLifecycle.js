@@ -42,9 +42,6 @@ export default function({ mount, unmount }) {
       onInit() {
         mount.apply(this, arguments);
       },
-      onReady() {}, // noop
-      onShow() {}, // noop
-      onHide() {}, // noop
       onDestroy() {
         unmount.apply(this, arguments);
       },

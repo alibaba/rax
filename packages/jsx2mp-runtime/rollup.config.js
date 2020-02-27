@@ -19,16 +19,6 @@ function getPropsIdentifierName(platform) {
   }
 }
 
-function getDataIdentifierName(platform) {
-  switch (platform) {
-    case 'quickapp':
-      return '_data';
-
-    default:
-      return 'data';
-  }
-}
-
 function getTagIdIdentifierName(platform) {
   switch (platform) {
     case 'quickapp':
@@ -91,7 +81,6 @@ function getRollupConfig(platform) {
       replace({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
         'PROPS': JSON.stringify(getPropsIdentifierName(platform)),
-        'DATA': JSON.stringify(getDataIdentifierName(platform)),
         'TAGID': JSON.stringify(getTagIdIdentifierName(platform)),
         'PARENTID': JSON.stringify(getParentIdIdentifierName(platform)),
       }),

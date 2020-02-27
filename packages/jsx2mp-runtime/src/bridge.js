@@ -1,4 +1,4 @@
-/* global PROPS, DATA */
+/* global PROPS */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickApp } from 'universal-env';
 import { cycles as appCycles } from './app';
@@ -45,7 +45,7 @@ function getPageCycles(Klass) {
       this.instance.instanceId = instanceId;
       setPageInstance(this.instance);
       this.instance._internal = this;
-      Object.assign(this.instance.state, this[DATA]);
+      Object.assign(this.instance.state, this.data);
       // Add route information for page.
       history.location.__updatePageOption(options);
       history.location.__updatePageId(this.instance.instanceId);
