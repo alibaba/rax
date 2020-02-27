@@ -9,7 +9,7 @@ const { moduleResolve, multipleModuleResolve } = require('../utils/moduleResolve
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const Expression = require('../utils/Expression');
-const compiledComponents = require('../compiledComponents');
+const getCompiledComponents = require('../getCompiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
@@ -37,7 +37,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
 
-  if (!compiledComponents[componentTag]) {
+  if (!getCompiledComponents(options.adapter.platform)[componentTag]) {
     // <tag __tagId="tagId" />
 
     let tagId;
