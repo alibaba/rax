@@ -144,7 +144,7 @@ describe('inline styles', () => {
       }
 
       let str = renderToString(<MyComponent />);
-      expect(str).toBe('<div><div style="font-weight:600"></div><div style="font-weight:600"></div><div style="font-weight:bold"></div></div>');
+      expect(str).toBe('<div><div style="font-weight:600;"></div><div style="font-weight:600;"></div><div style="font-weight:bold;"></div></div>');
     });
   });
 
