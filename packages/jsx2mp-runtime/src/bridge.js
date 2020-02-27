@@ -41,6 +41,7 @@ function getPageCycles(Klass) {
       }, _pageProps);
       this.instance = new Klass(props);
       // Reverse sync from state to data.
+      this.instance.props = props;
       this.instance.instanceId = instanceId;
       setPageInstance(this.instance);
       this.instance._internal = this;
