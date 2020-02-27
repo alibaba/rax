@@ -1,5 +1,5 @@
 import { createElement, Fragment, render, useState } from 'rax';
-import * as DriverDOM from '../../';
+import * as DriverDOM from '../';
 
 describe('NodeOperations', () => {
   let container;

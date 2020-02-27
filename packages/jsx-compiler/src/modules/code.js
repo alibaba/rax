@@ -12,6 +12,7 @@ const { BINDING_REG } = require('../utils/checkAttr');
 const RAX_PACKAGE = 'rax';
 const SUPER_COMPONENT = 'Component';
 const SHARED = 'shared';
+const MEMO = 'memo';
 
 const CREATE_COMPONENT = 'createComponent';
 const CREATE_PAGE = 'createPage';
@@ -35,12 +36,15 @@ const USE_REF = 'useRef';
 const USE_REDUCER = 'useReducer';
 const USE_LAYOUT_EFFECT = 'useLayoutEffect';
 const USE_IMPERATIVEHANDLE = 'useImperativeHandle';
+const USE_MEMO = 'useMemo';
+const USE_CALLBACK = 'useCallback';
 
 const EXPORTED_DEF = '__def__';
 const RUNTIME = 'jsx2mp-runtime';
 
 const coreMethodList = [USE_EFFECT, USE_STATE, USE_CONTEXT, USE_REF, CREATE_REF,
-  USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT, SHARED];
+  USE_REDUCER, USE_LAYOUT_EFFECT, USE_IMPERATIVEHANDLE, FORWARD_REF, CREATE_CONTEXT, SHARED,
+  USE_CALLBACK, USE_MEMO, MEMO];
 
 const getRuntimeByPlatform = (platform) => `${RUNTIME}/dist/jsx2mp-runtime.${platform}.esm`;
 const isAppRuntime = (mod) => mod === 'rax-app';
@@ -81,8 +85,7 @@ module.exports = {
       let { id, body } = exportComponentPath.node;
       if (!id) {
         // Check fn is anonymous
-        if (exportComponentPath.isArrowFunctionExpression()
-          && exportComponentPath.parentPath.isVariableDeclarator()) {
+        if (exportComponentPath.parentPath.isVariableDeclarator()) {
           id = exportComponentPath.parent.id;
         } else {
           id = t.identifier(SAFT_DEFAULT_NAME);
@@ -98,14 +101,12 @@ module.exports = {
         }
       } else if (isClassComponent(exportComponentPath)) {
         userDefineType = 'class';
-
-        const { decorators } = exportComponentPath.node;
-        // @NOTE: Remove superClass due to useless of Component base class.
-        if (replacer) {
-          replacer.replaceWith(
-            t.classDeclaration(id, t.identifier(SAFE_SUPER_COMPONENT), body, decorators)
-          );
+        if (id.name === SAFT_DEFAULT_NAME) {
+          // Suport export default class extends Component {}
+          exportComponentPath.node.id = id;
         }
+        // Replace Component use __component__
+        renameComponentClassDeclaration(ast);
       }
       replacer.insertAfter(t.variableDeclaration('let', [
         t.variableDeclarator(
@@ -215,6 +216,19 @@ function renameCoreModule(ast, runtimePath) {
       const source = path.get('source');
       if (source.isStringLiteral() && isAppRuntime(source.node.value)) {
         source.replaceWith(t.stringLiteral(runtimePath));
+      }
+    }
+  });
+}
+
+function renameComponentClassDeclaration(ast) {
+  traverse(ast, {
+    ClassDeclaration(path) {
+      const superClassPath = path.get('superClass');
+      if (superClassPath && t.isIdentifier(superClassPath.node, {
+        name: SUPER_COMPONENT
+      })) {
+        superClassPath.replaceWith(t.identifier(SAFE_SUPER_COMPONENT));
       }
     }
   });
@@ -408,7 +422,7 @@ function removeDefaultImports(ast) {
       if (/Expression$/.test(declaration.type)) {
         path.replaceWith(t.assignmentExpression('=', t.identifier(EXPORTED_DEF), declaration));
       } else {
-        path.remove();
+        path.replaceWith(declaration);
       }
     },
   });
