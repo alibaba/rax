@@ -80,10 +80,13 @@ function styleToCSS(style, options = {}) {
       continue;
     }
 
-    if (typeof val === 'number' && UNITLESS_NUMBER_PROPS[prop]) {
-      // Noop
-    } else if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
-      unit = options.defaultUnit;
+    // Handle unit for all numerical property, such as fontWeight: 600 / fontWeight: '600'
+    if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
+      if (UNITLESS_NUMBER_PROPS[prop]) {
+        // Noop
+      } else {
+        unit = options.defaultUnit;
+      }
     }
 
     if (typeof val === 'string' && val.indexOf('rpx') > -1 || unit === 'rpx') {
