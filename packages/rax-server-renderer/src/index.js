@@ -82,9 +82,7 @@ function styleToCSS(style, options = {}) {
 
     // Handle unit for all numerical property, such as fontWeight: 600 / fontWeight: '600'
     if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
-      if (UNITLESS_NUMBER_PROPS[prop]) {
-        // Noop
-      } else {
+      if (!UNITLESS_NUMBER_PROPS[prop]) {
         unit = options.defaultUnit;
       }
     }
