@@ -80,14 +80,16 @@ function styleToCSS(style, options = {}) {
       continue;
     }
 
+    const type = typeof val;
+
     // Handle unit for all numerical property, such as fontWeight: 600 / fontWeight: '600'
-    if (typeof val === 'number' || typeof val === 'string' && NUMBER_REGEXP.test(val)) {
+    if (type === 'number' || type === 'string' && NUMBER_REGEXP.test(val)) {
       if (!UNITLESS_NUMBER_PROPS[prop]) {
         unit = options.defaultUnit;
       }
     }
 
-    if (typeof val === 'string' && val.indexOf('rpx') > -1 || unit === 'rpx') {
+    if (type === 'string' && val.indexOf('rpx') > -1 || unit === 'rpx') {
       val = rpx2vw(val, options);
       unit = val === 0 ? '' : 'vw';
     }
