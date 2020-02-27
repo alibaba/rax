@@ -112,6 +112,27 @@ function createProxyMethods(events) {
 
 function createAnonymousClass(render) {
   const Klass = class extends Component {
+    constructor(props) {
+      super(props);
+      this.__compares = render.__compares;
+      // Handle functional component shouldUpdateComponent
+      if (!this.shouldComponentUpdate && this.__compares) {
+        const compares = this.__compares;
+        this.shouldComponentUpdate = nextProps => {
+          // Process composed compare
+          let arePropsEqual = true;
+
+          // Compare push in and pop out
+          for (let i = compares.length - 1; i > -1; i--) {
+            if (arePropsEqual = compares[i](this.props, nextProps)) {
+              break;
+            }
+          }
+
+          return !arePropsEqual;
+        };
+      }
+    }
     render(props) {
       return render.call(this, props);
     }
@@ -230,7 +251,7 @@ export function createComponent(definition, options = {}) {
 }
 
 function isClassComponent(Klass) {
-  return Klass.prototype.__proto__ === Component.prototype;
+  return Klass.prototype instanceof Component;
 }
 
 function generateBaseOptions(internal, defaultProps, ...restProps) {

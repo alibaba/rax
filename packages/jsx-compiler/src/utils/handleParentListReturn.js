@@ -16,7 +16,7 @@ module.exports = function(mapCallExpression, forNode, code) {
   const { loopFnBody } = parentList;
   const loopFnBodyLength = loopFnBody.body.length;
   const properties = loopFnBody.body[loopFnBodyLength - 1].argument.properties;
-  const forItem = properties.find(({ key }) => key.name === listItem.name);
+  const forItem = properties.find(({ key }) => key.name === listItem.__listItem.item);
   if (t.isIdentifier(forNode)) {
     forItem.value = mapCallExpression;
   }

@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickApp } from 'universal-env';
-import isFunction from './isFunction';
+import { isFunction } from './types';
 import {
   ON_SHOW,
   ON_HIDE,

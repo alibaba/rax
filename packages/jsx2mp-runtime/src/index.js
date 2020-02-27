@@ -8,6 +8,7 @@ import createContext from './createContext';
 import classnames from './classnames';
 import createRef from './createRef';
 import { addNativeEventListener, removeNativeEventListener, registerNativeEventListeners } from './nativeEventListener';
+import memo from './memo';
 
 // Adapter rax core
 const shared = {};
@@ -42,7 +43,9 @@ export {
   registerNativeEventListeners,
 
   // Shared
-  shared
+  shared,
+  // Memo
+  memo
 };
 
 /* hooks */

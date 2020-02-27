@@ -1,13 +1,10 @@
 import Host from './host';
 import { scheduleEffect, invokeEffects } from './scheduler';
-import sameValue from './sameValue';
-import isFunction from './isFunction';
+import { is } from './shallowEqual';
+import { isFunction, isNull } from './types';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 import { enqueueRender } from './enqueueRender';
-import { createMiniAppHistory } from './history';
 import { getRef } from './adapter/index';
-
-const history = createMiniAppHistory();
 
 export function getCurrentInstance() {
   return Host.current;
@@ -23,12 +20,12 @@ function getCurrentRenderingInstance() {
 }
 
 function areInputsEqual(inputs, prevInputs) {
-  if (prevInputs === null || inputs.length !== prevInputs.length) {
+  if (isNull(prevInputs) || inputs.length !== prevInputs.length) {
     return false;
   }
 
   for (let i = 0; i < inputs.length; i++) {
-    if (sameValue(inputs[i], prevInputs[i])) {
+    if (is(inputs[i], prevInputs[i])) {
       continue;
     }
     return false;
@@ -61,7 +58,7 @@ export function useState(initialState) {
         newState = newState(eagerState);
       }
 
-      if (!sameValue(newState, eagerState)) {
+      if (!is(newState, eagerState)) {
         // Current instance is in render update phase.
         // After this one render finish, will continue run.
         hook[2] = newState;
@@ -77,7 +74,7 @@ export function useState(initialState) {
   }
 
   const hook = hooks[hookID];
-  if (!sameValue(hook[0], hook[2])) {
+  if (!is(hook[0], hook[2])) {
     hook[0] = hook[2];
     currentInstance.__shouldUpdate = true;
   }
@@ -135,7 +132,7 @@ function useEffectImpl(effect, inputs, defered) {
     currentInstance._registerLifeCycle(COMPONENT_WILL_UNMOUNT, destory);
     currentInstance._registerLifeCycle(COMPONENT_DID_UPDATE, () => {
       const { prevInputs, inputs, create } = hooks[hookID];
-      if (inputs == null || !areInputsEqual(inputs, prevInputs)) {
+      if (isNull(inputs) || !areInputsEqual(inputs, prevInputs)) {
         destory();
         create();
       }
@@ -150,13 +147,13 @@ function useEffectImpl(effect, inputs, defered) {
 }
 
 export function useImperativeHandle(ref, create, inputs) {
-  const nextInputs = inputs != null ? inputs.concat([ref]) : null;
+  const nextInputs = !isNull(inputs) ? inputs.concat([ref]) : null;
 
   useLayoutEffect(() => {
     if (isFunction(ref)) {
       ref(create());
       return () => ref(null);
-    } else if (ref != null) {
+    } else if (!isNull(ref)) {
       ref.current = create();
       return () => {
         ref.current = null;
@@ -213,7 +210,7 @@ export function useReducer(reducer, initialArg, init) {
       const currentState = queue.eagerState;
       const eagerReducer = queue.eagerReducer;
       const eagerState = eagerReducer(currentState, action);
-      if (sameValue(eagerState, currentState)) {
+      if (is(eagerState, currentState)) {
         return;
       }
       queue.actions.push(action);
@@ -244,7 +241,7 @@ export function useReducer(reducer, initialArg, init) {
     next = queue.eagerState;
   }
 
-  if (!sameValue(next, hook[0])) {
+  if (!is(next, hook[0])) {
     hook[0] = next;
     currentInstance.__shouldUpdate = true;
   }

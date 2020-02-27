@@ -1,6 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import replace from 'rollup-plugin-replace';
 import filesize from 'rollup-plugin-filesize';
+import cleanup from 'rollup-plugin-cleanup';
 import { version, author } from './package.json';
 
 function getPropsIdentifierName(platform) {
@@ -86,6 +87,7 @@ function getRollupConfig(platform) {
       }),
       babel(getBabelConfig({ platform })),
       filesize(),
+      cleanup()
     ],
   };
 }
