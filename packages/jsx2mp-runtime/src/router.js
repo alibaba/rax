@@ -43,9 +43,17 @@ let __routerMap = {};
 
 export function __updateRouterMap(appConfig) {
   appConfig.routes.map(route => {
-    __routerMap[route.path] = route.source.replace(/\/index$/, '');
+    // Rule of source in appConfig differs from Quickapp's manifest
+    if (isQuickApp) {
+      __routerMap[route.path] = route.source.replace(/\/index$/, '');
+    } else {
+      __routerMap[route.path] = route.source;
+    }
   });
-  return __routerMap;
+  // return as globalRoutes for Quickapp
+  if (isQuickApp) {
+    return __routerMap;
+  }
 }
 
 /**

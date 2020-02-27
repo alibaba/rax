@@ -1,9 +1,9 @@
-/* global PROPS */
+/* global PROPS, DATA */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickApp } from 'universal-env';
 import { cycles as appCycles } from './app';
 import Component from './component';
-import { ON_SHOW, ON_HIDE, ON_LAUNCH, ON_ERROR, ON_PAGE_SCROLL, ON_SHARE_APP_MESSAGE, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_TAB_ITEM_TAP, ON_TITLE_CLICK, ON_BACK_PRESS, ON_MENU_PRESS } from './cycles';
+import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
 import {
   getNativePageLifecycle,
@@ -44,7 +44,7 @@ function getPageCycles(Klass) {
       this.instance.instanceId = instanceId;
       setPageInstance(this.instance);
       this.instance._internal = this;
-      Object.assign(this.instance.state, this.data);
+      Object.assign(this.instance.state, this[DATA]);
       // Add route information for page.
       history.location.__updatePageOption(options);
       history.location.__updatePageId(this.instance.instanceId);
@@ -141,13 +141,18 @@ function createConfig(component, options) {
   };
 
   const proxiedMethods = createProxyMethods(events);
-  if (isPage || isQuickApp) {
+  if (isPage) {
     Object.assign(config, proxiedMethods);
     // Bind config to instance
     Klass.__proto__.__config = config;
     registerEventsInConfig(Klass, component.__nativeEvents);
   } else {
-    config.methods = proxiedMethods;
+    if (isQuickApp) {
+      // quickapp's component and page share the same structure
+      Object.assign(config, proxiedMethods);
+    } else {
+      config.methods = proxiedMethods;
+    }
   }
 
   return config;
@@ -162,27 +167,13 @@ export function runApp(appConfig, pageProps = {}) {
   if (_appConfig) {
     throw new Error('runApp can only be called once.');
   }
-  const globalRoutes = __updateRouterMap(appConfig);
 
   _appConfig = appConfig; // Store raw app config to parse router.
-
   _pageProps = pageProps; // Store global page props to inject to every page props
+  __updateRouterMap(appConfig);
 
-  var _onCreate = appConfig.onCreate;
-  var appOptions = Object.assign({}, appConfig, {
+  const appOptions = {
     // Bridge app launch.
-    onCreate: function onCreate(launchOptions) {
-      var launchQueue = appCycles.create;
-      _onCreate && _onCreate();
-      if (Array.isArray(launchQueue) && launchQueue.length > 0) {
-        var fn;
-
-        while (fn = launchQueue.pop()) {
-          // eslint-disable-line
-          fn.call(this, launchOptions);
-        }
-      }
-    },
     onLaunch(launchOptions) {
       executeCallback(this, ON_LAUNCH, launchOptions);
     },
@@ -201,11 +192,31 @@ export function runApp(appConfig, pageProps = {}) {
       if (Array.isArray(callbackQueue) && callbackQueue[0]) {
         return callbackQueue[0].call(this, shareOptions);
       }
-    },
-    globalRoutes
-  }); // eslint-disable-next-line
+    }
+  };
 
-  return appOptions;
+  if (isQuickApp) {
+    // Quickapp's app returns config as JSON
+    return Object.assign(appOptions, {
+      onCreate: function(launchOptions) {
+        // excute quickapp's create cycle
+        const _onCreate = appConfig.onCreate;
+        _onCreate && _onCreate();
+        const launchQueue = appCycles.create;
+        if (Array.isArray(launchQueue) && launchQueue.length > 0) {
+          let fn;
+          while (fn = launchQueue.pop()) {
+            // eslint-disable-line
+            fn.call(this, launchOptions);
+          }
+        }
+      },
+      globalRoutes: __updateRouterMap(appConfig) // store globalRoutes in case overrided when page reinited
+    });
+  } else {
+    // eslint-disable-next-line
+    App(appOptions);
+  }
 }
 
 export function createPage(definition, options = {}) {

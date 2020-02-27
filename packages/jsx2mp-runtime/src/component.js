@@ -1,4 +1,4 @@
-/* global PROPS, TAGID, PARENTID, DATA */
+/* global PROPS, TAGID, PARENTID */
 /**
  * Base Component class definition.
  */
@@ -292,7 +292,7 @@ export default class Component {
       PARENTID: parentId
     }, getComponentProps(this.instanceId));
     if (!this.state) this.state = {};
-    Object.assign(this.state, internal[DATA]);
+    Object.assign(this.state, internal.data);
   }
   /**
    * Internal set data method
