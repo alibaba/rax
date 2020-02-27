@@ -323,7 +323,7 @@ export default class Component {
           arrayData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
           if (diffData(this.state[key], data[key])) {
-            if (isPlainObject(data[key]) {
+            if (isPlainObject(data[key])) {
               normalData[key] = Object.assign({}, this.state[key], data[key]);
             } else {
               normalData[key] = data[key];
