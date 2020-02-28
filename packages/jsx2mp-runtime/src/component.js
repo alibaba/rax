@@ -20,6 +20,7 @@ import {
 } from './cycles';
 import { cycles as pageCycles } from './page';
 import shallowEqual, { is } from './shallowEqual';
+import nextTick from './nextTick';
 import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
 
 export default class Component {
@@ -351,7 +352,7 @@ export default class Component {
                 this._internal[key] = normalData[key];
               }
             }
-            setTimeout(resolve, 0);
+            nextTick(resolve);
           } else {
             this._internal.setData(normalData, resolve);
           }
