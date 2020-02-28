@@ -30,16 +30,6 @@ function getTagIdIdentifierName(platform) {
   }
 }
 
-function getParentIdIdentifierName(platform) {
-  switch (platform) {
-    case 'quickapp':
-      return 'parentId';
-
-    default:
-      return '__parentId';
-  }
-}
-
 function getBabelConfig({ platform = 'ali' }) {
   return {
     presets: [
@@ -82,8 +72,7 @@ function getRollupConfig(platform) {
       replace({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
         'PROPS': JSON.stringify(getPropsIdentifierName(platform)),
-        'TAGID': JSON.stringify(getTagIdIdentifierName(platform)),
-        'PARENTID': JSON.stringify(getParentIdIdentifierName(platform)),
+        'TAGID': JSON.stringify(getTagIdIdentifierName(platform))
       }),
       babel(getBabelConfig({ platform })),
       filesize(),

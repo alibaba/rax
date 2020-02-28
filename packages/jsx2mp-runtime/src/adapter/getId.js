@@ -1,11 +1,11 @@
-/* global PROPS, TAGID, PARENTID */
+/* global PROPS, TAGID */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickApp } from 'universal-env';
 
 let _customId = 0;
 
 /**
- * Get instance TAGID or PARENTID
+ * Get instance TAGID or __parentId
  * */
 export default function(type, internal) {
   switch (type) {
@@ -19,7 +19,7 @@ export default function(type, internal) {
       if (isQuickApp) {
         return !internal._parent || !internal._parent.data || !internal._parent.data.tagId === undefined ? 'p_' + _customId++ : internal._parent.data.tagId;
       }
-      return internal[PROPS][PARENTID] === undefined ? `p_${_customId++}` : internal[PROPS][PARENTID];
+      return internal[PROPS].__parentId === undefined ? `p_${_customId++}` : internal[PROPS].__parentId;
     default:
       // For troubleshoot
       return `d_${_customId++}`;

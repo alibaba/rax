@@ -349,7 +349,7 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
     TAGID: tagId,
-    PARENTID: parentId
+    __parentId: parentId
   }, getComponentProps(instanceId), ...restProps);
   return {
     instanceId,
