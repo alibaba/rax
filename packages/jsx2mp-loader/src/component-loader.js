@@ -5,7 +5,7 @@ const { getOptions } = require('loader-utils');
 const chalk = require('chalk');
 const PrettyError = require('pretty-error');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash, addRelativePathPrefix } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, doubleBackslash, normalizeOutputFilePath, addRelativePathPrefix } = require('./utils/pathHelper');
 const eliminateDeadCode = require('./utils/dce');
 const { isTypescriptFile } = require('./utils/judgeModule');
 const processCSS = require('./styleProcessor');
@@ -70,9 +70,9 @@ module.exports = async function componentLoader(content) {
 
       if (/^c-/.test(key)) {
         const result = removeExt(addRelativePathPrefix(relative(dirname(this.resourcePath), value))); // ./components/Repo
-        usingComponents[key] = replaceBackSlashWithSlash(result);
+        usingComponents[key] = normalizeOutputFilePath(result);
       } else {
-        usingComponents[key] = replaceBackSlashWithSlash(value);
+        usingComponents[key] = normalizeOutputFilePath(value);
       }
     });
     config.usingComponents = usingComponents;
