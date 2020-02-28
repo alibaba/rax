@@ -1,8 +1,23 @@
+const componentCommonProps = {
+  ali: {
+    onClick: 'onTap',
+  },
+  wechat: {
+    onClick: 'bindtap',
+    onLongPress: 'bindlongpress',
+    onTouchStart: 'bindtouchstart',
+    onTouchEnd: 'bindtouchend',
+    onTouchMove: 'bindtouchmove',
+    onTouchCancel: 'bindtouchcancel',
+  }
+};
+
 /**
  * Extendable
  */
 const parserAdapters = {
   'ali': {
+    platform: 'ali',
     if: 'a:if',
     else: 'a:else',
     elseif: 'a:elif',
@@ -11,10 +26,8 @@ const parserAdapters = {
     forIndex: 'a:for-index',
     key: 'a:key',
 
-    modulePathSuffix: '/lib/miniapp/index',
-
     view: {
-      onClick: 'onTap',
+      ...componentCommonProps.ali,
       onLongPress: 'onLongTap',
       className: '__rax-view'
     },
@@ -28,6 +41,7 @@ const parserAdapters = {
     needTransformKey: false
   },
   'wechat': {
+    platform: 'wechat',
     if: 'wx:if',
     else: 'wx:else',
     elseif: 'wx:elif',
@@ -36,17 +50,15 @@ const parserAdapters = {
     forIndex: 'wx:for-index',
     key: 'wx:key',
 
-    modulePathSuffix: '/lib/miniapp-wx/index',
     view: {
-      onClick: 'bindtap',
-      onLongPress: 'bindlongpress',
-      onTouchStart: 'bindtouchstart',
-      onTouchEnd: 'bindtouchend',
-      onTouchMove: 'bindtouchmove',
-      onTouchCancel: 'bindtouchcancel',
+      ...componentCommonProps.wechat,
       className: '__rax-view'
     },
-    compatibleText: true,
+    compatibleText: false,
+    text: {
+      ...componentCommonProps.ali,
+      className: '__rax-text'
+    },
     styleKeyword: true,
     needTransformEvent: true,
     slotScope: false,
