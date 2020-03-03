@@ -119,6 +119,33 @@ describe('inline styles', () => {
       let str = renderToString(<MyComponent />);
       expect(str).toBe('<div style="flex:1;font-size:16px;width:100%;"></div>');
     });
+
+    it('style with fontWeight', () => {
+      const styles = {
+        numericalProperty: {
+          fontWeight: 600,
+        },
+        stringifyProperty: {
+          fontWeight: '600'
+        },
+        propertyWithKeyWord: {
+          fontWeight: 'bold'
+        }
+      };
+
+      function MyComponent(props, context) {
+        return (
+          <div>
+            <div style={styles.numericalProperty}></div>
+            <div style={styles.stringifyProperty}></div>
+            <div style={styles.propertyWithKeyWord}></div>
+          </div>
+        );
+      }
+
+      let str = renderToString(<MyComponent />);
+      expect(str).toBe('<div><div style="font-weight:600;"></div><div style="font-weight:600;"></div><div style="font-weight:bold;"></div></div>');
+    });
   });
 
   describe('rpx', () => {
