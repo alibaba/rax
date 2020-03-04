@@ -64,7 +64,7 @@ function App(props) {
       return createElement(
         Navigation,
         Object.assign(
-          { appConfig, component, history, routes, InitialComponent },
+          { appConfig, component, history, location: history.location, routes, InitialComponent },
           pageInitialProps[component.__path],
           pageProps
         )
@@ -74,7 +74,7 @@ function App(props) {
     return createElement(
       Fragment,
       {},
-      createElement(component, Object.assign({ history, routes, InitialComponent }, pageInitialProps[component.__path], pageProps)),
+      createElement(component, Object.assign({ history, location: history.location, routes, InitialComponent }, pageInitialProps[component.__path], pageProps)),
       createElement(TabBar, { history, config: appConfig.tabBar })
     );
   }
