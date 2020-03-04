@@ -47,9 +47,6 @@ export default function Navigation(props) {
 
   const isAlivePage = currentPage.keepAlive;
   useEffect(() => {
-    history.listen(() => {
-      _updatePageTrigger(Date.now());
-    });
     // Use display control alive page, need get alive page list.
     routes.forEach((route) => {
       if (route.keepAlive) {
