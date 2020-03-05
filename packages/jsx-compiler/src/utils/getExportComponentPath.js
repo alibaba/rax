@@ -32,7 +32,6 @@ module.exports = function(defaultExportedPath, programPath, code) {
     } else {
       throw new CodeError(code, componentNode, componentNode.loc, 'Exported component is undefined');
     }
-    console.log('exportComponentPath', exportComponentPath);
     return exportComponentPath;
   }
 };
