@@ -235,12 +235,16 @@ simulate.checkArray = async function(component, node, attrName, attributeName, d
  */
 simulate.checkEvent = async function(component, node, eventNameList) {
   const evtList = [];
-  eventNameList.forEach(eventName => node.addEventListener(eventName, evt => evtList.push(evt)));
-  for (const eventName of eventNameList) {
+  eventNameList.forEach(eventName => {
+    if (Array.isArray(eventName)) eventName = eventName[1];
+    node.addEventListener(eventName, evt => evtList.push(evt));
+  })
+  for (let eventName of eventNameList) {
+    if (Array.isArray(eventName)) eventName = eventName[0];
     component.dispatchEvent(eventName);
     await simulate.sleep(10);
   }
-  expect(evtList.map(evt => evt.type)).toEqual(eventNameList);
+  expect(evtList.map(evt => evt.type)).toEqual(eventNameList.map(eventName => (Array.isArray(eventName) ? eventName[1] : eventName)));
 };
 
 simulate.elementId = simulate.load('index', 'element');

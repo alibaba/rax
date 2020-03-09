@@ -867,7 +867,10 @@ class Element extends Node {
   getBoundingClientRect() {
     // 不作任何实现，只作兼容使用
     console.warn('getBoundingClientRect is not supported, please use dom.$$getBoundingClientRect instead of it');
-    return {};
+    return {
+      left: 0,
+      top: 0
+    };
   }
 }
 
