@@ -5,6 +5,26 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import { name } from './package.json';
 
+function getBabelConfig(platform) {
+  return {
+    runtimeHelpers: true,
+    presets: [
+      [
+        '@babel/preset-env',
+        {
+          targets: 'iOS >= 8',
+          loose: true,
+          include: ['transform-computed-properties'],
+        },
+      ],
+    ],
+    plugins: [
+      '@babel/plugin-proposal-class-properties',
+      ['./scripts/platform-plugin', { platform }]
+    ]
+  };
+}
+
 function getContainerIdentifierName(platform) {
   switch (platform) {
     case 'wechat':
@@ -32,7 +52,7 @@ function getRollupConfig(platform) {
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
         'CONTAINER': getContainerIdentifierName(platform)
       }),
-      babel({runtimeHelpers: true }),
+      babel(getBabelConfig(platform)),
       filesize()
     ]
   };
