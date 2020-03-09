@@ -599,12 +599,30 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
         isDirective,
       );
     }
-    if (computed && t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
-      propertyReplaceNode = transformIdentifier(
-        property,
-        dynamicBinding,
-        isDirective,
-      );
+    if (computed) { // others[index] => others[item.index]
+      switch (property.type) {
+        case 'Identifier':
+          propertyReplaceNode = transformIdentifier(
+            property,
+            dynamicBinding,
+            isDirective,
+          );
+          break;
+        case 'MemberExpression':
+          propertyReplaceNode = transformMemberExpression(
+            property,
+            dynamicBinding,
+            isDirective,
+          );
+          break;
+        default:
+          const name = dynamicBinding.add({
+            expression: property,
+            isDirective,
+          });
+          propertyReplaceNode = t.identifier(name);
+          break;
+      }
       propertyReplaceNode.__transformed = true;
     }
   }
