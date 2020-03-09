@@ -6,7 +6,7 @@ export default {
   props: [{
     name: 'value',
     get(domNode) {
-      return domNode.value || domNode.defaultValue || '';
+      return domNode.value || '';
     },
   }, {
     name: 'placeholder',

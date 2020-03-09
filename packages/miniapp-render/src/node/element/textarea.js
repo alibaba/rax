@@ -6,13 +6,13 @@ const pool = new Pool();
 
 class HTMLTextAreaElement extends Element {
   /**
-     * 创建实例
-     */
+   * Create instance
+   */
   static $$create(options, tree) {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Multiplexed element node
       const instance = pool.get();
 
       if (instance) {
@@ -25,8 +25,8 @@ class HTMLTextAreaElement extends Element {
   }
 
   /**
-     * 覆写父类的回收实例方法
-     */
+   * 覆写父类的回收实例方法
+   */
   $$recycle() {
     this.$$destroy();
 
@@ -39,8 +39,8 @@ class HTMLTextAreaElement extends Element {
   }
 
   /**
-     * 调用 $_generateHtml 接口时用于处理额外的属性，
-     */
+   * 调用 $_generateHtml 接口时用于处理额外的属性，
+   */
   $$dealWithAttrsForGenerateHtml(html, node) {
     const type = node.type;
     if (type) html += ` type="${type}"`;
@@ -55,14 +55,15 @@ class HTMLTextAreaElement extends Element {
     if (maxlength) html += ` maxlength="${maxlength}"`;
 
     const placeholder = node.placeholder;
-    if (placeholder) html += ` placeholder="${placeholder.replace(/"/g, '\\"')}"`;
+    if (placeholder)
+      html += ` placeholder="${placeholder.replace(/"/g, '\\"')}"`;
 
     return html;
   }
 
   /**
-     * 调用 outerHTML 的 setter 时用于处理额外的属性
-     */
+   * 调用 outerHTML 的 setter 时用于处理额外的属性
+   */
   $$dealWithAttrsForOuterHTML(node) {
     this.type = node.type || '';
     this.value = node.value || '';
@@ -75,8 +76,8 @@ class HTMLTextAreaElement extends Element {
   }
 
   /**
-     * 调用 cloneNode 接口时用于处理额外的属性
-     */
+   * 调用 cloneNode 接口时用于处理额外的属性
+   */
   $$dealWithAttrsForCloneNode() {
     return {
       type: this.type,
@@ -86,7 +87,7 @@ class HTMLTextAreaElement extends Element {
       placeholder: this.placeholder,
 
       // 特殊字段
-      mpplaceholderclass: this.mpplaceholderclass,
+      mpplaceholderclass: this.mpplaceholderclass
     };
   }
 
@@ -101,25 +102,17 @@ class HTMLTextAreaElement extends Element {
   }
 
   get value() {
-    return this.$_attrs.get('value') || '';
-  }
-
-  set value(value) {
-    value = '' + value;
-    this.$_attrs.set('value', value);
-  }
-
-  get defaultValue() {
-    const type = this.$_attrs.get('type');
-    const value = this.$_attrs.get('defaultValue');
-
-    if ((type === 'radio' || type === 'checkbox') && value === undefined) return 'on';
+    let value = this.$_attrs.get('value');
+    if (!value && !this.changed) {
+      value = this.$_attrs.get('defaultValue');
+    }
     return value || '';
   }
 
-  set defaultValue(value) {
+  set value(value) {
+    this.changed = true;
     value = '' + value;
-    this.$_attrs.set('defaultValue', value);
+    this.$_attrs.set('value', value);
   }
 
   get readOnly() {

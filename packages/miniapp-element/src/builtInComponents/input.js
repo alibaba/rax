@@ -9,7 +9,7 @@ export default {
   props: [{
     name: 'value',
     get(domNode) {
-      return domNode.value || domNode.defaultValue || '';
+      return domNode.value || '';
     },
   }, {
     name: 'type',
@@ -127,7 +127,7 @@ export default {
     },
     onInputFocus(evt) {
       this._inputOldValue = this.domNode.value || '';
-      callSimpleEvent('focus', evt, this.domNode);
+      // callSimpleEvent('focus', evt, this.domNode);
     },
     onInputBlur(evt) {
       if (!this.domNode) return;

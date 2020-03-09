@@ -49,7 +49,8 @@ class HTMLInputElement extends Element {
     if (maxlength) html += ` maxlength="${maxlength}"`;
 
     const placeholder = node.placeholder;
-    if (placeholder) html += ` placeholder="${placeholder.replace(/"/g, '\\"')}"`;
+    if (placeholder)
+      html += ` placeholder="${placeholder.replace(/"/g, '\\"')}"`;
 
     return html;
   }
@@ -62,13 +63,13 @@ class HTMLInputElement extends Element {
     this.maxlength = node.maxlength;
     this.placeholder = node.placeholder || '';
 
-    // 特殊字段
+    // Special attr
     this.mpplaceholderclass = node.mpplaceholderclass || '';
   }
 
   /**
-     * 调用 cloneNode 接口时用于处理额外的属性
-     */
+   * The cloneNode interface is invoked to handle additional properties
+   */
   $$dealWithAttrsForCloneNode() {
     return {
       type: this.type,
@@ -78,7 +79,7 @@ class HTMLInputElement extends Element {
       placeholder: this.placeholder,
 
       // 特殊字段
-      mpplaceholderclass: this.mpplaceholderclass,
+      mpplaceholderclass: this.mpplaceholderclass
     };
   }
 
@@ -103,28 +104,20 @@ class HTMLInputElement extends Element {
 
   get value() {
     const type = this.$_attrs.get('type');
-    const value = this.$_attrs.get('value');
+    let value = this.$_attrs.get('value');
+    if (!value && !this.changed) {
+      value = this.$_attrs.get('defaultValue');
+    }
 
-    if ((type === 'radio' || type === 'checkbox') && value === undefined) return 'on';
+    if ((type === 'radio' || type === 'checkbox') && value === undefined)
+      return 'on';
     return value || '';
   }
 
   set value(value) {
+    this.changed = true;
     value = '' + value;
     this.$_attrs.set('value', value);
-  }
-
-  get defaultValue() {
-    const type = this.$_attrs.get('type');
-    const value = this.$_attrs.get('defaultValue');
-
-    if ((type === 'radio' || type === 'checkbox') && value === undefined) return 'on';
-    return value || '';
-  }
-
-  set defaultValue(value) {
-    value = '' + value;
-    this.$_attrs.set('defaultValue', value);
   }
 
   get readOnly() {
