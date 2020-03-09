@@ -238,13 +238,13 @@ simulate.checkEvent = async function(component, node, eventNameList) {
   eventNameList.forEach(eventName => {
     if (Array.isArray(eventName)) eventName = eventName[1];
     node.addEventListener(eventName, evt => evtList.push(evt));
-  })
+  });
   for (let eventName of eventNameList) {
     if (Array.isArray(eventName)) eventName = eventName[0];
     component.dispatchEvent(eventName);
     await simulate.sleep(10);
   }
-  expect(evtList.map(evt => evt.type)).toEqual(eventNameList.map(eventName => (Array.isArray(eventName) ? eventName[1] : eventName)));
+  expect(evtList.map(evt => evt.type)).toEqual(eventNameList.map(eventName => Array.isArray(eventName) ? eventName[1] : eventName));
 };
 
 simulate.elementId = simulate.load('index', 'element');

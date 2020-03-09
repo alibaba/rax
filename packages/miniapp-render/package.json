@@ -41,6 +41,7 @@
     "@babel/plugin-transform-runtime": "^7.7.6",
     "@babel/preset-env": "^7.4.5",
     "@babel/runtime": "^7.7.7",
+    "@babel/types": "^7.8.7",
     "babel-jest": "^24.9.0",
     "cross-env": "^5.2.1",
     "cross-spawn": "^7.0.1",

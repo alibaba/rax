@@ -1,3 +1,4 @@
+/* global isMiniApp, Component */
 import render from 'miniapp-render';
 import filterNodes from './vdom/filterNodes';
 import checkDiffChildNodes from './vdom/checkDiffChildNodes';
@@ -251,6 +252,7 @@ const lifeCycles = getLifeCycle({
   }
 });
 
+/* eslint-disable new-cap */
 Component({
   ...config,
   ...lifeCycles

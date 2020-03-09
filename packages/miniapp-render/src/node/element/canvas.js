@@ -1,3 +1,4 @@
+/* global isMiniApp */
 import Element from '../element';
 import cache from '../../util/cache';
 import Pool from '../../util/pool';
@@ -63,7 +64,7 @@ class HTMLCanvasElement extends Element {
       if (isMiniApp) {
         this.addEventListener('canvasReady', () => {
           resolve(this);
-        })
+        });
       } else {
         this.$$getNodesRef().then(nodesRef => nodesRef.node(res => {
           this.$_node = res.node;
@@ -75,7 +76,7 @@ class HTMLCanvasElement extends Element {
           resolve(this);
         }).exec()).catch(reject);
       }
-    })
+    });
   }
 
   /**
