@@ -1,4 +1,3 @@
-/* global PLATFORM */
 import render from 'miniapp-render';
 import filterNodes from './vdom/filterNodes';
 import checkDiffChildNodes from './vdom/checkDiffChildNodes';
@@ -231,7 +230,7 @@ const lifeCycles = getLifeCycle({
       data.childNodes = dataChildNodes;
     }
     this.setData(data);
-    if (PLATFORM === 'ali') {
+    if (isMiniApp) {
       if (this.domNode.tagName === 'CANVAS') {
         this.domNode.$$trigger('canvasReady');
       }

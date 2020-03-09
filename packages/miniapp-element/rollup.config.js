@@ -39,8 +39,7 @@ function getRollupConfig(platform) {
         targets: ['dist']
       }),
       replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-        'PLATFORM': `'${platform}'`
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
       }),
       babel(getBabelConfig(platform)),
       filesize(),

@@ -1,4 +1,3 @@
-/* global PLATFORM */
 import Element from '../element';
 import cache from '../../util/cache';
 import Pool from '../../util/pool';
@@ -61,7 +60,7 @@ class HTMLCanvasElement extends Element {
    */
   $$prepare() {
     return new Promise((resolve, reject) => {
-      if (PLATFORM === 'ali') {
+      if (isMiniApp) {
         this.addEventListener('canvasReady', () => {
           resolve(this);
         })
