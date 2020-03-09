@@ -178,7 +178,14 @@ function findHydrationChild(parent) {
   return parent.childNodes[parent[HYDRATION_INDEX]++];
 }
 
-export function createElement(type, props, component, __shouldConvertUnitlessToRpx) {
+/**
+ * @param {string} type node type
+ * @param {object} props elemement properties
+ * @param {object} component component instance
+ * @param {boolean} __shouldConvertUnitlessToRpx should add unit when missing
+ * @param {boolean} __shouldConvertRpxToVw should transfrom rpx to vw
+ */
+export function createElement(type, props, component, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
   let node;
@@ -247,7 +254,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyle(node, value, __shouldConvertUnitlessToRpx);
+        setStyle(node, value, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw);
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
@@ -341,14 +348,28 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
-export function setStyle(node, style, __shouldConvertUnitlessToRpx) {
+/**
+ * @param {object} node target node
+ * @param {object} style target node style value
+ * @param {boolean} __shouldConvertUnitlessToRpx
+ * @param {boolean} __shouldConvertRpxToVw should transfrom rpx to vw
+ */
+export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
   for (let prop in style) {
     const value = style[prop];
     let convertedValue;
     if (typeof value === 'number' && isDimensionalProp(prop)) {
-      convertedValue = __shouldConvertUnitlessToRpx ? convertUnit(value + 'rpx') : value + 'px';
+      if (__shouldConvertUnitlessToRpx) {
+        convertedValue = value + 'rpx';
+        if (__shouldConvertRpxToVw) {
+          // Transfrom rpx to vw
+          convertedValue = convertUnit(convertedValue);
+        }
+      } else {
+        convertedValue = value + 'px';
+      }
     } else {
-      convertedValue = convertUnit(value);
+      convertedValue = __shouldConvertRpxToVw ? convertUnit(value) : value;
     }
 
     // Support CSS custom properties (variables) like { --main-color: "black" }

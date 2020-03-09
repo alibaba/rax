@@ -1,3 +1,4 @@
+/* global isMiniApp, Component */
 import render from 'miniapp-render';
 import filterNodes from './vdom/filterNodes';
 import checkDiffChildNodes from './vdom/checkDiffChildNodes';
@@ -193,8 +194,9 @@ const lifeCycles = getLifeCycle({
     if (!this.domNode) return;
 
     // TODO, for the sake of compatibility with a bug in the underlying library, is implemented as follows
-    if (this.domNode.tagName === 'CANVAS')
+    if (this.domNode.tagName === 'CANVAS') {
       this.domNode._builtInComponent = this;
+    }
 
     // Store document
     this.document = cache.getDocument(pageId);
@@ -229,6 +231,11 @@ const lifeCycles = getLifeCycle({
       data.childNodes = dataChildNodes;
     }
     this.setData(data);
+    if (isMiniApp) {
+      if (this.domNode.tagName === 'CANVAS') {
+        this.domNode.$$trigger('canvasReady');
+      }
+    }
   },
   ready() {
     this.__ready = true;

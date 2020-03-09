@@ -32,7 +32,7 @@ test('canvas', async() => {
 
   // event
   const wxCanvas = canvas.querySelector('.wx-comp-canvas');
-  await _.checkEvent(wxCanvas, node, ['touchstart', 'touchmove', 'touchend', 'touchcancel', 'longtap', 'error']);
+  await _.checkEvent(wxCanvas, node, [['touchstart', 'canvastouchstart'], ['touchmove', 'canvastouchmove'], ['touchend', 'canvastouchend'], ['touchcancel', 'canvastouchcancel'], 'longtap', 'error']);
 
   page.document.body.removeChild(node);
   document.body.removeChild(wrapper);

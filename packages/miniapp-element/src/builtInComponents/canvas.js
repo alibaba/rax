@@ -24,6 +24,21 @@ export default {
     }
   }],
   handles: {
+    onCanvasTouchStart(evt) {
+      this.callSimpleEvent('canvastouchstart', evt);
+    },
+
+    onCanvasTouchMove(evt) {
+      this.callSimpleEvent('canvastouchmove', evt);
+    },
+
+    onCanvasTouchEnd(evt) {
+      this.callSimpleEvent('canvastouchend', evt);
+    },
+
+    onCanvasTouchCancel(evt) {
+      this.callSimpleEvent('canvastouchcancel', evt);
+    },
     onCanvasLongTap(evt) {
       callSimpleEvent('longtap', evt, this.domNode);
     },
