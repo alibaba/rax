@@ -1,5 +1,3 @@
-/* global Component */
-/* eslint-disable new-cap */
 Component({
   props: {
     childNodes: [],

@@ -252,7 +252,6 @@ const lifeCycles = getLifeCycle({
   }
 });
 
-/* eslint-disable new-cap */
 Component({
   ...config,
   ...lifeCycles
