@@ -303,7 +303,7 @@ function formatEventName(name) {
 
 // throttle 50ms
 function toleranceEventTimeStamp(timeStamp) {
-  return Math.floor(timestamp / 10) - 5;
+  return Math.floor(timeStamp / 10) - 5;
 }
 
 function generateBaseOptions(internal, defaultProps, ...restProps) {
