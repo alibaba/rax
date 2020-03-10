@@ -61,7 +61,7 @@ describe('Hydrate', () => {
     const Component = () => {
       return (
         <div class="container">
-          <div>About Rax 1.x</div>
+          <div>About Rax</div>
         </div>
       );
     };
