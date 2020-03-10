@@ -196,50 +196,8 @@ class Location extends EventTarget {
   }
 
   /**
-     * 打开一个新页面
-     */
-  $$open(url) {
-    url = tool.completeURL(url, this.origin, true);
-
-    const window = cache.getWindow(this.$_pageId);
-    const parseRes = Location.$$parse(url);
-
-    if (parseRes.protocol !== this.$_protocol || parseRes.hostname !== this.$_hostname || parseRes.port !== this.$_port) {
-      // 只能打开相同 protocol、hostname 和 port 的 url
-      return window.$$trigger('pageaccessdenied', {
-        event: {
-          url,
-          type: 'open',
-        },
-      });
-    }
-
-    const matchRoute = window.$$miniprogram.getMatchRoute(parseRes.pathname || '/');
-
-    if (matchRoute) {
-      let param = ['type=open', `targeturl=${encodeURIComponent(url)}`];
-      if (this.$_search) param.push(`search=${encodeURIComponent(parseRes.search || '')}`);
-      if (this.$_hash) param.push(`hash=${encodeURIComponent(parseRes.hash || '')}`);
-
-      param = '?' + param.join('&');
-
-      const callMethod = window.$$miniprogram.isTabBarPage(matchRoute) ? 'switchTab' : 'navigateTo';
-      CONTAINER[callMethod]({
-        url: `${matchRoute}${param}`,
-      });
-    } else {
-      window.$$trigger('pagenotfound', {
-        event: {
-          url,
-          type: 'open',
-        },
-      });
-    }
-  }
-
-  /**
-     * 重置实例
-     */
+   * Reset instance
+   */
   $$reset(url = '') {
     const {
       protocol, hostname, port, pathname, hash, search
@@ -257,6 +215,7 @@ class Location extends EventTarget {
      * 解析 href
      */
   static $$parse(href = '') {
+    console.log('href', href);
     href = href.trim();
 
     // protocol

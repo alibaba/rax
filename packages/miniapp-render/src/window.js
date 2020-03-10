@@ -402,11 +402,6 @@ class Window extends EventTarget {
     return Symbol;
   }
 
-  open(url) {
-    // 不支持 windowName 和 windowFeatures
-    this.location.$$open(url);
-  }
-
   getComputedStyle() {
     // 不作任何实现，只作兼容使用
     console.warn('window.getComputedStyle is not supported, please use window.$$getComputedStyle instead of it');
