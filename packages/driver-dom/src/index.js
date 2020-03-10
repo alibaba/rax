@@ -270,11 +270,8 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
 /**
  * camelcased CSS property name, for example:
- *
- *   > camelcaseStyleName('backgroundColor')
- *   < "background-color"
- *   > camelcaseStyleName('webkitTransition')
- *   < "-webkit-transition"
+ * 'backgroundColor'< "background-color"
+ * 'webkitTransition' < "-webkit-transition"
  */
 function camelcaseStyleName(name) {
   return name
