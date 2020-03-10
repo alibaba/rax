@@ -226,10 +226,12 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
           if (attributeName === STYLE) {
             // Remove invalid style prop, and direct reset style to child avoid diff style
-            for (let i = 0, l = hydrationChild.style.length; i < l; i++) {
-              let stylePropName = hydrationChild.style[i];
-              if (!propValue[stylePropName]) {
-                hydrationChild.style[stylePropName] = EMPTY;
+            for (let i = 0, l = hydrationChild.style.length; 0 < l; l--) {
+              // Prop name get from node style is hyphenated, eg: background-color
+              let stylePropName = hydrationChild.style[l - 1];
+              let camelcasedStyleName = camelcaseStyleName(stylePropName);
+              if (propValue[camelcasedStyleName] != null) {
+                hydrationChild.style[camelcasedStyleName] = EMPTY;
               }
             }
           }
@@ -264,6 +266,22 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
   }
 
   return node;
+}
+
+/**
+ * camelcased CSS property name, for example:
+ *
+ *   > camelcaseStyleName('backgroundColor')
+ *   < "background-color"
+ *   > camelcaseStyleName('webkitTransition')
+ *   < "-webkit-transition"
+ */
+function camelcaseStyleName(name) {
+  return name
+    .replace(/^-/, '')
+    .replace(/-([a-z])/gi, function(s, g) {
+      return g.toUpperCase();
+    });
 }
 
 export function appendChild(node, parent) {
