@@ -16,6 +16,12 @@ let _appConfig;
 let _pageProps = {};
 
 /**
+ * Record events
+ * timestamp -> { detail, type }
+ */
+const eventsMap = {};
+
+/**
  * Reference relationship.
  * page/component instance          Rax instance
  *    instance    -------------->      *self
@@ -95,6 +101,30 @@ function createProxyMethods(events) {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
         const event = args[0];
+
+        // set stopPropagation method
+        event.stopPropagation = () => {
+          eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
+            detail: event.detail,
+            type: event.type
+          };
+        };
+
+        const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
+        // If prevEvent exists, and event type & event detail are the same, stop event triggle
+        if (prevEvent && prevEvent.type === event.type) {
+          let isSame = true;
+          for (let key in prevEvent.detail) {
+            if (prevEvent.detail[key] !== event.detail[key]) {
+              isSame = false;
+              break;
+            }
+          }
+          if (isSame) {
+            return;
+          }
+        }
+
         let context = this.instance; // Context default to Rax component instance.
 
         const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
@@ -269,6 +299,11 @@ function isDatasetArg(str) {
 
 function formatEventName(name) {
   return name.replace('_', '');
+}
+
+// throttle 50ms
+function toleranceEventTimeStamp(timeStamp) {
+  return Math.floor(timeStamp / 10) - 5;
 }
 
 function generateBaseOptions(internal, defaultProps, ...restProps) {
