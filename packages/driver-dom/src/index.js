@@ -1,6 +1,12 @@
 /**
  * Driver for Web DOM
  **/
+const {
+  warnForReplacedHydratebleElement,
+  warnForDeletedHydratableElement,
+  warnForInsertedHydratedElement
+} = require('./warning');
+
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 
 // opacity -> opa
@@ -37,6 +43,7 @@ const COMMENT_NODE = 8;
 const EMPTY = '';
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
+const __DEV__ = process.env.NODE_ENV !== 'production';
 
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
@@ -239,10 +246,16 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
       } else {
         createNode();
         replaceChild(node, hydrationChild, parent);
+        if (__DEV__) {
+          warnForReplacedHydratebleElement(parent, node, hydrationChild);
+        }
       }
     } else {
       createNode();
       node[HYDRATION_APPEND] = true;
+      if (__DEV__) {
+        warnForInsertedHydratedElement(parent, node);
+      }
     }
   } else {
     createNode();
@@ -392,6 +405,9 @@ function recolectHydrationChild(hydrationParent) {
   const vdomLength = hydrationParent[HYDRATION_INDEX] || 0;
   if (nativeLength - vdomLength > 0) {
     for (let i = nativeLength - 1; i >= vdomLength; i--) {
+      if (__DEV__) {
+        warnForDeletedHydratableElement(hydrationParent, hydrationParent.childNodes[i]);
+      }
       hydrationParent.removeChild(hydrationParent.childNodes[i]);
     }
   }
