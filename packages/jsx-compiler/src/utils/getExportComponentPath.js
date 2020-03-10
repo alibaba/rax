@@ -17,15 +17,16 @@ module.exports = function(defaultExportedPath, programPath, code) {
     let exportComponentPath = defaultExportedPath;
     // Only first param is component
     const componentNode = defaultExportedPath.get('arguments')[0].node;
-    if (programPath.scope.hasBinding(componentNode.name)) {
+    const componentName = componentNode.name;
+    if (programPath.scope.hasBinding(componentName)) {
       programPath.traverse({
+        VariableDeclarator(path) {
+          const target = getComponentPath(path, componentName);
+          if (target) exportComponentPath = target;
+        },
         Declaration(path) {
-          const { node } = path;
-          if (node.id && t.isIdentifier(node.id, {
-            name: componentNode.name
-          })) {
-            exportComponentPath = path;
-          }
+          const target = getComponentPath(path, componentName);
+          if (target) exportComponentPath = target;
         }
       });
     } else {
@@ -34,3 +35,16 @@ module.exports = function(defaultExportedPath, programPath, code) {
     return exportComponentPath;
   }
 };
+
+/**
+ * @param {NodePath} path - Declaration path
+ * @param {string} componentName - componentName
+ */
+function getComponentPath(path, componentName) {
+  const { node } = path;
+  if (node.id && t.isIdentifier(node.id, {
+    name: componentName
+  })) {
+    return path.get('init') || path;
+  }
+}
