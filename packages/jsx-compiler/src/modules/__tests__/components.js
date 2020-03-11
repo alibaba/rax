@@ -1,6 +1,8 @@
 const { _transformComponents } = require('../components');
 const { parseExpression, parseCode, getImported } = require('../../parser/index');
 const genCode = require('../../codegen/genCode');
+const adapter = require('../../adapter').ali;
+const wxAdapter = require('../../adapter').wechat;
 
 describe('Transform components', () => {
   it('should transform Provider', () => {
@@ -11,7 +13,9 @@ describe('Transform components', () => {
     const parsed = {
       templateAST: ast
     };
-    const options = {};
+    const options = {
+      adapter
+    };
     const { contextList } = _transformComponents(parsed, options);
     expect(genCode(ast).code).toEqual(`<block>
         <View>Test</View>
@@ -36,19 +40,41 @@ describe('Transform components', () => {
       componentDependentProps: {},
       componentsAlias: {}
     };
-    const options = {};
+    const options = {
+      adapter
+    };
     const { componentsAlias } = _transformComponents(parsed, options);
     expect(genCode(ast).code).toEqual(`<rax-view>
         <c-a94616 __parentId="{{__tagId}}" __tagId="{{__tagId}}-0" />
       </rax-view>`);
     expect(componentsAlias).toEqual({'c-a94616': {'default': true, 'namespace': false, 'from': '../components/CustomEl', 'isCustomEl': true, 'local': 'CustomEl', 'name': 'c-a94616'}});
   });
+  it('should handle wechat miniprogram text', () => {
+    const importedAST = parseCode(`
+      import CustomEl from '../components/CustomEl';
+      import Text from 'rax-text';
+    `);
+    const imported = getImported(importedAST);
+    const sourceCode = '<Text style={styles.name} onClick={handleClick}>123</Text>';
+    const ast = parseExpression(sourceCode);
+    _transformComponents({
+      templateAST: ast,
+      imported,
+      componentDependentProps: {},
+      componentsAlias: {}
+    }, {
+      adapter: wxAdapter
+    });
+    expect(genCode(ast).code).toEqual('<rax-text style={styles.name} onClick={handleClick}>123</rax-text>');
+  });
   it('should transform JSX Fragment', () => {
     const ast = parseExpression('<View><>Test</></View>');
     const parsed = {
       templateAST: ast
     };
-    const options = {};
+    const options = {
+      adapter
+    };
     _transformComponents(parsed, options);
     expect(genCode(ast).code).toEqual('<View><block>Test</block></View>');
   });

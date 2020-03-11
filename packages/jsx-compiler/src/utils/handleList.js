@@ -56,7 +56,8 @@ module.exports = function(
 
     let name;
     const addedNodeIndex = findIndex(properties, ({ value }) => genExpression(value) === genExpression(originalExpression));
-    if (addedNodeIndex < 0) {
+    if (addedNodeIndex < 0 || properties[addedNodeIndex].key.__isFromMapFn) {
+      properties.splice(addedNodeIndex, addedNodeIndex > -1);
       name = dynamicBinding.add({
         expression: originalExpression
       });

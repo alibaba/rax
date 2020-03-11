@@ -6,4 +6,9 @@ module.exports = `.__rax-view {
   flex-shrink:0;
   box-sizing:border-box;
 }
+.__rax-text {
+  box-sizing: border-box;
+  display: block;
+  font-size: 32rpx;
+}
 `;

@@ -2,7 +2,7 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
-const compiledComponents = require('../compiledComponents');
+const getCompiledComponents = require('../getCompiledComponents');
 const DynamicBinding = require('../utils/DynamicBinding');
 
 function transformAttribute(ast, code, adapter) {
@@ -28,19 +28,19 @@ function transformAttribute(ast, code, adapter) {
           break;
         case 'className':
           if (!adapter.styleKeyword) {
-            if (isNativeComponent(path)) {
+            if (isNativeComponent(path, adapter.platform)) {
               node.name.name = 'class';
             } else {
               // Object.assign for shallow copy, avoid self tag is same reference
               path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'),
                 Object.assign({}, node.value)));
             }
-          } else if (isNativeComponent(path)) {
+          } else if (isNativeComponent(path, adapter.platform)) {
             node.name.name = 'class';
           }
           break;
         case 'style':
-          if (adapter.styleKeyword && !isNativeComponent(path)) {
+          if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform)) {
             node.name.name = 'styleSheet';
           }
           break;
@@ -83,11 +83,11 @@ function transformAttribute(ast, code, adapter) {
   };
 }
 
-function isNativeComponent(path) {
+function isNativeComponent(path, platform) {
   const {
     node: { name: tagName }
   } = path.parentPath.get('name');
-  return !!compiledComponents[tagName];
+  return !!getCompiledComponents(platform)[tagName];
 }
 
 module.exports = {

@@ -76,22 +76,20 @@ function doubleBackslash(filePath) {
 }
 
 /**
- * Replace backslashs with slashs
- * for pages and usingComponents in json don't support backslashs
- *
- * @param {*} filePath
+ * Use '/' as path sep regardless of OS when outputting the path to code
+ * @param {string} filepath
  */
-function replaceBackSlashWithSlash(filePath) {
-  return filePath.replace(/\\/g, '/');
+function normalizeOutputFilePath(filepath) {
+  return filepath.replace(/\\/g, '/');
 }
 
 /**
- * Add ./ (Linux/Unix) or .\ (Windows) at the start of filepath
+ * Add ./ at the start of filepath
  * @param {string} filepath
  * @returns {string}
  */
 function addRelativePathPrefix(filepath) {
-  return filepath[0] !== '.' ? `.${sep}${filepath}` : filepath;
+  return filepath[0] !== '.' ? `./${filepath}` : filepath;
 }
 
 module.exports = {
@@ -99,6 +97,6 @@ module.exports = {
   isFromTargetDirs,
   replaceExtension,
   doubleBackslash,
-  replaceBackSlashWithSlash,
+  normalizeOutputFilePath,
   addRelativePathPrefix
 };

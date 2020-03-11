@@ -9,10 +9,10 @@ const { moduleResolve, multipleModuleResolve } = require('../utils/moduleResolve
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const Expression = require('../utils/Expression');
-const compiledComponents = require('../compiledComponents');
+const getCompiledComponents = require('../getCompiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
-const { getNpmName, normalizeFileName, addRelativePathPrefix } = require('../utils/pathHelper');
+const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
@@ -37,7 +37,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
 
-  if (!compiledComponents[componentTag]) {
+  if (!getCompiledComponents(options.adapter.platform)[componentTag]) {
     // <tag __tagId="tagId" />
 
     let tagId;
@@ -365,7 +365,7 @@ function getComponentPath(alias, options) {
 
     // Use specific path to import native miniapp component
     if (pkgName !== alias.from) {
-      return normalizeFileName(addRelativePathPrefix(join(npmRelativePath, alias.from.replace(pkgName, realPkgName))));
+      return normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, alias.from.replace(pkgName, realPkgName)))));
     }
     // Use miniappConfig in package.json to import native miniapp component
     const pkg = getComponentConfig(alias.from, options.resourcePath);
@@ -389,13 +389,13 @@ function getComponentPath(alias, options) {
           pkg.miniappConfig.subPackages[alias.local][mainName];
 
       if (disableCopyNpm) {
-        return join(pkg.name, miniappComponentPath);
+        return normalizeOutputFilePath(join(pkg.name, miniappComponentPath));
       }
 
       const miniappConfigRelativePath = relative(pkg.main, miniappComponentPath);
       const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath);
       const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(realPkgName) + realPkgName.length);
-      return normalizeFileName(addRelativePathPrefix(join(npmRelativePath, realPkgName, realMiniappRelativePath)));
+      return normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, realPkgName, realMiniappRelativePath))));
     }
   }
 }

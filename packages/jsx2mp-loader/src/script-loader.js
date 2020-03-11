@@ -3,7 +3,7 @@ const { join, dirname, relative, resolve, sep } = require('path');
 const { copySync, existsSync, mkdirpSync, writeJSONSync, readFileSync, readJSONSync } = require('fs-extra');
 const { getOptions } = require('loader-utils');
 const cached = require('./cached');
-const { removeExt, isFromTargetDirs, doubleBackslash, replaceBackSlashWithSlash, addRelativePathPrefix } = require('./utils/pathHelper');
+const { removeExt, isFromTargetDirs, doubleBackslash, normalizeOutputFilePath, addRelativePathPrefix } = require('./utils/pathHelper');
 const { isNpmModule, isJSONFile, isTypescriptFile } = require('./utils/judgeModule');
 const isMiniappComponent = require('./utils/isMiniappComponent');
 const output = require('./output');
@@ -121,13 +121,13 @@ module.exports = function scriptLoader(content) {
                 paths: [this.resourcePath]
               });
               const relativeComponentPath = normalizeNpmFileName(addRelativePathPrefix(relative(dirname(sourceNativeMiniappScriptFile), realComponentPath)));
-              componentConfig.usingComponents[key] = replaceBackSlashWithSlash(removeExt(relativeComponentPath));
+              componentConfig.usingComponents[key] = normalizeOutputFilePath(removeExt(relativeComponentPath));
               dependencies.push({
                 name: realComponentPath,
                 loader: ScriptLoader, // Native miniapp component js file will loaded by script-loader
                 options: loaderOptions
               });
-            } else if (componentPath.indexOf(`${sep}npm${sep}`) === -1) { // Exclude the path that has been modified by jsx-compiler
+            } else if (componentPath.indexOf('/npm/') === -1) { // Exclude the path that has been modified by jsx-compiler
               const absComponentPath = resolve(dirname(sourceNativeMiniappScriptFile), componentPath);
               dependencies.push({
                 name: absComponentPath,
