@@ -9,8 +9,6 @@ module.exports = [
   require('./css'),
   // Handle js code.
   require('./code'),
-  // Handle rax-text
-  require('./rax-text'),
   // Handle template attrs
   require('./element'),
   // Handle jsx attribute

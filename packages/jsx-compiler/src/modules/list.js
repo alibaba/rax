@@ -85,6 +85,31 @@ function transformMapMethod(path, parsed, code, adapter) {
           loopFnBody: body
         };
 
+        mapCallbackFnBodyPath.get('body').filter(p => !p.isReturnStatement()).map(statementPath => {
+          statementPath.traverse({
+            Identifier(innerPath) {
+              const innerNode = innerPath.node;
+              handleValidIdentifier(innerPath, () => {
+                // Ensure inner node's name is original name
+                if ((innerNode.loc && innerNode.loc.identifierName || innerNode.name) === forIndex.name) {
+                  // Use renamed index instead of original value
+                  innerNode.name = renamedIndex.name;
+                }
+                const declartorPath = innerPath.find(p => p.isVariableDeclarator());
+                // Handle variable declaration in map function
+                if (
+                  declartorPath
+                   && (declartorPath.node.id.start <= innerNode.start && declartorPath.node.id.end >= innerNode.end)
+                   && findIndex(properties, property => property.value.name === innerNode.name) < 0) {
+                  properties.push(t.objectProperty(innerNode, innerNode));
+                  // Mark as from map fn body statement
+                  innerNode.__isFromMapFn = true;
+                }
+              });
+            }
+          });
+        });
+
         // map callback function return path;
         const returnElPath = getReturnElementPath(body).get('argument');
         returnElPath.traverse({
@@ -140,19 +165,6 @@ function transformMapMethod(path, parsed, code, adapter) {
                 handleListJSXExpressionContainer(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue);
               }
             }
-          }
-        });
-
-        mapCallbackFnBodyPath.traverse({
-          Identifier(innerPath) {
-            const innerNode = innerPath.node;
-            handleValidIdentifier(innerPath, () => {
-              // Ensure inner node's name is original name
-              if (innerNode.loc.identifierName === forIndex.name) {
-                // Use renamed index instead of original value
-                innerNode.name = renamedIndex.name;
-              }
-            });
           }
         });
 

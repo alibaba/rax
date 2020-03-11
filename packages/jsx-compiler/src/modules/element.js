@@ -5,7 +5,7 @@ const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 const CodeError = require('../utils/CodeError');
 const DynamicBinding = require('../utils/DynamicBinding');
-const compiledComponents = require('../compiledComponents');
+const getCompiledComponents = require('../getCompiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
@@ -463,7 +463,7 @@ function transformTemplate(
         if (t.isJSXIdentifier(componentTagNode)) {
           const name = componentTagNode.name;
           // Handle rax-view
-          const replaceName = compiledComponents[name];
+          const replaceName = getCompiledComponents(adapter.platform)[name];
           if (replaceName) {
             replaceComponentTagName(path, t.jsxIdentifier(replaceName));
             const propsMap = adapter[replaceName];
@@ -480,7 +480,7 @@ function transformTemplate(
                 }
               }
             });
-            if (!hasClassName) {
+            if (!hasClassName && propsMap.className) {
               node.attributes.push(
                 t.jsxAttribute(
                   t.jsxIdentifier('class'),
@@ -599,12 +599,30 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
         isDirective,
       );
     }
-    if (computed && t.isIdentifier(property) && property.__listItem) { // others[index] => others[item.index]
-      propertyReplaceNode = transformIdentifier(
-        property,
-        dynamicBinding,
-        isDirective,
-      );
+    if (computed) { // others[index] => others[item.index]
+      switch (property.type) {
+        case 'Identifier':
+          propertyReplaceNode = transformIdentifier(
+            property,
+            dynamicBinding,
+            isDirective,
+          );
+          break;
+        case 'MemberExpression':
+          propertyReplaceNode = transformMemberExpression(
+            property,
+            dynamicBinding,
+            isDirective,
+          );
+          break;
+        default:
+          const name = dynamicBinding.add({
+            expression: property,
+            isDirective,
+          });
+          propertyReplaceNode = t.identifier(name);
+          break;
+      }
       propertyReplaceNode.__transformed = true;
     }
   }

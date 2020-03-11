@@ -134,6 +134,66 @@ describe('Transform list', () => {
 </View>`);
   });
 
+  it('nested list with temp variable in first list', () => {
+    const code = `
+<View
+  className="header"
+  onClick={() => {
+    setWorkYear(workYear + 1);
+  }}
+>
+  <View style={{ color: 'red' }}>workYear: {workYear}</View>
+  <View style={{ color: 'red' }}>count: {count}</View>
+  {arr.map(l1 => {
+    const a = l1 || [];
+    return (
+      <View>
+        {a.map(l2 => {
+          return <View>{l2}</View>;
+        })}
+      </View>
+    );
+  })}
+  <Loading count={count} />
+  {props.children}
+</View>`;
+    const ast = parseExpression(code);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
+    const index1 = 'index' + count++;
+    const index2 = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View className="header" onClick={() => {
+  setWorkYear(workYear + 1);
+}}>
+  <View style={{
+    color: 'red'
+  }}>workYear: {workYear}</View>
+  <View style={{
+    color: 'red'
+  }}>count: {count}</View>
+  <block a:for={arr.map((l1, ${index1}) => {
+    const a = l1 || [];
+    return {
+      l1: l1,
+      ${index1}: ${index1},
+      a: a.map((l2, ${index2}) => {
+        return {
+          l2: l2,
+          ${index2}: ${index2}
+        };
+      })
+    };
+  })} a:for-item="l1" a:for-index="${index1}"><View>
+        <block a:for={a} a:for-item="l2" a:for-index="${index2}"><View>{{
+            l2.l2
+          }}</View></block>
+      </View></block>
+  <Loading count={count} />
+  {props.children}
+</View>`);
+  });
+
   it('list default params', () => {
     const code = `<View>{[1,2,3].map(() => {
       return <Text>test</Text>;
