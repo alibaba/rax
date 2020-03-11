@@ -73,11 +73,10 @@ function getComponentCycles(Klass) {
   return getNativeComponentLifecycle({
     mount: function() {
       const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, Klass.__highestLevelProps);
-      this.instance = new Klass(props);
+      this.instance = new Klass(props, this);
       this.instance.__highestLevelProps = Klass.__highestLevelProps;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      this.instance._internal = this;
       Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
@@ -168,8 +167,8 @@ function createProxyMethods(events) {
 
 function createAnonymousClass(render) {
   const Klass = class extends Component {
-    constructor(props) {
-      super(props);
+    constructor(props, _internal) {
+      super(props, _internal, true);
       this.__compares = render.__compares;
       // Handle functional component shouldUpdateComponent
       if (!this.shouldComponentUpdate && this.__compares) {
@@ -308,12 +307,10 @@ function toleranceEventTimeStamp(timeStamp) {
 
 function generateBaseOptions(internal, defaultProps, ...restProps) {
   const tagId = getId('tag', internal);
-  const parentId = getId('parent', internal);
   const instanceId = tagId;
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
     __tagId: tagId,
-    __parentId: parentId
   }, getComponentProps(instanceId), ...restProps);
   return {
     instanceId,

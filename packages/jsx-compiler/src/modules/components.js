@@ -10,7 +10,6 @@ const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const Expression = require('../utils/Expression');
 const getCompiledComponents = require('../getCompiledComponents');
-const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 
@@ -36,6 +35,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   const aliasName = alias.name.replace(/@|\//g, '_');
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
+  node.name.isCustom = true;
 
   if (!getCompiledComponents(options.adapter.platform)[componentTag]) {
     // <tag __tagId="tagId" />
@@ -69,14 +69,6 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
         }
       }
 
-      if (baseComponents.indexOf(componentTag) < 0) {
-        node.attributes.push(
-          t.jsxAttribute(
-            t.jsxIdentifier('__parentId'),
-            t.stringLiteral('{{__tagId}}')
-          )
-        );
-      }
       tagId = '{{__tagId}}-' + tagId;
     } else {
       tagId = createBinding(

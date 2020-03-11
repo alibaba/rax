@@ -443,7 +443,7 @@ function transformTemplate(
   traverse(ast, {
     JSXAttribute(path) {
       const attrName = path.node.name.name;
-      if (['__parentId', '__tagId'].indexOf(attrName) > -1) {
+      if (['__tagId'].indexOf(attrName) > -1) {
         return;
       }
       const originalAttrValue = path.node.value;

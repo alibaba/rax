@@ -3,8 +3,8 @@
  * Base Component class definition.
  */
 import Host from './host';
-import {updateChildProps, removeComponentProps, getComponentProps, setComponentProps} from './updater';
-import {enqueueRender} from './enqueueRender';
+import { updateChildProps, removeComponentProps, setComponentProps } from './updater';
+import { enqueueRender } from './enqueueRender';
 import {
   RENDER,
   ON_SHOW,
@@ -16,27 +16,31 @@ import {
   COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
 import { cycles as pageCycles } from './page';
-import getId from './getId';
 import shallowEqual, { is } from './shallowEqual';
 import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
+import apiCore from './adapter/getNativeAPI';
+import setComponentRef from './adapter/setComponentRef';
 
 export default class Component {
-  constructor(props) {
+  constructor(props, _internal, isFunctionComponent) {
     this.state = {};
     this.props = props;
     this.refs = {};
 
+    this._internal = _internal;
     this.__dependencies = {}; // for context
 
     this.__mounted = false;
     this.__shouldUpdate = false;
     this._methods = {};
     this._hooks = {};
-    this.hooks = []; // ??
+    this.hooks = [];
     this._hookID = 0;
 
     this._pendingStates = [];
     this._pendingCallbacks = [];
+
+    setComponentRef(this, props.bindComRef || props.ref, isFunctionComponent);
   }
 
   // Bind to this instance.
@@ -99,18 +103,24 @@ export default class Component {
   }
 
   _registerRefs(refs) {
-    refs.forEach(({name, method}) => {
-      if (!method) {
-        const target = {
-          current: null
-        };
-        this._internal[name] = ref => {
-          target.current = ref;
-        };
-        this.refs[name] = target;
-      } else {
+    refs.forEach(({name, method, type, id}) => {
+      if (type === 'component') {
         this._internal[name] = method;
-        this.refs[name] = method;
+        if (this._internal.selectComponent) {
+          const instance = this._internal.selectComponent(`#${id}`);
+          this.refs[name] = {
+            current: instance
+          };
+          method(instance);
+        } else {
+          this.refs[name] = method;
+        }
+      } else {
+        const instance = apiCore.createSelectorQuery().select(`#${id}`);
+        this.refs[name] = {
+          current: instance
+        };
+        method(instance);
       }
     });
   }
@@ -288,23 +298,6 @@ export default class Component {
     }
   }
 
-  /**
-   * Internal means page/component instance of miniapp.
-   * @param internal
-   * @private
-   */
-  _setInternal(internal) {
-    this._internal = internal;
-    const parentId = getId('parent', internal);
-    const tagId = getId('tag', internal);
-    this.instanceId = `${parentId}-${tagId}`;
-    this.props = Object.assign({}, internal[PROPS], {
-      __tagId: tagId,
-      __parentId: parentId
-    }, getComponentProps(this.instanceId));
-    if (!this.state) this.state = {};
-    Object.assign(this.state, internal.data);
-  }
   /**
    * Internal set data method
    * @param data {Object}
