@@ -102,6 +102,19 @@ function isRpx(str) {
 // Cache the convert fn.
 const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
 
+/**
+ * camelcased CSS property name, for example:
+ * 'backgroundColor'< "background-color"
+ * 'webkitTransition' < "-webkit-transition"
+ */
+const camelcaseStyleName = cached(name => {
+  return name
+    .replace(/^-/, '')
+    .replace(/-([a-z])/gi, function(s, g) {
+      return g.toUpperCase();
+    });
+});
+
 const isDimensionalProp = cached(prop => !NON_DIMENSIONAL_REG.test(prop));
 const isEventProp = cached(prop => EVENT_PREFIX_REG.test(prop));
 
@@ -266,19 +279,6 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
   }
 
   return node;
-}
-
-/**
- * camelcased CSS property name, for example:
- * 'backgroundColor'< "background-color"
- * 'webkitTransition' < "-webkit-transition"
- */
-function camelcaseStyleName(name) {
-  return name
-    .replace(/^-/, '')
-    .replace(/-([a-z])/gi, function(s, g) {
-      return g.toUpperCase();
-    });
 }
 
 export function appendChild(node, parent) {
