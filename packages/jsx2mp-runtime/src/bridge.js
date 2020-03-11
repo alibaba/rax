@@ -111,26 +111,28 @@ function createProxyMethods(events) {
         // `this` point to page/component instance.
         const event = args[0];
 
-        // set stopPropagation method
-        event.stopPropagation = () => {
-          eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
-            detail: event.detail,
-            type: event.type
+        if (!isQuickApp) {
+          // set stopPropagation method
+          event.stopPropagation = () => {
+            eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
+              detail: event.detail,
+              type: event.type
+            };
           };
-        };
 
-        const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
-        // If prevEvent exists, and event type & event detail are the same, stop event triggle
-        if (prevEvent && prevEvent.type === event.type) {
-          let isSame = true;
-          for (let key in prevEvent.detail) {
-            if (prevEvent.detail[key] !== event.detail[key]) {
-              isSame = false;
-              break;
+          const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
+          // If prevEvent exists, and event type & event detail are the same, stop event triggle
+          if (prevEvent && prevEvent.type === event.type) {
+            let isSame = true;
+            for (let key in prevEvent.detail) {
+              if (prevEvent.detail[key] !== event.detail[key]) {
+                isSame = false;
+                break;
+              }
             }
-          }
-          if (isSame) {
-            return;
+            if (isSame) {
+              return;
+            }
           }
         }
 
