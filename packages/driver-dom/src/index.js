@@ -103,11 +103,11 @@ function isRpx(str) {
 const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
 
 /**
- * camelcased CSS property name, for example:
- * 'backgroundColor'< "background-color"
- * 'webkitTransition' < "-webkit-transition"
+ * Camelize CSS property, for example:
+ * background-color -> backgroundColor
+ * -webkit-transition -> webkitTransition
  */
-const camelcaseStyleName = cached(name => {
+const camelizeStyleName = cached(name => {
   return name
     .replace(/^-/, '')
     .replace(/-([a-z])/gi, function(s, g) {
@@ -242,9 +242,9 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
             for (let i = 0, l = hydrationChild.style.length; 0 < l; l--) {
               // Prop name get from node style is hyphenated, eg: background-color
               let stylePropName = hydrationChild.style[l - 1];
-              let camelcasedStyleName = camelcaseStyleName(stylePropName);
-              if (propValue[camelcasedStyleName] != null) {
-                hydrationChild.style[camelcasedStyleName] = EMPTY;
+              let camelizedStyleName = camelizeStyleName(stylePropName);
+              if (propValue[camelizedStyleName] != null) {
+                hydrationChild.style[camelizedStyleName] = EMPTY;
               }
             }
           }
