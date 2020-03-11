@@ -1,7 +1,6 @@
 *~
 *.swp
 .DS_Store
-.history
 npm-debug.log
 lerna-debug.log
 npm-debug.log*
