@@ -7,17 +7,17 @@ import { useEffect } from './hooks';
 import { getMiniAppHistory } from './history';
 import { getPageInstanceById } from './pageInstanceMap';
 
-const history = getMiniAppHistory();
-
 export const cycles = {};
 
 export function usePageEffect(cycle, callback) {
+  const history = getMiniAppHistory();
+
   if (isFunction(callback)) {
     switch (cycle) {
       case ON_SHOW:
       case ON_HIDE:
-        const pageId = history && history.location._pageId;
         useEffect(() => {
+          const pageId = history && history.location._pageId;
           if (!cycles[pageId]) {
             cycles[pageId] = {};
           }
