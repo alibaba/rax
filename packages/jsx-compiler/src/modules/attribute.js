@@ -4,6 +4,7 @@ const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
 const getCompiledComponents = require('../getCompiledComponents');
 const DynamicBinding = require('../utils/DynamicBinding');
+const generateId = require('../utils/generateId');
 
 function transformAttribute(ast, code, adapter) {
   const refs = [];
@@ -45,31 +46,45 @@ function transformAttribute(ast, code, adapter) {
           }
           break;
         case 'ref':
-          switch (node.value.type) {
-            case 'JSXExpressionContainer':
-              const childExpression = node.value.expression;
-              // For this.xxx = createRef();
-              if (t.isMemberExpression(childExpression)
+          if (t.isJSXExpressionContainer(node.value) && !t.isStringLiteral(node.value.expression)) {
+            const childExpression = node.value.expression;
+            // For this.xxx = createRef();
+            if (t.isMemberExpression(childExpression)
                 && t.isThisExpression(childExpression.object)) {
-                node.value = t.stringLiteral(dynamicRef.add({
-                  expression: childExpression
-                }));
+              node.value = t.stringLiteral(dynamicRef.add({
+                expression: childExpression
+              }));
+            } else {
+              node.value = t.stringLiteral(genExpression(childExpression));
+            }
+            const refInfo = {
+              name: node.value,
+              method: childExpression
+            };
+            const attributes = path.parent.attributes;
+            const componentNameNode = path.parent.name;
+            if (t.isJSXIdentifier(componentNameNode)) {
+              if (componentNameNode.isCustom && !isNativeComponent(path, adapter.platform)) {
+                refInfo.type = t.stringLiteral('component');
+                insertBindComRef(attributes, childExpression, node.value, adapter.triggerRef);
               } else {
-                node.value = t.stringLiteral(genExpression(childExpression));
+                refInfo.type = t.stringLiteral('native');
               }
-              refs.push({
-                name: node.value,
-                method: childExpression
-              });
-              break;
-            case 'StringLiteral':
-              refs.push({
-                name: node.value,
-                method: node.value
-              });
-              break;
-            default:
-              throw new CodeError(code, node, path.loc, "Ref's type must be string or jsxExpressionContainer");
+            } else {
+              refInfo.type = t.stringLiteral('component');
+              insertBindComRef(attributes, childExpression, node.value, adapter.triggerRef);
+            }
+            // Get all attributes
+            let idAttr = attributes.find(attr => t.isJSXIdentifier(attr.name, { name: 'id' }));
+            if (!idAttr) {
+              // Insert progressive increase id
+              idAttr = t.jsxAttribute(t.jsxIdentifier('id'), t.stringLiteral(generateId()));
+              attributes.push(idAttr);
+            }
+            refInfo.id = idAttr.value;
+            refs.push(refInfo);
+          } else {
+            throw new CodeError(code, node, path.loc, "Ref's type must be JSXExpressionContainer, like <View ref = { scrollRef }/>");
           }
           break;
         default:
@@ -88,6 +103,19 @@ function isNativeComponent(path, platform) {
     node: { name: tagName }
   } = path.parentPath.get('name');
   return !!getCompiledComponents(platform)[tagName];
+}
+
+function insertBindComRef(attributes, childExpression, ref, triggerRef) {
+  // Inset setCompRef
+  // <Child bindComRef={fn} /> in MiniApp
+  // <Child bindComRef="scrollRef" /> in WechatMiniProgram
+  attributes.push(
+    t.jsxAttribute(t.jsxIdentifier('bindComRef'),
+      triggerRef ? ref :
+        t.jsxExpressionContainer(
+          childExpression
+        ))
+  );
 }
 
 module.exports = {

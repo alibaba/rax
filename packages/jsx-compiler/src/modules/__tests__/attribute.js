@@ -22,7 +22,7 @@ describe('Transform JSX Attribute', () => {
     const code = '<View ref={scrollViewRef}>test</View>';
     const ast = parseExpression(code);
     const { refs } = _transformAttribute(ast, code, adapter);
-    expect(genCode(ast).code).toEqual('<View ref="scrollViewRef">test</View>');
+    expect(genCode(ast).code).toEqual('<View ref="scrollViewRef" id="id_0">test</View>');
     expect(refs[0].name).toEqual({'type': 'StringLiteral', 'value': 'scrollViewRef'});
     expect(refs[0].method.name).toEqual('scrollViewRef');
   });

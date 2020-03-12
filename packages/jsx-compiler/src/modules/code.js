@@ -539,33 +539,13 @@ function addRegisterRefs(refs, renderFunctionPath) {
    *  }
    * ])
    * */
-  const scopedRefs = [];
-  const stringRefs = [];
-  refs.map(ref => {
-    if (t.isStringLiteral(ref.method)) {
-      // Exclude expressions that have already been processed
-      if (!BINDING_REG.test(ref.method.value)) {
-        stringRefs.push(ref);
-      }
-    } else if (t.isIdentifier(ref.method) && !renderFunctionPath.scope.hasBinding(ref.name.value)) {
-      stringRefs.push(ref);
-    } else {
-      // For this.xxx or difficult expression
-      scopedRefs.push(ref);
-    }
-  });
-  if (scopedRefs.length > 0) {
+  if (refs.length > 0) {
     fnBody.push(t.expressionStatement(t.callExpression(registerRefsMethods, [
-      t.arrayExpression(scopedRefs.map(ref => {
+      t.arrayExpression(refs.map(ref => {
         return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.name),
-          t.objectProperty(t.stringLiteral('method'), ref.method )]);
-      }))
-    ])));
-  }
-  if (stringRefs.length > 0) {
-    fnBody.unshift(t.expressionStatement(t.callExpression(registerRefsMethods, [
-      t.arrayExpression(stringRefs.map(ref => {
-        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.method)]);
+          t.objectProperty(t.stringLiteral('method'), ref.method ),
+          t.objectProperty(t.stringLiteral('type'), ref.type ),
+          t.objectProperty(t.stringLiteral('id'), ref.id )]);
       }))
     ])));
   }
