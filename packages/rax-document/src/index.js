@@ -10,6 +10,24 @@ function Root(props, context) {
   return <div id="root" />;
 }
 
+function Manifest(props, context) {
+  const { __manifests, __pagePath } = context;
+
+  if (Array.isArray(__manifests)) {
+    const manifest = __manifests.find((item) => {
+      return item.path === __pagePath;
+    });
+
+    if (manifest && manifest.data) {
+      return (
+        <meta name="manifest" content={JSON.stringify(manifest.data)} />
+      );
+    }
+  }
+
+  return null;
+}
+
 function Data(props, context) {
   const { __initialData } = context;
 
@@ -61,5 +79,6 @@ export {
   Data,
   Style,
   Script,
-  App
+  App,
+  Manifest
 };
