@@ -104,16 +104,13 @@ const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
 
 /**
  * Camelize CSS property.
- * Vendor prefixes other than ms should begin with a capital letter.
- * https://www.andismith.com/blogs/2012/02/modernizr-prefixed/
+ * Vendor prefixes should begin with a capital letter.
  * For example:
  * background-color -> backgroundColor
  * -webkit-transition -> webkitTransition
- * -ms-transition -> msTransition
  */
 const camelizeStyleName = cached(name => {
   return name
-    .replace(/^-ms-/, 'ms')
     .replace(/-([a-z])/gi, function(s, g) {
       return g.toUpperCase();
     });
