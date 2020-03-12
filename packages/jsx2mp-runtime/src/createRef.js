@@ -6,9 +6,9 @@ export default function(initialValue) {
   const ref = {
     current: initialValue
   };
-  const refFn = (instance) => {
+  const refFn = (instance, canOverride) => {
     // Instance maybe component instance or triggered event object
-    if (!created || instance.detail) {
+    if (!created || canOverride) {
       if (isMiniApp) {
         ref.current = instance;
       } else if (isWeChatMiniProgram) {

@@ -111,7 +111,7 @@ export default class Component {
           this.refs[name] = {
             current: instance
           };
-          method(instance);
+          method(instance, true);
         } else {
           this.refs[name] = method;
         }

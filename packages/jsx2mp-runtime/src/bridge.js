@@ -306,11 +306,10 @@ function toleranceEventTimeStamp(timeStamp) {
 }
 
 function generateBaseOptions(internal, defaultProps, ...restProps) {
-  const tagId = getId('tag', internal);
-  const instanceId = tagId;
+  const instanceId = getId('tag', internal);
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
-    __tagId: tagId,
+    __tagId: instanceId,
   }, getComponentProps(instanceId), ...restProps);
   return {
     instanceId,
