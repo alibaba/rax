@@ -18,11 +18,9 @@ describe('Transform list', () => {
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
     return {
       val: val,
-      ${index}: ${index},
-      _d0: val,
-      _d1: ${index}
+      ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val._d0}}" data-key="{{val._d1}}" /></block></View>`);
+  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val.val}}" data-key="{{val.${index}}}" /></block></View>`);
   });
 
   it('transform array.map in JSXContainer', () => {
@@ -39,11 +37,9 @@ describe('Transform list', () => {
     expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
     return {
       val: val,
-      ${index}: ${index},
-      _d0: val,
-      _d1: ${index}
+      ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val._d0}}" data-key="{{val._d1}}" /></block></View>`);
+  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val.val}}" data-key="{{val.${index}}}" /></block></View>`);
   });
 
   it('bind list variable', () => {
@@ -59,12 +55,14 @@ describe('Transform list', () => {
     return {
       item: item,
       ${index}: ${index},
-      _d0: {
+      _d0: item.title,
+      _d1: {
         uri: item.picUrl
-      },
-      _d1: resizeMode
+      }
     };
-  })} a:for-item="item" a:for-index="${index}"><View>{item.title}<image source="{{item._d0}}" resizeMode="{{item._d1}}" /></View></block></View>`);
+  })} a:for-item="item" a:for-index="${index}"><View>{{
+        item._d0
+      }}<image source="{{item._d1}}" resizeMode={resizeMode} /></View></block></View>`);
   });
 
   it('list elements', () => {
@@ -76,7 +74,7 @@ describe('Transform list', () => {
       templateAST: ast
     }, code, adapter);
     const index = 'index' + count++;
-    expect(genCode(ast, { concise: true }).code).toEqual(`<View><block a:for={[1, 2, 3].map((val, ${index}) => { return { val: val, ${index}: ${index} }; })} a:for-item="val" a:for-index="${index}"><Text>{${index}}</Text></block></View>`);
+    expect(genCode(ast, { concise: true }).code).toEqual(`<View><block a:for={[1, 2, 3].map((val, ${index}) => { return { val: val, ${index}: ${index} }; })} a:for-item="val" a:for-index="${index}"><Text>{{ val.${index} }}</Text></block></View>`);
   });
 
   it('nested list', () => {
@@ -107,11 +105,89 @@ describe('Transform list', () => {
     }, code, adapter);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
-    expect(genCode(ast, { concise: true }).code).toEqual(`<View className="header" onClick={() => { setWorkYear(workYear + 1); }}>
+    expect(genCode(ast).code).toEqual(`<View className="header" onClick={() => {
+  setWorkYear(workYear + 1);
+}}>
+  <View style={{
+    color: 'red'
+  }}>workYear: {workYear}</View>
+  <View style={{
+    color: 'red'
+  }}>count: {count}</View>
+  <block a:for={arr.map((l1, ${index1}) => {
+    return {
+      l1: l1.map((l2, ${index2}) => {
+        return {
+          l2: l2,
+          ${index2}: ${index2}
+        };
+      }),
+      ${index1}: ${index1}
+    };
+  })} a:for-item="l1" a:for-index="${index1}"><View>
+        <block a:for={l1} a:for-item="l2" a:for-index="${index2}"><View>{{
+            l2.l2
+          }}</View></block>
+      </View></block>
+  <Loading count={count} />
+  {props.children}
+</View>`);
+  });
+
+  it('nested list with temp variable in first list', () => {
+    const code = `
+<View
+  className="header"
+  onClick={() => {
+    setWorkYear(workYear + 1);
+  }}
+>
   <View style={{ color: 'red' }}>workYear: {workYear}</View>
   <View style={{ color: 'red' }}>count: {count}</View>
-  <block a:for={arr.map((l1, ${index1}) => { return { l1: l1.map((l2, ${index2}) => { return { l2: l2, ${index2}: ${index2} }; }), ${index1}: ${index1} }; })} a:for-item="l1" a:for-index="${index1}"><View>
-        <block a:for={l1} a:for-item="l2" a:for-index="${index2}"><View>{l2}</View></block>
+  {arr.map(l1 => {
+    const a = l1 || [];
+    return (
+      <View>
+        {a.map(l2 => {
+          return <View>{l2}</View>;
+        })}
+      </View>
+    );
+  })}
+  <Loading count={count} />
+  {props.children}
+</View>`;
+    const ast = parseExpression(code);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
+    const index1 = 'index' + count++;
+    const index2 = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View className="header" onClick={() => {
+  setWorkYear(workYear + 1);
+}}>
+  <View style={{
+    color: 'red'
+  }}>workYear: {workYear}</View>
+  <View style={{
+    color: 'red'
+  }}>count: {count}</View>
+  <block a:for={arr.map((l1, ${index1}) => {
+    const a = l1 || [];
+    return {
+      l1: l1,
+      ${index1}: ${index1},
+      a: a.map((l2, ${index2}) => {
+        return {
+          l2: l2,
+          ${index2}: ${index2}
+        };
+      })
+    };
+  })} a:for-item="l1" a:for-index="${index1}"><View>
+        <block a:for={a} a:for-item="l2" a:for-index="${index2}"><View>{{
+            l2.l2
+          }}</View></block>
       </View></block>
   <Loading count={count} />
   {props.children}
@@ -194,7 +270,9 @@ describe('Transform list', () => {
       ${index1}: ${index1}
     };
   })} a:for-item="item" a:for-index="${index1}"><View>
-          <block a:for={item} a:for-item="it" a:for-index="${index2}"><Text style="{{it._s0}}">{it}</Text></block>
+          <block a:for={item} a:for-item="it" a:for-index="${index2}"><Text style="{{it._s0}}">{{
+            it.it
+          }}</Text></block>
         </View></block>
   </View>`);
   });
@@ -212,5 +290,49 @@ describe('Transform list', () => {
       ${index}: ${index}
     };
   })} a:for-item="item" a:for-index="${index}"><Text>test</Text></block></View>`);
+  });
+
+  it('use expression in map fn', () => {
+    const code = `<View>{[1,2,3].map((item, index) => {
+      const a = index * 2 + 10;
+      return <Text>{a}</Text>;
+    })}</View>`;
+    const ast = parseExpression(code);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={[1, 2, 3].map((item, ${index}) => {
+    const a = ${index} * 2 + 10;
+    return {
+      item: item,
+      ${index}: ${index},
+      _d0: a
+    };
+  })} a:for-item="item" a:for-index="${index}"><Text>{{
+        item._d0
+      }}</Text></block></View>`);
+  });
+
+  it('use format function in loop', () => {
+    const code = `
+    <View>{arr.map((val, idx) => {
+      return <View data-value={val} data-key={idx}>{format(idx)}</View>
+    })}</View>
+  `;
+    const ast = parseExpression(code);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block a:for={arr.map((val, ${index}) => {
+    return {
+      val: val,
+      ${index}: ${index},
+      _d0: format(${index})
+    };
+  })} a:for-item="val" a:for-index="${index}"><View data-value="{{val.val}}" data-key="{{val.${index}}}">{{
+        val._d0
+      }}</View></block></View>`);
   });
 });

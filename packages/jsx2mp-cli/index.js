@@ -122,7 +122,7 @@ function watch(options = {}) {
     if (needUpdate) {
       console.log(chalk.black.bgYellow.bold('Update for miniapp related packages available, please reinstall dependencies.'));
     }
-    console.log('\nWatching file changes...');
+    console.log('Watching for changes...');
   });
 }
 

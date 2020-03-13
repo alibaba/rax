@@ -1,5 +1,6 @@
 const { sep, join, dirname } = require('path');
 const { existsSync, statSync, readFileSync } = require('fs-extra');
+const { normalizeLocalFilePath } = require('../utils/pathHelper');
 
 function startsWith(prevString, nextString) {
   return prevString.indexOf(nextString) === 0;
@@ -87,11 +88,13 @@ function loadNpmModules(module, start, extension) {
  */
 function moduleResolve(script, dependency, extension = '.js') {
   let target;
-  if (startsWithArr(dependency, ['./', '../', '/', '.\\', '..\\', '\\'])) {
-    let dependencyPath = join(dirname(script), dependency);
+  const normalizedScript = normalizeLocalFilePath(script);
+  const normalizedDependency = normalizeLocalFilePath(dependency);
+  if (startsWithArr(normalizedDependency, [sep, `.${sep}`, `..${sep}`])) {
+    let dependencyPath = join(dirname(normalizedScript), normalizedDependency);
     target = loadAsFile(dependencyPath, extension) || loadAsDirectory(dependencyPath, extension);
   } else {
-    target = loadNpmModules(dependency, dirname(script), extension);
+    target = loadNpmModules(normalizedDependency, dirname(normalizedScript), extension);
   }
   return target;
 };

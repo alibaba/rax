@@ -15,10 +15,11 @@ export default function() {
     return {
       properties: {
         __tagId: null,
-        __parentId: null,
+        ref: null
       },
       options: {
         addGlobalClass: true,
+        multipleSlots: true
       }
     };
   }

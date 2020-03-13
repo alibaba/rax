@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-runtime",
-  "version": "0.3.23",
+  "version": "0.4.1",
   "description": "Runtime for jsx2mp.",
   "miniprogram": {
     "ali": "dist/jsx2mp-runtime.ali.esm.js",
@@ -22,6 +22,7 @@
     "cross-env": "^5.2.0",
     "rollup": "^1.13.1",
     "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-cleanup": "^3.1.1",
     "rollup-plugin-filesize": "^6.1.0",
     "rollup-plugin-replace": "^2.2.0",
     "universal-env": "^3.0.0"

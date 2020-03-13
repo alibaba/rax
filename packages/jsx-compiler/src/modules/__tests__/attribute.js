@@ -6,7 +6,7 @@ const wxAdapter = require('../../adapter').wechat;
 const genCode = require('../../codegen/genCode');
 
 describe('Transform JSX Attribute', () => {
-  it('should transform attribute name is key', () => {
+  it('should transform alibaba miniapp attribute name is key', () => {
     const code = '<View key={1}>test</View>';
     const ast = parseExpression(code);
     _transformAttribute(ast, code, adapter);
@@ -22,7 +22,7 @@ describe('Transform JSX Attribute', () => {
     const code = '<View ref={scrollViewRef}>test</View>';
     const ast = parseExpression(code);
     const { refs } = _transformAttribute(ast, code, adapter);
-    expect(genCode(ast).code).toEqual('<View ref="scrollViewRef">test</View>');
+    expect(genCode(ast).code).toEqual('<View ref="scrollViewRef" id="id_0">test</View>');
     expect(refs[0].name).toEqual({'type': 'StringLiteral', 'value': 'scrollViewRef'});
     expect(refs[0].method.name).toEqual('scrollViewRef');
   });

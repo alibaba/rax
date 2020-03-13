@@ -8,7 +8,7 @@ export function setPageInstance(pageInstance) {
 }
 
 
-export function getPageInstance(pageId) {
+export function getPageInstanceById(pageId) {
   if (pageInstanceMap.hasOwnProperty(pageId)) {
     return pageInstanceMap[pageId];
   }
