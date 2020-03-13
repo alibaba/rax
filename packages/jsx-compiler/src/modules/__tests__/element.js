@@ -39,7 +39,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
       const code = genInlineCode(ast).code;
       expect(code).toEqual('<View foo="{{_d0}}">{{ _d0 }}</View>');
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: bar }');
@@ -62,7 +62,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
 
       expect(genInlineCode(ast).code).toEqual('<View bool="{{true}}" str=\'string\' num="{{8}}" nil="{{null}}" regexp="{{_d0}}" tpl="hello world {{_d1}}">string8{{ _d0 }}</View>');
 
@@ -101,7 +101,7 @@ describe('Transform JSXElement', () => {
       const { dynamicEvents } = _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
 
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo, _d3: fn(), _d4: foo.method(), _d5: a, _d6: a() ? 1 : 2, _d7: ~a, _d8: b, _d9: c, _d10: new Foo(), _d11: delete foo.bar, _d12: typeof aaa, _d13: { ...{ a: 1 } } }');
 
@@ -127,7 +127,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<View>{{ _d0.b.c }}</View>');
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: a }');
     });
@@ -139,7 +139,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<View>{{ _d0 ? _d0.b[_d1.d] : 1 }}</View>');
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: a, _d1: c }');
     });
@@ -157,7 +157,7 @@ describe('Transform JSXElement', () => {
        */
       const { dynamicEvents } = _transform({
         templateAST: ast,
-      });
+      }, adapter);
       expect(genDynamicEvents(dynamicEvents)).toEqual('{ _e0: this.handleClick }');
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
     });
@@ -170,7 +170,7 @@ describe('Transform JSXElement', () => {
       `);
       const { dynamicEvents } = _transform({
         templateAST: ast
-      });
+      }, adapter);
 
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" />');
       expect(genDynamicEvents(dynamicEvents)).toEqual('{ _e0: props.onClick }');
@@ -185,7 +185,7 @@ describe('Transform JSXElement', () => {
       `);
       const { dynamicEvents } = _transform({
         templateAST: ast
-      });
+      }, adapter);
 
       expect(genInlineCode(ast).code).toEqual('<View onClick="_e0" onKeyPress="_e1" data-e0-arg-context="this" data-e0-arg-0="{{ a: 1 }}" data-e1-arg-context="this" data-e1-arg-0="{{\'hello\'}}" />');
       expect(genDynamicEvents(dynamicEvents)).toEqual('{ _e0: onClick, _e1: this.handleClick }');
@@ -205,7 +205,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
       expect(genDynamicValue(dynamicValue)).toEqual('{}');
     });
   });
@@ -217,7 +217,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      });
+      }, adapter);
       const code = genInlineCode(ast).code;
       expect(code).toEqual('<View>{{ _d0 }}</View>');
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: foo }');
@@ -231,7 +231,6 @@ describe('Transform JSXElement', () => {
           {/a-z/}
           {{ a: 1 }}
           {[0, 1, 2]}
-          {null}
         </View>
       `;
       const ast = parseExpression(sourceCode);
@@ -239,7 +238,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
 
       expect(genInlineCode(ast).code).toEqual(`<View>
           string
@@ -247,7 +246,6 @@ describe('Transform JSXElement', () => {
           {{ _d0 }}
           {{ _d1 }}
           {{ _d2 }}
-          
         </View>`);
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: /a-z/, _d1: { a: 1 }, _d2: [0, 1, 2] }');
     });
@@ -278,7 +276,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, null, sourceCode);
+      }, adapter, sourceCode);
 
       expect(genInlineCode(ast).code).toEqual(`<View>
         {{ _d0 }}
@@ -311,7 +309,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, adapter, sourceCode);
+      }, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Text style="{{_d0.name}}">{{ _d1 && _d1.itemTitle ? _d1.itemTitle : \'\' }}</Text>');
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: styles, _d1: data }');
     });
@@ -323,7 +321,7 @@ describe('Transform JSXElement', () => {
       _transform({
         templateAST: ast,
         dynamicValue
-      }, null, adapter, sourceCode);
+      }, adapter, sourceCode);
       expect(genInlineCode(ast).code).toEqual('<Image style="{{_d0}}" source="{{ uri: _d1 }}"></Image>');
       expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: { ...styles.avator, ...styles[`${rank}Avator`] }, _d1: avator }');
     });

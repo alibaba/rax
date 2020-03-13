@@ -16,6 +16,12 @@ let _appConfig;
 let _pageProps = {};
 
 /**
+ * Record events
+ * timestamp -> { detail, type }
+ */
+const eventsMap = {};
+
+/**
  * Reference relationship.
  * page/component instance          Rax instance
  *    instance    -------------->      *self
@@ -34,7 +40,6 @@ function getPageCycles(Klass) {
         location: history.location
       }, _pageProps);
       this.instance = new Klass(props);
-      this.instance.defaultProps = Klass.defaultProps;
       // Reverse sync from state to data.
       this.instance.instanceId = instanceId;
       setPageInstance(this.instance);
@@ -67,12 +72,11 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getNativeComponentLifecycle({
     mount: function() {
-      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps);
-      this.instance = new Klass(props);
-      this.instance.defaultProps = Klass.defaultProps;
+      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, Klass.__highestLevelProps);
+      this.instance = new Klass(props, this);
+      this.instance.__highestLevelProps = Klass.__highestLevelProps;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      this.instance._internal = this;
       Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
@@ -96,6 +100,30 @@ function createProxyMethods(events) {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
         const event = args[0];
+
+        // set stopPropagation method
+        event.stopPropagation = () => {
+          eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
+            detail: event.detail,
+            type: event.type
+          };
+        };
+
+        const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
+        // If prevEvent exists, and event type & event detail are the same, stop event triggle
+        if (prevEvent && prevEvent.type === event.type) {
+          let isSame = true;
+          for (let key in prevEvent.detail) {
+            if (prevEvent.detail[key] !== event.detail[key]) {
+              isSame = false;
+              break;
+            }
+          }
+          if (isSame) {
+            return;
+          }
+        }
+
         let context = this.instance; // Context default to Rax component instance.
 
         const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
@@ -138,11 +166,35 @@ function createProxyMethods(events) {
 }
 
 function createAnonymousClass(render) {
-  return class extends Component {
+  const Klass = class extends Component {
+    constructor(props, _internal) {
+      super(props, _internal, true);
+      this.__compares = render.__compares;
+      // Handle functional component shouldUpdateComponent
+      if (!this.shouldComponentUpdate && this.__compares) {
+        const compares = this.__compares;
+        this.shouldComponentUpdate = nextProps => {
+          // Process composed compare
+          let arePropsEqual = true;
+
+          // Compare push in and pop out
+          for (let i = compares.length - 1; i > -1; i--) {
+            if (arePropsEqual = compares[i](this.props, nextProps)) {
+              break;
+            }
+          }
+
+          return !arePropsEqual;
+        };
+      }
+    }
     render(props) {
       return render.call(this, props);
     }
   };
+  // Transfer __highestLevelProps
+  Klass.__highestLevelProps = render.__highestLevelProps;
+  return Klass;
 }
 
 /**
@@ -229,7 +281,7 @@ export function createComponent(definition, options = {}) {
 }
 
 function isClassComponent(Klass) {
-  return Klass.prototype.__proto__ === Component.prototype;
+  return Klass.prototype instanceof Component;
 }
 
 const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;
@@ -248,14 +300,16 @@ function formatEventName(name) {
   return name.replace('_', '');
 }
 
+// throttle 50ms
+function toleranceEventTimeStamp(timeStamp) {
+  return Math.floor(timeStamp / 10) - 5;
+}
+
 function generateBaseOptions(internal, defaultProps, ...restProps) {
-  const tagId = getId('tag', internal);
-  const parentId = getId('parent', internal);
-  const instanceId = tagId;
+  const instanceId = getId('tag', internal);
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
-    __tagId: tagId,
-    __parentId: parentId
+    __tagId: instanceId,
   }, getComponentProps(instanceId), ...restProps);
   return {
     instanceId,

@@ -3,20 +3,12 @@
  * Base Component class definition.
  */
 import Host from './host';
-import {updateChildProps, removeComponentProps, getComponentProps, setComponentProps} from './updater';
-import {enqueueRender} from './enqueueRender';
-import isFunction from './isFunction';
-import sameValue from './sameValue';
+import { updateChildProps, removeComponentProps, setComponentProps } from './updater';
+import { enqueueRender } from './enqueueRender';
 import {
   RENDER,
   ON_SHOW,
   ON_HIDE,
-  ON_PAGE_SCROLL,
-  ON_REACH_BOTTOM,
-  ON_PULL_DOWN_REFRESH,
-  ON_SHARE_APP_MESSAGE,
-  ON_TAB_ITEM_TAP,
-  ON_TITLE_CLICK,
   COMPONENT_DID_MOUNT,
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
@@ -24,24 +16,31 @@ import {
   COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
 } from './cycles';
 import { cycles as pageCycles } from './page';
-import getId from './getId';
+import shallowEqual, { is } from './shallowEqual';
+import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
+import apiCore from './adapter/getNativeAPI';
+import setComponentRef from './adapter/setComponentRef';
 
 export default class Component {
-  constructor(props) {
+  constructor(props, _internal, isFunctionComponent) {
     this.state = {};
     this.props = props;
+    this.refs = {};
 
+    this._internal = _internal;
     this.__dependencies = {}; // for context
 
     this.__mounted = false;
     this.__shouldUpdate = false;
     this._methods = {};
     this._hooks = {};
-    this.hooks = []; // ??
+    this.hooks = [];
     this._hookID = 0;
 
     this._pendingStates = [];
     this._pendingCallbacks = [];
+
+    setComponentRef(this, props.bindComRef || props.ref, isFunctionComponent);
   }
 
   // Bind to this instance.
@@ -104,19 +103,24 @@ export default class Component {
   }
 
   _registerRefs(refs) {
-    this.refs = {};
-    refs.forEach(({name, method}) => {
-      if (!method) {
-        const target = {
-          current: null
-        };
-        this._internal[name] = ref => {
-          target.current = ref;
-        };
-        this.refs[name] = target;
-      } else {
+    refs.forEach(({name, method, type, id}) => {
+      if (type === 'component') {
         this._internal[name] = method;
-        this.refs[name] = method;
+        if (this._internal.selectComponent) {
+          const instance = this._internal.selectComponent(`#${id}`);
+          this.refs[name] = {
+            current: instance
+          };
+          method(instance, true);
+        } else {
+          this.refs[name] = method;
+        }
+      } else {
+        const instance = apiCore.createSelectorQuery().select(`#${id}`);
+        this.refs[name] = {
+          current: instance
+        };
+        method(instance);
       }
     });
   }
@@ -125,7 +129,7 @@ export default class Component {
     const state = Object.assign({}, this.state);
     let parialState;
     while (parialState = this._pendingStates.shift()) { // eslint-disable-line
-      if (parialState == null) continue; // eslint-disable-line
+      if (isNull(parialState)) continue; // eslint-disable-line
       if (isFunction(parialState)) {
         Object.assign(state, parialState.call(this, state, this.props));
       } else {
@@ -148,7 +152,7 @@ export default class Component {
       };
 
       const contextUpdater = (newContext) => {
-        if (!sameValue(newContext, contextItem.renderedContext)) {
+        if (!is(newContext, contextItem.renderedContext)) {
           this.__shouldUpdate = true;
           this._updateComponent();
         }
@@ -201,7 +205,7 @@ export default class Component {
     const nextProps = this.nextProps || this.props; // actually this is nextProps
     const prevProps = this.props = this.prevProps || this.props;
 
-    if (diffProps(prevProps, nextProps)) {
+    if (!shallowEqual(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
     }
 
@@ -245,6 +249,8 @@ export default class Component {
     this.hooks.forEach(hook => {
       if (isFunction(hook.destory)) hook.destory();
     });
+    // Clean up page cycle callbacks
+    this.__proto__.__nativeEventMap = {};
     this._internal.instance = null;
     this._internal = null;
     this.__mounted = false;
@@ -258,7 +264,6 @@ export default class Component {
    * @private
    */
   _trigger(cycle, ...args) {
-    let ret;
     const pageId = this.instanceId;
 
     switch (cycle) {
@@ -270,11 +275,6 @@ export default class Component {
       case COMPONENT_WILL_UNMOUNT:
       case ON_SHOW:
       case ON_HIDE:
-      case ON_PAGE_SCROLL:
-      case ON_REACH_BOTTOM:
-      case ON_TAB_ITEM_TAP:
-      case ON_TITLE_CLICK:
-      case ON_PULL_DOWN_REFRESH:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
           this._cycles[cycle].forEach(fn => fn(...args));
@@ -295,36 +295,9 @@ export default class Component {
 
         this.render(this.props = nextProps, this.state = nextState);
         break;
-
-      case ON_SHARE_APP_MESSAGE:
-        if (isFunction(this[cycle])) ret = this[cycle](...args);
-        if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
-          // There will be one callback fn for shareAppMessage at most
-          const fn = pageCycles[pageId][cycle][0];
-          ret = fn(...args);
-        }
-        break;
     }
-    return ret;
   }
 
-  /**
-   * Internal means page/component instance of miniapp.
-   * @param internal
-   * @private
-   */
-  _setInternal(internal) {
-    this._internal = internal;
-    const parentId = getId('parent', internal);
-    const tagId = getId('tag', internal);
-    this.instanceId = `${parentId}-${tagId}`;
-    this.props = Object.assign({}, internal[PROPS], {
-      __tagId: tagId,
-      __parentId: parentId
-    }, getComponentProps(this.instanceId));
-    if (!this.state) this.state = {};
-    Object.assign(this.state, internal.data);
-  }
   /**
    * Internal set data method
    * @param data {Object}
@@ -334,64 +307,69 @@ export default class Component {
     let $ready = false;
     // In alibaba miniapp can use $spliceData optimize long list
     if (this._internal.$spliceData) {
-      const useSpliceData = {};
-      const useSetData = {};
+      // Use $spliceData update
+      const arrayData = {};
+      // Use setData update
+      const normalData = {};
       for (let key in data) {
         if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          useSpliceData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
+          arrayData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
         } else {
           if (diffData(this.state[key], data[key])) {
-            if (Object.prototype.toString.call(data[key]) === '[object Object]') {
-              useSetData[key] = Object.assign({}, this.state[key], data[key]);
+            if (isPlainObject(data[key])) {
+              normalData[key] = Object.assign({}, this.state[key], data[key]);
             } else {
-              useSetData[key] = data[key];
+              normalData[key] = data[key];
             }
           }
         }
       }
-      if (!isEmptyObj(useSetData)) {
-        $ready = useSetData.$ready;
+      if (!isEmptyObj(normalData)) {
+        $ready = normalData.$ready;
         setDataTask.push(new Promise(resolve => {
-          this._internal.setData(useSetData, resolve);
+          this._internal.setData(normalData, resolve);
         }));
       }
-      if (!isEmptyObj(useSpliceData)) {
+      if (!isEmptyObj(arrayData)) {
         setDataTask.push(new Promise(resolve => {
-          this._internal.$spliceData(useSpliceData, resolve);
+          this._internal.$spliceData(arrayData, resolve);
         }));
       }
     } else {
-      setDataTask.push(new Promise(resolve => {
-        $ready = data.$ready;
-        this._internal.setData(data, resolve);
-      }));
+      const normalData = {};
+      for (let key in data) {
+        if (diffData(this.state[key], data[key])) {
+          normalData[key] = data[key];
+        }
+      }
+      if (!isEmptyObj(normalData)) {
+        setDataTask.push(new Promise(resolve => {
+          $ready = normalData.$ready;
+          this._internal.setData(normalData, resolve);
+        }));
+      }
     }
-    Promise.all(setDataTask).then(() => {
-      if ($ready) {
-        // trigger did mount
-        this._trigger(COMPONENT_DID_MOUNT);
-      }
-      let callback;
-      while (callback = this._pendingCallbacks.pop()) {
-        callback();
-      }
-    });
-    Object.assign(this.state, data);
+    if (setDataTask.length > 0) {
+      Promise.all(setDataTask).then(() => {
+        if ($ready) {
+          // trigger did mount
+          this._trigger(COMPONENT_DID_MOUNT);
+        }
+        let callback;
+        while (callback = this._pendingCallbacks.pop()) {
+          callback();
+        }
+      });
+      Object.assign(this.state, data);
+    }
   }
-}
-
-function diffProps(prev, next) {
-  for (let key in next) {
-    if (next[key] !== prev[key]) return true;
-  }
-  return false;
 }
 
 function diffArray(prev, next) {
-  if (!Array.isArray(prev)) return false;
+  if (!isArray(prev)) return false;
   // Only concern about list append case
   if (next.length === 0) return false;
-  if (prev.length === 0) return false;
+  if (prev.length === 0) return true;
   return next.slice(0, prev.length).every((val, index) => prev[index] === val);
 }
 
@@ -399,20 +377,9 @@ function diffData(prevData, nextData) {
   const prevType = typeof prevData;
   const nextType = typeof nextData;
   if (prevType !== nextType) return true;
-  if (prevType === 'object' && prevData !== null && nextData !== null) {
-    const prevKeys = Object.keys(prevData);
-    const nextKeys = Object.keys(nextData);
-    if (prevKeys.length !== nextKeys.length) return true;
-    if (prevKeys.length === 0) return false;
-    return !prevKeys.every(key => prevData[key] === nextData[key] );
+  if (prevType === 'object' && !isNull(prevData) && !isNull(nextData)) {
+    return !shallowEqual(prevData, nextData);
   } else {
     return prevData !== nextData;
   }
-}
-
-function isEmptyObj(obj) {
-  for (let key in obj) {
-    return false;
-  }
-  return true;
 }

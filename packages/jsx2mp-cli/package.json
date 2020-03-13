@@ -1,6 +1,6 @@
 {
   "name": "jsx2mp-cli",
-  "version": "0.2.22",
+  "version": "0.3.0",
   "license": "BSD-3-Clause",
   "description": "A cli tool to transform Rax JSX based project to MiniApp.",
   "bin": {
@@ -29,8 +29,8 @@
     "del": "^5.1.0",
     "fs-extra": "^7.0.1",
     "inquirer": "^6.2.2",
-    "jsx2mp-loader": "^0.2.0",
-    "jsx2mp-runtime": "^0.3.0",
+    "jsx2mp-loader": "^0.3.0",
+    "jsx2mp-runtime": "^0.4.1",
     "kebab-case": "^1.0.0",
     "memory-fs": "^0.4.1",
     "ora": "^3.4.0",

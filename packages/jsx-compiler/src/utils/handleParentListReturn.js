@@ -16,7 +16,13 @@ module.exports = function(mapCallExpression, forNode, code) {
   const { loopFnBody } = parentList;
   const loopFnBodyLength = loopFnBody.body.length;
   const properties = loopFnBody.body[loopFnBodyLength - 1].argument.properties;
-  const forItem = properties.find(({ key }) => key.name === listItem.name);
+  let forItem;
+  if (t.isIdentifier(forNode)) {
+    // parentList.map(() => { const a = []; a.map(item => <View/>) })
+    forItem = properties.find(({ key, value }) => key.name === listItem.name);
+  } else {
+    forItem = properties.find(({ key }) => key.name === listItem.__listItem.item);
+  }
   if (t.isIdentifier(forNode)) {
     forItem.value = mapCallExpression;
   }
@@ -26,7 +32,7 @@ module.exports = function(mapCallExpression, forNode, code) {
         if (t.isIdentifier(forNode.object)) {
           forItem.value = t.objectExpression([
             t.spreadElement(forItem.value),
-            t.objectProperty(forItem.value, mapCallExpression)
+            t.objectProperty(forNode.property, mapCallExpression)
           ]);
         } else if (t.isCallExpression(forNode)) {
           // handle list.filter().map()
@@ -35,7 +41,7 @@ module.exports = function(mapCallExpression, forNode, code) {
           }
           forItem.value = t.objectExpression([
             t.spreadElement(forItem.value),
-            t.objectProperty(forItem.value, mapCallExpression)
+            t.objectProperty(forNode.property, mapCallExpression)
           ]);
           forNode = listItem;
         } else {

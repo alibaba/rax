@@ -9,8 +9,6 @@ module.exports = [
   require('./css'),
   // Handle js code.
   require('./code'),
-  // Handle rax-text
-  require('./rax-text'),
   // Handle template attrs
   require('./element'),
   // Handle jsx attribute
@@ -19,10 +17,10 @@ module.exports = [
   require('./style'),
   // Handle Rax base components.
   require('./components'),
-  // JSX+ Directives
-  require('./jsx-plus'),
   // Directive a:for
   require('./list'),
+  // JSX+ Directives
+  require('./jsx-plus'),
   // Directive a:if
   require('./condition'),
   // Handle render function
