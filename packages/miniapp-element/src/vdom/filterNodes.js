@@ -13,14 +13,16 @@ export default function filterNodes(domNode, level) {
   const childNodes = domNode.childNodes || [];
 
   if (!childNodes.map) return [];
-  if (NOT_SUPPORT.indexOf(domNode.tagName) >= 0) return []; // 不支持标签，不渲染子节点
+  // Tags are not supported and child nodes are not rendered
+  if (NOT_SUPPORT.indexOf(domNode.tagName) >= 0) return [];
 
   return childNodes.map(child => {
     const domInfo = child.$$domInfo;
 
     if (domInfo.type !== 'element' && domInfo.type !== 'text') return;
 
-    domInfo.class = `h5-${domInfo.tagName} node-${domInfo.nodeId} ${domInfo.class || ''}`; // 增加默认 class
+    // Add default class
+    domInfo.class = `h5-${domInfo.tagName} node-${domInfo.nodeId} ${domInfo.class || ''}`;
     domInfo.domNode = child;
 
     // Special node
@@ -54,7 +56,7 @@ export default function filterNodes(domNode, level) {
     // Check image node
     domInfo.isImage = domInfo.type === 'element' && domInfo.tagName === 'img';
     if (domInfo.isImage) {
-      domInfo.src = child.src ? tool.completeURL(child.src, window.location.origin, true) : '';
+      domInfo.src = child.src || '';
       domInfo.mode = child.getAttribute('mode') || '';
       domInfo.lazyLoad = !!child.getAttribute('lazy-load');
       domInfo.showMenuByLongpress = !!child.getAttribute('show-menu-by-longpress');

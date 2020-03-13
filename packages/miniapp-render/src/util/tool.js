@@ -1,21 +1,19 @@
-import cache from './cache';
-
 /**
- * 驼峰转连字符
+ * Hump to hyphen
  */
 function toDash(str) {
   return str.replace(/[A-Z]/g, all => `-${all.toLowerCase()}`);
 }
 
 /**
- * 连字符转驼峰
+ * Hyphen to hump
  */
 function toCamel(str) {
   return str.replace(/-([a-zA-Z])/g, (all, $1) => $1.toUpperCase());
 }
 
 /**
- * 获取唯一 id
+ * Get unique id
  */
 let seed = +new Date();
 function getId() {
@@ -23,14 +21,14 @@ function getId() {
 }
 
 /**
- * 从 pageId 中获取小程序页面 route
+ * Gets the route of the miniapp page from the pageId
  */
 function getPageRoute(pageId) {
   return pageId.split('-')[2];
 }
 
 /**
- * 从 pageRoute 中获取小程序页面名称
+ * Gets the applet page name from pageRoute
  */
 function getPageName(pageRoute) {
   const splitPageRoute = pageRoute.split('/');
@@ -38,7 +36,7 @@ function getPageName(pageRoute) {
 }
 
 /**
- * 节流，一个同步流中只调用一次该函数
+ * Throttling, which is called only once in a synchronous flow
  */
 const waitFuncSet = new Set();
 function throttle(func) {
@@ -59,7 +57,7 @@ function throttle(func) {
 }
 
 /**
- * 清空节流缓存
+ * Clear throttling cache
  */
 function flushThrottleCache() {
   waitFuncSet.forEach(waitFunc => waitFunc && waitFunc());
@@ -67,27 +65,7 @@ function flushThrottleCache() {
 }
 
 /**
- * 补全 url
- */
-function completeURL(url, defaultOrigin, notTransHttps) {
-  const config = cache.getConfig();
-
-  // 处理 url 前缀
-  if (url.indexOf('//') === 0) {
-    url = 'https:' + url;
-  } else if (url[0] === '/') {
-    url = (config.origin || defaultOrigin) + url;
-  }
-
-  if (!notTransHttps && url.indexOf('http:') === 0) {
-    url = url.replace(/^http:/ig, 'https:');
-  }
-
-  return url;
-}
-
-/**
- * 解码特殊字符
+ * Encode special character
  */
 function decodeContent(content) {
   return content
@@ -102,9 +80,9 @@ function decodeContent(content) {
 }
 
 /**
- * 判断该标签在小程序中是否支持
+ * Check tag wheather supported
  */
-const NOT_SUPPORT_TAG_NAME_LIST = ['IFRAME'];
+const NOT_SUPPORT_TAG_NAME_LIST = ['IFRAME', 'A'];
 function isTagNameSupport(tagName) {
   return NOT_SUPPORT_TAG_NAME_LIST.indexOf(tagName) === -1;
 }
@@ -117,7 +95,6 @@ export default {
   getPageName,
   throttle,
   flushThrottleCache,
-  completeURL,
   decodeContent,
   isTagNameSupport,
 };
