@@ -102,12 +102,17 @@ export default {
   }],
   handles: {
     onTextareaFocus(evt) {
+      this._textareaOldValue = this.domNode.value;
       callSimpleEvent('focus', evt, this.domNode);
     },
     onTextareaBlur(evt) {
       if (!this.domNode) return;
 
       this.domNode.setAttribute('focus', false);
+      if (this._textareaOldValue !== undefined && this.domNode.value !== this._textareaOldValue) {
+        this._textareaOldValue = undefined;
+        this.callEvent('change', evt);
+      }
       callSimpleEvent('blur', evt, this.domNode);
     },
     onTextareaLineChange(evt) {
@@ -116,7 +121,8 @@ export default {
     onTextareaInput(evt) {
       if (!this.domNode) return;
 
-      this.domNode.value = evt.detail.value;
+      const value = '' + evt.detail.value;
+      this.domNode.setAttribute('value', value);
       callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onTextareaConfirm(evt) {

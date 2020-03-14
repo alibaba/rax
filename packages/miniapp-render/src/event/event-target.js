@@ -32,6 +32,10 @@ class EventTarget {
     this.ontouchmove = null;
     this.ontouchend = null;
     this.ontouchcancel = null;
+    this.oninput = null;
+    this.onfocus = null;
+    this.onblur = null;
+    this.onchange = null;
 
     this.$_miniprogramEvent = null; // 记录已触发的小程序事件
     this.$_eventHandlerMap = null;
@@ -68,8 +72,8 @@ class EventTarget {
   static $$process(target, eventName, miniprogramEvent, extra, callback) {
     let event;
 
-    if (eventName instanceof CustomEvent) {
-      // 传入的是自定义事件
+    if (eventName instanceof CustomEvent || eventName instanceof Event) {
+      // 传入的是事件对象
       event = eventName;
       eventName = event.type;
     }
@@ -102,23 +106,21 @@ class EventTarget {
       });
     }
 
-    if (event.bubbles) {
       // 捕获
-      for (let i = path.length - 1; i >= 0; i--) {
-        const currentTarget = path[i];
+    for (let i = path.length - 1; i >= 0; i--) {
+      const currentTarget = path[i];
 
-        if (!event.$$canBubble) break; // 判定冒泡是否结束
-        if (currentTarget === target) continue;
+      if (!event.$$canBubble) break; // 判定冒泡是否结束
+      if (currentTarget === target) continue;
 
-        event.$$setCurrentTarget(currentTarget);
-        event.$$setEventPhase(Event.CAPTURING_PHASE);
+      event.$$setCurrentTarget(currentTarget);
+      event.$$setEventPhase(Event.CAPTURING_PHASE);
 
-        currentTarget.$$trigger(eventName, {
-          event,
-          isCapture: true,
-        });
-        if (callback) callback(currentTarget, event, true);
-      }
+      currentTarget.$$trigger(eventName, {
+        event,
+        isCapture: true,
+      });
+      if (callback) callback(currentTarget, event, true);
     }
 
     // 目标

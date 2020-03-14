@@ -93,7 +93,7 @@ class HTMLTextAreaElement extends Element {
 
   // Attribute
   get type() {
-    return this.$_attrs.get('type');
+    return this.$_attrs.get('type') || 'textarea';
   }
 
   set type(value) {

@@ -122,7 +122,8 @@ export default {
     onInputInput(evt) {
       if (!this.domNode) return;
 
-      this.domNode.value = evt.detail.value;
+      const value = '' + evt.detail.value;
+      this.domNode.setAttribute('value', value);
       callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onInputFocus(evt) {
