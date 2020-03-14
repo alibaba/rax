@@ -63,7 +63,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
 
             const type = targetDomNode.type;
             if (type === 'radio') {
-              targetDomNode.checked = true;
+              targetDomNode.setAttribute('checked', true);
               const name = targetDomNode.name;
               const otherDomNodes =
                 window.document.querySelectorAll(`input[name=${name}]`) ||
@@ -73,7 +73,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
                   otherDomNode.type === 'radio' &&
                   otherDomNode !== targetDomNode
                 ) {
-                  otherDomNode.checked = false;
+                  otherDomNode.setAttribute('checked', false);
                 }
               }
               callSimpleEvent(
@@ -82,7 +82,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
                 targetDomNode
               );
             } else if (type === 'checkbox') {
-              targetDomNode.checked = !targetDomNode.checked;
+              targetDomNode.setAttribute('checked', !targetDomNode.checked)
               callSimpleEvent(
                 'change',
                 {
@@ -192,16 +192,16 @@ export default function(eventName, evt, extra, pageId, nodeId) {
             if (inputList.length) {
               inputList.forEach(item => {
                 if (item.type === 'radio') {
-                  item.checked = false;
+                  item.setAttribute('checked', false);
                 } else if (item.type === 'checkbox') {
-                  item.checked = false;
+                  item.setAttribute('checked', false);
                 } else {
-                  item.value = '';
+                  item.setAttribute('value', '');
                 }
               });
             }
             if (textareaList.length)
-              textareaList.forEach(item => item.value = '');
+              textareaList.forEach(item => tem.setAttribute('value', ''));
             if (switchList.length)
               switchList.forEach(item =>
                 item.setAttribute('checked', undefined)

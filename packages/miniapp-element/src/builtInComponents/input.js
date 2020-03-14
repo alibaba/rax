@@ -154,22 +154,23 @@ export default {
       const otherDomNodes = window.document.querySelectorAll(`input[name=${name}]`) || [];
 
       if (value === domNode.value) {
-        domNode.checked = true;
+        domNode.setAttribute('checked', true);
         for (const otherDomNode of otherDomNodes) {
           if (otherDomNode.type === 'radio' && otherDomNode !== domNode) {
-            otherDomNode.checked = false;
+            otherDomNode.setAttribute('checked', false);
           }
         }
       }
+      callEvent('input', evt, null, this.pageId, this.nodeId);
       callEvent('change', evt, null, this.pageId, this.nodeId);
     },
     onCheckboxChange(evt) {
       const domNode = this.domNode;
       const value = evt.detail.value || [];
       if (value.indexOf(domNode.value) >= 0) {
-        domNode.checked = true;
+        domNode.setAttribute('checked', true);
       } else {
-        domNode.checked = false;
+        domNode.setAttribute('checked', false);
       }
       callEvent('change', evt, null, this.pageId, this.nodeId);
     },
