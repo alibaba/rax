@@ -45,7 +45,7 @@ describe('Transform components', () => {
     };
     const { componentsAlias } = _transformComponents(parsed, options);
     expect(genCode(ast).code).toEqual(`<rax-view>
-        <c-a94616 __parentId="{{__tagId}}" __tagId="{{__tagId}}-0" />
+        <c-a94616 __tagId="{{__tagId}}-0" />
       </rax-view>`);
     expect(componentsAlias).toEqual({'c-a94616': {'default': true, 'namespace': false, 'from': '../components/CustomEl', 'isCustomEl': true, 'local': 'CustomEl', 'name': 'c-a94616'}});
   });

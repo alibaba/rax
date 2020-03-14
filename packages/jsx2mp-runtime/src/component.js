@@ -6,8 +6,8 @@
 import { isQuickApp } from 'universal-env';
 import { getId, registerRef } from './adapter/index';
 import Host from './host';
-import {updateChildProps, removeComponentProps, getComponentProps, setComponentProps} from './updater';
-import {enqueueRender} from './enqueueRender';
+import { updateChildProps, removeComponentProps, setComponentProps } from './updater';
+import { enqueueRender } from './enqueueRender';
 import {
   RENDER,
   ON_SHOW,
@@ -22,24 +22,29 @@ import { cycles as pageCycles } from './page';
 import shallowEqual, { is } from './shallowEqual';
 import nextTick from './nextTick';
 import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
+import apiCore from './adapter/getNativeAPI';
+import setComponentRef from './adapter/setComponentRef';
 
 export default class Component {
-  constructor(props) {
+  constructor(props, _internal, isFunctionComponent) {
     this.state = {};
     this.props = props;
     this.refs = {};
 
+    this._internal = _internal;
     this.__dependencies = {}; // for context
 
     this.__mounted = false;
     this.__shouldUpdate = false;
     this._methods = {};
     this._hooks = {};
-    this.hooks = []; // ??
+    this.hooks = [];
     this._hookID = 0;
 
     this._pendingStates = [];
     this._pendingCallbacks = [];
+
+    setComponentRef(this, props.bindComRef || props.ref, isFunctionComponent);
   }
 
   // Bind to this instance.
@@ -102,8 +107,8 @@ export default class Component {
   }
 
   _registerRefs(refs) {
-    refs.forEach(({name, method}) => {
-      registerRef.call(this, name, method);
+    refs.forEach(({name, method, type, id}) => {
+      registerRef.call(this, name, method, type, id);
     });
   }
 
@@ -280,23 +285,6 @@ export default class Component {
     }
   }
 
-  /**
-   * Internal means page/component instance of miniapp.
-   * @param internal
-   * @private
-   */
-  _setInternal(internal) {
-    this._internal = internal;
-    const parentId = getId('parent', internal);
-    const tagId = getId('tag', internal);
-    this.instanceId = `${parentId}-${tagId}`;
-    this.props = Object.assign({}, internal[PROPS], {
-      TAGID: tagId,
-      __parentId: parentId
-    }, getComponentProps(this.instanceId));
-    if (!this.state) this.state = {};
-    Object.assign(this.state, internal.data);
-  }
   /**
    * Internal set data method
    * @param data {Object}

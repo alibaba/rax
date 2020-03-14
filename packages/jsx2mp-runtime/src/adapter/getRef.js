@@ -2,7 +2,7 @@
 import { isQuickApp } from 'universal-env';
 import createRef from '../createRef';
 
-export default function(initialValue) {
+export default function(initialValue, name) {
   if (isQuickApp) {
     return this._internal.$element(name) || {};
   } else {

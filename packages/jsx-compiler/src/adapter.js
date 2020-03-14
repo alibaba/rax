@@ -62,7 +62,8 @@ const parserAdapters = {
     styleKeyword: true,
     needTransformEvent: true,
     slotScope: false,
-    needTransformKey: true
+    needTransformKey: true,
+    triggerRef: true
   },
 };
 

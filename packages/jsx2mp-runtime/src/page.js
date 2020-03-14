@@ -14,6 +14,8 @@ const history = getMiniAppHistory();
 export const cycles = {};
 
 export function usePageEffect(cycle, callback) {
+  const history = getMiniAppHistory();
+
   if (isFunction(callback)) {
     switch (cycle) {
       case ON_SHOW:
@@ -22,8 +24,8 @@ export function usePageEffect(cycle, callback) {
         if (isQuickApp && cycle === ON_SHOW) {
           return callback();
         }
-        const pageId = history && history.location._pageId;
         useEffect(() => {
+          const pageId = history && history.location._pageId;
           if (!cycles[pageId]) {
             cycles[pageId] = {};
           }
