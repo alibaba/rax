@@ -20,7 +20,7 @@ function Manifest(props, context) {
 
     if (manifest && manifest.data) {
       return (
-        <meta name="manifest" content={JSON.stringify(manifest.data)} />
+        <script type="application/manifest+json" dangerouslySetInnerHTML={{__html: JSON.stringify(manifest.data)}} />
       );
     }
   }
