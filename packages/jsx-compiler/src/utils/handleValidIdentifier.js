@@ -13,6 +13,7 @@ module.exports = function(identifierPath, callback) {
       if (identifierPath.parent.property !== identifierPath.node) {
         callback();
       }
+      break;
     default:
       callback();
   }
