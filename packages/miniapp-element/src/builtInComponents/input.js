@@ -121,14 +121,12 @@ export default {
   handles: {
     onInputInput(evt) {
       if (!this.domNode) return;
-
-      const value = '' + evt.detail.value;
-      this.domNode.setAttribute('value', value);
+      this._inputOldValue = this.domNode.value;
       callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onInputFocus(evt) {
       this._inputOldValue = this.domNode.value || '';
-      // callSimpleEvent('focus', evt, this.domNode);
+      callSimpleEvent('focus', evt, this.domNode);
     },
     onInputBlur(evt) {
       if (!this.domNode) return;
