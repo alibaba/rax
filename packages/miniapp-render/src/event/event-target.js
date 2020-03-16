@@ -2,7 +2,7 @@ import Event from './event';
 import CustomEvent from './custom-event';
 
 /**
- * 比较 touch 列表
+ * Compare touch list
  */
 function compareTouchList(a, b) {
   if (a.length !== b.length) return false;
@@ -16,6 +16,55 @@ function compareTouchList(a, b) {
   }
 
   return true;
+}
+
+/**
+ * Compare event detail
+ * @param {object} a
+ * @param {object} b
+ */
+function compareDetail(a, b) {
+  if (a.pageX === b.pageX && a.pageY === b.pageY && a.clientX === b.clientX && a.clientY === b.clientY) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ *
+ * @param {string} property 'touches' or 'changedTouches' or 'detail'
+ * @param {object} last last event
+ * @param {object} now current event
+ */
+function compareEventProperty(property, last, now) {
+  const compareFn = property === 'detail' ? compareDetail : compareTouchList;
+  if (last[property] && now[property] && !compareFn(last[property], now[property])) {
+    // property are different
+    return true;
+  }
+  if (!last[property] && now[property] || last[property] && !now[property]) {
+    // One of them  doesn't have property
+    return true;
+  }
+  return false;
+}
+
+function compareEventInAlipay(last, now) {
+  // In Alipay, timestamps of the same event may have slight differences when bubbling
+  // Set the D-value threshold to 10
+  if (!last || now.timeStamp - last.timeStamp > 10) {
+    return true;
+  }
+  // Tap event has no touches or changedTouches in Alipay, so use detail property to check
+  return compareEventProperty('detail', last, now) || compareEventProperty('touches', last, now) || compareEventProperty('changedTouches', last, now);
+}
+
+function compareEventInWechat(last, now) {
+  // TimeStamps are different
+  if (!last || last.timeStamp !== now.timeStamp) {
+    return true;
+  }
+  return compareEventProperty('touches', last, now) || compareEventProperty('changedTouches', last, now);
 }
 
 class EventTarget {
@@ -37,7 +86,7 @@ class EventTarget {
     this.onblur = null;
     this.onchange = null;
 
-    this.$_miniprogramEvent = null; // 记录已触发的小程序事件
+    this.$_miniappEvent = null; // 记录已触发的小程序事件
     this.$_eventHandlerMap = null;
   }
 
@@ -53,7 +102,7 @@ class EventTarget {
       if (key[0] === '$' && (key[1] !== '_' && key[1] !== '$')) this[key] = null;
     });
 
-    this.$_miniprogramEvent = null;
+    this.$_miniappEvent = null;
     this.$_eventHandlerMap = null;
   }
 
@@ -132,12 +181,14 @@ class EventTarget {
       target.$$trigger(eventName, {
         event,
         isCapture: true,
+        isTarget: true
       });
       if (callback) callback(target, event, true);
 
       target.$$trigger(eventName, {
         event,
         isCapture: false,
+        isTarget: true
       });
       if (callback) callback(target, event, false);
     }
@@ -191,12 +242,12 @@ class EventTarget {
   /**
      * 触发节点事件
      */
-  $$trigger(eventName, {event, args = [], isCapture} = {}) {
+  $$trigger(eventName, { event, args = [], isCapture, isTarget } = {}) {
     eventName = eventName.toLowerCase();
     const handlers = this.$_getHandlers(eventName, isCapture);
     const onEventName = `on${eventName}`;
 
-    if (typeof this[onEventName] === 'function') {
+    if ((!isCapture || !isTarget) && typeof this[onEventName] === 'function') {
       // 触发 onXXX 绑定的事件
       if (event && event.$$immediateStop) return;
       try {
@@ -223,33 +274,18 @@ class EventTarget {
      * 检查该事件是否可以触发
      */
   $$checkEvent(miniprogramEvent) {
-    const last = this.$_miniprogramEvent;
+    const last = this.$_miniappEvent;
     const now = miniprogramEvent;
 
     let flag = false;
 
-    if (!last || last.timeStamp !== now.timeStamp) {
-      // 时间戳不同
-      flag = true;
-    } else {
-      if (last.touches && now.touches && !compareTouchList(last.touches, now.touches)) {
-        // 存在不同的 touches
-        flag = true;
-      } else if (!last.touches && now.touches || last.touches && !now.touches) {
-        // 存在一方没有 touches
-        flag = true;
-      }
-
-      if (last.changedTouches && now.changedTouches && !compareTouchList(last.changedTouches, now.changedTouches)) {
-        // 存在不同的 changedTouches
-        flag = true;
-      } else if (!last.changedTouches && now.changedTouches || last.changedTouches && !now.changedTouches) {
-        // 存在一方没有 changedTouches
-        flag = true;
-      }
+    if (isMiniApp) {
+      flag = compareEventInAlipay(last, now);
+    } else if (isWeChatMiniProgram) {
+      flag = compareEventInWechat(last, now);
     }
 
-    if (flag) this.$_miniprogramEvent = now;
+    if (flag) this.$_miniappEvent = now;
     return flag;
   }
 
