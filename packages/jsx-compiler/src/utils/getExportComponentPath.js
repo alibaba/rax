@@ -1,6 +1,5 @@
 const t = require('@babel/types');
 const CodeError = require('../utils/CodeError');
-const genExpression = require('../codegen/genExpression');
 
 /**
  * @param export default path
