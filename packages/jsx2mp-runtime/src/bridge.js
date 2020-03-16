@@ -5,7 +5,7 @@ import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './c
 import { setComponentInstance, getComponentProps } from './updater';
 import getNativeComponentLifecycle from './adapter/getNativeComponentLifecycle';
 import getComponentBaseConfig from './adapter/getComponentBaseConfig';
-import {createMiniAppHistory, getMiniAppHistory} from './history';
+import { createMiniAppHistory, getMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
@@ -72,9 +72,17 @@ function getPageCycles(Klass) {
 function getComponentCycles(Klass) {
   return getNativeComponentLifecycle({
     mount: function() {
-      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, Klass.__highestLevelProps);
+      const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps);
+      // Inject history
+      if (Klass.__injectHistory) {
+        const history = getMiniAppHistory();
+        Object.assign(props, {
+          history,
+          location: history.location
+        });
+      }
       this.instance = new Klass(props, this);
-      this.instance.__highestLevelProps = Klass.__highestLevelProps;
+      this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
       Object.assign(this.instance.state, this.data);
@@ -192,8 +200,8 @@ function createAnonymousClass(render) {
       return render.call(this, props);
     }
   };
-  // Transfer __highestLevelProps
-  Klass.__highestLevelProps = render.__highestLevelProps;
+  // Transfer __injectHistory
+  Klass.__injectHistory = render.__injectHistory;
   return Klass;
 }
 

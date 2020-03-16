@@ -1,5 +1,6 @@
 const t = require('@babel/types');
 const CodeError = require('../utils/CodeError');
+const genExpression = require('../codegen/genExpression');
 
 /**
  * @param export default path
@@ -45,6 +46,9 @@ function getComponentPath(path, componentName) {
   if (node.id && t.isIdentifier(node.id, {
     name: componentName
   })) {
+    if (path.isFunctionDeclaration() || path.isClassDeclaration()) {
+      return path;
+    }
     return path.get('init') || path;
   }
 }
