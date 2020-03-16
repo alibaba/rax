@@ -9,6 +9,7 @@ import classnames from './classnames';
 import createRef from './createRef';
 import { addNativeEventListener, removeNativeEventListener, registerNativeEventListeners } from './nativeEventListener';
 import memo from './memo';
+import version from './version';
 
 // Adapter rax core
 const shared = {};
@@ -45,7 +46,10 @@ export {
   // Shared
   shared,
   // Memo
-  memo
+  memo,
+
+  // Version
+  version
 };
 
 /* hooks */
