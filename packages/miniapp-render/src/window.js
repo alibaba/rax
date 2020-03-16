@@ -4,7 +4,6 @@ import tool from './util/tool';
 import cache from './util/cache';
 import Node from './node/node';
 import Element from './node/element';
-import Location from './bom/location';
 import Event from './event/event';
 import Document from './Document';
 import TextNode from './node/text-node';
@@ -16,7 +15,6 @@ import Attribute from './node/attribute';
 
 let lastRafTime = 0;
 const WINDOW_PROTOTYPE_MAP = {
-  location: Location.prototype,
   event: Event.prototype,
 };
 const ELEMENT_PROTOTYPE_MAP = {
@@ -33,12 +31,9 @@ class Window extends EventTarget {
 
     this.$_pageId = pageId;
 
-    this.$_location = new Location(pageId);
     this.$_miniprogram = new Miniprogram(pageId);
 
     this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
-
-    this.$_initInnerEvent();
 
     // 补充实例的属性，用于 'xxx' in XXX 判断
     this.onhashchange = null;
@@ -58,27 +53,6 @@ class Window extends EventTarget {
   }
 
   /**
-     * 初始化内部事件
-     */
-  $_initInnerEvent() {
-    // 监听 location 的事件
-    this.$_location.addEventListener('hashchange', ({oldURL, newURL}) => {
-      this.$$trigger('hashchange', {
-        event: new Event({
-          name: 'hashchange',
-          target: this,
-          eventPhase: Event.AT_TARGET,
-          $$extra: {
-            oldURL,
-            newURL,
-          },
-        }),
-        currentTarget: this,
-      });
-    });
-  }
-
-  /**
      * 拉取处理切面必要的信息
      */
   $_getAspectInfo(descriptor) {
@@ -91,7 +65,7 @@ class Window extends EventTarget {
     let type = descriptor[2];
     let prototype;
 
-    // 找出对象原型
+    // Find object prototypes
     if (main === 'window') {
       if (WINDOW_PROTOTYPE_MAP[sub]) {
         prototype = WINDOW_PROTOTYPE_MAP[sub];
@@ -120,25 +94,10 @@ class Window extends EventTarget {
   }
 
   /**
-     * 暴露给小程序用的对象
-     */
+   * An object that is exposed to miniapp
+  */
   get $$miniprogram() {
     return this.$_miniprogram;
-  }
-
-  /**
-     * 小程序端的 getComputedStyle 实现
-     * https://developers.weixin.qq.com/miniprogram/dev/api/wxml/NodesRef.fields.html
-     */
-  $$getComputedStyle(dom, computedStyle = []) {
-    tool.flushThrottleCache(); // 先清空 setData
-    return new Promise((resolve, reject) => {
-      if (dom.tagName === 'BODY') {
-        this.$$createSelectorQuery().select('.miniprogram-root').fields({computedStyle}, res => res ? resolve(res) : reject()).exec();
-      } else {
-        this.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${dom.$$nodeId}`).fields({computedStyle}, res => res ? resolve(res) : reject()).exec();
-      }
-    });
   }
 
   /**
@@ -320,18 +279,10 @@ class Window extends EventTarget {
   }
 
   /**
-     * 对外属性和方法
-     */
+   * External properties and methods
+   */
   get document() {
     return cache.getDocument(this.$_pageId) || null;
-  }
-
-  get location() {
-    return this.$_location;
-  }
-
-  set location(href) {
-    this.$_location.href = href;
   }
 
   get CustomEvent() {
@@ -403,15 +354,8 @@ class Window extends EventTarget {
   }
 
   getComputedStyle() {
-    // 不作任何实现，只作兼容使用
-    console.warn('window.getComputedStyle is not supported, please use window.$$getComputedStyle instead of it');
-    return {
-      // vue transition 组件使用
-      transitionDelay: '',
-      transitionDuration: '',
-      animationDelay: '',
-      animationDuration: '',
-    };
+    // Only for compatible use
+    console.warn('window.getComputedStyle is not supported.');
   }
 
   requestAnimationFrame(callback) {
