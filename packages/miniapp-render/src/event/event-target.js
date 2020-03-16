@@ -1,3 +1,5 @@
+/* global isMiniApp, isWeChatMiniProgram */
+
 import Event from './event';
 import CustomEvent from './custom-event';
 
@@ -155,7 +157,7 @@ class EventTarget {
       });
     }
 
-      // 捕获
+    // 捕获
     for (let i = path.length - 1; i >= 0; i--) {
       const currentTarget = path[i];
 

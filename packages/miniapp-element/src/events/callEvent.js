@@ -73,7 +73,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
                 targetDomNode
               );
             } else if (type === 'checkbox') {
-              targetDomNode.setAttribute('checked', !targetDomNode.checked)
+              targetDomNode.setAttribute('checked', !targetDomNode.checked);
               callSimpleEvent(
                 'change',
                 {
@@ -192,7 +192,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
               });
             }
             if (textareaList.length)
-              textareaList.forEach(item => tem.setAttribute('value', ''));
+              textareaList.forEach(item => item.setAttribute('value', ''));
             if (switchList.length)
               switchList.forEach(item =>
                 item.setAttribute('checked', undefined)

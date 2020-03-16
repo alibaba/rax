@@ -1,4 +1,4 @@
-/* global isMiniApp */
+/* global isMiniApp, isWeChatMiniProgram */
 import Element from '../element';
 import cache from '../../util/cache';
 import Pool from '../../util/pool';
@@ -65,7 +65,7 @@ class HTMLCanvasElement extends Element {
         this.addEventListener('canvasReady', () => {
           resolve(this);
         });
-      } else {
+      } else if (isWeChatMiniProgram) {
         this.$$getNodesRef().then(nodesRef => nodesRef.node(res => {
           this.$_node = res.node;
 
