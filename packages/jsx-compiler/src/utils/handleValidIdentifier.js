@@ -10,7 +10,10 @@ module.exports = function(identifierPath, callback) {
       }
       break;
     case 'MemberExpression':
-      if (identifierPath.parent.property !== identifierPath.node) {
+      // For list[index]
+      if (identifierPath.parent.computed) {
+        callback();
+      } else if (identifierPath.parent.property !== identifierPath.node) {
         callback();
       }
       break;
