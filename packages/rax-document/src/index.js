@@ -18,6 +18,7 @@ function Manifest(props, context) {
       return item.path === __pagePath;
     });
 
+    // manifest json type: https://developer.mozilla.org/en-US/docs/Web/Manifest#Deploying_a_manifest_with_the_link_tag
     if (manifest && manifest.data) {
       return (
         <script type="application/manifest+json" dangerouslySetInnerHTML={{__html: JSON.stringify(manifest.data)}} />
