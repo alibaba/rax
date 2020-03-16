@@ -5,7 +5,9 @@ export default {
   props: [{
     name: 'value',
     get(domNode) {
-      const value = domNode.getAttribute('value');
+      let value = domNode.getAttribute('value');
+      if (typeof value === 'string') value = value.split(',').map(item => parseInt(item, 10));
+
       return value !== undefined ? value : [];
     },
   }, {

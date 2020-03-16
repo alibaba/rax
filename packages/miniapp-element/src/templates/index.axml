@@ -339,7 +339,11 @@
         onTouchCancel="onTouchCancel"
         onTap="onTap"
         hidden="{{item.extra.hidden}}"
-    ><subtree childNodes="{{item.childNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></picker-view-column>
+    >
+    <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
+      <element in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}" id="{{pickerViewColumnItem.id}}" class="{{pickerViewColumnItem.class || ''}}" style="{{pickerViewColumnItem.style || ''}}" animation="{{pickerViewColumnItem.animation}}" onTouchStart="onTouchStart" onTouchmove="onTouchMove" onTouchend="onTouchEnd" onTouchcancel="onTouchCancel" onTap="onTap"></element>
+    </view>
+    </picker-view-column>
 </block></picker-view>
 <slider
     a:elif="{{builtinComponentName === 'slider'}}"
