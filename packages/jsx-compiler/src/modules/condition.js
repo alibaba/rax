@@ -4,6 +4,7 @@ const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
 const chalk = require('chalk');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
@@ -125,14 +126,9 @@ function transformTemplate(ast, templateMap, adapter, code) {
           replacement.push(createJSX('block', {
             [adapter.if]: generateConditionValue(test, { adapter })
           }, children));
-          if (!/Expression$/.test(left.type)) {
-            replacement.push(createJSX('block', {
-              [adapter.else]: null,
-            }, [t.jsxExpressionContainer(left)]));
-          } else {
-            console.log(chalk.yellow("When logicalExpression's left node is an expression, please write JSX directly instead of using a variable which is assigned a JSX element."
-            ));
-          }
+          replacement.push(createJSX('block', {
+            [adapter.else]: null,
+          }, [t.jsxExpressionContainer(left)]));
         }
         path.parentPath.replaceWithMultiple(replacement);
       } else {
