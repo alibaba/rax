@@ -240,7 +240,8 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
           if (attributeName === STYLE) {
             // Remove invalid style prop, and direct reset style to child avoid diff style
-            for (let i = 0, l = hydrationChild.style.length; 0 < l; l--) {
+            // Set style to empty will change the index of style, so here need to traverse style backwards
+            for (let l = hydrationChild.style.length; 0 < l; l--) {
               // Prop name get from node style is hyphenated, eg: background-color
               let stylePropName = hydrationChild.style[l - 1];
               let camelizedStyleName = camelizeStyleName(stylePropName);
