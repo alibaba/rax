@@ -14,16 +14,14 @@ export default function classNames() {
     const arg = arguments[i];
     if (!arg) continue;
 
-    const argType = typeof arg;
-
-    if (isString(argType) || isNumber(argType)) {
+    if (isString(arg) || isNumber(arg)) {
       classes.push(arg);
     } else if (isArray(arg) && arg.length) {
       const inner = classNames.apply(null, arg);
       if (inner) {
         classes.push(inner);
       }
-    } else if (isObject(argType)) {
+    } else if (isObject(arg)) {
       for (let key in arg) {
         if (hasOwn.call(arg, key) && arg[key]) {
           classes.push(key);
