@@ -42,6 +42,7 @@ function getPageCycles(Klass) {
       this.instance = new Klass(props);
       // Reverse sync from state to data.
       this.instance.instanceId = instanceId;
+      this.instance.__pageOptions = options;
       setPageInstance(this.instance);
       this.instance._internal = this;
       Object.assign(this.instance.state, this.data);
@@ -61,6 +62,7 @@ function getPageCycles(Klass) {
       if (this.instance && this.instance.__mounted) {
         // Update current location pageId
         const history = getMiniAppHistory();
+        history.location.__updatePageOption(this.instance.__pageOptions);
         history.location.__updatePageId(this.instance.instanceId);
         this.instance._trigger(ON_SHOW);
       }
