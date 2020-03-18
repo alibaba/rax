@@ -37,15 +37,7 @@ export function __updateRouterMap(appConfig) {
  * @param Component
  */
 export function withRouter(Component) {
-  if (!Component.__highestLevelProps) {
-    Component.__highestLevelProps = {};
-  }
-  const history = getMiniAppHistory();
-  Object.assign(Component.__highestLevelProps, {
-    history: history,
-    location: history.location,
-  });
-
+  Component.__injectHistory = true;
   return Component;
 }
 

@@ -156,7 +156,7 @@ function transformMapMethod(path, parsed, code, adapter) {
                 parsed.useCreateStyle = useCreateStyle;
               }
               // Handle props
-              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code);
+              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code, adapter);
             }
           },
           JSXExpressionContainer: {

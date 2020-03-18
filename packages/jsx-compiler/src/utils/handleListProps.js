@@ -10,6 +10,7 @@ const handleList = require('./handleList');
  * @param {Array} properties - map return properties
  * @param {object} dynamicBinding - dynamic style generator
  * @param {string} code - original code
+ * @param {object} adapter - adapter
  * */
 module.exports = function(...args) {
   const path = args[0];
