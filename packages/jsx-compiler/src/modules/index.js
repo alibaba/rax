@@ -29,4 +29,6 @@ module.exports = [
   require('./template'),
   // Handle function
   require('./function'),
+  // Handle alias
+  require('./alias')
 ];
