@@ -68,7 +68,17 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         const iterValue = callee.object;
         // handle parentList
-        const [forNode, parentList] = handleParentListReturn(node, iterValue, code);
+        const parentListPath = path.findParent(parentPath => {
+          if (parentPath.isJSXElement()) {
+            const attributes = parentPath.node.openingElement.attributes;
+            return attributes.some(attr => genExpression(attr.name) === adapter.for);
+          }
+          return false;
+        });
+
+        const parentList = parentListPath && parentListPath.node.__jsxlist;
+
+        const forNode = handleParentListReturn(node, iterValue, parentList, dynamicValue, code);
 
         if (!t.isBlockStatement(body)) {
           // create a block return for inline return

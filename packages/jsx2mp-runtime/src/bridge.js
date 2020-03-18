@@ -320,6 +320,11 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
     __tagId: instanceId,
+    // In MiniApp every slot is scopedSlots
+    $slots: {
+      ...internal[PROPS].$slots,
+      ...internal[PROPS].$scopedSlots
+    }
   }, getComponentProps(instanceId), ...restProps);
   return {
     instanceId,
