@@ -46,4 +46,23 @@ describe('CSSPropertyOperations', () => {
     const targetNode = container.children[0];
     expect(targetNode.style._values).toMatchObject({ 'width': '50vw', 'height': '20vw', 'margin': '10vw 100vh' });
   });
+
+  it('should not change the style values order after hydration', () => {
+    container.innerHTML = '<div style="font-size: 14px; display: flex; flex-direction: row;"></div>';
+
+    const styles = {
+      fontSize: '14px',
+      display: 'flex',
+      flexDirection: 'row'
+    };
+
+    render(<div style={styles} />, container, { driver: DriverDOM, hydrate: true });
+
+    const targetNode = container.children[0];
+    expect(JSON.stringify(targetNode.style._values)).toEqual(JSON.stringify({
+      'font-size': '14px',
+      'display': 'flex',
+      'flex-direction': 'row'
+    }));
+  });
 });
