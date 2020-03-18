@@ -1,5 +1,5 @@
 import { enqueueRender } from './enqueueRender';
-import { getHistory, getMiniAppHistory } from './history';
+import { getMiniAppHistory } from './history';
 
 // instanceId -> props
 const propsMap = {};
