@@ -245,7 +245,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
               // Prop name get from node style is hyphenated, eg: background-color
               let stylePropName = hydrationChild.style[l - 1];
               let camelizedStyleName = camelizeStyleName(stylePropName);
-              if (propValue[camelizedStyleName] != null) {
+              if (propValue[camelizedStyleName] == null) {
                 hydrationChild.style[camelizedStyleName] = EMPTY;
               }
             }
