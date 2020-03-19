@@ -58,7 +58,8 @@ if (isWeb) {
 } else if (isWeex) {
   try {
     // https://weex.apache.org/docs/modules/globalEvent.html#addeventlistener
-    const globalEvent = require('@weex-module/globalEvent');
+    // Use __weex_require__ in Rax project.
+    const globalEvent = __weex_require__('@weex-module/globalEvent');
     globalEvent.addEventListener('WXApplicationDidBecomeActiveEvent', function() {
       emit(SHOW);
     });
@@ -66,6 +67,6 @@ if (isWeb) {
       emit(HIDE);
     });
   } catch (err) {
-    console.log('require @weex-module/globalEvent error');
+    console.log('@weex-module/globalEvent error: ' + err);
   }
 }
