@@ -51,14 +51,6 @@ function transformRenderFunction(ast, renderFnPath, code, options) {
                   }
                 }
               });
-              // collect import tagName
-              // importComponents.push(genExpression(createJSX('import', {
-              //   name: templateName,
-              //   src: t.stringLiteral(`./templates/${methodName}.${options.adapter.ext}`)
-              // }, []), {
-              //   comments: false,
-              //   concise: true,
-              // }))
               // collect template tagName
               renderItem[ methodName ] = returnArgumentPath.node;
               renderItemList.push(renderItem)
@@ -77,7 +69,6 @@ function transformRenderFunction(ast, renderFnPath, code, options) {
               tempDataName,
               objectExpression: returnArgumentPath.node
             }
-            // transformTarget(targetNode, returnArgumentPath.node, tempDataName)
             
             const targetAttr = {};
             returnProperties.forEach((v) => {
@@ -91,51 +82,6 @@ function transformRenderFunction(ast, renderFnPath, code, options) {
     }
   });
   return { renderItemFunctions, renderItemList, importComponents };
-}
-
-function transformTarget(ast, objectExpression, tempDataName) {
-  const keys = objectExpression.properties.map((v) => v.key.name);
-  traverse(ast, {
-    // JSXText(path) {
-    //   // <View>hello</View> => <View><text>hello</text></View>
-    //   const { node, parentPath } = path;
-    //   if(t.isJSXElement(parentPath) && path.node.value && path.node.value.trim().length && t.isJSXIdentifier(parentPath.node.openingElement.name, { name: 'View' })) {
-    //     path.replaceWith(createJSX('text', {}, [path.node]));
-    //   }
-    // },
-    JSXExpressionContainer(path) {
-      const { node, parentPath } = path;
-      // if(t.isJSXElement(parentPath) && t.isJSXExpressionContainer(path) && (t.isIdentifier(node.expression) || t.isMemberExpression(node.expression)) && t.isJSXIdentifier(parentPath.node.openingElement.name, { name: 'View' })) {
-      //   path.replaceWith(createJSX('text', {}, [path.node]));
-      // }
-      // count.xxx => `${methodName}StateTemp${tempId++}`.count.xxx
-      const { expression } = node;
-      const propertyName = getPropertyName(expression);
-      if (t.isIdentifier(expression) && keys.some(x => x === propertyName)) {
-        path.replaceWith(
-          t.jSXExpressionContainer(
-            t.memberExpression(
-              t.identifier(tempDataName),
-              expression
-            )
-          )
-        )
-      }
-      if (t.isMemberExpression(expression) && keys.some(x => x === propertyName)) {
-        const transExpression = parseCode(`${tempDataName}.${genExpression(expression)}`).program.body[0].expression
-        path.replaceWith(t.jSXExpressionContainer(transExpression))
-      }
-    }
-  })
-}
-
-function getPropertyName(expression) {
-  if(t.isIdentifier(expression)) {
-    return expression.name
-  }
-  if(t.isMemberExpression(expression)) {
-    return getPropertyName(expression.object)
-  }
 }
 
 module.exports = {

@@ -115,12 +115,10 @@ module.exports = {
         // Replace Component use __component__
         renameComponentClassDeclaration(ast);
       }
-      // if (!quickApp) {
-        replacer.insertAfter(t.variableDeclaration('let', [
-          t.variableDeclarator(
-            t.identifier(EXPORTED_DEF), id)
-        ]));
-      // }
+      replacer.insertAfter(t.variableDeclaration('let', [
+        t.variableDeclarator(
+          t.identifier(EXPORTED_DEF), id)
+      ]));
     }
     const exportedVariables = collectCoreMethods(imported[RAX_PACKAGE] || []);
     const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
@@ -129,8 +127,6 @@ module.exports = {
     ensureIndexPathInImports(ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
     renameCoreModule(ast, runtimePath);
     renameFileModule(ast);
-    // motor-universal-utils => motor-universal-utils/quickapp
-    renameFileModule(parsed.ast);
     // const inputEl = useRef(null) => const inputEl = useRef(null, 'inputEl');
     renameUseRef(parsed.ast)
     renameAppConfig(ast, sourcePath, resourcePath);
@@ -144,8 +140,14 @@ module.exports = {
 
 
     if (type !== 'app') {
-      removeDefaultImports(ast);
+      if (quickApp) {
+        removeDefaultImports(ast);
+      }
       addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, quickApp);
+    }
+
+    if (!quickApp) {
+      removeDefaultImports(ast);
     }
 
     /**
@@ -258,23 +260,6 @@ function renameComponentClassDeclaration(ast) {
         name: SUPER_COMPONENT
       })) {
         superClassPath.replaceWith(t.identifier(SAFE_SUPER_COMPONENT));
-      }
-    }
-  });
-}
-
-// import img from '../assets/img.png' => const img = '../assets/img.png'
-function renameFileModule(ast) {
-  traverse(ast, {
-    ImportDeclaration(path) {
-      const source = path.get('source');
-      if (source.isStringLiteral() && isFileModule(source.node.value)) {
-        source.parentPath.replaceWith(t.variableDeclaration('const', [
-          t.variableDeclarator(
-            t.identifier(path.get('specifiers')[0].node.local.name),
-            t.stringLiteral(source.node.value)
-          )
-        ]));
       }
     }
   });
