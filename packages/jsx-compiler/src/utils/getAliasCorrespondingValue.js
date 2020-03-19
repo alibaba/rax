@@ -20,7 +20,7 @@ function getAliasType(aliasEntries, importedModule) {
 
   let correspondingAlias = '';
   const useComplexPath = Object.keys(aliasEntries).some(alias => {
-    if (importedModule.startsWith(alias)  && importedModule[alias.length] === '/') {
+    if (importedModule.startsWith(alias) && importedModule[alias.length] === '/') {
       correspondingAlias = alias;
       return true;
     }
