@@ -10,6 +10,7 @@ import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
 import { registerEventsInConfig } from './nativeEventListener';
+import { isObject } from './types';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
@@ -110,60 +111,63 @@ function createProxyMethods(events) {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
         const event = args[0];
-
-        // set stopPropagation method
-        event.stopPropagation = () => {
-          eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
-            detail: event.detail,
-            type: event.type
-          };
-        };
-
-        const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
-        // If prevEvent exists, and event type & event detail are the same, stop event triggle
-        if (prevEvent && prevEvent.type === event.type) {
-          let isSame = true;
-          for (let key in prevEvent.detail) {
-            if (prevEvent.detail[key] !== event.detail[key]) {
-              isSame = false;
-              break;
-            }
-          }
-          if (isSame) {
-            return;
-          }
-        }
-
+        const isNativeEvent = isObject(event) && isObject(event.detail) && event.timeStamp;
         let context = this.instance; // Context default to Rax component instance.
 
-        const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
-        const datasetArgs = [];
-        // Universal event args
-        const datasetKeys = Object.keys(dataset);
-        if (datasetKeys.length > 0) {
-          datasetKeys.forEach((key) => {
-            if ('argContext' === key || 'arg-context' === key) {
-              context = dataset[key] === 'this' ? this.instance : dataset[key];
-            } else if (isDatasetArg(key)) {
+        if (isNativeEvent) {
+          // set stopPropagation method
+          event.stopPropagation = () => {
+            eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
+              detail: event.detail,
+              type: event.type
+            };
+          };
+
+          const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
+          // If prevEvent exists, and event type & event detail are the same, stop event triggle
+          if (prevEvent && prevEvent.type === event.type) {
+            let isSame = true;
+            for (let key in prevEvent.detail) {
+              if (prevEvent.detail[key] !== event.detail[key]) {
+                isSame = false;
+                break;
+              }
+            }
+            if (isSame) {
+              return;
+            }
+          }
+
+          const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
+          const datasetArgs = [];
+          // Universal event args
+          const datasetKeys = Object.keys(dataset);
+          if (datasetKeys.length > 0) {
+            datasetKeys.forEach((key) => {
+              if ('argContext' === key || 'arg-context' === key) {
+                context = dataset[key] === 'this' ? this.instance : dataset[key];
+              } else if (isDatasetArg(key)) {
               // eg. arg0, arg1, arg-0, arg-1
-              const index = DATASET_ARG_REG.exec(key)[1];
-              datasetArgs[index] = dataset[key];
-            }
-          });
-        } else {
-          const formatName = formatEventName(eventName);
-          Object.keys(this[PROPS]).forEach(key => {
-            if (`data-${formatName}-arg-context` === key) {
-              context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
-            } else if (isDatasetKebabArg(key)) {
+                const index = DATASET_ARG_REG.exec(key)[1];
+                datasetArgs[index] = dataset[key];
+              }
+            });
+          } else {
+            const formatName = formatEventName(eventName);
+            Object.keys(this[PROPS]).forEach(key => {
+              if (`data-${formatName}-arg-context` === key) {
+                context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
+              } else if (isDatasetKebabArg(key)) {
               // `data-arg-` length is 9.
-              const len = `data-${formatName}-arg-`.length;
-              datasetArgs[key.slice(len)] = this[PROPS][key];
-            }
-          });
+                const len = `data-${formatName}-arg-`.length;
+                datasetArgs[key.slice(len)] = this[PROPS][key];
+              }
+            });
+          }
+          // Concat args.
+          args = datasetArgs.concat(args);
         }
-        // Concat args.
-        args = datasetArgs.concat(args);
+
         if (this.instance._methods[eventName]) {
           return this.instance._methods[eventName].apply(context, args);
         } else {
