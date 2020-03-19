@@ -114,7 +114,7 @@ function parse(code, options) {
   const exported = getExported(ast);
   const programPath = getProgramPath(ast);
   const defaultExportedPath = getDefaultExportedPath(ast);
-  // console.log('programPath', programPath.scope);
+
   const ret = {
     ast,
     imported,
