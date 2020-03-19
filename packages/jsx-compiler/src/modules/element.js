@@ -704,16 +704,10 @@ function transformCallExpressionArg(ast, dynamicValue, isDirective) {
         Identifier(innerPath) {
           handleValidIdentifier(innerPath, () => {
             const { node: innerNode } = innerPath;
-            if (innerNode.__listItem && !innerPath.parentPath.isMemberExpression()) {
-              const item = innerNode.__listItem.item;
-              if (item) {
-                innerPath.replaceWith(
-                  t.memberExpression(
-                    t.identifier(item),
-                    t.identifier(innerNode.name),
-                  ),
-                );
-              }
+            if (!innerNode.__transformed) {
+              const replaceNode = transformIdentifier(innerNode, dynamicValue, isDirective);
+              innerPath.replaceWith(replaceNode);
+              replaceNode.__transformed = true;
             }
           });
         },
