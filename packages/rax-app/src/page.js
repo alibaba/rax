@@ -56,12 +56,16 @@ if (isWeb) {
     prevVisibleState = currentVisibleState;
   });
 } else if (isWeex) {
-  // https://weex.apache.org/docs/modules/globalEvent.html#addeventlistener
-  const globalEvent = weex.requireModule('globalEvent'); // eslint-disable-line
-  globalEvent.addEventListener('WXApplicationDidBecomeActiveEvent', function() {
-    emit(SHOW);
-  });
-  globalEvent.addEventListener('WXApplicationWillResignActiveEvent', function() {
-    emit(HIDE);
-  });
+  try {
+    // https://weex.apache.org/docs/modules/globalEvent.html#addeventlistener
+    const globalEvent = require('@weex-module/globalEvent');
+    globalEvent.addEventListener('WXApplicationDidBecomeActiveEvent', function() {
+      emit(SHOW);
+    });
+    globalEvent.addEventListener('WXApplicationWillResignActiveEvent', function() {
+      emit(HIDE);
+    });
+  } catch (err) {
+    console.log('require @weex-module/globalEvent error');
+  }
 }
