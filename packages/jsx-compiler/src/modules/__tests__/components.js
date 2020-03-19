@@ -1,8 +1,9 @@
-const { _transformComponents } = require('../components');
+const { _transformComponents, _transformDataset } = require('../components');
 const { parseExpression, parseCode, getImported } = require('../../parser/index');
 const genCode = require('../../codegen/genCode');
 const adapter = require('../../adapter').ali;
 const wxAdapter = require('../../adapter').wechat;
+const quickAppAdapter = require('../../adapter').quickapp;
 
 describe('Transform components', () => {
   it('should transform Provider', () => {
@@ -67,13 +68,40 @@ describe('Transform components', () => {
     });
     expect(genCode(ast).code).toEqual('<rax-text style={styles.name} onClick={handleClick}>123</rax-text>');
   });
+  it('should move dataset', () => {
+    const importedAST = parseCode(`
+      import { createElement } from 'rax'
+      import View from 'rax-view';
+    `);
+    const imported = getImported(importedAST);
+    const ast = parseExpression(`
+      <View>
+        <rax-text data-item="111" onClick={this.handleClick}>hello</rax-text>
+      </View>
+    `);
+    const parsed = {
+      templateAST: ast,
+      imported,
+      componentDependentProps: {},
+      componentsAlias: {}
+    };
+    const options = {
+      adapter: quickAppAdapter
+    };
+    const { componentsAlias } = _transformComponents(parsed, options);
+    _transformDataset(parsed, options)
+    expect(genCode(ast).code).toEqual(`<rax-view>
+        <div class="__rax-view" data-item="111" onClick={this.handleClick}><rax-text data-item="111">hello</rax-text></div>
+      </rax-view>`);
+    expect(componentsAlias).toEqual({});
+  });
   it('should transform JSX Fragment', () => {
     const ast = parseExpression('<View><>Test</></View>');
     const parsed = {
       templateAST: ast
     };
     const options = {
-      adapter
+      adapter: quickAppAdapter
     };
     _transformComponents(parsed, options);
     expect(genCode(ast).code).toEqual('<View><block>Test</block></View>');

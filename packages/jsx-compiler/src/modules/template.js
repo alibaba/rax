@@ -1,4 +1,5 @@
 const t = require('@babel/types');
+const { relative, extname, dirname } = require('path');
 const { NodePath } = require('@babel/traverse');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const isClassComponent = require('../utils/isClassComponent');
@@ -10,10 +11,58 @@ const createBinding = require('../utils/createBinding');
 const findIndex = require('../utils/findIndex');
 const getExportComponentPath = require('../utils/getExportComponentPath');
 const getProgramPath = require('../utils/getProgramPath');
+const isQuickApp = require('../utils/isQuickApp');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
 
+function removeExt(path) {
+  const ext = extname(path);
+  return path.slice(0, path.length - ext.length);
+}
+
+function transformComTemplate(parsed, options, code) {
+  const { ast, templateAST, imported, usingComponents } = parsed;
+  const importComponents = []
+  traverse(templateAST, {
+    JSXElement: {
+      exit(path) {
+        const { node: {
+          openingElement
+        } } = path;
+        if (openingElement) {
+          if (t.isJSXIdentifier(openingElement.name)
+            && openingElement.name.name === 'template'
+            && openingElement.attributes.find(attr => t.isJSXIdentifier(attr.name) && attr.name.name === 'pagePath')
+          ) {
+            Object.keys(usingComponents || {}).forEach((v) => {
+              let src = usingComponents[v];
+              if (/^c-/.test(v)) {
+                let result = './' + relative(dirname(options.resourcePath), src); // components/Repo.jsx
+                src = `${removeExt(result)}.${options.adapter.ext}`
+              }
+              importComponents.push(genExpression(createJSX('import', {
+                src: t.stringLiteral(src),
+                name: t.stringLiteral(v)
+              }), {
+                comments: false,
+                concise: true,
+              }))
+            })
+          } else {
+            path.skip();
+          }
+        } else {
+          path.skip();
+        }
+      }
+    }
+  })
+  return {
+    importComponents,
+    templateAST
+  }
+}
 /**
  * Extract JSXElement path.
  */
@@ -31,19 +80,33 @@ module.exports = {
 
     const returnPath = getReturnElementPath(renderFnPath);
     if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.resourcePath);
-
     let returnArgument = returnPath.get('argument').node;
+    const quickApp = isQuickApp(options)
+    // support render mulit elements
+    if(t.isArrayExpression(returnPath.get('argument')) && quickApp) {
+      returnArgument = createJSX('div', {
+        class: t.stringLiteral('__rax-view')
+      }, returnPath.get('argument').node.elements)
+    }
     if (!['JSXText', 'JSXExpressionContainer', 'JSXSpreadChild', 'JSXElement', 'JSXFragment'].includes(returnArgument.type)) {
       returnArgument = t.jsxExpressionContainer(returnArgument);
     }
-    parsed[TEMPLATE_AST] = createJSX('block', {
-      [options.adapter.if]: t.stringLiteral(createBinding('$ready')),
-    }, [returnArgument]);
-    parsed[RENDER_FN_PATH] = renderFnPath;
     returnPath.remove();
+    if (!quickApp) {
+      parsed[TEMPLATE_AST] = createJSX('block', {
+        [options.adapter.if]: t.stringLiteral(createBinding('$ready')),
+      }, [returnArgument]);
+      parsed[RENDER_FN_PATH] = renderFnPath;
+    } else {
+      const template = createJSX('div', { class: t.StringLiteral('page-container __rax-view') }, [returnArgument])
+      parsed[TEMPLATE_AST] = createJSX('template', { pagePath: t.StringLiteral('true') }, [template])
+      parsed[RENDER_FN_PATH] = renderFnPath;
+    }
   },
   generate(ret, parsed, options) {
     if (parsed[TEMPLATE_AST]) {
+      const { importComponents } = transformComTemplate(parsed, options);
+      ret.importComponents = ret.importComponents ? ret.importComponents.concat(importComponents) : importComponents;
       const children = parsed[TEMPLATE_AST].children || [];
       const lastTemplateDefineIdx = findIndex(children,
         (node) => t.isJSXElement(node) && node.openingElement.name.name !== 'template');

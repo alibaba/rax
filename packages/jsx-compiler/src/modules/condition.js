@@ -3,6 +3,7 @@ const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
 const chalk = require('chalk');
+const isQuickApp = require('../utils/isQuickApp');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 
 const TEMPLATE_AST = 'templateAST';
@@ -152,10 +153,22 @@ function transformTemplate(ast, templateMap, adapter, code) {
  * */
 function transformConditionalExpression(path, expression, options) {
   let { test, consequent, alternate } = expression;
+  const { parentPath } = path;
+  const quickApp = isQuickApp(options.adapter);
 
   const replacement = [];
   let consequentReplacement = [];
   let alternateReplacement = [];
+
+  let openTag = 'block';
+
+  if (quickApp) {
+    if(t.isJSXElement(parentPath) && t.isJSXIdentifier(parentPath.node.openingElement.name, { name: 'Text' })){
+      openTag = 'span'
+    } else if (!isAllJsxElement(expression)) {
+      openTag = 'View'
+    }
+  }
 
   if (t.isExpression(consequent)) {
     if (t.isConditionalExpression(consequent)) {
@@ -196,7 +209,7 @@ function transformConditionalExpression(path, expression, options) {
   if (consequentReplacement.length > 0) {
     replacement.push(
       createJSX(
-        'block',
+        openTag,
         {
           [options.adapter.if]: generateConditionValue(test, options),
         },
@@ -207,7 +220,7 @@ function transformConditionalExpression(path, expression, options) {
   if (alternateReplacement.length > 0) {
     replacement.push(
       createJSX(
-        'block',
+        openTag,
         {
           [options.adapter.else]: null,
         },
@@ -233,6 +246,23 @@ module.exports = {
   _transformRenderFunction: transformRenderFunction,
   _transformTemplate: transformTemplate,
 };
+
+function needRecursion(nodePath) {
+  return (t.isConditionalExpression(nodePath) || t.isJSXElement(nodePath))
+}
+
+function isAllJsxElement(expression) {
+  const { consequent, alternate } = expression;
+  // { need ? 1 : 2 }
+  if(!needRecursion(consequent) && !needRecursion(alternate)) return false;
+  // { need ? <Demo /> : <Test /> }
+  if (t.isJSXElement(consequent) && t.isJSXElement(alternate)) return true;
+  // { need ? bar ? <Bar /> : <View /> : <Demo /> }
+  if (t.isConditionalExpression(consequent)) {
+    return isAllJsxElement(consequent)
+  }
+  return isAllJsxElement(alternate)
+}
 
 function generateConditionValue(test, options) {
   let conditionValue;

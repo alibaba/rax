@@ -10,12 +10,15 @@ const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const Expression = require('../utils/Expression');
 const getCompiledComponents = require('../getCompiledComponents');
+const isQuickApp = require('../utils/isQuickApp');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
 let tagCount = 0;
+const TAG_REG = /rax-/;
+let iconFontIndex = 0;
 
 /**
  * Transform the component name is identifier
@@ -25,7 +28,10 @@ let tagCount = 0;
  * @param {Object} parsed
  * @param {Object} options
  */
-function transformIdentifierComponentName(path, alias, dynamicValue, parsed, options) {
+function transformIdentifierComponentName(path, alias, dynamicValue, parsed, options, quickApp) {
+  const componentConfig = quickApp ? 'quickappConfig' : 'miniappConfig';
+  const tagIdKey = quickApp ? 'tag-id' : '__tagId';
+  const tagIdValue = quickApp ? 'tagId' : '__tagId';
   const { node, parentPath } = path;
   const {
     renderFunctionPath,
@@ -34,7 +40,10 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   // Miniapp template tag name does not support special characters.
   const aliasName = alias.name.replace(/@|\//g, '_');
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
-  replaceComponentTagName(path, t.jsxIdentifier(componentTag));
+  // todo delete
+  const pureComponentTag = componentTag.replace('_ali_', '')
+  replaceComponentTagName(path, t.jsxIdentifier(pureComponentTag));
+
   node.name.isCustom = true;
 
   if (!getCompiledComponents(options.adapter.platform)[componentTag]) {
@@ -69,23 +78,53 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
         }
       }
 
-      tagId = '{{__tagId}}-' + tagId;
+      tagId = `{{${tagIdValue}}}-` + tagId;
     } else {
-      tagId = createBinding(
-        genExpression(
-          t.memberExpression(
-            t.identifier(node.__slotChildEl.scopeName.value),
-            t.identifier('__tagId')
+      if (quickApp) {
+        tagId = createBinding(tagIdValue)
+      } else {
+        tagId = createBinding(
+          genExpression(
+            t.memberExpression(
+              t.identifier(node.__slotChildEl.scopeName.value),
+              t.identifier(tagIdValue)
+            )
           )
-        )
-      );
+        );
+      }
     }
 
     node.attributes.push(
-      t.jsxAttribute(t.jsxIdentifier('__tagId'), t.stringLiteral(tagId)),
+      t.jsxAttribute(t.jsxIdentifier(tagIdKey), t.stringLiteral(tagId)),
     );
 
     if (componentTag === 'slot') return;
+
+    // handle with icon in quickApp
+    if (pureComponentTag.indexOf('rax-icon') > -1 && quickApp) {
+      const fontAttr = {}
+      node.attributes.forEach((v) => {
+        if (v.name.name === 'fontFamily') {
+          fontAttr.fontFamily = v.value.value
+        }
+        if (v.name.name === 'source') {
+          v.value.expression.properties.forEach(property => {
+            if (property.key.name === 'uri') {
+              fontAttr.url = property.value.value
+            }
+          })
+        }
+      })
+      const index = iconFontIndex++;
+      if (!fontAttr.fontFamily) {
+        fontAttr.fontFamily = `iconfont${index}`
+      }
+      fontAttr.iconClass = `icon-font-${index}`;
+      node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class-name'), t.stringLiteral(fontAttr.iconClass)))
+      if (!parsed.iconfontMap.some(v => v.url === fontAttr.url)) {
+        parsed.iconfontMap.push(fontAttr);
+      }
+    }
 
     /**
      * Handle with special attrs &&
@@ -95,13 +134,13 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
       const packageName = getNpmName(alias.from);
       if (packageName === alias.from) {
         const pkg = getComponentConfig(alias.default ? alias.from : alias.name, options.resourcePath);
-        if (pkg && pkg.miniappConfig) {
-          if (Array.isArray(pkg.miniappConfig.renderSlotProps)) {
+        if (pkg && pkg[componentConfig]) {
+          if (Array.isArray(pkg[componentConfig].renderSlotProps)) {
             path.traverse({
               JSXAttribute(attrPath) {
                 const { node } = attrPath;
                 if (
-                  pkg.miniappConfig.renderSlotProps.indexOf(node.name.name) > -1
+                  pkg[componentConfig].renderSlotProps.indexOf(node.name.name) > -1
                 ) {
                   if (t.isJSXExpressionContainer(node.value)) {
                     let fnExp;
@@ -143,7 +182,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
             });
           }
 
-          if (pkg.miniappConfig.subPackages) {
+          if (pkg[componentConfig].subPackages) {
             parsed.imported[alias.from].forEach(importedComponent => {
               importedComponent.isFromComponentLibrary = true;
             });
@@ -155,11 +194,12 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   }
 }
 
-function transformComponents(parsed, options) {
+function transformComponents(parsed, options, quickApp) {
   const { ast, templateAST, imported } = parsed;
   const dynamicValue = {};
   const contextList = [];
   const componentsAlias = {};
+  const componentConfig = quickApp ? 'quickappConfig' : 'miniappConfig';
   traverse(templateAST, {
     JSXOpeningElement(path) {
       const { node } = path;
@@ -169,7 +209,7 @@ function transformComponents(parsed, options) {
         const alias = getComponentAlias(componentTag, imported);
         if (alias) {
           removeImport(ast, alias);
-          const componentTag = transformIdentifierComponentName(path, alias, dynamicValue, parsed, options);
+          const componentTag = transformIdentifierComponentName(path, alias, dynamicValue, parsed, options, quickApp);
           if (componentTag) {
             // Collect renamed component tag & path info
             componentsAlias[componentTag] = alias;
@@ -183,7 +223,8 @@ function transformComponents(parsed, options) {
             },
             dynamicValue,
             parsed,
-            options
+            options,
+            quickApp
           );
         }
       } else if (t.isJSXMemberExpression(node.name)) {
@@ -209,11 +250,11 @@ function transformComponents(parsed, options) {
             removeImport(parsed.ast, alias);
             if (alias) {
               const pkg = getComponentConfig(alias.from, options.resourcePath);
-              const isSingleComponent = pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name];
-              const isComponentLibrary = pkg.miniappConfig && pkg.miniappConfig.subPackages && pkg.miniappConfig.subPackages[alias.local] && pkg.miniappConfig.subPackages[alias.local].subComponents && pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+              const isSingleComponent = pkg[componentConfig] && pkg[componentConfig].subComponents && pkg[componentConfig].subComponents[property.name];
+              const isComponentLibrary = pkg[componentConfig] && pkg[componentConfig].subPackages && pkg[componentConfig].subPackages[alias.local] && pkg[componentConfig].subPackages[alias.local].subComponents && pkg[componentConfig].subPackages[alias.local].subComponents[property.name];
 
               if (isSingleComponent) {
-                let subComponent = pkg.miniappConfig.subComponents[property.name];
+                let subComponent = pkg[componentConfig].subComponents[property.name];
                 replaceComponentTagName(
                   path,
                   t.jsxIdentifier(subComponent.tagNameMap),
@@ -228,7 +269,7 @@ function transformComponents(parsed, options) {
                   );
                 }
               } else if (isComponentLibrary) {
-                let subComponent = pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+                let subComponent = pkg[componentConfig].subPackages[alias.local].subComponents[property.name];
                 const componentTag = subComponent.tagNameMap || `${alias.name}-${object.name}-${property.name}`.toLowerCase().replace(/@|\//g, '_');
                 replaceComponentTagName(
                   path,
@@ -276,22 +317,63 @@ function transformComponents(parsed, options) {
     componentsAlias
   };
 }
-
+function transformDataset(parsed, options) {
+  const { ast, templateAST, imported } = parsed;
+  traverse(templateAST, {
+    JSXElement: {
+      exit(path) {
+        const { node } = path;
+        const openTagName = node.openingElement.name;
+        if (t.isJSXIdentifier(openTagName) 
+        && TAG_REG.test(openTagName.name) 
+        && !getCompiledComponents(options.adapter.platform)[openTagName.name]
+        && !node.__transformDataset
+        && node.openingElement.attributes.some(x => x.name.name.indexOf('data-') > -1)) {
+          node.__transformDataset = true;
+          let attr = {
+            class: t.stringLiteral('__rax-view')
+          };
+          node.openingElement.attributes.forEach(v => {
+            if (v.name.name.indexOf('data-') > -1) {
+              attr[ v.name.name ] = v.value;
+            }
+            if (v.name.name.indexOf('onClick') > -1) {
+              attr[ v.name.name ] = v.value;
+            }
+          });
+          if (attr.onClick) {
+            node.openingElement.attributes = node.openingElement.attributes.filter(x => x.name.name !== 'onClick')
+          }
+          path.replaceWith(createJSX('div', attr, [path.node]))
+        }
+      }
+    }
+  })
+}
 /**
  * Rax components.
  */
 module.exports = {
   parse(parsed, code, options) {
+    const quickApp = isQuickApp(options);
     if (!parsed.componentDependentProps) {
       parsed.componentDependentProps = {};
     }
-    const { contextList, dynamicValue, componentsAlias } = transformComponents(parsed, options);
+    if (!parsed.iconfontMap) {
+      parsed.iconfontMap = [];
+    }
+    const { contextList, dynamicValue, componentsAlias, iconfontMap } = transformComponents(parsed, options, quickApp);
+    if (quickApp) {
+      transformDataset(parsed, options)
+    }
     // Collect used components
     Object.keys(componentsAlias).forEach(componentTag => {
       if (!parsed.usingComponents) {
         parsed.usingComponents = {};
       }
-      parsed.usingComponents[componentTag] = getComponentPath(componentsAlias[componentTag], options);
+      // todo delete
+      const key = componentTag.replace('_ali_', '');
+      parsed.usingComponents[key] = getComponentPath(componentsAlias[componentTag], options, quickApp);
     });
     // Assign used context
     parsed.contextList = contextList;
@@ -304,9 +386,11 @@ module.exports = {
   },
   generate(ret, parsed, options) {
     ret.usingComponents = parsed.usingComponents;
+    ret.iconfontMap = parsed.iconfontMap;
   },
   // For test case.
-  _transformComponents: transformComponents
+  _transformComponents: transformComponents,
+  _transformDataset: transformDataset
 };
 
 function getComponentAlias(tagName, imported) {
@@ -336,7 +420,7 @@ function getRealNpmPkgName(filePath) {
   return result && result[1];
 }
 
-function getComponentPath(alias, options) {
+function getComponentPath(alias, options, quickApp) {
   if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
     // alias.local
     if (!options.resourcePath) {
@@ -362,12 +446,13 @@ function getComponentPath(alias, options) {
     // Use miniappConfig in package.json to import native miniapp component
     const pkg = getComponentConfig(alias.from, options.resourcePath);
     let mainName = 'main';
-    if (options.platform.type !== 'ali') {
+    if (options.platform.type !== 'ali' && !quickApp) {
       mainName += `:${options.platform.type}`;
     }
+    const componentConfig = quickApp ? 'quickappConfig' : 'miniappConfig';
 
-    const isSingleComponent = pkg.miniappConfig && pkg.miniappConfig[mainName];
-    const isComponentLibrary = pkg.miniappConfig && pkg.miniappConfig.subPackages;
+    const isSingleComponent = pkg[componentConfig] && pkg[componentConfig][mainName];
+    const isComponentLibrary = pkg[componentConfig] && pkg[componentConfig].subPackages;
     if (!isSingleComponent && !isComponentLibrary) {
       console.warn(
         'Can not found compatible rax miniapp component "' + pkg.name + '".',
@@ -375,15 +460,13 @@ function getComponentPath(alias, options) {
       return;
     } else {
       const miniappComponentPath = isSingleComponent ?
-        pkg.miniappConfig[mainName] :
+        pkg[componentConfig][mainName] :
         alias.isSubComponent ?
-          pkg.miniappConfig.subPackages[alias.local].subComponents[alias.subComponentName][mainName] :
-          pkg.miniappConfig.subPackages[alias.local][mainName];
-
+          pkg[componentConfig].subPackages[alias.local].subComponents[alias.subComponentName][mainName] :
+          pkg[componentConfig].subPackages[alias.local][mainName];
       if (disableCopyNpm) {
         return normalizeOutputFilePath(join(pkg.name, miniappComponentPath));
       }
-
       const miniappConfigRelativePath = relative(pkg.main, miniappComponentPath);
       const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath);
       const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(realPkgName) + realPkgName.length);

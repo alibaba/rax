@@ -11,6 +11,7 @@ const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
 const genExpression = require('../codegen/genExpression');
+const isQuickApp = require('../utils/isQuickApp');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -165,7 +166,7 @@ function transformDirectiveClass(ast, parsed) {
   }
 }
 
-function transformDirectiveList(parsed, code, adapter) {
+function transformDirectiveList(parsed, code, adapter, quickApp) {
   const ast = parsed.templateAST;
   traverse(ast, {
     JSXAttribute(path) {
@@ -232,7 +233,13 @@ function transformDirectiveList(parsed, code, adapter) {
           originalIndex,
           jsxplus: true
         };
-        transformListJSXElement(parsed, parentJSXEl, code, adapter);
+        // parentJSXEl.replaceWith(listEl);
+        transformListJSXElement(parsed, parentJSXEl, code, adapter, quickApp);
+        parentJSXEl._forParams = {
+          forItem: params[0].name,
+          forIndex: params[1].name,
+          forList: expression.right.name
+        }
         path.remove();
       }
     }
@@ -294,10 +301,11 @@ function transformSlotDirective(ast, adapter) {
 }
 
 function transformListJSXElement(parsed, path, code, adapter) {
+  const quickApp = isQuickApp(adapter);
   const { node } = path;
   const { attributes } = node.openingElement;
-  const dynamicStyle = new DynamicBinding('_s');
-  const dynamicValue = new DynamicBinding('_d');
+  const dynamicStyle = new DynamicBinding(quickApp ? 's' : '_s');
+  const dynamicValue = new DynamicBinding(quickApp ? 'd' : '_d');
   if (node.__jsxlist && !node.__jsxlist.generated) {
     const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
     const loopBody = loopFnBody.body;

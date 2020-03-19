@@ -5,6 +5,7 @@ const TEMPLATE_AST = 'templateAST';
 const DynamicBinding = require('../utils/DynamicBinding');
 const getListItem = require('../utils/getListItem');
 const isSlotScopeNode = require('../utils/isSlotScopeNode');
+const isQuickApp = require('../utils/isQuickApp');
 
 /**
  * Transform style object.
@@ -13,8 +14,8 @@ const isSlotScopeNode = require('../utils/isSlotScopeNode');
  *          var _style0 = { width: 100 };
  *          return { _style0 };
  */
-function transformStyle(ast) {
-  const dynamicStyle = new DynamicBinding('_s');
+function transformStyle(ast, quickApp) {
+  const dynamicStyle = new DynamicBinding(quickApp ? 's' : '_s');
   let useCreateStyle = false;
   traverse(ast, {
     JSXAttribute(path) {
@@ -48,7 +49,8 @@ function shouldReplace(path) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const { useCreateStyle, dynamicStyle } = transformStyle(parsed[TEMPLATE_AST]);
+    const quickApp = isQuickApp(options);
+    const { useCreateStyle, dynamicStyle } = transformStyle(parsed[TEMPLATE_AST], quickApp);
     if (!parsed.useCreateStyle) {
       parsed.useCreateStyle = useCreateStyle;
     }

@@ -5,6 +5,9 @@ const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
+const isQuickApp = require('../utils/isQuickApp');
+const { readJSONSync } = require('fs-extra');
+const genExpression = require('../codegen/genExpression');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 const { BINDING_REG } = require('../utils/checkAttr');
@@ -72,6 +75,7 @@ module.exports = {
       useCreateStyle, useClassnames, dynamicValue, dynamicRef, dynamicStyle, dynamicEvents, imported,
       contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
     const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
+    const quickApp = isQuickApp(options);
     if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
       // Can not found default export, otherwise app.js is excluded.
       return;
@@ -80,6 +84,9 @@ module.exports = {
 
     if (type === 'app') {
       userDefineType = 'function';
+      if (quickApp) {
+        addExportDefault(ast);
+      }
     } else {
       const replacer = getReplacer(exportComponentPath);
       let { id, body } = exportComponentPath.node;
@@ -108,10 +115,12 @@ module.exports = {
         // Replace Component use __component__
         renameComponentClassDeclaration(ast);
       }
-      replacer.insertAfter(t.variableDeclaration('let', [
-        t.variableDeclarator(
-          t.identifier(EXPORTED_DEF), id)
-      ]));
+      // if (!quickApp) {
+        replacer.insertAfter(t.variableDeclaration('let', [
+          t.variableDeclarator(
+            t.identifier(EXPORTED_DEF), id)
+        ]));
+      // }
     }
     const exportedVariables = collectCoreMethods(imported[RAX_PACKAGE] || []);
     const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
@@ -120,7 +129,12 @@ module.exports = {
     ensureIndexPathInImports(ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
     renameCoreModule(ast, runtimePath);
     renameFileModule(ast);
+    // motor-universal-utils => motor-universal-utils/quickapp
+    renameFileModule(parsed.ast);
+    // const inputEl = useRef(null) => const inputEl = useRef(null, 'inputEl');
+    renameUseRef(parsed.ast)
     renameAppConfig(ast, sourcePath, resourcePath);
+
 
     if (!disableCopyNpm) {
       const currentNodeModulePath = join(sourcePath, 'npm');
@@ -128,11 +142,11 @@ module.exports = {
       renameNpmModules(ast, npmRelativePath, resourcePath, cwd);
     }
 
-    if (type !== 'app') {
-      addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath);
-    }
 
-    removeDefaultImports(ast);
+    if (type !== 'app') {
+      removeDefaultImports(ast);
+      addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, quickApp);
+    }
 
     /**
      * updateChildProps: collect props dependencies.
@@ -184,10 +198,25 @@ module.exports = {
       addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath);
       addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
       addProviderIniter(contextList, renderFunctionPath);
-      addRegisterRefs(refs, renderFunctionPath);
+      addRegisterRefs(refs, renderFunctionPath, quickApp);
     }
   },
 };
+
+function addExportDefault(ast) {
+  traverse(ast, {
+    ExpressionStatement(path) {
+      const { expression } = path.node;
+      const { callee } = expression;
+      if (t.isCallExpression(expression) && t.isIdentifier(callee) && callee.name === 'runApp') {
+        path.replaceWith(
+          t.exportDefaultDeclaration(
+            expression
+          ))
+      }
+    }
+  })
+}
 
 function genTagIdExp(expressions) {
   let ret = '';
@@ -251,6 +280,35 @@ function renameFileModule(ast) {
   });
 }
 
+// import img from '../assets/img.png' => const img = '../assets/img.png'
+function renameFileModule(ast) {
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.get('source');
+      if (source.isStringLiteral() && isFileModule(source.node.value)) {
+        source.parentPath.replaceWith(t.variableDeclaration('const', [
+          t.variableDeclarator(
+            t.identifier(path.get('specifiers')[0].node.local.name),
+            t.stringLiteral(source.node.value)
+          )
+        ]));
+      }
+    }
+  });
+}
+
+function renameUseRef(ast) {
+  traverse(ast, {
+    CallExpression(path) {
+      const { node, parentPath } = path;
+      const { callee } = node;
+      if (t.isVariableDeclarator(parentPath) && t.isIdentifier(callee) && callee.name === 'useRef') {
+        node.arguments.push(t.stringLiteral(parentPath.node.id.name))
+      }
+    }
+  });
+}
+
 /**
  * Rename app.json to app.config.js, for prev is compiled to adapte miniapp.
  * eg:
@@ -266,7 +324,7 @@ function renameAppConfig(ast, sourcePath, resourcePath) {
       if (source.isStringLiteral()) {
         const appConfigSourcePath = join(resourcePath, '..', source.node.value);
         if (appConfigSourcePath === join(sourcePath, 'app.json')) {
-          const replacement = source.node.value.replace(/app\.json/, 'app.config.js');
+          const replacement = source.node.value.replace(/app\.json/, 'appConfig.js');
           source.replaceWith(t.stringLiteral(replacement));
         }
       }
@@ -291,7 +349,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     const npmName = getNpmName(value);
     const nodeModulePath = join(rootContext, 'node_modules');
     const searchPaths = [nodeModulePath];
-    const target = require.resolve(npmName, { paths: searchPaths });
+    let target = require.resolve(npmName, { paths: searchPaths });
     // In tnpm, target will be like following (symbol linked path):
     // ***/_universal-toast_1.0.0_universal-toast/lib/index.js
     let packageJSONPath;
@@ -301,7 +359,12 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
       throw new Error(`You may not have npm installed: "${npmName}"`);
     }
 
+    const packageJSON = readJSONSync(packageJSONPath);
+
     const moduleBasePath = join(packageJSONPath, '..');
+    if(packageJSON.quickappConfig) {
+      target = join(moduleBasePath, packageJSON.quickappConfig.main)
+    }
     const realNpmName = relative(nodeModulePath, moduleBasePath);
     const modulePathSuffix = relative(moduleBasePath, target);
 
@@ -329,7 +392,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath) {
+function addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, quickApp) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -390,19 +453,30 @@ function addDefine(programPath, type, userDefineType, eventHandlers, useCreateSt
     );
   }
 
-  programPath.node.body.push(
-    t.expressionStatement(
-      t.callExpression(
-        t.identifier(getConstructor(type)),
-        [
-          t.callExpression(
-            t.identifier(safeCreateInstanceId),
-            args
-          )
-        ],
+  if (quickApp) {
+    programPath.node.body.push(
+      t.exportDefaultDeclaration(
+        t.callExpression(
+          t.identifier(safeCreateInstanceId),
+          args
+        )
       )
-    )
-  );
+    );
+  } else {
+    programPath.node.body.push(
+      t.expressionStatement(
+        t.callExpression(
+          t.identifier(getConstructor(type)),
+          [
+            t.callExpression(
+              t.identifier(safeCreateInstanceId),
+              args
+            )
+          ],
+        )
+      )
+    );
+  }
 }
 
 function removeRaxImports(ast) {
@@ -525,7 +599,7 @@ function addProviderIniter(contextList, renderFunctionPath) {
  * @param {Array} refs
  * @param {Object} renderFunctionPath
  * */
-function addRegisterRefs(refs, renderFunctionPath) {
+function addRegisterRefs(refs, renderFunctionPath, quickApp) {
   const registerRefsMethods = t.memberExpression(
     t.thisExpression(),
     t.identifier('_registerRefs')
@@ -542,10 +616,15 @@ function addRegisterRefs(refs, renderFunctionPath) {
   if (refs.length > 0) {
     fnBody.push(t.expressionStatement(t.callExpression(registerRefsMethods, [
       t.arrayExpression(refs.map(ref => {
-        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.name),
-          t.objectProperty(t.stringLiteral('method'), ref.method ),
-          t.objectProperty(t.stringLiteral('type'), ref.type ),
-          t.objectProperty(t.stringLiteral('id'), ref.id )]);
+        if (quickApp) {
+          return t.objectExpression([t.objectProperty(t.stringLiteral('name'), t.stringLiteral(ref.value)),
+          t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]);;
+        } else {
+          return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.name),
+            t.objectProperty(t.stringLiteral('method'), ref.method ),
+            t.objectProperty(t.stringLiteral('type'), ref.type ),
+            t.objectProperty(t.stringLiteral('id'), ref.id )]);
+        }
       }))
     ])));
   }

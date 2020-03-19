@@ -11,6 +11,8 @@ module.exports = [
   require('./code'),
   // Handle template attrs
   require('./element'),
+  // Handle quickApp tag
+  require('./tag'),
   // Handle jsx attribute
   require('./attribute'),
   // Handle template style attr
@@ -23,6 +25,8 @@ module.exports = [
   require('./jsx-plus'),
   // Directive a:if
   require('./condition'),
+  // Handle render function in quickApp
+  require('./render-function-quickApp'),
   // Handle render function
   require('./render-function'),
   // Parse and generate template.

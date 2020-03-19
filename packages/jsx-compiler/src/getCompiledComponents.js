@@ -9,5 +9,9 @@ module.exports = function(platform) {
         'rax-view': 'view',
         'rax-text': 'text'
       };
+    case 'quickapp':
+      return {
+        'rax-view': 'div',
+      }
   }
 };

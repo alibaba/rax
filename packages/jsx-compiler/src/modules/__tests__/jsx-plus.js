@@ -8,6 +8,7 @@ const {
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
 const adapter = require('../../adapter').ali;
+const quickAppAdapter = require('../../adapter').quickapp;
 
 let count = 0;
 let id = 0;
@@ -259,5 +260,76 @@ describe('Directives', () => {
         </View>
       </View>`);
     id++;
+  });
+});
+
+// quickApp
+describe('Directives in quickApp', () => {
+  describe('list in quickApp', () => {
+    it('simple', () => {
+      const code = `
+      <View>
+        <View x-for={val in array}>{val}</View>
+      </View>
+    `;
+      const ast = parseExpression(code);
+      _transformList({
+        templateAST: ast
+      }, code, quickAppAdapter);
+      expect(genExpression(ast))
+        .toEqual(`<View>
+        <View for={array.map((val, index9) => {
+    return {
+      val: val,
+      index9: index9
+    };
+  })} a:for-item="val" a:for-index="index9">{{
+      val.val
+    }}</View>
+      </View>`);
+    });
+
+    it('nested in quickApp', () => {
+      const code = `
+      <View>
+        <View x-for={item in array}>
+          <View x-for={item2 in item}>{item2}
+        </View>
+      </View>
+</View>
+    `;
+      const ast = parseExpression(code);
+      _transformList({
+        templateAST: ast
+      }, code, quickAppAdapter);
+      expect(genExpression(ast))
+        .toEqual(`<View>
+        <View for={array.map((item, index10) => {
+    return {
+      item: item.map((item2, index11) => {
+        return {
+          item2: item2,
+          index11: index11
+        };
+      }),
+      index10: index10
+    };
+  })} a:for-item="item" a:for-index="index10">
+          <View for={item} a:for-item="item2" a:for-index="index11">{{
+        item2.item2
+      }}
+        </View>
+      </View>
+</View>`);
+    });
+  });
+
+  describe('slot in quickApp', () => {
+    it('should transform ali slot', () => {
+      const code = '<View x-slot:item="props">{props.text}</View>';
+      const ast = parseExpression(code);
+      _transformSlotDirective(ast, code, quickAppAdapter);
+      expect(genExpression(ast)).toEqual('<View slot="item">{props.text}</View>');
+    });
   });
 });

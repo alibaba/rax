@@ -1,8 +1,9 @@
 const t = require('@babel/types');
-const { _transformAttribute } = require('../attribute');
+const { _transformAttribute, _transformPreComponentAttr } = require('../attribute');
 const { parseExpression } = require('../../parser');
 const adapter = require('../../adapter').ali;
 const wxAdapter = require('../../adapter').wechat;
+const quickAppAdapter = require('../../adapter').quickapp;
 const genCode = require('../../codegen/genCode');
 
 describe('Transform JSX Attribute', () => {
@@ -53,5 +54,34 @@ describe('Transform JSX Attribute', () => {
     expect(genCode(ast).code).toEqual(`<Custom styleSheet={{
   width: '100rpx'
 }}>test</Custom>`);
+  });
+  it("should collect attribute name is ref and parse it's value as a string in quickApp", () => {
+    const code = '<View ref={scrollViewRef}>test</View>';
+    const ast = parseExpression(code);
+    const { refs } = _transformAttribute(ast, code, quickAppAdapter);
+    expect(genCode(ast).code).toEqual('<View id="scrollViewRef">test</View>');
+    expect(refs[0].value).toEqual('scrollViewRef');
+  });
+  it('should transform wechat custom component style into styleSheet in quickApp', () => {
+    const code = "<rax-link style={{width: '100rpx'}}>test</rax-link>";
+    const ast = parseExpression(code);
+    _transformAttribute(ast, code, quickAppAdapter);
+    expect(genCode(ast).code).toEqual(`<rax-link style-sheet={{
+  width: '100rpx'
+}}>test</rax-link>`);
+  })
+  it('should transform on to bind in quickApp', () => {
+    const code = "<rax-text onInputChange={this.onInputChange}>test</rax-text>";
+    const ast = parseExpression(code);
+    _transformAttribute(ast, code, quickAppAdapter);
+    _transformPreComponentAttr(ast, quickAppAdapter)
+    expect(genCode(ast).code).toEqual(`<rax-text bind-input-change={this.onInputChange}>test</rax-text>`);
+  });
+  it('should transform lowercase in div in quickApp', () => {
+    const code = "<div onClick={this.onInputChange}>test</div>";
+    const ast = parseExpression(code);
+    _transformAttribute(ast, code, quickAppAdapter);
+    _transformPreComponentAttr(ast, quickAppAdapter)
+    expect(genCode(ast).code).toEqual(`<div onclick={this.onInputChange}>test</div>`);
   });
 });
