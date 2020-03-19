@@ -20,4 +20,10 @@ describe('use alias to replace', () => {
     const imported = getImported(parseCode(code), { '@Comp': '/Users/Code/src/components' }, '/Users/Code/src/pages/Home/index.jsx');
     expect(imported['../../components/Logo']).toBeDefined();
   });
+  it('should not replace imported module which starts with alias', () => {
+    const code = 'import is from \'react-is\';';
+
+    const imported = getImported(parseCode(code), { 'react': 'rax' });
+    expect(imported['react-is']).toBeDefined();
+  });
 });
