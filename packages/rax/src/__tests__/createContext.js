@@ -584,8 +584,7 @@ describe('createContext', () => {
 
     function MyContext() {
       return (
-        <ThemeContext.Provider value={'dark'}>
-        </ThemeContext.Provider>
+        <ThemeContext.Provider value={'dark'} />
       );
     };
 

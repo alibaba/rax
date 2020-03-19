@@ -109,6 +109,20 @@ function isRpx(str) {
 // Cache the convert fn.
 const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
 
+/**
+ * Camelize CSS property.
+ * Vendor prefixes should begin with a capital letter.
+ * For example:
+ * background-color -> backgroundColor
+ * -webkit-transition -> webkitTransition
+ */
+const camelizeStyleName = cached(name => {
+  return name
+    .replace(/-([a-z])/gi, function(s, g) {
+      return g.toUpperCase();
+    });
+});
+
 const isDimensionalProp = cached(prop => !NON_DIMENSIONAL_REG.test(prop));
 const isEventProp = cached(prop => EVENT_PREFIX_REG.test(prop));
 
@@ -233,10 +247,13 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
           if (attributeName === STYLE) {
             // Remove invalid style prop, and direct reset style to child avoid diff style
-            for (let i = 0, l = hydrationChild.style.length; i < l; i++) {
-              let stylePropName = hydrationChild.style[i];
-              if (!propValue[stylePropName]) {
-                hydrationChild.style[stylePropName] = EMPTY;
+            // Set style to empty will change the index of style, so here need to traverse style backwards
+            for (let l = hydrationChild.style.length; 0 < l; l--) {
+              // Prop name get from node style is hyphenated, eg: background-color
+              let stylePropName = hydrationChild.style[l - 1];
+              let camelizedStyleName = camelizeStyleName(stylePropName);
+              if (propValue[camelizedStyleName] == null) {
+                hydrationChild.style[camelizedStyleName] = EMPTY;
               }
             }
           }

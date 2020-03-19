@@ -13,15 +13,34 @@ function normalizeFileName(filename) {
 }
 
 /**
- * Add ./ (Linux/Unix) or .\ (Windows) at the start of filepath
+ * Add ./ at the start of filepath
  * @param {string} filepath
  * @returns {string}
  */
 function addRelativePathPrefix(filepath) {
-  return filepath[0] !== '.' ? `.${sep}${filepath}` : filepath;
+  return filepath[0] !== '.' ? `./${filepath}` : filepath;
 }
+
+/**
+ * Use '/' as path sep regardless of OS when outputting the path to code
+ * @param {string} filepath
+ */
+function normalizeOutputFilePath(filepath) {
+  return filepath.replace(/\\/g, '/');
+}
+
+/**
+ * use '/'(Linux/Unix) or '\'(Windows) as path sep in local file system
+ * @param {string} filepath
+ */
+function normalizeLocalFilePath(filepath) {
+  return filepath.replace(/\\|\//g, sep);
+}
+
 module.exports = {
   getNpmName,
   normalizeFileName,
-  addRelativePathPrefix
+  addRelativePathPrefix,
+  normalizeOutputFilePath,
+  normalizeLocalFilePath
 };

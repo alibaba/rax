@@ -10,6 +10,7 @@ const genExpression = require('../../codegen/genExpression');
 const adapter = require('../../adapter').ali;
 
 let count = 0;
+let id = 0;
 
 describe('Directives', () => {
   describe('list', () => {
@@ -26,12 +27,14 @@ describe('Directives', () => {
       const index = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
-        <block a:for={array.map((val, ${index}) => {
+        <View a:for={array.map((val, ${index}) => {
     return {
       val: val,
       ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}"><View>{val}</View></block>
+  })} a:for-item="val" a:for-index="${index}">{{
+      val.val
+    }}</View>
       </View>`);
     });
 
@@ -39,8 +42,7 @@ describe('Directives', () => {
       const code = `
       <View>
         <View x-for={item in array}>
-          <View x-for={item2 in item}>{item2}
-        </View>
+          <View x-for={item2 in item}>{item2}</View>
       </View>
 </View>
     `;
@@ -52,7 +54,7 @@ describe('Directives', () => {
       const index2 = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
-        <block a:for={array.map((item, ${index1}) => {
+        <View a:for={array.map((item, ${index1}) => {
     return {
       item: item.map((item2, ${index2}) => {
         return {
@@ -62,10 +64,11 @@ describe('Directives', () => {
       }),
       ${index1}: ${index1}
     };
-  })} a:for-item="item" a:for-index="${index1}"><View>
-          <block a:for={item} a:for-item="item2" a:for-index="${index2}"><View>{item2}
-        </View></block>
-      </View></block>
+  })} a:for-item="item" a:for-index="${index1}">
+          <View a:for={item} a:for-item="item2" a:for-index="${index2}">{{
+        item2.item2
+      }}</View>
+      </View>
 </View>`);
     });
 
@@ -91,23 +94,49 @@ describe('Directives', () => {
       const index2 = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View className="rxpi-coupon">
-        <block key="{{row._d0}}" a:for={testList.map((row, ${index1}) => {
+        <View className="rxpi-coupon-row" key="{{row._d0}}" a:for={testList.map((row, ${index1}) => {
     return {
       row: row.map((col, ${index2}) => {
         return {
           col: col,
-          ${index2}: ${index2},
-          _d0: ${index2}
+          ${index2}: ${index2}
         };
       }),
       ${index1}: ${index1},
       _d0: 'test_' + ${index1}
     };
-  })} a:for-item="row" a:for-index="${index1}"><View className="rxpi-coupon-row">
-          <block a:for={row} a:for-item="col" a:for-index="${index2}"><View>
-            <Text key="{{col._d0}}">{${index2}}</Text>
-          </View></block>
-        </View></block>
+  })} a:for-item="row" a:for-index="${index1}">
+          <View a:for={row} a:for-item="col" a:for-index="${index2}">
+            <Text key="{{col.${index2}}}">{{
+          col.${index2}
+        }}</Text>
+          </View>
+        </View>
+      </View>`);
+    });
+
+    it('use format function in x-for', () => {
+      const code = `
+      <View>
+        <View x-for={val in array}>{format(val)}</View>
+      </View>
+    `;
+      const ast = parseExpression(code);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
+      const index = 'index' + count++;
+      expect(genExpression(ast))
+        .toEqual(`<View>
+        <View a:for={array.map((val, ${index}) => {
+    return {
+      val: val,
+      ${index}: ${index},
+      _d0: format(val)
+    };
+  })} a:for-item="val" a:for-index="${index}">{{
+      val._d0
+    }}</View>
       </View>`);
     });
   });
@@ -146,7 +175,7 @@ describe('Directives', () => {
         <View className="home" x-class={classNames}></View>
       `);
       _transformClass(ast, adapter);
-      expect(genExpression(ast)).toEqual('<View className={"home" + " " + __classnames__(classNames)}></View>');
+      expect(genExpression(ast)).toEqual('<View className={`home${" "}${__classnames__(classNames)}`}></View>');
     });
   });
 
@@ -164,5 +193,71 @@ describe('Directives', () => {
       _transformSlotDirective(ast, adapter);
       expect(genExpression(ast)).toEqual('<View slot="item" slot-scope="__defaultScopeName">{props.text}</View>');
     });
+  });
+
+  describe('ref', () => {
+    it('should transform ref in x-for', () => {
+      const code = `<View>
+        <View x-for={(item, index) in data} ref={refs[index]}>test</View>
+      </View>`;
+      const ast = parseExpression(code);
+      _transformList({
+        templateAST: ast
+      }, code, adapter);
+      const index = 'index' + count++;
+      expect(genExpression(ast)).toEqual(`<View>
+        <View ref="{{item._d0}}" a:for={data.map((item, ${index}) => {
+    this._registerRefs([{
+      "name": "${id}" + "${index}",
+      "method": refs[${index}]
+    }]);
+
+    return {
+      item: item,
+      ${index}: ${index},
+      _d0: "${id}" + "${index}"
+    };
+  })} a:for-item="item" a:for-index="${index}">test</View>
+      </View>`);
+      id++;
+    });
+  });
+
+  it('should transform ref in nested x-for', () => {
+    const code = `<View>
+        <View x-for={(item, index) in data}>
+            <View x-for={(item, idx) in item.list} ref={refs[idx]}>test</View>
+        </View>
+      </View>`;
+    const ast = parseExpression(code);
+    _transformList({
+      templateAST: ast
+    }, code, adapter);
+    const index1 = 'index' + count++;
+    const index2 = 'index' + count++;
+    expect(genExpression(ast)).toEqual(`<View>
+        <View a:for={data.map((item, ${index1}) => {
+    return {
+      item: { ...item,
+        list: item.list.map((item, ${index2}) => {
+          this._registerRefs([{
+            "name": "${id}" + "${index2}",
+            "method": refs[${index2}]
+          }]);
+
+          return {
+            item: item,
+            ${index2}: ${index2},
+            _d0: "${id}" + "${index2}"
+          };
+        })
+      },
+      ${index1}: ${index1}
+    };
+  })} a:for-item="item" a:for-index="${index1}">
+            <View ref="{{item._d0}}" a:for={item.list} a:for-item="item" a:for-index="${index2}">test</View>
+        </View>
+      </View>`);
+    id++;
   });
 });
