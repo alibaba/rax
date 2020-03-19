@@ -12,7 +12,7 @@ export function warnForReplacedHydratebleElement(
       return;
     }
 
-    // shoudd not warn for replace comment, bescause it may be a placeholder from server
+    // should not warn for replace comment, bescause it may be a placeholder from server
     if (serverNode.nodeType === 8) {
       return;
     }
