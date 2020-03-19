@@ -28,7 +28,5 @@ module.exports = [
   // Parse and generate template.
   require('./template'),
   // Handle function
-  require('./function'),
-  // Handle alias
-  require('./alias')
+  require('./function')
 ];
