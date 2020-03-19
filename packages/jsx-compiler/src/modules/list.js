@@ -11,6 +11,7 @@ const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
+const getParentListPath = require('../utils/getParentListPath');
 
 /**
  * Transfrom map method
@@ -68,13 +69,7 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         const iterValue = callee.object;
         // handle parentList
-        const parentListPath = path.findParent(parentPath => {
-          if (parentPath.isJSXElement()) {
-            const attributes = parentPath.node.openingElement.attributes;
-            return attributes.some(attr => genExpression(attr.name) === adapter.for);
-          }
-          return false;
-        });
+        const parentListPath = getParentListPath(path, adapter);
 
         const parentList = parentListPath && parentListPath.node.__jsxlist;
 

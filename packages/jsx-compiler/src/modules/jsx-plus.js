@@ -8,7 +8,7 @@ const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
-const genExpression = require('../codegen/genExpression');
+const getParentListPath = require('../utils/getParentListPath');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -178,7 +178,6 @@ function transformDirectiveList(parsed, code, adapter) {
         const { expression } = node.value;
         let params = [];
         let forNode;
-        let parentList;
         // original index identifier
         let originalIndex;
         // create new index identifier
@@ -222,15 +221,9 @@ function transformDirectiveList(parsed, code, adapter) {
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
 
-        const parentListPath = path.findParent(parentPath => {
-          if (parentPath.isJSXElement()) {
-            const attributes = parentPath.node.openingElement.attributes;
-            return attributes.some(attr => genExpression(attr.name) === adapter.for);
-          }
-          return false;
-        });
+        const parentListPath = getParentListPath(path, adapter);
 
-        parentList = parentListPath && parentListPath.node.__jsxlist;
+        const parentList = parentListPath && parentListPath.node.__jsxlist;
         forNode = handleParentListReturn(mapCallExpression, forNode, parentList, dynamicValue, code);
 
         // <Component x-for={(item in list)} /> => <Component a:for={list} a:for-item="item" />
