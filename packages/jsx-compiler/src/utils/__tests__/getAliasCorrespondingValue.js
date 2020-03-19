@@ -6,7 +6,7 @@ describe('use alias to replace', () => {
     const code = 'import { createElement } from \'react\';';
 
     const imported = getImported(parseCode(code), {'react': 'rax'});
-    expect(imported['rax']).toBeDefined();
+    expect(imported.rax).toBeDefined();
   });
   it('should replace imported simple path with alias', () => {
     const code = 'import Comp from \'@Comp\';';

@@ -29,7 +29,7 @@ function getAliasType(aliasEntries, importedModule) {
   return [];
 }
 
-function getAliasCorrespondingValue (aliasEntries = {}, value = '', resourcePath = '') {
+function getAliasCorrespondingValue(aliasEntries = {}, value = '', resourcePath = '') {
   const [ aliasType, correspondingAlias ] = getAliasType(aliasEntries, value);
   if (aliasType) {
     let replacedValue;
@@ -44,7 +44,7 @@ function getAliasCorrespondingValue (aliasEntries = {}, value = '', resourcePath
         const realAbsolutePath = join(aliasEntries[correspondingAlias], value.replace(correspondingAlias, ''));
         replacedValue = relative(dirname(resourcePath), realAbsolutePath);
         break;
-      }
+    }
     return replacedValue;
   }
   return null;
