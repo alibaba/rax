@@ -20,6 +20,10 @@ script:
 
 jobs:
   include:
+    - stage: auto-publisher
+      script:
+        - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        - npm run check-and-publish
     - stage: bench
       node_js: "12"
       addons:
@@ -29,11 +33,6 @@ jobs:
       services:
         - xvfb
       script: npm run bench
-
-    - stage: auto-publisher
-      script:
-        - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-        - npm run check-and-publish
 
 stages:
   - test # default stage
