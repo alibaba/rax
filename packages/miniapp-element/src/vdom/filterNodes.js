@@ -9,7 +9,6 @@ const { cache, tool } = render.$$adapter;
 
 // Filter nodes only reserve childs
 export default function filterNodes(domNode, level) {
-  const window = cache.getWindow(domNode.$$pageId);
   const childNodes = domNode.childNodes || [];
 
   if (!childNodes.map) return [];
