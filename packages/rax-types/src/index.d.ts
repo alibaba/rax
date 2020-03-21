@@ -2869,7 +2869,7 @@ declare global {
       filter: Rax.SVGProps<SVGFilterElement>;
       foreignObject: Rax.SVGProps<SVGForeignObjectElement>;
       g: Rax.SVGProps<SVGGElement>;
-      image: Rax.SVGProps<SVGImageElement> | any;
+      image: Rax.SVGProps<SVGImageElement>;
       line: Rax.SVGProps<SVGLineElement>;
       linearGradient: Rax.SVGProps<SVGLinearGradientElement>;
       marker: Rax.SVGProps<SVGMarkerElement>;
