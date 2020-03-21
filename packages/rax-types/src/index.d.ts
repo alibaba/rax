@@ -80,7 +80,7 @@ interface HTMLUListElement extends HTMLElement {}
 interface HTMLVideoElement extends HTMLElement {}
 interface HTMLWebViewElement extends HTMLElement {}
 
-interface SVGElement extends Element {}
+// interface SVGElement extends Element {}
 interface SVGSVGElement extends SVGElement {}
 interface SVGCircleElement extends SVGElement {}
 interface SVGClipPathElement extends SVGElement {}
@@ -2869,7 +2869,7 @@ declare global {
       filter: Rax.SVGProps<SVGFilterElement>;
       foreignObject: Rax.SVGProps<SVGForeignObjectElement>;
       g: Rax.SVGProps<SVGGElement>;
-      image: Rax.SVGProps<SVGImageElement>;
+      image: Rax.SVGProps<SVGImageElement> | any;
       line: Rax.SVGProps<SVGLineElement>;
       linearGradient: Rax.SVGProps<SVGLinearGradientElement>;
       marker: Rax.SVGProps<SVGMarkerElement>;
@@ -2903,6 +2903,32 @@ declare global {
       waterfall: any;
       web: any;
       richtext: any;
+
+      // MiniApp
+      slot: any,
+      swiper: any,
+      'swiper-item': any,
+      'scroll-view': any,
+      'cover-view': any,
+      'cover-image': any,
+      'movable-view': any,
+      'movable-area': any,
+      icon: any,
+      'rich-text': any,
+      'picker-view': any,
+      picker: any,
+      navigator: any,
+      'web-view': any,
+      'lifestyle': any,
+      'contact-button': any,
+      'aria-component': any,
+      'functional-page-navigator': any,
+      'live-player': any,
+      'ive-pusher': any,
+      ad: any,
+      'open-data': any,
+      'page-meta': any,
+      'navigation-bar': any
     }
   }
 }
