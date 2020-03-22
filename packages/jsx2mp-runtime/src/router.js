@@ -93,10 +93,12 @@ function generateUrl(path, query) {
   if (!miniappPath) {
     throw new Error(`Path ${path} is not found`);
   }
-  if (search) {
-    search += `&${stringifyQuery(query)}`;
-  } else {
-    search = stringifyQuery(query);
+  if (query) {
+    if (search) {
+      search += `&${stringifyQuery(query)}`;
+    } else {
+      search = stringifyQuery(query);
+    }
   }
   return search ? `/${miniappPath}?${search}` : `/${miniappPath}`;
 }
