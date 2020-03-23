@@ -10,7 +10,7 @@ import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
 import { registerEventsInConfig } from './nativeEventListener';
-import { isObject } from './types';
+import { isPlainObject } from './types';
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
@@ -110,11 +110,10 @@ function createProxyMethods(events) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
-        const event = args[args.length - 1];
-        const isNativeEvent = isObject(event) && isObject(event.detail) && event.timeStamp;
+        const event = args.find(arg => isPlainObject(arg) && arg.type && arg.timeStamp && isPlainObject(arg.detail));
         let context = this.instance; // Context default to Rax component instance.
 
-        if (isNativeEvent) {
+        if (event) {
           // set stopPropagation method
           event.stopPropagation = () => {
             eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
