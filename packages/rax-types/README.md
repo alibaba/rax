@@ -1,22 +1,21 @@
-# rax-types [![npm](https://img.shields.io/npm/v/rax-types.svg)](https://www.npmjs.com/package/rax-types)
+# @types/rax [![npm](https://img.shields.io/npm/v/@types/rax.svg)](https://www.npmjs.com/package/@types/rax)
 
 # Installation
 ```
-npm install --save rax-types
+npm install --save @types/rax
 ```
 
 # Config
 
-Add `node_modules/rax-types` to your tsconifg.json file, like so:
+Add `node_modules/@types/rax` to your tsconifg.json file, like so:
 ```json
 {
   "compilerOptions": {
     "typeRoots": [
-      "node_modules/rax-types", 
-      "node_modules/@types"
+      "node_modules/@types",
     ],
     "paths": {
-      "rax": ["node_modules/rax-types"]
+      "rax": ["node_modules/@types/rax"]
     }
   }
 }
