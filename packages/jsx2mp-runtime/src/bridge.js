@@ -110,7 +110,7 @@ function createProxyMethods(events) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
-        const event = args[0];
+        const event = args[args.length - 1];
         const isNativeEvent = isObject(event) && isObject(event.detail) && event.timeStamp;
         let context = this.instance; // Context default to Rax component instance.
 
