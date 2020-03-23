@@ -80,7 +80,7 @@ interface HTMLUListElement extends HTMLElement {}
 interface HTMLVideoElement extends HTMLElement {}
 interface HTMLWebViewElement extends HTMLElement {}
 
-// interface SVGElement extends Element {}
+interface SVGElement extends Element {}
 interface SVGSVGElement extends SVGElement {}
 interface SVGCircleElement extends SVGElement {}
 interface SVGClipPathElement extends SVGElement {}
