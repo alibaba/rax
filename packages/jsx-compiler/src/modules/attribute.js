@@ -60,7 +60,7 @@ function transformAttribute(ast, code, adapter) {
             }
             refs.push(handleRefAttr(path, childExpression, node.value, adapter));
           } else {
-            throw new CodeError(code, node, path.loc, "Ref's type must be JSXExpressionContainer, like <View ref = { scrollRef }/>");
+            throw new CodeError(code, node, node.loc, "Ref's type must be JSXExpressionContainer, like <View ref={ viewRef }/>");
           }
           break;
         default:
