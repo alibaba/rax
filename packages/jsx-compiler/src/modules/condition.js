@@ -1,8 +1,8 @@
 const t = require('@babel/types');
+
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
-const chalk = require('chalk');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const genExpression = require('../codegen/genExpression');
 
@@ -271,6 +271,7 @@ function handleConsequent(path, expressionPath, templateMap, renderScope, adapte
       }
     });
   }
+
   if (shouldTransfrom) {
     const { node } = path;
     const { test, start, end } = node;
@@ -310,7 +311,7 @@ function handleConsequent(path, expressionPath, templateMap, renderScope, adapte
       );
 
       templateMap[varName].children.push(containerNode);
-      if (hasJSX(rightPath)) {
+      if (isJSX(rightNode) || hasJSX(rightPath)) {
         // Remove only if the expression contains JSX
         expressionPath.remove();
       }

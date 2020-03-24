@@ -1,6 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global my, wx */
-import { getMiniAppHistory } from './history';
 import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
 
 let apiCore;
@@ -44,15 +42,15 @@ export function withRouter(Component) {
 /**
  * Navigate to given path.
  */
-export function push(path) {
-  return navigateTo({ url: generateUrl(path) });
+export function push(path, query) {
+  return navigateTo({ url: generateUrl(path, query) });
 }
 
 /**
  * Navigate replace.
  */
-export function replace(path) {
-  return redirectTo({ url: generateUrl(path) });
+export function replace(path, query) {
+  return redirectTo({ url: generateUrl(path, query) });
 }
 
 /**
@@ -86,13 +84,32 @@ export function canGo() {
 
 /**
  * Generate MiniApp url
- * @param {String} path
+ * @param {string} path
+ * @param {object} query
  */
-function generateUrl(path) {
-  const [pathname, query] = path.split('?');
+function generateUrl(path, query) {
+  let [pathname, search] = path.split('?');
   const miniappPath = __routerMap[pathname];
   if (!miniappPath) {
     throw new Error(`Path ${path} is not found`);
   }
-  return query ? `/${miniappPath}?${query}` : `/${miniappPath}`;
+  if (query) {
+    if (search) {
+      search += `&${stringifyQuery(query)}`;
+    } else {
+      search = stringifyQuery(query);
+    }
+  }
+  return search ? `/${miniappPath}?${search}` : `/${miniappPath}`;
+}
+
+/**
+ * Stringify query
+ * @param {object} query - route query
+ * @return {string}
+ */
+function stringifyQuery(query) {
+  return Object.keys(query).reduce((total, nextKey, index) => {
+    return `${total}${index ? '&' : ''}${nextKey}=${query[nextKey]}`;
+  }, '');
 }
