@@ -15,6 +15,8 @@ const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFil
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
+const GROUP_PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*?\\${sep}[^\\${sep}]*).*$`);
+
 let tagCount = 0;
 
 /**
@@ -331,8 +333,10 @@ function getComponentConfig(pkgName, resourcePath) {
 }
 
 // for tnpm, the package name will be like _rax-image@1.1.2@rax-image
-function getRealNpmPkgName(filePath) {
-  const result = PKG_NAME_REG.exec(filePath);
+function getRealNpmPkgName(filePath, pkgName) {
+  const isGroupPkg = pkgName.indexOf('/') !== -1;
+
+  const result = isGroupPkg ? GROUP_PKG_NAME_REG.exec(filePath) : PKG_NAME_REG.exec(filePath);
   return result && result[1];
 }
 
@@ -351,7 +355,7 @@ function getComponentPath(alias, options) {
     const { disableCopyNpm } = options;
     const realNpmFile = resolveModule.sync(alias.from, { basedir: dirname(options.resourcePath), preserveSymlinks: false });
     const pkgName = getNpmName(alias.from);
-    const realPkgName = getRealNpmPkgName(realNpmFile);
+    const realPkgName = getRealNpmPkgName(realNpmFile, pkgName);
     const targetFileDir = dirname(join(options.outputPath, relative(options.sourcePath, options.resourcePath)));
     const npmRelativePath = relative(targetFileDir, join(options.outputPath, 'npm'));
 
