@@ -1,6 +1,12 @@
 /**
  * Driver for Web DOM
  **/
+const {
+  warnForReplacedHydratebleElement,
+  warnForDeletedHydratableElement,
+  warnForInsertedHydratedElement
+} = require('./warning');
+
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 
 // opacity -> opa
@@ -37,6 +43,7 @@ const COMMENT_NODE = 8;
 const EMPTY = '';
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
+const __DEV__ = process.env.NODE_ENV !== 'production';
 
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
@@ -101,6 +108,20 @@ function isRpx(str) {
 
 // Cache the convert fn.
 const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
+
+/**
+ * Camelize CSS property.
+ * Vendor prefixes should begin with a capital letter.
+ * For example:
+ * background-color -> backgroundColor
+ * -webkit-transition -> webkitTransition
+ */
+const camelizeStyleName = cached(name => {
+  return name
+    .replace(/-([a-z])/gi, function(s, g) {
+      return g.toUpperCase();
+    });
+});
 
 const isDimensionalProp = cached(prop => !NON_DIMENSIONAL_REG.test(prop));
 const isEventProp = cached(prop => EVENT_PREFIX_REG.test(prop));
@@ -226,10 +247,13 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
           if (attributeName === STYLE) {
             // Remove invalid style prop, and direct reset style to child avoid diff style
-            for (let i = 0, l = hydrationChild.style.length; i < l; i++) {
-              let stylePropName = hydrationChild.style[i];
-              if (!propValue[stylePropName]) {
-                hydrationChild.style[stylePropName] = EMPTY;
+            // Set style to empty will change the index of style, so here need to traverse style backwards
+            for (let l = hydrationChild.style.length; 0 < l; l--) {
+              // Prop name get from node style is hyphenated, eg: background-color
+              let stylePropName = hydrationChild.style[l - 1];
+              let camelizedStyleName = camelizeStyleName(stylePropName);
+              if (propValue[camelizedStyleName] == null) {
+                hydrationChild.style[camelizedStyleName] = EMPTY;
               }
             }
           }
@@ -239,10 +263,16 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
       } else {
         createNode();
         replaceChild(node, hydrationChild, parent);
+        if (__DEV__) {
+          warnForReplacedHydratebleElement(parent, node, hydrationChild);
+        }
       }
     } else {
       createNode();
       node[HYDRATION_APPEND] = true;
+      if (__DEV__) {
+        warnForInsertedHydratedElement(parent, node);
+      }
     }
   } else {
     createNode();
@@ -392,6 +422,9 @@ function recolectHydrationChild(hydrationParent) {
   const vdomLength = hydrationParent[HYDRATION_INDEX] || 0;
   if (nativeLength - vdomLength > 0) {
     for (let i = nativeLength - 1; i >= vdomLength; i--) {
+      if (__DEV__) {
+        warnForDeletedHydratableElement(hydrationParent, hydrationParent.childNodes[i]);
+      }
       hydrationParent.removeChild(hydrationParent.childNodes[i]);
     }
   }
