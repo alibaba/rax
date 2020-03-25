@@ -330,7 +330,7 @@ function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code,
             parsed.useCreateStyle = useCreateStyle;
           }
           // Handle props
-          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code);
+          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code, adapter);
         }
       },
       JSXExpressionContainer: {
