@@ -10,6 +10,25 @@ function Root(props, context) {
   return <div id="root" />;
 }
 
+function Manifest(props, context) {
+  const { __manifests, __pagePath } = context;
+
+  if (Array.isArray(__manifests)) {
+    const manifest = __manifests.find((item) => {
+      return item.path === __pagePath;
+    });
+
+    // manifest json type: https://developer.mozilla.org/en-US/docs/Web/Manifest#Deploying_a_manifest_with_the_link_tag
+    if (manifest && manifest.data) {
+      return (
+        <script type="application/manifest+json" dangerouslySetInnerHTML={{__html: JSON.stringify(manifest.data)}} />
+      );
+    }
+  }
+
+  return null;
+}
+
 function Data(props, context) {
   const { __initialData } = context;
 
@@ -61,5 +80,6 @@ export {
   Data,
   Style,
   Script,
-  App
+  App,
+  Manifest
 };
