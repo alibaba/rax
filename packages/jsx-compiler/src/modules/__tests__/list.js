@@ -294,8 +294,7 @@ describe('Transform list', () => {
     return {
       l1: l1,
       ${index1}: ${index1},
-      a: a,
-      _d0: a.map((l2, ${index2}) => {
+      a: a.map((l2, ${index2}) => {
         return {
           l2: l2,
           ${index2}: ${index2}
@@ -303,7 +302,7 @@ describe('Transform list', () => {
       })
     };
   })} a:for-item="l1" a:for-index="${index1}"><View>
-        <block a:for={_d0} a:for-item="l2" a:for-index="${index2}"><View>{{
+        <block a:for={a} a:for-item="l2" a:for-index="${index2}"><View>{{
             l2.l2
           }}</View></block>
       </View></block>
