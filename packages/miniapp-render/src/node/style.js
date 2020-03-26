@@ -31,6 +31,7 @@ function parse(styleText) {
 
 class Style {
   constructor(onUpdate) {
+    this.__settedStyle = {};
     this.$$init(onUpdate);
   }
 
@@ -69,7 +70,7 @@ class Style {
     this.$_disableCheckUpdate = false;
 
     styleList.forEach(name => {
-      this[`$_${name}`] = undefined;
+      this.__settedStyle[name] = undefined;
     });
   }
 
@@ -100,7 +101,7 @@ class Style {
      * 对外属性和方法
      */
   get cssText() {
-    const joinText = styleList.filter(name => this[`$_${name}`]).map(name => `${tool.toDash(name)}:${this['$_' + name]}`).join(';').trim();
+    const joinText = Object.keys(this.__settedStyle).map(name => `${tool.toDash(name)}:${this.__settedStyle[name]}` ).join(';').trim();
     return joinText ? `${joinText};` : '';
   }
 
@@ -135,20 +136,13 @@ const properties = {};
 styleList.forEach(name => {
   properties[name] = {
     get() {
-      return this[`$_${name}`] || '';
+      return this.__settedStyle[name] || '';
     },
     set(value) {
-      const config = cache.getConfig();
-      const oldValue = this[`$_${name}`];
+      const oldValue = this.__settedStyle[name];
       value = value !== undefined ? '' + value : undefined;
 
-      // 判断 value 是否需要删减
-      if (value && config.optimization.styleValueReduce && value.length > config.optimization.styleValueReduce) {
-        console.warn(`property "${name}" will be deleted, because it's greater than ${config.optimization.styleValueReduce}`);
-        value = undefined;
-      }
-
-      this[`$_${name}`] = value;
+      this.__settedStyle[name] = value;
       if (oldValue !== value) this.$_checkUpdate();
     },
   };
