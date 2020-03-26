@@ -1,3 +1,4 @@
+/* global TAGID */
 import { enqueueRender } from './enqueueRender';
 import { getMiniAppHistory } from './history';
 
@@ -45,7 +46,7 @@ export function updateChildProps(trigger, instanceId, nextUpdateProps) {
     if (targetComponent) {
       const nextProps = Object.assign(
         {
-          __tagId: instanceId
+          TAGID: instanceId
         },
         targetComponent.props,
         nextUpdateProps
