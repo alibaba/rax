@@ -1,10 +1,11 @@
 const t = require('@babel/types');
+
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
-const chalk = require('chalk');
 const isQuickApp = require('../utils/isQuickApp');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const genExpression = require('../codegen/genExpression');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
@@ -126,14 +127,9 @@ function transformTemplate(ast, templateMap, adapter, code) {
           replacement.push(createJSX('block', {
             [adapter.if]: generateConditionValue(test, { adapter })
           }, children));
-          if (!/Expression$/.test(left.type)) {
-            replacement.push(createJSX('block', {
-              [adapter.else]: null,
-            }, [t.jsxExpressionContainer(left)]));
-          } else {
-            console.log(chalk.yellow("When logicalExpression's left node is an expression, please write JSX directly instead of using a variable which is assigned a JSX element."
-            ));
-          }
+          replacement.push(createJSX('block', {
+            [adapter.else]: null,
+          }, [t.jsxExpressionContainer(left)]));
         }
         path.parentPath.replaceWithMultiple(replacement);
       } else {
@@ -305,6 +301,7 @@ function handleConsequent(path, expressionPath, templateMap, renderScope, adapte
       }
     });
   }
+
   if (shouldTransfrom) {
     const { node } = path;
     const { test, start, end } = node;
@@ -344,7 +341,7 @@ function handleConsequent(path, expressionPath, templateMap, renderScope, adapte
       );
 
       templateMap[varName].children.push(containerNode);
-      if (hasJSX(rightPath)) {
+      if (isJSX(rightNode) || hasJSX(rightPath)) {
         // Remove only if the expression contains JSX
         expressionPath.remove();
       }

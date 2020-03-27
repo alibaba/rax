@@ -6,6 +6,8 @@ const handleValidIdentifier = require('./handleValidIdentifier');
 const getListItem = require('./getListItem');
 const findIndex = require('./findIndex');
 const createIncrement = require('./createIncrement');
+const handleRefAttr = require('./handleRefAttr');
+const CodeError = require('./CodeError');
 
 /**
  * @param {NodePath} containerPath - container node path
@@ -16,10 +18,12 @@ const createIncrement = require('./createIncrement');
  * @param {string} renamedIndex - renamed index name
  * @param {Array} properties - map return properties
  * @param {object} dynamicBinding - dynamic style generator
+ * @param {string} code - original code
+ * @param {object} adapter - adapter
  * */
 module.exports = function(
   containerPath, valueNode, parentPath, forItem,
-  originalIndex, renamedIndex, properties, dynamicBinding) {
+  originalIndex, renamedIndex, properties, dynamicBinding, code, adapter) {
   const isAttr = parentPath.isJSXAttribute();
   const { node } = parentPath;
   // Check attribute name wheather is ref
@@ -48,13 +52,20 @@ module.exports = function(
     if (isRef && listInfo.item === forItem.name) {
       const parentList = listInfo.parentList;
       const { loopFnBody } = parentList;
+      const renamedIndexNode = t.identifier(renamedIndex);
       propertyValue = t.binaryExpression('+',
-        t.stringLiteral(createIncrement()), t.stringLiteral(renamedIndex));
-      handleRef(loopFnBody, propertyValue, targetPath);
+        t.stringLiteral(createIncrement()), renamedIndexNode);
+      if (targetPath.isJSXExpressionContainer()) {
+        handleRef(loopFnBody,
+          handleRefAttr(targetPath.parentPath, targetPath.node.expression, propertyValue, adapter, renamedIndexNode)
+        );
+      } else {
+        throw new CodeError(code, node, targetPath.loc, "Ref's type must be JSXExpressionContainer, like <View ref = { scrollRef }/>");
+      }
     }
     const originalExpression = isAttr ? node.value.expression : valueNode;
 
-    let name;
+    let name, propertyIndex;
     const addedNodeIndex = findIndex(properties, ({ value }) => genExpression(value) === genExpression(originalExpression));
     if (addedNodeIndex < 0 || properties[addedNodeIndex].key.__isFromMapFn) {
       properties.splice(addedNodeIndex, addedNodeIndex > -1);
@@ -62,8 +73,10 @@ module.exports = function(
         expression: originalExpression
       });
       properties.push(t.objectProperty(t.identifier(name), propertyValue));
+      propertyIndex = properties.length - 1;
     } else {
       name = properties[addedNodeIndex].key.name;
+      propertyIndex = addedNodeIndex;
     }
     // {{xxx}}
     const replaceVariable = genExpression(t.memberExpression(forItem, t.identifier(name)));
@@ -77,7 +90,7 @@ module.exports = function(
     // Record current properties info
     replaceNode.__properties = {
       value: properties,
-      index: properties.length - 1
+      index: propertyIndex
     };
     targetPath.replaceWith(replaceNode);
   }
@@ -85,19 +98,19 @@ module.exports = function(
 
 /**
  * @param {Node} loopFnBody - current loop function body
- * @param {Node} propertyValue - the node which should be
- * inserted into current list return properties
- * @param {NodePath} targetPath - the attr value path
+ * @param {Node} refInfo - ref info
  */
-function handleRef(loopFnBody, propertyValue, targetPath) {
+function handleRef(loopFnBody, refInfo) {
   const registerRefsMethods = t.memberExpression(
     t.thisExpression(),
     t.identifier('_registerRefs')
   );
   loopFnBody.body.unshift(t.expressionStatement(t.callExpression(registerRefsMethods, [
     t.arrayExpression([
-      t.objectExpression([t.objectProperty(t.stringLiteral('name'), propertyValue),
-        t.objectProperty(t.stringLiteral('method'), targetPath.node.expression)])
+      t.objectExpression([t.objectProperty(t.stringLiteral('name'), refInfo.name),
+        t.objectProperty(t.stringLiteral('method'), refInfo.method),
+        t.objectProperty(t.stringLiteral('type'), refInfo.type ),
+        t.objectProperty(t.stringLiteral('id'), refInfo.id )])
     ])
   ])));
 }

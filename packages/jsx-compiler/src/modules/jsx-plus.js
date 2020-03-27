@@ -2,15 +2,13 @@ const t = require('@babel/types');
 const DynamicBinding = require('../utils/DynamicBinding');
 const traverse = require('../utils/traverseNodePath');
 const CodeError = require('../utils/CodeError');
-const createJSX = require('../utils/createJSX');
-const findIndex = require('../utils/findIndex');
 const createListIndex = require('../utils/createListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
-const genExpression = require('../codegen/genExpression');
+const getParentListPath = require('../utils/getParentListPath');
 const isQuickApp = require('../utils/isQuickApp');
 
 const directiveIf = 'x-if';
@@ -166,7 +164,8 @@ function transformDirectiveClass(ast, parsed) {
   }
 }
 
-function transformDirectiveList(parsed, code, adapter, quickApp) {
+function transformDirectiveList(parsed, code, adapter) {
+  const quickApp = isQuickApp(adapter);
   const ast = parsed.templateAST;
   traverse(ast, {
     JSXAttribute(path) {
@@ -176,10 +175,11 @@ function transformDirectiveList(parsed, code, adapter, quickApp) {
         if (!t.isJSXExpressionContainer(node.value)) {
           throw new CodeError(code, node, node.loc, 'Invalid x-for usage');
         }
+        const dynamicStyle = new DynamicBinding(quickApp ? 's' : '_s');
+        const dynamicValue = new DynamicBinding(quickApp ? 'd' : '_d');
         const { expression } = node.value;
         let params = [];
         let forNode;
-        let parentList;
         // original index identifier
         let originalIndex;
         // create new index identifier
@@ -222,7 +222,11 @@ function transformDirectiveList(parsed, code, adapter, quickApp) {
           [
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
-        [forNode, parentList] = handleParentListReturn(mapCallExpression, forNode, code);
+
+        const parentListPath = getParentListPath(path, adapter);
+
+        const parentList = parentListPath && parentListPath.node.__jsxlist;
+        forNode = handleParentListReturn(mapCallExpression, forNode, parentList, dynamicValue, code);
 
         // <Component x-for={(item in list)} /> => <Component a:for={list} a:for-item="item" />
         parentJSXEl.node.__jsxlist = {
@@ -233,8 +237,7 @@ function transformDirectiveList(parsed, code, adapter, quickApp) {
           originalIndex,
           jsxplus: true
         };
-        // parentJSXEl.replaceWith(listEl);
-        transformListJSXElement(parsed, parentJSXEl, code, adapter, quickApp);
+        transformListJSXElement(parsed, parentJSXEl, dynamicStyle, dynamicValue, code, adapter);
         parentJSXEl._forParams = {
           forItem: params[0].name,
           forIndex: params[1].name,
@@ -300,12 +303,10 @@ function transformSlotDirective(ast, adapter) {
   });
 }
 
-function transformListJSXElement(parsed, path, code, adapter) {
-  const quickApp = isQuickApp(adapter);
+function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code, adapter) {
   const { node } = path;
   const { attributes } = node.openingElement;
-  const dynamicStyle = new DynamicBinding(quickApp ? 's' : '_s');
-  const dynamicValue = new DynamicBinding(quickApp ? 'd' : '_d');
+
   if (node.__jsxlist && !node.__jsxlist.generated) {
     const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
     const loopBody = loopFnBody.body;

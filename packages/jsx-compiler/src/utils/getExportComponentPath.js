@@ -45,6 +45,9 @@ function getComponentPath(path, componentName) {
   if (node.id && t.isIdentifier(node.id, {
     name: componentName
   })) {
+    if (path.isFunctionDeclaration() || path.isClassDeclaration()) {
+      return path;
+    }
     return path.get('init') || path;
   }
 }
