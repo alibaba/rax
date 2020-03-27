@@ -149,8 +149,13 @@ function createProxyMethods(events) {
           }
         }
 
-        // inner target property in quickapp is _target
-        const et = event && (event.currentTarget || event._target);
+        let et = null;
+        if (isQuickApp) {
+          // inner target property in quickapp is _target
+          et = event && event._target;
+        } else {
+          et = event && event.currentTarget;
+        }
         const dataset = et ? et.dataset : {};
         const datasetArgs = [];
         // Universal event args
@@ -181,10 +186,10 @@ function createProxyMethods(events) {
         args = datasetArgs.concat(args);
 
         if (isQuickApp) {
-          // align the currentTargt variable for quickapp
+          // align the currentTarget variable for quickapp
           const evt = Object.assign({}, event);
           // Built-in target of event's callback in quickapp is _target
-          if (event && event._target && !event.currentTarget) {
+          if (event && event._target) {
             evt.currentTarget = Object.assign({}, event._target);
             evt.currentTarget.dataset = event._target._dataset;
           }
