@@ -65,7 +65,7 @@ module.exports = function(
     }
     const originalExpression = isAttr ? node.value.expression : valueNode;
 
-    let name, propertyIndex;
+    let name;
     const addedNodeIndex = findIndex(properties, ({ value }) => genExpression(value) === genExpression(originalExpression));
     if (addedNodeIndex < 0 || properties[addedNodeIndex].key.__isFromMapFn) {
       properties.splice(addedNodeIndex, addedNodeIndex > -1);
@@ -73,10 +73,8 @@ module.exports = function(
         expression: originalExpression
       });
       properties.push(t.objectProperty(t.identifier(name), propertyValue));
-      propertyIndex = properties.length - 1;
     } else {
       name = properties[addedNodeIndex].key.name;
-      propertyIndex = addedNodeIndex;
     }
     // {{xxx}}
     const replaceVariable = genExpression(t.memberExpression(forItem, t.identifier(name)));
@@ -87,11 +85,8 @@ module.exports = function(
     replaceNode.__originalExpression = originalExpression;
     replaceNode.__index = targetPath.node.__index;
     node.value = replaceNode;
-    // Record current properties info
-    replaceNode.__properties = {
-      value: properties,
-      index: propertyIndex
-    };
+    // Record current properties
+    replaceNode.__properties = properties;
     targetPath.replaceWith(replaceNode);
   }
 };

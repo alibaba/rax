@@ -1,6 +1,7 @@
 const t = require('@babel/types');
 const handleList = require('./handleList');
 const CodeError = require('./CodeError');
+const findIndex = require('./findIndex');
 
 /**
  * @param {NodePath} mapFnBodyPath - map function path
@@ -23,7 +24,8 @@ module.exports = function(mapFnBodyPath, ...args) {
   })) {
     if (!t.isJSXExpressionContainer(node.value)) {
       if (node.value.__originalExpression) {
-        node.value.__properties.value.splice(node.value.__properties.index, 1);
+        const propertyIndex = findIndex(node.value.__properties, (property) => property === node.value.__originalExpression);
+        node.value.__properties.splice(propertyIndex, 1);
         node.value = t.jsxExpressionContainer(node.value.__originalExpression);
       } else {
         throw new CodeError(code, node.value, node.loc,
