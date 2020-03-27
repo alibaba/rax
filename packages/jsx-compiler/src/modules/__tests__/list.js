@@ -465,12 +465,13 @@ describe('Transform quickApp list', () => {
     _transformList({
       templateAST: ast
     }, [], quickAppAdapter);
-    expect(genCode(ast).code).toEqual(`<View><block for={arr.map((val, index15) => {
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block for={arr.map((val, ${index}) => {
     return {
       val: val,
-      index15: index15
+      ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="index15"><item data-value="{{val.val}}" data-key="{{val.index15}}" /></block></View>`);
+  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val.val}}" data-key="{{val.${index}}}" /></block></View>`);
   });
 
   it('transform array.map in JSXContainer in quickApp', () => {
@@ -482,12 +483,13 @@ describe('Transform quickApp list', () => {
     _transformList({
       templateAST: ast
     }, [], quickAppAdapter);
-    expect(genCode(ast).code).toEqual(`<View><block for={arr.map((val, index16) => {
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block for={arr.map((val, ${index}) => {
     return {
       val: val,
-      index16: index16
+      ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="index16"><item data-value="{{val.val}}" data-key="{{val.index16}}" /></block></View>`);
+  })} a:for-item="val" a:for-index="${index}"><item data-value="{{val.val}}" data-key="{{val.${index}}}" /></block></View>`);
   });
 
   it('bind list variable in quickApp', () => {
@@ -497,16 +499,17 @@ describe('Transform quickApp list', () => {
     _transformList({
       templateAST: ast
     }, [], quickAppAdapter);
-    expect(genCode(ast).code).toEqual(`<View><block for={arr.map((item, index17) => {
+    const index = 'index' + count++;
+    expect(genCode(ast).code).toEqual(`<View><block for={arr.map((item, ${index}) => {
     return {
       item: item,
-      index17: index17,
+      ${index}: ${index},
       d0: item.title,
       d1: {
         uri: item.picUrl
       }
     };
-  })} a:for-item="item" a:for-index="index17"><View>{{
+  })} a:for-item="item" a:for-index="${index}"><View>{{
         item.d0
       }}<image source="{{item.d1}}" resizeMode={resizeMode} /></View></block></View>`);
   });
@@ -519,7 +522,8 @@ describe('Transform quickApp list', () => {
     _transformList({
       templateAST: ast
     }, [], quickAppAdapter);
-    expect(genCode(ast, { concise: true }).code).toEqual('<View><block for={[1, 2, 3].map((val, index18) => { return { val: val, index18: index18 }; })} a:for-item="val" a:for-index="index18"><Text>{{ val.index18 }}</Text></block></View>');
+    const index = 'index' + count++;
+    expect(genCode(ast, { concise: true }).code).toEqual(`<View><block for={[1, 2, 3].map((val, ${index}) => { return { val: val, ${index}: ${index} }; })} a:for-item="val" a:for-index="${index}"><Text>{{ val.${index} }}</Text></block></View>`);
   });
 
   it('nested list in quickApp', () => {
@@ -548,11 +552,13 @@ describe('Transform quickApp list', () => {
     _transformList({
       templateAST: ast
     }, [], quickAppAdapter);
+    const index = 'index' + count++;
+    const index2 = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View className="header" onClick={() => { setWorkYear(workYear + 1); }}>
     <View style={{ color: 'red' }}>workYear: {workYear}</View>
     <View style={{ color: 'red' }}>count: {count}</View>
-    <block for={arr.map((l1, index19) => { return { l1: l1.map((l2, index20) => { return { l2: l2, index20: index20 }; }), index19: index19 }; })} a:for-item="l1" a:for-index="index19"><View>
-          <block for={l1} a:for-item="l2" a:for-index="index20"><View>{{ l2.l2 }}</View></block>
+    <block for={arr.map((l1, ${index}) => { return { l1: l1.map((l2, ${index2}) => { return { l2: l2, ${index2}: ${index2} }; }), ${index}: ${index} }; })} a:for-item="l1" a:for-index="${index}"><View>
+          <block for={l1} a:for-item="l2" a:for-index="${index2}"><View>{{ l2.l2 }}</View></block>
         </View></block>
     <Loading count={count} />
     {props.children}
@@ -563,10 +569,11 @@ describe('Transform quickApp list', () => {
     const raw = `<View>{[1,2,3].map(() => {
       return <Text>test</Text>;
     })}</View>`;
+    const index = 'index' + count++;
     const ast = parseExpression(raw);
     _transformList({
       templateAST: ast
     }, [], quickAppAdapter);
-    expect(genCode(ast, { concise: true }).code).toEqual('<View><block for={[1, 2, 3].map((item, index21) => { return { item: item, index21: index21 }; })} a:for-item="item" a:for-index="index21"><Text>test</Text></block></View>');
+    expect(genCode(ast, { concise: true }).code).toEqual(`<View><block for={[1, 2, 3].map((item, ${index}) => { return { item: item, ${index}: ${index} }; })} a:for-item="item" a:for-index="${index}"><Text>test</Text></block></View>`);
   });
 });

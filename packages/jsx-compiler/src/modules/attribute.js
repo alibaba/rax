@@ -5,7 +5,7 @@ const isQuickApp = require('../utils/isQuickApp');
 const CodeError = require('../utils/CodeError');
 const getCompiledComponents = require('../getCompiledComponents');
 const DynamicBinding = require('../utils/DynamicBinding');
-const handleRefAttr = require('../utils/handleRefAttr');
+const generateId = require('../utils/generateId');
 
 function transformAttribute(ast, code, adapter) {
   const quickApp = isQuickApp(adapter);
@@ -67,7 +67,6 @@ function transformAttribute(ast, code, adapter) {
             }
             node.name.name = 'id';
           } else {
-            if (path.node.__transformed) return;
             if (t.isJSXExpressionContainer(node.value) && !t.isStringLiteral(node.value.expression)) {
               const childExpression = node.value.expression;
               // For this.xxx = createRef();
@@ -77,11 +76,36 @@ function transformAttribute(ast, code, adapter) {
                   expression: childExpression
                 }));
               } else {
-                throw new CodeError(code, node, path.loc, "Ref's type must be string or jsxExpressionContainer");
+                node.value = t.stringLiteral(genExpression(childExpression));
               }
-              refs.push(handleRefAttr(path, childExpression, node.value, adapter));
+              const refInfo = {
+                name: node.value,
+                method: childExpression
+              };
+              const attributes = path.parent.attributes;
+              const componentNameNode = path.parent.name;
+              if (t.isJSXIdentifier(componentNameNode)) {
+                if (componentNameNode.isCustom && !isNativeComponent(path, adapter.platform)) {
+                  refInfo.type = t.stringLiteral('component');
+                  insertBindComRef(attributes, childExpression, node.value, adapter.triggerRef);
+                } else {
+                  refInfo.type = t.stringLiteral('native');
+                }
+              } else {
+                refInfo.type = t.stringLiteral('component');
+                insertBindComRef(attributes, childExpression, node.value, adapter.triggerRef);
+              }
+              // Get all attributes
+              let idAttr = attributes.find(attr => t.isJSXIdentifier(attr.name, { name: 'id' }));
+              if (!idAttr) {
+                // Insert progressive increase id
+                idAttr = t.jsxAttribute(t.jsxIdentifier('id'), t.stringLiteral(generateId()));
+                attributes.push(idAttr);
+              }
+              refInfo.id = idAttr.value;
+              refs.push(refInfo);
             } else {
-              throw new CodeError(code, node, node.loc, "Ref's type must be JSXExpressionContainer, like <View ref={ viewRef }/>");
+              throw new CodeError(code, node, path.loc, "Ref's type must be JSXExpressionContainer, like <View ref = { scrollRef }/>");
             }
           }
           break;
@@ -130,6 +154,19 @@ function transformPreComponentAttr(ast, options) {
       }
     }
   });
+}
+
+function insertBindComRef(attributes, childExpression, ref, triggerRef) {
+  // Inset setCompRef
+  // <Child bindComRef={fn} /> in MiniApp
+  // <Child bindComRef="scrollRef" /> in WechatMiniProgram
+  attributes.push(
+    t.jsxAttribute(t.jsxIdentifier('bindComRef'),
+      triggerRef ? ref :
+        t.jsxExpressionContainer(
+          childExpression
+        ))
+  );
 }
 
 module.exports = {
