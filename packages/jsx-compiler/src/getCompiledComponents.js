@@ -12,6 +12,6 @@ module.exports = function(platform) {
     case 'quickapp':
       return {
         'rax-view': 'div',
-      }
+      };
   }
 };

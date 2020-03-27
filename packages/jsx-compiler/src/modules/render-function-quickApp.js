@@ -53,11 +53,11 @@ function transformRenderFunction(ast, renderFnPath, code, options) {
               });
               // collect template tagName
               renderItem[ methodName ] = returnArgumentPath.node;
-              renderItemList.push(renderItem)
+              renderItemList.push(renderItem);
               // Return used variables
               returnArgumentPath.replaceWith(t.objectExpression(returnProperties));
             }
-            
+
             // Collect this.xxxx()
             renderItemFunctions.push({
               name: tempDataName,
@@ -68,12 +68,12 @@ function transformRenderFunction(ast, renderFnPath, code, options) {
             targetNode.__renderParams = {
               tempDataName,
               objectExpression: returnArgumentPath.node
-            }
-            
+            };
+
             const targetAttr = {};
             returnProperties.forEach((v) => {
-              targetAttr[v.key.name] = t.stringLiteral(createBinding(`${tempDataName}.${v.value.name}`))
-            })
+              targetAttr[v.key.name] = t.stringLiteral(createBinding(`${tempDataName}.${v.value.name}`));
+            });
             const targetPath = path.parentPath.isJSXExpressionContainer() ? path.parentPath : path;
             targetNode && targetPath.replaceWith(targetNode);
           }
@@ -96,8 +96,8 @@ module.exports = {
   generate(ret, parsed, options) {
     const quickApp = isQuickApp(options);
     if (!quickApp) return;
-    ret.renderItems = parsed.renderItems
-    ret.importComponents = parsed.importComponents
+    ret.renderItems = parsed.renderItems;
+    ret.importComponents = parsed.importComponents;
   },
   // For test cases.
   _transformRenderFunction: transformRenderFunction,

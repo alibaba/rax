@@ -149,7 +149,7 @@ describe('Transform JSXElement', () => {
 
       expect(genDynamicEvents(dynamicEvents)).toEqual('{ e0: event => { console.log(event); }, e1: console.log, e2: function (event) { console.log(event); } }');
 
-      expect(genInlineCode(ast).code).toEqual(`<View onFn1="{{e0}}" onFn2="{{e1}}" onFn3="{{e2}}" prop="{{d0}}" state="{{d1}}" member="{{d2.bar.c}}" call1="{{d3}}" call2="{{d4}}" conditional="{{d5 ? 1 : 2}}" conditionalComplex="{{d6}}" compare="{{d5 >= 1}}" math="{{d5 - 1}}" bitwise="{{d7}}" logical="{{d5 || d8}}" stringOp="{{'a' + d9}}" comma="{{d5, d9}}" inst="{{d10}}" delete="{{d11}}" type="{{d12}}" relation="{{'a' in d8}}" group="{{d5 + 1}}" spread="{{d13}}" />`);
+      expect(genInlineCode(ast).code).toEqual('<View onFn1="{{e0}}" onFn2="{{e1}}" onFn3="{{e2}}" prop="{{d0}}" state="{{d1}}" member="{{d2.bar.c}}" call1="{{d3}}" call2="{{d4}}" conditional="{{d5 ? 1 : 2}}" conditionalComplex="{{d6}}" compare="{{d5 >= 1}}" math="{{d5 - 1}}" bitwise="{{d7}}" logical="{{d5 || d8}}" stringOp="{{\'a\' + d9}}" comma="{{d5, d9}}" inst="{{d10}}" delete="{{d11}}" type="{{d12}}" relation="{{\'a\' in d8}}" group="{{d5 + 1}}" spread="{{d13}}" />');
     });
 
     it('unsupported', () => {
@@ -287,8 +287,8 @@ describe('Transform JSXElement', () => {
               forItem: 'val',
               forIndex: 'index',
               forList: 'array'
-            }
-            node.__transformed = true
+            };
+            node.__transformed = true;
           }
         }
       });
@@ -301,7 +301,7 @@ describe('Transform JSXElement', () => {
           <block for="{{(index, val) in d0}}"><View>{{ d1 }}</View></block>
         </View>`);
     });
-  })
+  });
 
 
   describe('element', () => {

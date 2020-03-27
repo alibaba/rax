@@ -26,18 +26,18 @@ function _transformTemplate(defaultExportedPath, code, options) {
   const returnPath = getReturnElementPath(renderFnPath);
   if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.resourcePath);
   let returnArgument = returnPath.get('argument').node;
-  if(t.isArrayExpression(returnPath.get('argument'))) {
+  if (t.isArrayExpression(returnPath.get('argument'))) {
     returnArgument = createJSX('div', {
       class: t.stringLiteral('__rax-view')
-    }, returnPath.get('argument').node.elements)
+    }, returnPath.get('argument').node.elements);
   }
   if (!['JSXText', 'JSXExpressionContainer', 'JSXSpreadChild', 'JSXElement', 'JSXFragment'].includes(returnArgument.type)) {
     returnArgument = t.jsxExpressionContainer(returnArgument);
   }
   returnPath.remove();
   const result = {};
-  const template = createJSX('div', { class: t.StringLiteral('page-container __rax-view') }, [returnArgument])
-  result[TEMPLATE_AST] = createJSX('template', { pagePath: t.StringLiteral('true') }, [template])
+  const template = createJSX('div', { class: t.stringLiteral('page-container __rax-view') }, [returnArgument]);
+  result[TEMPLATE_AST] = createJSX('template', { pagePath: t.stringLiteral('true') }, [template]);
   result[RENDER_FN_PATH] = renderFnPath;
   return result;
 }
@@ -98,7 +98,7 @@ describe('Render item function', () => {
        }
     `);
     const defaultExportedPath = getDefaultExportedPath(ast);
-    const { templateAST, renderFunctionPath } = _transformTemplate(defaultExportedPath)
+    const { templateAST, renderFunctionPath } = _transformTemplate(defaultExportedPath);
     const { renderItemFunctions } = _transformRenderFunction(templateAST, renderFunctionPath);
     expect(renderItemFunctions.map(fn => ({
       name: fn.name,

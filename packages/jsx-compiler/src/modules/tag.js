@@ -10,7 +10,7 @@ function transformTag(ast) {
     JSXText(path) {
       // <View>hello</View> => <View><text>hello</text></View>
       const { node, parentPath } = path;
-      if(t.isJSXElement(parentPath) && path.node.value && path.node.value.trim().length) {
+      if (t.isJSXElement(parentPath) && path.node.value && path.node.value.trim().length) {
         const openTagName = parentPath.node.openingElement.name;
         if (t.isJSXIdentifier(openTagName, { name: 'rax-view' }) || t.isJSXIdentifier(openTagName, { name: 'rax-link' })) {
           path.replaceWith(createJSX('text', {}, [path.node]));
@@ -20,19 +20,19 @@ function transformTag(ast) {
     JSXExpressionContainer(path) {
       // <View>{'hello'}</View> => <View><text>hello</text></View>
       const { node, parentPath } = path;
-      if(t.isJSXElement(parentPath) && t.isJSXExpressionContainer(path) && ((t.isIdentifier(node.expression) || t.isMemberExpression(node.expression)))){
+      if (t.isJSXElement(parentPath) && t.isJSXExpressionContainer(path) && ((t.isIdentifier(node.expression) || t.isMemberExpression(node.expression)))) {
         const openTagName = parentPath.node.openingElement.name;
         if (t.isJSXIdentifier(openTagName, { name: 'rax-view' }) || t.isJSXIdentifier(openTagName, { name: 'rax-link' })) {
           path.replaceWith(createJSX('text', {}, [path.node]));
         }
-      } 
+      }
     },
-  })
+  });
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    if(isQuickApp(options)) {
+    if (isQuickApp(options)) {
       transformTag(parsed[TEMPLATE_AST]);
     }
   },

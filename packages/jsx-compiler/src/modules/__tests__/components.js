@@ -89,7 +89,7 @@ describe('Transform components', () => {
       adapter: quickAppAdapter
     };
     const { componentsAlias } = _transformComponents(parsed, options);
-    _transformDataset(parsed, options)
+    _transformDataset(parsed, options);
     expect(genCode(ast).code).toEqual(`<rax-view>
         <div class="__rax-view" data-item="111" onClick={this.handleClick}><rax-text data-item="111">hello</rax-text></div>
       </rax-view>`);

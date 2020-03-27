@@ -207,7 +207,7 @@ function transformMapMethod(path, parsed, code, adapter) {
           forItem: forItem.name,
           forIndex: renamedIndex.name,
           forList: callee.object
-        }
+        };
         returnElPath.replaceWith(t.objectExpression(properties));
       } else if (t.isIdentifier(mapCallbackFn) || t.isMemberExpression(mapCallbackFn)) {
         // { foo.map(this.xxx) }

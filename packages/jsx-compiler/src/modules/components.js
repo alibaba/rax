@@ -41,7 +41,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   const aliasName = alias.name.replace(/@|\//g, '_');
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
   // todo delete
-  const pureComponentTag = componentTag.replace('_ali_', '')
+  const pureComponentTag = componentTag.replace('_ali_', '');
   replaceComponentTagName(path, t.jsxIdentifier(pureComponentTag));
 
   node.name.isCustom = true;
@@ -81,7 +81,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
       tagId = `{{${tagIdValue}}}-` + tagId;
     } else {
       if (quickApp) {
-        tagId = createBinding(tagIdValue)
+        tagId = createBinding(tagIdValue);
       } else {
         tagId = createBinding(
           genExpression(
@@ -102,25 +102,25 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
 
     // handle with icon in quickApp
     if (pureComponentTag.indexOf('rax-icon') > -1 && quickApp) {
-      const fontAttr = {}
+      const fontAttr = {};
       node.attributes.forEach((v) => {
         if (v.name.name === 'fontFamily') {
-          fontAttr.fontFamily = v.value.value
+          fontAttr.fontFamily = v.value.value;
         }
         if (v.name.name === 'source') {
           v.value.expression.properties.forEach(property => {
             if (property.key.name === 'uri') {
-              fontAttr.url = property.value.value
+              fontAttr.url = property.value.value;
             }
-          })
+          });
         }
-      })
+      });
       const index = iconFontIndex++;
       if (!fontAttr.fontFamily) {
-        fontAttr.fontFamily = `iconfont${index}`
+        fontAttr.fontFamily = `iconfont${index}`;
       }
       fontAttr.iconClass = `icon-font-${index}`;
-      node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class-name'), t.stringLiteral(fontAttr.iconClass)))
+      node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class-name'), t.stringLiteral(fontAttr.iconClass)));
       if (!parsed.iconfontMap.some(v => v.url === fontAttr.url)) {
         parsed.iconfontMap.push(fontAttr);
       }
@@ -324,8 +324,8 @@ function transformDataset(parsed, options) {
       exit(path) {
         const { node } = path;
         const openTagName = node.openingElement.name;
-        if (t.isJSXIdentifier(openTagName) 
-        && TAG_REG.test(openTagName.name) 
+        if (t.isJSXIdentifier(openTagName)
+        && TAG_REG.test(openTagName.name)
         && !getCompiledComponents(options.adapter.platform)[openTagName.name]
         && !node.__transformDataset
         && node.openingElement.attributes.some(x => x.name.name.indexOf('data-') > -1)) {
@@ -342,13 +342,13 @@ function transformDataset(parsed, options) {
             }
           });
           if (attr.onClick) {
-            node.openingElement.attributes = node.openingElement.attributes.filter(x => x.name.name !== 'onClick')
+            node.openingElement.attributes = node.openingElement.attributes.filter(x => x.name.name !== 'onClick');
           }
-          path.replaceWith(createJSX('div', attr, [path.node]))
+          path.replaceWith(createJSX('div', attr, [path.node]));
         }
       }
     }
-  })
+  });
 }
 /**
  * Rax components.
@@ -364,7 +364,7 @@ module.exports = {
     }
     const { contextList, dynamicValue, componentsAlias, iconfontMap } = transformComponents(parsed, options, quickApp);
     if (quickApp) {
-      transformDataset(parsed, options)
+      transformDataset(parsed, options);
     }
     // Collect used components
     Object.keys(componentsAlias).forEach(componentTag => {

@@ -69,19 +69,19 @@ describe('Transform JSX Attribute', () => {
     expect(genCode(ast).code).toEqual(`<rax-link style-sheet={{
   width: '100rpx'
 }}>test</rax-link>`);
-  })
+  });
   it('should transform on to bind in quickApp', () => {
-    const code = "<rax-text onInputChange={this.onInputChange}>test</rax-text>";
+    const code = '<rax-text onInputChange={this.onInputChange}>test</rax-text>';
     const ast = parseExpression(code);
     _transformAttribute(ast, code, quickAppAdapter);
-    _transformPreComponentAttr(ast, quickAppAdapter)
-    expect(genCode(ast).code).toEqual(`<rax-text bind-input-change={this.onInputChange}>test</rax-text>`);
+    _transformPreComponentAttr(ast, quickAppAdapter);
+    expect(genCode(ast).code).toEqual('<rax-text bind-input-change={this.onInputChange}>test</rax-text>');
   });
   it('should transform lowercase in div in quickApp', () => {
-    const code = "<div onClick={this.onInputChange}>test</div>";
+    const code = '<div onClick={this.onInputChange}>test</div>';
     const ast = parseExpression(code);
     _transformAttribute(ast, code, quickAppAdapter);
-    _transformPreComponentAttr(ast, quickAppAdapter)
-    expect(genCode(ast).code).toEqual(`<div onclick={this.onInputChange}>test</div>`);
+    _transformPreComponentAttr(ast, quickAppAdapter);
+    expect(genCode(ast).code).toEqual('<div onclick={this.onInputChange}>test</div>');
   });
 });

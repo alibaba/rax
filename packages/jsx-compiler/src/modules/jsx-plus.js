@@ -239,7 +239,7 @@ function transformDirectiveList(parsed, code, adapter, quickApp) {
           forItem: params[0].name,
           forIndex: params[1].name,
           forList: expression.right.name
-        }
+        };
         path.remove();
       }
     }

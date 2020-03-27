@@ -274,8 +274,8 @@ function transformTemplate(
             path.replaceWith(replaceNode);
           } else {
             // this.xxx() => <View>{count}</View> => <View>{{xxxStateTemp1.count}}</View>
-            const expressionName = getExpressionName(expression)
-            if(renderFuncReg.test(expressionName) && quickApp) {
+            const expressionName = getExpressionName(expression);
+            if (renderFuncReg.test(expressionName) && quickApp) {
               path.replaceWith(t.stringLiteral(createBinding(genExpression(expression))));
               break;
             }
@@ -299,8 +299,8 @@ function transformTemplate(
             }
           }
         } else if (type === ELE) {
-          const expressionName = getExpressionName(expression)
-          if(renderFuncReg.test(expressionName) && quickApp) {
+          const expressionName = getExpressionName(expression);
+          if (renderFuncReg.test(expressionName) && quickApp) {
             path.replaceWith(createJSXBinding(genExpression(expression)));
             break;
           }
@@ -373,14 +373,14 @@ function transformTemplate(
             path.replaceWith(t.stringLiteral(quickApp ? createBinding(name, adapter.platform) : name));
           } else {
             if (quickApp) {
-              if(!expression.callee.property || expression.callee.property !== 'map') {
+              if (!expression.callee.property || expression.callee.property !== 'map') {
                 let name = dynamicValue.add({
                   expression,
                   isDirective,
                 });
-                const forParams = isForList(path)
-                if(forParams) {
-                  name = `(${forParams.forIndex}, ${forParams.forItem}) in ${name}`
+                const forParams = isForList(path);
+                if (forParams) {
+                  name = `(${forParams.forIndex}, ${forParams.forItem}) in ${name}`;
                 }
                 path.replaceWith(t.stringLiteral(createBinding(name)));
               }
@@ -391,7 +391,6 @@ function transformTemplate(
               });
               path.replaceWith(t.stringLiteral(createBinding(name, adapter.platform)));
             }
-            
           }
         } else if (type === ELE) {
           // Skip `array.map(iterableFunction)`.
@@ -489,15 +488,14 @@ function transformTemplate(
       }
     }
     if (quickApp) {
-      if(parentPath.isJSXAttribute() && !parentPath.parentPath.node.attributes.some(x => {
-        return t.isJSXIdentifier(x.name) && x.name.name.indexOf('data-') > -1
+      if (parentPath.isJSXAttribute() && !parentPath.parentPath.node.attributes.some(x => {
+        return t.isJSXIdentifier(x.name) && x.name.name.indexOf('data-') > -1;
       })) {
         node.__transformed = true;
       }
     } else {
       node.__transformed = true;
     }
-    
   }
 
   traverse(ast, {
@@ -569,10 +567,10 @@ function transformTemplate(
 
 function getExpressionName(expression) {
   if (t.isIdentifier(expression.object)) {
-    return expression.object.name
+    return expression.object.name;
   }
   if (t.isMemberExpression(expression.object)) {
-    return getExpressionName(expression.object)
+    return getExpressionName(expression.object);
   }
 }
 
@@ -703,9 +701,9 @@ function transformMemberExpression(expression, dynamicBinding, isDirective) {
  * Path has for
  * */
 function isForList(path) {
-  if(path._forParams) return path._forParams;
-  if(!path.parentPath) return false;
-  return isForList(path.parentPath)
+  if (path._forParams) return path._forParams;
+  if (!path.parentPath) return false;
+  return isForList(path.parentPath);
 }
 
 /**

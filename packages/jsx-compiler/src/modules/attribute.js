@@ -38,13 +38,13 @@ function transformAttribute(ast, code, adapter) {
               path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'),
                 Object.assign({}, node.value)));
             }
-          } else{
+          } else {
             if (quickApp) {
               node.name.name = 'class';
             } else if (isNativeComponent(path, adapter.platform)) {
               node.name.name = 'class';
             }
-          } 
+          }
           break;
         case 'style':
           if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform)) {
@@ -146,28 +146,28 @@ function transformPreComponentAttr(ast, options) {
     JSXAttribute(path) {
       const { node, parentPath } = path;
       const attrName = node.name.name;
-      if(parentPath.node.name.name.indexOf('rax-') !== -1) {
+      if (parentPath.node.name.name.indexOf('rax-') !== -1) {
         // origin components
         // onChange => bindChange
-        if(attrName.slice(0, 2) === 'on') {
+        if (attrName.slice(0, 2) === 'on') {
           node.name.name = attrName.replace('on', 'bind');
         }
         // bindChange => bind-change
         const newAttrName = node.name.name;
         if (/[A-Z]+/g.test(newAttrName) && newAttrName !== 'className') {
           node.name.name = newAttrName.replace(/[A-Z]+/g, (v, i) => {
-            if(i !== 0) {
-              return `-${v.toLowerCase()}`
+            if (i !== 0) {
+              return `-${v.toLowerCase()}`;
             }
-            return v; 
+            return v;
           });
         }
       }
-      if(parentPath.node.name.name === 'div') {
+      if (parentPath.node.name.name === 'div') {
         node.name.name = node.name.name.toLowerCase();
       }
     }
-  })
+  });
 }
 
 module.exports = {
@@ -180,12 +180,12 @@ module.exports = {
   generate(ret, parsed, options) {
     if (!isQuickApp(options)) return;
     if (parsed.templateAST) {
-      transformPreComponentAttr(parsed.templateAST, options.adapter)
+      transformPreComponentAttr(parsed.templateAST, options.adapter);
     }
     ret.template = genExpression(parsed.templateAST, {
       comments: false,
       concise: true,
-    })
+    });
   },
   // For test cases.
   _transformAttribute: transformAttribute,

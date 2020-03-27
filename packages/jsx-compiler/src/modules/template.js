@@ -23,7 +23,7 @@ function removeExt(path) {
 
 function transformComTemplate(parsed, options, code) {
   const { ast, templateAST, imported, usingComponents } = parsed;
-  const importComponents = []
+  const importComponents = [];
   traverse(templateAST, {
     JSXElement: {
       exit(path) {
@@ -39,7 +39,7 @@ function transformComTemplate(parsed, options, code) {
               let src = usingComponents[v];
               if (/^c-/.test(v)) {
                 let result = './' + relative(dirname(options.resourcePath), src); // components/Repo.jsx
-                src = `${removeExt(result)}.${options.adapter.ext}`
+                src = `${removeExt(result)}.${options.adapter.ext}`;
               }
               importComponents.push(genExpression(createJSX('import', {
                 src: t.stringLiteral(src),
@@ -47,8 +47,8 @@ function transformComTemplate(parsed, options, code) {
               }), {
                 comments: false,
                 concise: true,
-              }))
-            })
+              }));
+            });
           } else {
             path.skip();
           }
@@ -57,11 +57,11 @@ function transformComTemplate(parsed, options, code) {
         }
       }
     }
-  })
+  });
   return {
     importComponents,
     templateAST
-  }
+  };
 }
 /**
  * Extract JSXElement path.
@@ -81,12 +81,12 @@ module.exports = {
     const returnPath = getReturnElementPath(renderFnPath);
     if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.resourcePath);
     let returnArgument = returnPath.get('argument').node;
-    const quickApp = isQuickApp(options)
+    const quickApp = isQuickApp(options);
     // support render mulit elements
-    if(t.isArrayExpression(returnPath.get('argument')) && quickApp) {
+    if (t.isArrayExpression(returnPath.get('argument')) && quickApp) {
       returnArgument = createJSX('div', {
         class: t.stringLiteral('__rax-view')
-      }, returnPath.get('argument').node.elements)
+      }, returnPath.get('argument').node.elements);
     }
     if (!['JSXText', 'JSXExpressionContainer', 'JSXSpreadChild', 'JSXElement', 'JSXFragment'].includes(returnArgument.type)) {
       returnArgument = t.jsxExpressionContainer(returnArgument);
@@ -98,8 +98,8 @@ module.exports = {
       }, [returnArgument]);
       parsed[RENDER_FN_PATH] = renderFnPath;
     } else {
-      const template = createJSX('div', { class: t.StringLiteral('page-container __rax-view') }, [returnArgument])
-      parsed[TEMPLATE_AST] = createJSX('template', { pagePath: t.StringLiteral('true') }, [template])
+      const template = createJSX('div', { class: t.stringLiteral('page-container __rax-view') }, [returnArgument]);
+      parsed[TEMPLATE_AST] = createJSX('template', { pagePath: t.stringLiteral('true') }, [template]);
       parsed[RENDER_FN_PATH] = renderFnPath;
     }
   },

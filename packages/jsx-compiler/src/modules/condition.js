@@ -163,10 +163,10 @@ function transformConditionalExpression(path, expression, options) {
   let openTag = 'block';
 
   if (quickApp) {
-    if(t.isJSXElement(parentPath) && t.isJSXIdentifier(parentPath.node.openingElement.name, { name: 'Text' })){
-      openTag = 'span'
+    if (t.isJSXElement(parentPath) && t.isJSXIdentifier(parentPath.node.openingElement.name, { name: 'Text' })) {
+      openTag = 'span';
     } else if (!isAllJsxElement(expression)) {
-      openTag = 'View'
+      openTag = 'View';
     }
   }
 
@@ -248,20 +248,20 @@ module.exports = {
 };
 
 function needRecursion(nodePath) {
-  return (t.isConditionalExpression(nodePath) || t.isJSXElement(nodePath))
+  return t.isConditionalExpression(nodePath) || t.isJSXElement(nodePath);
 }
 
 function isAllJsxElement(expression) {
   const { consequent, alternate } = expression;
   // { need ? 1 : 2 }
-  if(!needRecursion(consequent) && !needRecursion(alternate)) return false;
+  if (!needRecursion(consequent) && !needRecursion(alternate)) return false;
   // { need ? <Demo /> : <Test /> }
   if (t.isJSXElement(consequent) && t.isJSXElement(alternate)) return true;
   // { need ? bar ? <Bar /> : <View /> : <Demo /> }
   if (t.isConditionalExpression(consequent)) {
-    return isAllJsxElement(consequent)
+    return isAllJsxElement(consequent);
   }
-  return isAllJsxElement(alternate)
+  return isAllJsxElement(alternate);
 }
 
 function generateConditionValue(test, options) {

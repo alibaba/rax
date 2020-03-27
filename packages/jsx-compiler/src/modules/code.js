@@ -128,7 +128,7 @@ module.exports = {
     renameCoreModule(ast, runtimePath);
     renameFileModule(ast);
     // const inputEl = useRef(null) => const inputEl = useRef(null, 'inputEl');
-    renameUseRef(parsed.ast)
+    renameUseRef(parsed.ast);
     renameAppConfig(ast, sourcePath, resourcePath);
 
 
@@ -214,10 +214,10 @@ function addExportDefault(ast) {
         path.replaceWith(
           t.exportDefaultDeclaration(
             expression
-          ))
+          ));
       }
     }
-  })
+  });
 }
 
 function genTagIdExp(expressions) {
@@ -288,7 +288,7 @@ function renameUseRef(ast) {
       const { node, parentPath } = path;
       const { callee } = node;
       if (t.isVariableDeclarator(parentPath) && t.isIdentifier(callee) && callee.name === 'useRef') {
-        node.arguments.push(t.stringLiteral(parentPath.node.id.name))
+        node.arguments.push(t.stringLiteral(parentPath.node.id.name));
       }
     }
   });
@@ -347,8 +347,8 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     const packageJSON = readJSONSync(packageJSONPath);
 
     const moduleBasePath = join(packageJSONPath, '..');
-    if(packageJSON.quickappConfig) {
-      target = join(moduleBasePath, packageJSON.quickappConfig.main)
+    if (packageJSON.quickappConfig) {
+      target = join(moduleBasePath, packageJSON.quickappConfig.main);
     }
     const realNpmName = relative(nodeModulePath, moduleBasePath);
     const modulePathSuffix = relative(moduleBasePath, target);
@@ -603,7 +603,7 @@ function addRegisterRefs(refs, renderFunctionPath, quickApp) {
       t.arrayExpression(refs.map(ref => {
         if (quickApp) {
           return t.objectExpression([t.objectProperty(t.stringLiteral('name'), t.stringLiteral(ref.value)),
-          t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]);;
+            t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]); ;
         } else {
           return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.name),
             t.objectProperty(t.stringLiteral('method'), ref.method ),

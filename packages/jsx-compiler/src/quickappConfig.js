@@ -28,9 +28,9 @@ module.exports = function(rawContent, options = {}) {
     }
     const packageJSON = readJSONSync(packageJSONPath);
     const moduleBasePath = join(packageJSONPath, '..');
-    if(packageJSON.quickappConfig) {
+    if (packageJSON.quickappConfig) {
       result = true;
-      target = join(moduleBasePath, packageJSON.quickappConfig.main)
+      target = join(moduleBasePath, packageJSON.quickappConfig.main);
     }
     const realNpmName = relative(nodeModulePath, moduleBasePath);
     const modulePathSuffix = relative(moduleBasePath, target);
@@ -46,7 +46,7 @@ module.exports = function(rawContent, options = {}) {
     ImportDeclaration(path) {
       const { source } = path.node;
       let pkgName = source.value;
-      if(pkgName.indexOf('./') === -1) {
+      if (pkgName.indexOf('./') === -1) {
         const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
         let npmRelativePath = relative(targetFileDir, join(outputPath, '/npm'));
         npmRelativePath = npmRelativePath[0] !== '.' ? './' + npmRelativePath : npmRelativePath;
@@ -55,15 +55,14 @@ module.exports = function(rawContent, options = {}) {
         path.node.source = getRealSource(pkgName, npmRelativePath, rootContext);
       }
     }
-  })
+  });
   return {
     isQaConfigModules: result,
     code: genCode(ast).code
-  }
-  
-}
+  };
+};
 function getNpmName(value) {
   const isScopedNpm = /^_?@/.test(value);
   return value.split('/').slice(0, isScopedNpm ? 2 : 1).join('/');
 }
-  
+
