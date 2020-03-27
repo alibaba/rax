@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isQuickApp } from 'universal-env';
 
 export default function({ mount, unmount }) {
   // For alibaba miniapp
@@ -33,6 +33,18 @@ export default function({ mount, unmount }) {
       // Keep compatibility to wx base library version < 2.2.3
       attached,
       detached,
+    };
+  }
+
+  // For quickapp
+  if (isQuickApp) {
+    return {
+      onInit() {
+        mount.apply(this, arguments);
+      },
+      onDestroy() {
+        unmount.apply(this, arguments);
+      },
     };
   }
 }
