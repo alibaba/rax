@@ -62,11 +62,11 @@ describe('Transform JSX Attribute', () => {
     expect(genCode(ast).code).toEqual('<View id="scrollViewRef">test</View>');
     expect(refs[0].value).toEqual('scrollViewRef');
   });
-  it('should transform wechat custom component style into styleSheet in quickApp', () => {
+  it('should transform quickApp custom component style into styleSheet', () => {
     const code = "<rax-link style={{width: '100rpx'}}>test</rax-link>";
     const ast = parseExpression(code);
     _transformAttribute(ast, code, quickAppAdapter);
-    expect(genCode(ast).code).toEqual(`<rax-link style-sheet={{
+    expect(genCode(ast).code).toEqual(`<rax-link styleSheet={{
   width: '100rpx'
 }}>test</rax-link>`);
   });
