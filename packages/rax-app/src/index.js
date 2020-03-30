@@ -1,12 +1,32 @@
 import { withRouter } from 'rax-use-router';
-import { useAppLaunch } from './app';
+import {
+  useAppLaunch,
+  useAppError,
+  useAppHide,
+  useAppShare,
+  useAppShow,
+  usePageNotFound
+} from './app';
 import { usePageHide, usePageShow } from './page';
 import runApp from './runApp';
+import {
+  registerNativeEventListeners,
+  addNativeEventListener,
+  removeNativeEventListener
+} from './nativeEventListener';
 
 export {
   runApp,
   withRouter,
   useAppLaunch,
+  useAppError,
+  useAppHide,
+  useAppShare,
+  useAppShow,
+  usePageNotFound,
   usePageHide,
-  usePageShow
+  usePageShow,
+  registerNativeEventListeners,
+  addNativeEventListener,
+  removeNativeEventListener
 };
