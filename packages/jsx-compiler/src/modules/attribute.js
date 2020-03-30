@@ -46,7 +46,7 @@ function transformAttribute(ast, code, adapter) {
           break;
         case 'style':
           if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform)) {
-            if (quickApp && parentPath.nodeisCustomEl) {
+            if (quickApp && parentPath.node.isCustomEl) {
               node.name.name = 'style-sheet';
             } else {
               node.name.name = 'styleSheet';
