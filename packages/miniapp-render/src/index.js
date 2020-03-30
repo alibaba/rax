@@ -31,6 +31,10 @@ export default {
     cache.destroy(pageId);
   },
 
+  createApp() {
+    return new Window('app');
+  },
+
   // 开放给 miniprogram-element
   $$adapter: {
     cache,
