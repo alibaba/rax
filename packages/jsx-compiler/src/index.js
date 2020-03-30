@@ -2,7 +2,6 @@ const { generate } = require('./codegen');
 const { parse } = require('./parser');
 const { baseOptions } = require('./options');
 const adapter = require('./adapter');
-const quickAppConfig = require('./quickappConfig');
 
 /**
  * @param template {String} Template string.
@@ -21,4 +20,3 @@ module.exports = exports = compile;
 exports.parse = parse;
 exports.generate = generate;
 exports.baseOptions = baseOptions;
-exports.quickAppConfig = quickAppConfig;

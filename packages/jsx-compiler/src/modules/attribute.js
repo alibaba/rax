@@ -39,16 +39,14 @@ function transformAttribute(ast, code, adapter) {
                 Object.assign({}, node.value)));
             }
           } else {
-            if (quickApp) {
-              node.name.name = 'class';
-            } else if (isNativeComponent(path, adapter.platform)) {
+            if (isNativeComponent(path, adapter.platform) || quickApp) {
               node.name.name = 'class';
             }
           }
           break;
         case 'style':
           if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform)) {
-            if (quickApp && /(c)?-/g.test(parentPath.node.name.name)) {
+            if (quickApp && parentPath.nodeisCustomEl) {
               node.name.name = 'style-sheet';
             } else {
               node.name.name = 'styleSheet';

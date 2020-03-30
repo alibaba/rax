@@ -76,9 +76,6 @@ const parserAdapters = {
     forIndex: 'a:for-index',
     key: 'key',
     ext: 'ux',
-
-    modulePathSuffix: '/lib/miniapp/index',
-
     div: {
       onClick: 'onclick',
       onLongPress: 'onlongpress',

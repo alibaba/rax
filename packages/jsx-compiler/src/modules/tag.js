@@ -20,7 +20,7 @@ function transformTag(ast) {
     JSXExpressionContainer(path) {
       // <View>{'hello'}</View> => <View><text>hello</text></View>
       const { node, parentPath } = path;
-      if (t.isJSXElement(parentPath) && t.isJSXExpressionContainer(path) && ((t.isIdentifier(node.expression) || t.isMemberExpression(node.expression)))) {
+      if (t.isJSXElement(parentPath) && (t.isIdentifier(node.expression) || t.isMemberExpression(node.expression))) {
         const openTagName = parentPath.node.openingElement.name;
         if (t.isJSXIdentifier(openTagName, { name: 'rax-view' }) || t.isJSXIdentifier(openTagName, { name: 'rax-link' })) {
           path.replaceWith(createJSX('text', {}, [path.node]));

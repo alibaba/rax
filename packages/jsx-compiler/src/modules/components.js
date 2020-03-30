@@ -45,7 +45,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   // todo delete
   const pureComponentTag = componentTag.replace('_ali_', '');
   replaceComponentTagName(path, t.jsxIdentifier(pureComponentTag));
-
+  node.isCustomEl = alias.isCustomEl;
   node.name.isCustom = true;
 
   if (!getCompiledComponents(options.adapter.platform)[componentTag]) {
