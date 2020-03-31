@@ -16,7 +16,7 @@ import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
 import { registerEventsInConfig } from './nativeEventListener';
-import { isPlainObject } from './types';
+import { isPlainObject, isEmptyObj } from './types';
 
 const { TYPE, TARGET, TIMESTAMP } = getEventProps();
 
@@ -122,84 +122,74 @@ function createProxyMethods(events) {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
         const event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
+
         let context = this.instance; // Context default to Rax component instance.
 
-        if (!isQuickApp && event) {
-          // set stopPropagation method
-          event.stopPropagation = () => {
-            eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
-              detail: event.detail,
-              type: event.type
+        if (event) {
+          if (isQuickApp) {
+            // align the currentTarget variable for quickapp
+            event.currentTarget = event._target;
+            event.currentTarget.dataset = event._target._dataset;
+          } else {
+            // set stopPropagation method
+            event.stopPropagation = () => {
+              eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
+                detail: event.detail,
+                type: event.type
+              };
             };
-          };
 
-          const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
-          // If prevEvent exists, and event type & event detail are the same, stop event triggle
-          if (prevEvent && prevEvent.type === event.type) {
-            let isSame = true;
-            for (let key in prevEvent.detail) {
-              if (prevEvent.detail[key] !== event.detail[key]) {
-                isSame = false;
-                break;
+            const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
+            // If prevEvent exists, and event type & event detail are the same, stop event triggle
+            if (prevEvent && prevEvent.type === event.type) {
+              let isSame = true;
+              for (let key in prevEvent.detail) {
+                if (prevEvent.detail[key] !== event.detail[key]) {
+                  isSame = false;
+                  break;
+                }
               }
-            }
-            if (isSame) {
-              return;
+              if (isSame) {
+                return;
+              }
             }
           }
         }
 
-        let et = null;
-        if (isQuickApp) {
-          // inner target property in quickapp is _target
-          et = event && event._target;
-        } else {
-          et = event && event.currentTarget;
-        }
-        const dataset = et ? et.dataset : {};
+        const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
         const datasetArgs = [];
         // Universal event args
         const datasetKeys = Object.keys(dataset);
         if (datasetKeys.length > 0) {
-          datasetKeys.forEach((key) => {
+          datasetKeys.forEach((key, idx) => {
             if ('argContext' === key || 'arg-context' === key) {
               context = dataset[key] === 'this' ? this.instance : dataset[key];
             } else if (isDatasetArg(key)) {
               // eg. arg0, arg1, arg-0, arg-1
-              const index = DATASET_ARG_REG.exec(key)[1];
-              datasetArgs[index] = dataset[key];
+              const index = Number(DATASET_ARG_REG.exec(key)[1]);
+              if (context) {
+                datasetArgs[index + 1] = dataset[key];
+              } else {
+                datasetArgs[index] = dataset[key];
+                // event does not exist on dataset
+                if (idx !== index) {
+                  datasetArgs[idx] = event;
+                }
+              }
             }
           });
-        } else {
-          const formatName = formatEventName(eventName);
-          Object.keys(this[PROPS]).forEach(key => {
-            if (`data-${formatName}-arg-context` === key) {
-              context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
-            } else if (isDatasetKebabArg(key)) {
-            // `data-arg-` length is 9.
-              const len = `data-${formatName}-arg-`.length;
-              datasetArgs[key.slice(len)] = this[PROPS][key];
-            }
-          });
-        }
-        // Concat args.
-        args = datasetArgs.concat(args);
-
-        if (isQuickApp) {
-          // align the currentTarget variable for quickapp
-          const evt = Object.assign({}, event);
-          // Built-in target of event's callback in quickapp is _target
-          if (event && event._target) {
-            evt.currentTarget = Object.assign({}, event._target);
-            evt.currentTarget.dataset = event._target._dataset;
+          // event should be first param when onClick={handleClick.bind(this, 1)}
+          if (context && event) {
+            datasetArgs[0] = event;
           }
-          args = [evt, ...args.slice(1)];
+        } else {
+          if (event) {
+            datasetArgs[0] = event;
+          }
         }
 
-        // Concat args.
-        args = datasetArgs.concat(args);
         if (this.instance._methods[eventName]) {
-          return this.instance._methods[eventName].apply(context, args);
+          return this.instance._methods[eventName].apply(context, datasetArgs);
         } else {
           console.warn(`instance._methods['${eventName}'] not exists.`);
         }
@@ -354,20 +344,10 @@ function isClassComponent(Klass) {
   return Klass.prototype instanceof Component;
 }
 
-const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;
-
-function isDatasetKebabArg(str) {
-  return DATASET_KEBAB_ARG_REG.test(str);
-}
-
 const DATASET_ARG_REG = /\w+-?[aA]rg?-?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
-}
-
-function formatEventName(name) {
-  return name.replace('_', '');
 }
 
 // throttle 50ms
