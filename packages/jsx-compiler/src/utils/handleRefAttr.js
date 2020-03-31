@@ -19,11 +19,9 @@ module.exports = function(attrPath, childExpression, refName, adapter, loopIndex
   };
   const attributes = attrPath.parent.attributes;
   const componentNameNode = attrPath.parent.name;
+  const isNative = isNativeComponent(attrPath, adapter.platform);
   if (t.isJSXIdentifier(componentNameNode)) {
-    if (
-      componentNameNode.isCustom &&
-      !isNativeComponent(attrPath, adapter.platform)
-    ) {
+    if (componentNameNode.isCustom && !isNative) {
       refInfo.type = t.stringLiteral('component');
       insertBindComRef(
         attributes,
@@ -67,6 +65,11 @@ module.exports = function(attrPath, childExpression, refName, adapter, loopIndex
       refInfo.id = idAttr.value;
     }
     attributes.push(idAttr);
+    if (!isNative && adapter.styleKeyword) {
+      // Clone componentId
+      const componentIdAttr = t.jsxAttribute(t.jsxIdentifier('componentId'), idAttr.value);
+      attributes.push(componentIdAttr);
+    }
   }
 
   node.__transformed = true;
