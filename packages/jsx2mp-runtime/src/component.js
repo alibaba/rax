@@ -373,6 +373,8 @@ export default class Component {
     }
     if (setDataTask.length > 0) {
       Promise.all(setDataTask).then(() => {
+        // Ensure this.state is latest in set data callback
+        Object.assign(this.state, data);
         if ($ready) {
           // trigger did mount
           this._trigger(COMPONENT_DID_MOUNT);
@@ -382,7 +384,6 @@ export default class Component {
           callback();
         }
       });
-      Object.assign(this.state, data);
     }
   }
 }
