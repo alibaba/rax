@@ -175,24 +175,27 @@ function createProxyMethods(events) {
             } else if (isDatasetArg(key)) {
               // eg. arg0, arg1, arg-0, arg-1
               const index = Number(DATASET_ARG_REG.exec(key)[1]);
-              if (contextInfo.changed) {
-                datasetArgs[index + 1] = dataset[key];
-              } else {
-                datasetArgs[index] = dataset[key];
+              datasetArgs[index] = dataset[key];
+
+              if (!contextInfo.changed && idx !== index) {
                 // event does not exist on dataset
-                if (idx !== index) {
-                  datasetArgs[idx] = event;
-                }
+                datasetArgs[idx] = event;
               }
             }
           });
-          /**
-          * event should be first param when
-          * onClick={handleClick.bind(this, 1)}
-          * onClick={handleClick}
-          */
-          if ((contextInfo.changed || !datasetArgs.length) && event) {
-            datasetArgs[0] = event;
+
+          if (event) {
+            /**
+            * event should be last param when onClick={handleClick.bind(this, 1)}
+            */
+            if (contextInfo.changed) {
+              datasetArgs.push(event);
+            } else if (!datasetArgs.length) {
+              /**
+              * event should be first param when onClick={handleClick}
+              */
+              datasetArgs[0] = event;
+            }
           }
         } else {
           if (event) {
