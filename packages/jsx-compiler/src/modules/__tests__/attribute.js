@@ -70,4 +70,10 @@ describe('Transform JSX Attribute', () => {
   width: '100rpx'
 }}>test</rax-link>`);
   });
+  it('should transform wechat custom component id', () => {
+    const code = '<Custom id="box">test</Custom>';
+    const ast = parseExpression(code);
+    _transformAttribute(ast, code, wxAdapter);
+    expect(genCode(ast).code).toEqual('<Custom id="box" componentId="box">test</Custom>');
+  });
 });

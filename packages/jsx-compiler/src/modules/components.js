@@ -41,9 +41,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   // Miniapp template tag name does not support special characters.
   const aliasName = alias.name.replace(/@|\//g, '_');
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
-  // todo delete
-  const pureComponentTag = componentTag.replace('_ali_', '');
-  replaceComponentTagName(path, t.jsxIdentifier(pureComponentTag));
+  replaceComponentTagName(path, t.jsxIdentifier(componentTag));
   node.isCustomEl = alias.isCustomEl;
   node.name.isCustom = true;
 
@@ -102,7 +100,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     if (componentTag === 'slot') return;
 
     // handle with icon in adapter.singleFileComponent
-    if (pureComponentTag.indexOf('rax-icon') > -1 && adapter.singleFileComponent) {
+    if (componentTag.indexOf('rax-icon') > -1 && adapter.singleFileComponent) {
       const fontAttr = {};
       node.attributes.forEach((attr) => {
         if (attr.name.name === 'fontFamily') {
