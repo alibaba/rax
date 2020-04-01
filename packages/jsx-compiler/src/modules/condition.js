@@ -89,10 +89,12 @@ function transformTemplate(ast, templateMap, adapter, code) {
 
       path.traverse({
         Identifier(innerPath) {
-          const template = templateMap[innerPath.node.name];
-          if (template) {
-            path.replaceWith(template);
-          }
+          handleValidIdentifier(innerPath, () => {
+            const template = templateMap[innerPath.node.name];
+            if (template) {
+              path.replaceWith(template);
+            }
+          });
         }
       });
     },
