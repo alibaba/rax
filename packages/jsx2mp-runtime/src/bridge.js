@@ -128,8 +128,6 @@ function createProxyMethods(events) {
           context: this.instance
         };
 
-        const datasetArgs = [];
-
         if (event) {
           if (isQuickApp) {
             // shallow copy event & event._target
@@ -164,6 +162,8 @@ function createProxyMethods(events) {
           }
 
           const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
+          const datasetArgs = [];
+
           // Universal event args
           const datasetKeys = Object.keys(dataset);
           const formatedEventName = formatEventName(eventName);
@@ -191,10 +191,11 @@ function createProxyMethods(events) {
           if (contextInfo.changed || !datasetArgs.length) {
             datasetArgs.push(event);
           }
+          args = datasetArgs;
         }
 
         if (this.instance._methods[eventName]) {
-          return this.instance._methods[eventName].apply(contextInfo.context, datasetArgs);
+          return this.instance._methods[eventName].apply(contextInfo.context, args);
         } else {
           console.warn(`instance._methods['${eventName}'] not exists.`);
         }
