@@ -128,6 +128,8 @@ function createProxyMethods(events) {
           context: this.instance
         };
 
+        const datasetArgs = [];
+
         if (event) {
           if (isQuickApp) {
             // shallow copy event & event._target
@@ -160,46 +162,34 @@ function createProxyMethods(events) {
               }
             }
           }
-        }
 
-        const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
-        const datasetArgs = [];
-        // Universal event args
-        const datasetKeys = Object.keys(dataset);
-        if (datasetKeys.length > 0) {
+          const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
+          // Universal event args
+          const datasetKeys = Object.keys(dataset);
           const formatedEventName = formatEventName(eventName);
           datasetKeys.forEach((key, idx) => {
             if (`${formatedEventName}ArgContext` === key || `${formatedEventName}-arg-context` === key) {
               contextInfo.context = dataset[key] === 'this' ? this.instance : dataset[key];
               contextInfo.changed = true;
             } else if (isDatasetArg(key)) {
-              // eg. arg0, arg1, arg-0, arg-1
+            // eg. arg0, arg1, arg-0, arg-1
               const index = Number(DATASET_ARG_REG.exec(key)[1]);
               datasetArgs[index] = dataset[key];
 
               if (!contextInfo.changed && idx !== index) {
-                // event does not exist on dataset
+              // event does not exist on dataset
                 datasetArgs[idx] = event;
               }
             }
           });
 
-          if (event) {
-            /**
-            * event should be last param when onClick={handleClick.bind(this, 1)}
-            */
-            if (contextInfo.changed) {
-              datasetArgs.push(event);
-            } else if (!datasetArgs.length) {
-              /**
-              * event should be first param when onClick={handleClick}
-              */
-              datasetArgs[0] = event;
-            }
-          }
-        } else {
-          if (event) {
-            datasetArgs[0] = event;
+          /**
+           * event should be last param
+           * when onClick={handleClick.bind(this, 1)}
+           * or onClick={handleClick}
+           */
+          if (contextInfo.changed || !datasetArgs.length) {
+            datasetArgs.push(event);
           }
         }
 
