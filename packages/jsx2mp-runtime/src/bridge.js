@@ -123,7 +123,10 @@ function createProxyMethods(events) {
         // `this` point to page/component instance.
         const event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
 
-        let context = this.instance; // Context default to Rax component instance.
+        // Context default to Rax component instance.
+        const contextInfo = {
+          context: this.instance
+        };
 
         if (event) {
           if (isQuickApp) {
@@ -163,11 +166,12 @@ function createProxyMethods(events) {
         if (datasetKeys.length > 0) {
           datasetKeys.forEach((key, idx) => {
             if ('argContext' === key || 'arg-context' === key) {
-              context = dataset[key] === 'this' ? this.instance : dataset[key];
+              contextInfo.context = dataset[key] === 'this' ? this.instance : dataset[key];
+              contextInfo.changed = true;
             } else if (isDatasetArg(key)) {
               // eg. arg0, arg1, arg-0, arg-1
               const index = Number(DATASET_ARG_REG.exec(key)[1]);
-              if (context) {
+              if (contextInfo.changed) {
                 datasetArgs[index + 1] = dataset[key];
               } else {
                 datasetArgs[index] = dataset[key];
@@ -179,7 +183,7 @@ function createProxyMethods(events) {
             }
           });
           // event should be first param when onClick={handleClick.bind(this, 1)}
-          if (context && event) {
+          if (contextInfo.changed && event) {
             datasetArgs[0] = event;
           }
         } else {
@@ -189,7 +193,7 @@ function createProxyMethods(events) {
         }
 
         if (this.instance._methods[eventName]) {
-          return this.instance._methods[eventName].apply(context, datasetArgs);
+          return this.instance._methods[eventName].apply(contextInfo.context, datasetArgs);
         } else {
           console.warn(`instance._methods['${eventName}'] not exists.`);
         }
