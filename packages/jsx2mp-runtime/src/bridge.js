@@ -121,7 +121,7 @@ function createProxyMethods(events) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
-        const event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
+        let event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
 
         // Context default to Rax component instance.
         const contextInfo = {
@@ -130,6 +130,9 @@ function createProxyMethods(events) {
 
         if (event) {
           if (isQuickApp) {
+            // shallow copy event & event._target
+            event = {...event};
+            event._target = {...event._target};
             // align the currentTarget variable for quickapp
             event.currentTarget = event._target;
             event.currentTarget.dataset = event._target._dataset;
@@ -164,8 +167,9 @@ function createProxyMethods(events) {
         // Universal event args
         const datasetKeys = Object.keys(dataset);
         if (datasetKeys.length > 0) {
+          const formatedEventName = formatEventName(eventName);
           datasetKeys.forEach((key, idx) => {
-            if ('argContext' === key || 'arg-context' === key) {
+            if (`${formatedEventName}ArgContext` === key || `${formatedEventName}-arg-context` === key) {
               contextInfo.context = dataset[key] === 'this' ? this.instance : dataset[key];
               contextInfo.changed = true;
             } else if (isDatasetArg(key)) {
@@ -182,8 +186,12 @@ function createProxyMethods(events) {
               }
             }
           });
-          // event should be first param when onClick={handleClick.bind(this, 1)}
-          if (contextInfo.changed && event) {
+          /**
+          * event should be first param when
+          * onClick={handleClick.bind(this, 1)}
+          * onClick={handleClick}
+          */
+          if ((contextInfo.changed || !datasetArgs.length) && event) {
             datasetArgs[0] = event;
           }
         } else {
@@ -352,6 +360,10 @@ const DATASET_ARG_REG = /\w+-?[aA]rg?-?(\d+)/;
 
 function isDatasetArg(str) {
   return DATASET_ARG_REG.test(str);
+}
+
+function formatEventName(name) {
+  return name.replace('_', '');
 }
 
 // throttle 50ms
