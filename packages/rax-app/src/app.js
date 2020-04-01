@@ -60,7 +60,7 @@ export function useAppShare(callback) {
 }
 
 if (isMiniApp || isWeChatMiniProgram) {
-  window.addEventListener('applaunch', ({ options, context }) => {
+  window.addEventListener(LANUCH, ({ options, context }) => {
     emit(LANUCH, context, options);
   });
   window.addEventListener('appshow', ({ options, context }) => {
