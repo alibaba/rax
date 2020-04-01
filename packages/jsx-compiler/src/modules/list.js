@@ -10,7 +10,6 @@ const DynamicBinding = require('../utils/DynamicBinding');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
-const isQuickApp = require('../utils/isQuickApp');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
 const getParentListPath = require('../utils/getParentListPath');
 
@@ -22,9 +21,8 @@ const getParentListPath = require('../utils/getParentListPath');
  * @param {object} adapter
  */
 function transformMapMethod(path, parsed, code, adapter) {
-  const quickApp = isQuickApp(adapter);
-  const dynamicStyle = new DynamicBinding(quickApp ? 's' : '_s');
-  const dynamicValue = new DynamicBinding(quickApp ? 'd' : '_d');
+  const dynamicStyle = new DynamicBinding(adapter.singleFileComponent ? 's' : '_s');
+  const dynamicValue = new DynamicBinding(adapter.singleFileComponent ? 'd' : '_d');
   const renderItemFunctions = parsed.renderItemFunctions;
 
   // Avoid transfrom x-for result

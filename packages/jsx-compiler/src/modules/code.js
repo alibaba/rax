@@ -5,7 +5,6 @@ const { parseExpression } = require('../parser');
 const isClassComponent = require('../utils/isClassComponent');
 const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
-const isQuickApp = require('../utils/isQuickApp');
 const { readJSONSync } = require('fs-extra');
 const genExpression = require('../codegen/genExpression');
 const { isNpmModule, isWeexModule } = require('../utils/checkModule');
@@ -74,8 +73,7 @@ module.exports = {
     const { ast, programPath, defaultExportedPath, exportComponentPath, renderFunctionPath,
       useCreateStyle, useClassnames, dynamicValue, dynamicRef, dynamicStyle, dynamicEvents, imported,
       contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
-    const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
-    const quickApp = isQuickApp(options);
+    const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm, adapter } = options;
     if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
       // Can not found default export, otherwise app.js is excluded.
       return;
@@ -84,7 +82,7 @@ module.exports = {
 
     if (type === 'app') {
       userDefineType = 'function';
-      if (quickApp) {
+      if (adapter.singleFileComponent) {
         addExportDefault(ast);
       }
     } else {
@@ -140,13 +138,13 @@ module.exports = {
 
 
     if (type !== 'app') {
-      if (quickApp) {
+      if (adapter.singleFileComponent) {
         removeDefaultImports(ast);
       }
-      addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, quickApp);
+      addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, adapter);
     }
 
-    if (!quickApp) {
+    if (!adapter.singleFileComponent) {
       removeDefaultImports(ast);
     }
 
@@ -200,7 +198,7 @@ module.exports = {
       addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath);
       addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
       addProviderIniter(contextList, renderFunctionPath);
-      addRegisterRefs(refs, renderFunctionPath, quickApp);
+      addRegisterRefs(refs, renderFunctionPath, adapter);
     }
   },
 };
@@ -347,6 +345,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
     const packageJSON = readJSONSync(packageJSONPath);
 
     const moduleBasePath = join(packageJSONPath, '..');
+    // TODO remove quickappConfig
     if (packageJSON.quickappConfig) {
       target = join(moduleBasePath, packageJSON.quickappConfig.main);
     }
@@ -377,7 +376,7 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   });
 }
 
-function addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, quickApp) {
+function addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, adapter) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -438,7 +437,7 @@ function addDefine(programPath, type, userDefineType, eventHandlers, useCreateSt
     );
   }
 
-  if (quickApp) {
+  if (adapter.singleFileComponent) {
     programPath.node.body.push(
       t.exportDefaultDeclaration(
         t.callExpression(
@@ -584,7 +583,7 @@ function addProviderIniter(contextList, renderFunctionPath) {
  * @param {Array} refs
  * @param {Object} renderFunctionPath
  * */
-function addRegisterRefs(refs, renderFunctionPath, quickApp) {
+function addRegisterRefs(refs, renderFunctionPath, adapter) {
   const registerRefsMethods = t.memberExpression(
     t.thisExpression(),
     t.identifier('_registerRefs')
@@ -601,15 +600,10 @@ function addRegisterRefs(refs, renderFunctionPath, quickApp) {
   if (refs.length > 0) {
     fnBody.push(t.expressionStatement(t.callExpression(registerRefsMethods, [
       t.arrayExpression(refs.map(ref => {
-        if (quickApp) {
-          return t.objectExpression([t.objectProperty(t.stringLiteral('name'), t.stringLiteral(ref.value)),
-            t.objectProperty(t.stringLiteral('method'), t.identifier(ref.value))]); ;
-        } else {
-          return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.name),
-            t.objectProperty(t.stringLiteral('method'), ref.method ),
-            t.objectProperty(t.stringLiteral('type'), ref.type ),
-            t.objectProperty(t.stringLiteral('id'), ref.id )]);
-        }
+        return t.objectExpression([t.objectProperty(t.stringLiteral('name'), ref.name),
+          t.objectProperty(t.stringLiteral('method'), ref.method ),
+          t.objectProperty(t.stringLiteral('type'), ref.type ),
+          t.objectProperty(t.stringLiteral('id'), ref.id )]);
       }))
     ])));
   }

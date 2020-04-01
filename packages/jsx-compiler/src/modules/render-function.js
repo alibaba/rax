@@ -3,7 +3,6 @@ const traverse = require('../utils/traverseNodePath');
 const getReturnElementPath = require('../utils/getReturnElementPath');
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
-const isQuickApp = require('../utils/isQuickApp');
 
 function transformRenderFunction(ast, renderFnPath) {
   const renderItemList = [];
@@ -95,7 +94,7 @@ function transformRenderFunction(ast, renderFnPath) {
 
 module.exports = {
   parse(parsed, code, options) {
-    if (!isQuickApp(options)) {
+    if (!options.adapter.singleFileComponent) {
       parsed.renderItemFunctions = transformRenderFunction(parsed.templateAST, parsed.renderFunctionPath);
     }
   },

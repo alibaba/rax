@@ -5,7 +5,6 @@ const createJSX = require('../utils/createJSX');
 const genExpression = require('../codegen/genExpression');
 const { parseCode } = require('../parser/index');
 const createBinding = require('../utils/createBinding');
-const isQuickApp = require('../utils/isQuickApp');
 
 function transformRenderFunction(ast, renderFnPath, code, options) {
   const renderItemList = [];
@@ -86,16 +85,14 @@ function transformRenderFunction(ast, renderFnPath, code, options) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const quickApp = isQuickApp(options);
-    if (!quickApp) return;
+    if (!options.adapter.singleFileComponent) return;
     const { renderItemFunctions, renderItemList, importComponents } = transformRenderFunction(parsed.templateAST, parsed.renderFunctionPath, code, options);
     parsed.renderItemFunctions = renderItemFunctions;
     parsed.renderItems = renderItemList;
     parsed.importComponents = importComponents;
   },
   generate(ret, parsed, options) {
-    const quickApp = isQuickApp(options);
-    if (!quickApp) return;
+    if (!options.adapter.singleFileComponent) return;
     ret.renderItems = parsed.renderItems;
     ret.importComponents = parsed.importComponents;
   },

@@ -11,7 +11,6 @@ const createBinding = require('../utils/createBinding');
 const findIndex = require('../utils/findIndex');
 const getExportComponentPath = require('../utils/getExportComponentPath');
 const getProgramPath = require('../utils/getProgramPath');
-const isQuickApp = require('../utils/isQuickApp');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
@@ -69,6 +68,7 @@ function transformComTemplate(parsed, options, code) {
 module.exports = {
   parse(parsed, code, options) {
     const { defaultExportedPath, ast } = parsed;
+    const { adapter } = options;
     if (!defaultExportedPath) return;
     const exportComponentPath = parsed.exportComponentPath = getExportComponentPath(defaultExportedPath, getProgramPath(ast), code);
     const renderFnPath = isFunctionComponent(exportComponentPath)
@@ -81,10 +81,9 @@ module.exports = {
     const returnPath = getReturnElementPath(renderFnPath);
     if (!returnPath) throw new Error('Can not find JSX Statements in ' + options.resourcePath);
     let returnArgument = returnPath.get('argument').node;
-    const quickApp = isQuickApp(options);
     // support render mulit elements
-    if (t.isArrayExpression(returnPath.get('argument')) && quickApp) {
-      returnArgument = createJSX('div', {
+    if (t.isArrayExpression(returnPath.get('argument')) && adapter.singleFileComponent) {
+      returnArgument = createJSX(adapter.baseComponent, {
         class: t.stringLiteral('__rax-view')
       }, returnPath.get('argument').node.elements);
     }
@@ -92,13 +91,13 @@ module.exports = {
       returnArgument = t.jsxExpressionContainer(returnArgument);
     }
     returnPath.remove();
-    if (!quickApp) {
+    if (!adapter.singleFileComponent) {
       parsed[TEMPLATE_AST] = createJSX('block', {
         [options.adapter.if]: t.stringLiteral(createBinding('$ready')),
       }, [returnArgument]);
       parsed[RENDER_FN_PATH] = renderFnPath;
     } else {
-      const template = createJSX('div', { class: t.stringLiteral('page-container __rax-view') }, [returnArgument]);
+      const template = createJSX(adapter.baseComponent, { class: t.stringLiteral('page-container __rax-view') }, [returnArgument]);
       parsed[TEMPLATE_AST] = createJSX('template', { pagePath: t.stringLiteral('true') }, [template]);
       parsed[RENDER_FN_PATH] = renderFnPath;
     }

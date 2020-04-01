@@ -91,10 +91,13 @@ const parserAdapters = {
       onResize: 'onresize',
       className: '__rax-view'
     },
+    baseComponent: 'div',
     // Need transform style & class keyword
     styleKeyword: true,
     // Need transform onClick -> bindonclick
     needTransformEvent: false,
+    // Need transform onClick -> bind-click
+    singleFileComponent: true,
     slotScope: false
   },
 };

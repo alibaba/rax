@@ -3,7 +3,6 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
-const isQuickApp = require('../utils/isQuickApp');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const genExpression = require('../codegen/genExpression');
 
@@ -150,7 +149,7 @@ function transformTemplate(ast, templateMap, adapter, code) {
 function transformConditionalExpression(path, expression, options) {
   let { test, consequent, alternate } = expression;
   const { parentPath } = path;
-  const quickApp = isQuickApp(options.adapter);
+  const { adapter } = options;
 
   const replacement = [];
   let consequentReplacement = [];
@@ -158,7 +157,7 @@ function transformConditionalExpression(path, expression, options) {
 
   let openTag = 'block';
 
-  if (quickApp) {
+  if (adapter.singleFileComponent) {
     if (t.isJSXElement(parentPath) && t.isJSXIdentifier(parentPath.node.openingElement.name, { name: 'Text' })) {
       openTag = 'span';
     } else if (!isAllJsxElement(expression)) {

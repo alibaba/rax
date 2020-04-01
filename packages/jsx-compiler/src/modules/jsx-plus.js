@@ -9,7 +9,6 @@ const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
 const getParentListPath = require('../utils/getParentListPath');
-const isQuickApp = require('../utils/isQuickApp');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -165,7 +164,6 @@ function transformDirectiveClass(ast, parsed) {
 }
 
 function transformDirectiveList(parsed, code, adapter) {
-  const quickApp = isQuickApp(adapter);
   const ast = parsed.templateAST;
   traverse(ast, {
     JSXAttribute(path) {
@@ -175,8 +173,8 @@ function transformDirectiveList(parsed, code, adapter) {
         if (!t.isJSXExpressionContainer(node.value)) {
           throw new CodeError(code, node, node.loc, 'Invalid x-for usage');
         }
-        const dynamicStyle = new DynamicBinding(quickApp ? 's' : '_s');
-        const dynamicValue = new DynamicBinding(quickApp ? 'd' : '_d');
+        const dynamicStyle = new DynamicBinding(adapter.singleFileComponent ? 's' : '_s');
+        const dynamicValue = new DynamicBinding(adapter.singleFileComponent ? 'd' : '_d');
         const { expression } = node.value;
         let params = [];
         let forNode;

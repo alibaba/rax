@@ -68,33 +68,6 @@ describe('Transform components', () => {
     });
     expect(genCode(ast).code).toEqual('<rax-text style={styles.name} onClick={handleClick}>123</rax-text>');
   });
-  it('should move dataset', () => {
-    const importedAST = parseCode(`
-      import { createElement } from 'rax'
-      import View from 'rax-view';
-    `);
-    const imported = getImported(importedAST);
-    const ast = parseExpression(`
-      <View>
-        <rax-text data-item="111" onClick={this.handleClick}>hello</rax-text>
-      </View>
-    `);
-    const parsed = {
-      templateAST: ast,
-      imported,
-      componentDependentProps: {},
-      componentsAlias: {}
-    };
-    const options = {
-      adapter: quickAppAdapter
-    };
-    const { componentsAlias } = _transformComponents(parsed, options);
-    _transformDataset(parsed, options);
-    expect(genCode(ast).code).toEqual(`<rax-view>
-        <div class="__rax-view" data-item="111" onClick={this.handleClick}><rax-text data-item="111">hello</rax-text></div>
-      </rax-view>`);
-    expect(componentsAlias).toEqual({});
-  });
   it('should transform JSX Fragment', () => {
     const ast = parseExpression('<View><>Test</></View>');
     const parsed = {

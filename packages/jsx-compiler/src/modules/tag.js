@@ -1,7 +1,6 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const createJSX = require('../utils/createJSX');
-const isQuickApp = require('../utils/isQuickApp');
 
 const TEMPLATE_AST = 'templateAST';
 
@@ -32,7 +31,7 @@ function transformTag(ast) {
 
 module.exports = {
   parse(parsed, code, options) {
-    if (isQuickApp(options)) {
+    if (options.adapter.singleFileComponent) {
       transformTag(parsed[TEMPLATE_AST]);
     }
   },

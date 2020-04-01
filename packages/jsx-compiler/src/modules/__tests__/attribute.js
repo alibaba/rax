@@ -60,7 +60,7 @@ describe('Transform JSX Attribute', () => {
     const ast = parseExpression(code);
     const { refs } = _transformAttribute(ast, code, quickAppAdapter);
     expect(genCode(ast).code).toEqual('<View id="scrollViewRef">test</View>');
-    expect(refs[0].value).toEqual('scrollViewRef');
+    expect(refs[0].name.value).toEqual('scrollViewRef');
   });
   it('should transform quickApp custom component style into styleSheet', () => {
     const code = "<rax-link style={{width: '100rpx'}}>test</rax-link>";
@@ -69,19 +69,5 @@ describe('Transform JSX Attribute', () => {
     expect(genCode(ast).code).toEqual(`<rax-link styleSheet={{
   width: '100rpx'
 }}>test</rax-link>`);
-  });
-  it('should transform on to bind in quickApp', () => {
-    const code = '<rax-text onInputChange={this.onInputChange}>test</rax-text>';
-    const ast = parseExpression(code);
-    _transformAttribute(ast, code, quickAppAdapter);
-    _transformPreComponentAttr(ast, quickAppAdapter);
-    expect(genCode(ast).code).toEqual('<rax-text bind-input-change={this.onInputChange}>test</rax-text>');
-  });
-  it('should transform lowercase in div in quickApp', () => {
-    const code = '<div onClick={this.onInputChange}>test</div>';
-    const ast = parseExpression(code);
-    _transformAttribute(ast, code, quickAppAdapter);
-    _transformPreComponentAttr(ast, quickAppAdapter);
-    expect(genCode(ast).code).toEqual('<div onclick={this.onInputChange}>test</div>');
   });
 });

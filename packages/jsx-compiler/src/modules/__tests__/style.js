@@ -3,6 +3,7 @@ const { _transform } = require('../style');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
 const genCode = require('../../codegen/genCode');
+const adapter = require('../../adapter').quickapp;
 
 function genInlineCode(ast) {
   return genCode(ast, {
@@ -26,7 +27,7 @@ describe('Transform style', () => {
     const expected = '<Text style="{{_s0}}">hello</Text>';
     const expectedDynamicValue = '{ _s0: __create_style__(styles.name) }';
     const ast = parseExpression(raw);
-    const { dynamicStyle } = _transform(ast);
+    const { dynamicStyle } = _transform(ast, { adapter });
     expect(genExpression(ast)).toEqual(expected);
     expect(genDynamicValue(dynamicStyle)).toEqual(expectedDynamicValue);
   });

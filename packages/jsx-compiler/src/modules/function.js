@@ -1,7 +1,6 @@
 const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const { isWeexModule } = require('../utils/checkModule');
-const isQuickApp = require('../utils/isQuickApp');
 
 function transformFunction(ast) {
   traverse(ast, {
