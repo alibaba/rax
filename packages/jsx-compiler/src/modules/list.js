@@ -11,6 +11,7 @@ const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
+const getParentListPath = require('../utils/getParentListPath');
 
 /**
  * Transfrom map method
@@ -68,7 +69,11 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         const iterValue = callee.object;
         // handle parentList
-        const [forNode, parentList] = handleParentListReturn(node, iterValue, code);
+        const parentListPath = getParentListPath(path, adapter);
+
+        const parentList = parentListPath && parentListPath.node.__jsxlist;
+
+        const forNode = handleParentListReturn(node, iterValue, parentList, dynamicValue, code);
 
         if (!t.isBlockStatement(body)) {
           // create a block return for inline return
@@ -156,7 +161,7 @@ function transformMapMethod(path, parsed, code, adapter) {
                 parsed.useCreateStyle = useCreateStyle;
               }
               // Handle props
-              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code);
+              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code, adapter);
             }
           },
           JSXExpressionContainer: {

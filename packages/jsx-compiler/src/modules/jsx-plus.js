@@ -2,15 +2,13 @@ const t = require('@babel/types');
 const DynamicBinding = require('../utils/DynamicBinding');
 const traverse = require('../utils/traverseNodePath');
 const CodeError = require('../utils/CodeError');
-const createJSX = require('../utils/createJSX');
-const findIndex = require('../utils/findIndex');
 const createListIndex = require('../utils/createListIndex');
 const handleParentListReturn = require('../utils/handleParentListReturn');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
-const genExpression = require('../codegen/genExpression');
+const getParentListPath = require('../utils/getParentListPath');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
@@ -175,10 +173,11 @@ function transformDirectiveList(parsed, code, adapter) {
         if (!t.isJSXExpressionContainer(node.value)) {
           throw new CodeError(code, node, node.loc, 'Invalid x-for usage');
         }
+        const dynamicStyle = new DynamicBinding('_s');
+        const dynamicValue = new DynamicBinding('_d');
         const { expression } = node.value;
         let params = [];
         let forNode;
-        let parentList;
         // original index identifier
         let originalIndex;
         // create new index identifier
@@ -221,7 +220,11 @@ function transformDirectiveList(parsed, code, adapter) {
           [
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
-        [forNode, parentList] = handleParentListReturn(mapCallExpression, forNode, code);
+
+        const parentListPath = getParentListPath(path, adapter);
+
+        const parentList = parentListPath && parentListPath.node.__jsxlist;
+        forNode = handleParentListReturn(mapCallExpression, forNode, parentList, dynamicValue, code);
 
         // <Component x-for={(item in list)} /> => <Component a:for={list} a:for-item="item" />
         parentJSXEl.node.__jsxlist = {
@@ -232,7 +235,7 @@ function transformDirectiveList(parsed, code, adapter) {
           originalIndex,
           jsxplus: true
         };
-        transformListJSXElement(parsed, parentJSXEl, code, adapter);
+        transformListJSXElement(parsed, parentJSXEl, dynamicStyle, dynamicValue, code, adapter);
         path.remove();
       }
     }
@@ -293,11 +296,10 @@ function transformSlotDirective(ast, adapter) {
   });
 }
 
-function transformListJSXElement(parsed, path, code, adapter) {
+function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code, adapter) {
   const { node } = path;
   const { attributes } = node.openingElement;
-  const dynamicStyle = new DynamicBinding('_s');
-  const dynamicValue = new DynamicBinding('_d');
+
   if (node.__jsxlist && !node.__jsxlist.generated) {
     const { args, forNode, originalIndex, loopFnBody } = node.__jsxlist;
     const loopBody = loopFnBody.body;
@@ -328,7 +330,7 @@ function transformListJSXElement(parsed, path, code, adapter) {
             parsed.useCreateStyle = useCreateStyle;
           }
           // Handle props
-          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code);
+          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code, adapter);
         }
       },
       JSXExpressionContainer: {

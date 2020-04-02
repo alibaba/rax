@@ -1,7 +1,9 @@
-/* global PROPS */
+/* global PROPS, TAGID */
 /**
  * Base Component class definition.
  */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isQuickApp } from 'universal-env';
 import Host from './host';
 import { updateChildProps, removeComponentProps, setComponentProps } from './updater';
 import { enqueueRender } from './enqueueRender';
@@ -17,6 +19,7 @@ import {
 } from './cycles';
 import { cycles as pageCycles } from './page';
 import shallowEqual, { is } from './shallowEqual';
+import nextTick from './nextTick';
 import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
 import apiCore from './adapter/getNativeAPI';
 import setComponentRef from './adapter/setComponentRef';
@@ -88,7 +91,7 @@ export default class Component {
   _updateData(data) {
     if (!this._internal) return;
     data.$ready = true;
-    data.__tagId = this.props.__tagId;
+    data[TAGID] = this.props[TAGID];
     this.__updating = true;
     this._setData(data);
   }
@@ -98,29 +101,37 @@ export default class Component {
   }
 
   _updateChildProps(tagId, props) {
-    const chlidInstanceId = `${this.props.__tagId}-${tagId}`;
+    const chlidInstanceId = `${this.props[TAGID]}-${tagId}`;
     updateChildProps(this, chlidInstanceId, props);
   }
 
   _registerRefs(refs) {
     refs.forEach(({name, method, type, id}) => {
-      if (type === 'component') {
-        this._internal[name] = method;
-        if (this._internal.selectComponent) {
-          const instance = this._internal.selectComponent(`#${id}`);
+      if (isQuickApp) {
+        nextTick(() => {
+          Object.assign(method, {
+            current: this._internal.$element(name)
+          });
+        });
+      } else {
+        if (type === 'component') {
+          this._internal[name] = method;
+          if (this._internal.selectComponent) {
+            const instance = this._internal.selectComponent(`#${id}`);
+            this.refs[name] = {
+              current: instance
+            };
+            method(instance, true);
+          } else {
+            this.refs[name] = method;
+          }
+        } else {
+          const instance = apiCore.createSelectorQuery().select(`#${id}`);
           this.refs[name] = {
             current: instance
           };
-          method(instance, true);
-        } else {
-          this.refs[name] = method;
+          method(instance);
         }
-      } else {
-        const instance = apiCore.createSelectorQuery().select(`#${id}`);
-        this.refs[name] = {
-          current: instance
-        };
-        method(instance);
       }
     });
   }
@@ -306,7 +317,7 @@ export default class Component {
     const setDataTask = [];
     let $ready = false;
     // In alibaba miniapp can use $spliceData optimize long list
-    if (this._internal.$spliceData) {
+    if (!isQuickApp && this._internal.$spliceData) {
       // Use $spliceData update
       const arrayData = {};
       // Use setData update
@@ -345,12 +356,25 @@ export default class Component {
       if (!isEmptyObj(normalData)) {
         setDataTask.push(new Promise(resolve => {
           $ready = normalData.$ready;
-          this._internal.setData(normalData, resolve);
+          if (isQuickApp) {
+            for (let key in normalData) {
+              if (!(key in this._internal)) {
+                this._internal.$set(key, normalData[key]);
+              } else {
+                this._internal[key] = normalData[key];
+              }
+            }
+            nextTick(resolve);
+          } else {
+            this._internal.setData(normalData, resolve);
+          }
         }));
       }
     }
     if (setDataTask.length > 0) {
       Promise.all(setDataTask).then(() => {
+        // Ensure this.state is latest in set data callback
+        Object.assign(this.state, data);
         if ($ready) {
           // trigger did mount
           this._trigger(COMPONENT_DID_MOUNT);
@@ -360,7 +384,6 @@ export default class Component {
           callback();
         }
       });
-      Object.assign(this.state, data);
     }
   }
 }

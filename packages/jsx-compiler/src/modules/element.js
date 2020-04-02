@@ -211,6 +211,13 @@ function transformTemplate(
             node.loc,
             `Only EventHandlers are supported in Mini Program, eg: onClick/onChange, instead of "${attributeName}".`,
           );
+        const params = (expression.params || []).map(param => {
+          // Compatibility (event = {}) => handleClick(event)
+          if (t.isAssignmentPattern(param)) {
+            return param.left;
+          }
+          return param;
+        });
         const callExp = expression.body;
         const args = callExp.arguments;
         const { attributes } = parentPath.parentPath.node;
@@ -226,20 +233,22 @@ function transformTemplate(
             name: fnFirstParam && fnFirstParam.name
           }))) {
             args.forEach((arg, index) => {
-              const transformedArg = transformCallExpressionArg(arg, dynamicValue, isDirective);
-              attributes.push(
-                t.jsxAttribute(
-                  t.jsxIdentifier(`data-${formatName}-arg-` + index),
-                  t.stringLiteral(
-                    createBinding(
-                      genExpression(transformedArg, {
-                        concise: true,
-                        comments: false,
-                      }),
+              const transformedArg = transformCallExpressionArg(arg, params, dynamicValue, isDirective);
+              if (transformedArg.__dataset) {
+                attributes.push(
+                  t.jsxAttribute(
+                    t.jsxIdentifier(`data-${formatName}-arg-` + index),
+                    t.stringLiteral(
+                      createBinding(
+                        genExpression(transformedArg, {
+                          concise: true,
+                          comments: false,
+                        }),
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              }
             });
           }
         }
@@ -316,7 +325,7 @@ function transformTemplate(
                     ),
                   );
                 } else {
-                  const transformedArg = transformCallExpressionArg(arg, dynamicValue, isDirective);
+                  const transformedArg = transformCallExpressionArg(arg, [], dynamicValue, isDirective);
                   attributes.push(
                     t.jsxAttribute(
                       t.jsxIdentifier(`data-${formatName}-arg-${argsIndex}`),
@@ -689,41 +698,41 @@ function transformObjectExpression(expression, dynamicBinding, isDirective) {
 
 /**
  * Transform CallExpression arg
- * @param {Object} ast
+ * @param {object} ast - arguments node
+ * @param {Array} params - ArrowFunctionExpression's params, like event in event => handleClick()
+ * @param {object} dynamicValue
+ * @param {boolean} isDirective
  */
-function transformCallExpressionArg(ast, dynamicValue, isDirective) {
-  let arg;
+function transformCallExpressionArg(ast, params, dynamicValue, isDirective) {
   switch (ast.type) {
     case 'Identifier':
-      ast = transformIdentifier(ast, dynamicValue, isDirective);
+      // Exclude the event object
+      if (!params.some(param => param.name === ast.name)) {
+        ast = transformIdentifier(ast, dynamicValue, isDirective);
+        ast.__dataset = true;
+      }
       break;
-    case 'MemberExpression':
-      ast = transformMemberExpression(ast, dynamicValue, isDirective);
     default:
       traverse(ast, {
         Identifier(innerPath) {
           handleValidIdentifier(innerPath, () => {
             const { node: innerNode } = innerPath;
-            if (innerNode.__listItem && !innerPath.parentPath.isMemberExpression()) {
-              const item = innerNode.__listItem.item;
-              if (item) {
-                innerPath.replaceWith(
-                  t.memberExpression(
-                    t.identifier(item),
-                    t.identifier(innerNode.name),
-                  ),
-                );
+            if (!innerNode.__transformed) {
+              // Exclude the event object
+              if (!params.some(param => param.name === ast.name)) {
+                const replaceNode = transformIdentifier(innerNode, dynamicValue, isDirective);
+                innerPath.replaceWith(replaceNode);
               }
+              innerPath.node.__transformed = true;
             }
           });
         },
       });
+      ast.__dataset = true;
       break;
   }
-  if (!arg) {
-    arg = ast;
-  }
-  return arg;
+
+  return ast;
 }
 
 function checkMemberHasThis(expression) {

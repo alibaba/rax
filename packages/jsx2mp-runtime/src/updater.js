@@ -1,5 +1,6 @@
-import nextTick from './nextTick';
+/* global TAGID */
 import { enqueueRender } from './enqueueRender';
+import { getMiniAppHistory } from './history';
 
 // instanceId -> props
 const propsMap = {};
@@ -45,12 +46,19 @@ export function updateChildProps(trigger, instanceId, nextUpdateProps) {
     if (targetComponent) {
       const nextProps = Object.assign(
         {
-          __tagId: instanceId
+          TAGID: instanceId
         },
         targetComponent.props,
-        nextUpdateProps,
-        targetComponent.__highestLevelProps
+        nextUpdateProps
       );
+      // Inject history
+      if (targetComponent.__injectHistory) {
+        const history = getMiniAppHistory();
+        Object.assign(nextProps, {
+          history,
+          location: history.location
+        });
+      }
       if (targetComponent.__mounted) {
         targetComponent.nextProps = nextPropsMap[instanceId] = nextProps;
         // Ensure parent component did update.

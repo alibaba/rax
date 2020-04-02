@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isQuickApp } from 'universal-env';
 import { isFunction } from './types';
 import {
   ON_SHOW,
@@ -6,6 +8,8 @@ import {
 import { useEffect } from './hooks';
 import { getMiniAppHistory } from './history';
 import { getPageInstanceById } from './pageInstanceMap';
+
+const history = getMiniAppHistory();
 
 export const cycles = {};
 
@@ -16,6 +20,10 @@ export function usePageEffect(cycle, callback) {
     switch (cycle) {
       case ON_SHOW:
       case ON_HIDE:
+        // ON_SHOW is before than Component init
+        if (isQuickApp && cycle === ON_SHOW) {
+          return callback();
+        }
         useEffect(() => {
           const pageId = history && history.location._pageId;
           if (!cycles[pageId]) {
