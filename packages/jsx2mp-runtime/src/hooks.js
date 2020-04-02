@@ -170,7 +170,7 @@ export function useRef(initialValue, name) {
   const hooks = currentInstance.getHooks();
 
   if (isQuickApp) {
-    return this._internal.$element(name) || {};
+    return currentInstance._internal.$element(name) || {};
   }
 
   if (!hooks[hookID]) {
