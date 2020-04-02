@@ -70,6 +70,9 @@ module.exports = function(attrPath, childExpression, refName, adapter, loopIndex
       const componentIdAttr = t.jsxAttribute(t.jsxIdentifier('componentId'), idAttr.value);
       attributes.push(componentIdAttr);
     }
+  } else if (t.isJSXExpressionContainer(refInfo.id)) {
+    // For id={'xxx'}
+    refInfo.id = refInfo.id.expression;
   }
 
   node.__transformed = true;

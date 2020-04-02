@@ -128,7 +128,8 @@ function createProxyMethods(events) {
           context: this.instance
         };
 
-        const datasetArgs = [];
+        // proxyed event arguments
+        let proxyedArgs = [];
 
         if (event) {
           if (isQuickApp) {
@@ -164,6 +165,7 @@ function createProxyMethods(events) {
           }
 
           const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
+
           // Universal event args
           const datasetKeys = Object.keys(dataset);
           const formatedEventName = formatEventName(eventName);
@@ -174,11 +176,11 @@ function createProxyMethods(events) {
             } else if (isDatasetArg(key)) {
             // eg. arg0, arg1, arg-0, arg-1
               const index = Number(DATASET_ARG_REG.exec(key)[1]);
-              datasetArgs[index] = dataset[key];
+              proxyedArgs[index] = dataset[key];
 
               if (!contextInfo.changed && idx !== index) {
               // event does not exist on dataset
-                datasetArgs[idx] = event;
+                proxyedArgs[idx] = event;
               }
             }
           });
@@ -188,13 +190,15 @@ function createProxyMethods(events) {
            * when onClick={handleClick.bind(this, 1)}
            * or onClick={handleClick}
            */
-          if (contextInfo.changed || !datasetArgs.length) {
-            datasetArgs.push(event);
+          if (contextInfo.changed || !proxyedArgs.length) {
+            proxyedArgs.push(event);
           }
+        } else {
+          proxyedArgs = args;
         }
 
         if (this.instance._methods[eventName]) {
-          return this.instance._methods[eventName].apply(contextInfo.context, datasetArgs);
+          return this.instance._methods[eventName].apply(contextInfo.context, proxyedArgs);
         } else {
           console.warn(`instance._methods['${eventName}'] not exists.`);
         }
