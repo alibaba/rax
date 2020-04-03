@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isQuickApp } from 'universal-env';
 
 export default function() {
   // For alibaba miniapp
@@ -21,6 +21,13 @@ export default function() {
         addGlobalClass: true,
         multipleSlots: true
       }
+    };
+  }
+
+  // For quickapp
+  if (isQuickApp) {
+    return {
+      props: ['tagId'],
     };
   }
 }
