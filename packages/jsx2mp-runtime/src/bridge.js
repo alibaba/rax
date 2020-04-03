@@ -100,7 +100,7 @@ function getComponentCycles(Klass) {
       this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      Object.assign(this.instance.state, this.data);
+      // Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {

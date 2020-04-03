@@ -90,7 +90,7 @@ export default class Component {
   _updateData(data) {
     if (!this._internal) return;
     data.$ready = true;
-    data[TAGID] = this.props[TAGID];
+    this.state[TAGID] = data[TAGID] = this.props[TAGID];
     this.__updating = true;
     this._setData(data);
   }
@@ -337,7 +337,12 @@ export default class Component {
       if (!isEmptyObj(normalData)) {
         $ready = normalData.$ready;
         setDataTask.push(new Promise(resolve => {
-          this._internal.setData(normalData, resolve);
+          this._internal.setData(normalData, () => {
+            if (!this.state.$ready) {
+              this.state.$ready = true;
+            }
+            resolve(arguments);
+          });
         }));
       }
       if (!isEmptyObj(arrayData)) {
@@ -372,8 +377,6 @@ export default class Component {
     }
     if (setDataTask.length > 0) {
       Promise.all(setDataTask).then(() => {
-        // Ensure this.state is latest in set data callback
-        Object.assign(this.state, data);
         if ($ready) {
           // trigger did mount
           this._trigger(COMPONENT_DID_MOUNT);
