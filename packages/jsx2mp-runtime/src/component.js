@@ -25,12 +25,11 @@ import apiCore from './adapter/getNativeAPI';
 import setComponentRef from './adapter/setComponentRef';
 
 export default class Component {
-  constructor(props, _internal, isFunctionComponent) {
+  constructor(props, isFunctionComponent) {
     this.state = {};
     this.props = props;
     this.refs = {};
 
-    this._internal = _internal;
     this.__dependencies = {}; // for context
 
     this.__mounted = false;
@@ -379,12 +378,18 @@ export default class Component {
           // trigger did mount
           this._trigger(COMPONENT_DID_MOUNT);
         }
-        let callback;
-        while (callback = this._pendingCallbacks.pop()) {
-          callback();
-        }
+        triggerCallbacks(this._pendingCallbacks);
       });
+    } else {
+      triggerCallbacks(this._pendingCallbacks);
     }
+  }
+}
+
+function triggerCallbacks(callbacks) {
+  let callback;
+  while (callback = callbacks.pop()) {
+    callback();
   }
 }
 

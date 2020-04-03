@@ -95,7 +95,8 @@ function getComponentCycles(Klass) {
           location: history.location
         });
       }
-      this.instance = new Klass(props, this);
+      this.instance = new Klass(props);
+      this.instance._internal = this;
       this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
@@ -210,8 +211,8 @@ function createProxyMethods(events) {
 
 function createAnonymousClass(render) {
   const Klass = class extends Component {
-    constructor(props, _internal) {
-      super(props, _internal, true);
+    constructor(props) {
+      super(props, true);
       this.__compares = render.__compares;
       // Handle functional component shouldUpdateComponent
       if (!this.shouldComponentUpdate && this.__compares) {
