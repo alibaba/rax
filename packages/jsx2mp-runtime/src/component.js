@@ -90,7 +90,7 @@ export default class Component {
   _updateData(data) {
     if (!this._internal) return;
     data.$ready = true;
-    this.state[TAGID] = data[TAGID] = this.props[TAGID];
+    data[TAGID] = this.props[TAGID];
     this.__updating = true;
     this._setData(data);
   }
@@ -316,18 +316,19 @@ export default class Component {
     const setDataTask = [];
     let $ready = false;
     // In alibaba miniapp can use $spliceData optimize long list
-    if (!isQuickApp && this._internal.$spliceData) {
+    if (this._internal.$spliceData) {
+      const currentData = this._internal.data;
       // Use $spliceData update
       const arrayData = {};
       // Use setData update
       const normalData = {};
       for (let key in data) {
-        if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          arrayData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
+        if (Array.isArray(data[key]) && diffArray(currentData[key], data[key])) {
+          arrayData[key] = [currentData[key].length, 0].concat(data[key].slice(currentData[key].length));
         } else {
-          if (diffData(this.state[key], data[key])) {
+          if (diffData(currentData[key], data[key])) {
             if (isPlainObject(data[key])) {
-              normalData[key] = Object.assign({}, this.state[key], data[key]);
+              normalData[key] = Object.assign({}, currentData[key], data[key]);
             } else {
               normalData[key] = data[key];
             }
@@ -337,12 +338,7 @@ export default class Component {
       if (!isEmptyObj(normalData)) {
         $ready = normalData.$ready;
         setDataTask.push(new Promise(resolve => {
-          this._internal.setData(normalData, () => {
-            if (!this.state.$ready) {
-              this.state.$ready = true;
-            }
-            resolve(arguments);
-          });
+          this._internal.setData(normalData, resolve);
         }));
       }
       if (!isEmptyObj(arrayData)) {
@@ -350,28 +346,32 @@ export default class Component {
           this._internal.$spliceData(arrayData, resolve);
         }));
       }
+    } else if (isQuickApp) {
+      setDataTask.push(new Promise(resolve => {
+        for (let key in data) {
+          if (key === '$ready') {
+            // Only this._interanal.$ready !== data.ready, it will trigger componentDidMount
+            $ready = this._internal.$ready !== data.ready;
+          }
+          if (!(key in this._internal)) {
+            this._internal.$set(key, data[key]);
+          } else if (diffData(this._internal, data)) {
+            this._internal[key] = data[key];
+          }
+        }
+        nextTick(resolve);
+      }));
     } else {
       const normalData = {};
       for (let key in data) {
-        if (diffData(this.state[key], data[key])) {
+        if (diffData(this._internal.data[key], data[key])) {
           normalData[key] = data[key];
         }
       }
       if (!isEmptyObj(normalData)) {
         setDataTask.push(new Promise(resolve => {
           $ready = normalData.$ready;
-          if (isQuickApp) {
-            for (let key in normalData) {
-              if (!(key in this._internal)) {
-                this._internal.$set(key, normalData[key]);
-              } else {
-                this._internal[key] = normalData[key];
-              }
-            }
-            nextTick(resolve);
-          } else {
-            this._internal.setData(normalData, resolve);
-          }
+          this._internal.setData(normalData, resolve);
         }));
       }
     }
