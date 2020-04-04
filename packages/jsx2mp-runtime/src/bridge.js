@@ -54,14 +54,13 @@ function getPageCycles(Klass) {
       this.instance.__pageOptions = options;
       setPageInstance(this.instance);
       this.instance._internal = this;
-      Object.assign(this.instance.state, this.data);
       // Add route information for page.
       history.location.__updatePageOption(options);
       history.location.__updatePageId(this.instance.instanceId);
-      this.data = this.instance.state;
 
       if (this.instance.__ready) return;
       this.instance.__ready = true;
+      this.data = this.instance.state;
       this.instance._mountComponent();
     },
     unmount() {
@@ -100,13 +99,11 @@ function getComponentCycles(Klass) {
       this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      // Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
       }
-
       this.data = this.instance.state;
       this.instance._mountComponent();
     },
