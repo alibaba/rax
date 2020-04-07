@@ -209,7 +209,7 @@ function createProxyMethods(events) {
 function createAnonymousClass(render) {
   const Klass = class extends Component {
     constructor(props) {
-      super(props, true);
+      super(props);
       this.__compares = render.__compares;
       // Handle functional component shouldUpdateComponent
       if (!this.shouldComponentUpdate && this.__compares) {
@@ -235,6 +235,8 @@ function createAnonymousClass(render) {
   };
   // Transfer __injectHistory
   Klass.__injectHistory = render.__injectHistory;
+  // Set as function component
+  Klass.prototype.isFunctionComponent = true;
   return Klass;
 }
 

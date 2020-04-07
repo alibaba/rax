@@ -25,7 +25,7 @@ import apiCore from './adapter/getNativeAPI';
 import setComponentRef from './adapter/setComponentRef';
 
 export default class Component {
-  constructor(props, isFunctionComponent) {
+  constructor(props) {
     this.state = {};
     this.props = props;
     this.refs = {};
@@ -41,8 +41,7 @@ export default class Component {
 
     this._pendingStates = [];
     this._pendingCallbacks = [];
-
-    setComponentRef(this, props.bindComRef || props.ref, isFunctionComponent);
+    setComponentRef(this, props.bindComRef || props.ref);
   }
 
   // Bind to this instance.
