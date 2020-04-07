@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isQuickApp } from 'universal-env';
 import Host from './host';
 import { scheduleEffect, invokeEffects } from './scheduler';
 import { is } from './shallowEqual';
@@ -162,10 +164,14 @@ export function useImperativeHandle(ref, create, inputs) {
   }, nextInputs);
 }
 
-export function useRef(initialValue) {
+export function useRef(initialValue, name) {
   const currentInstance = getCurrentRenderingInstance();
   const hookID = currentInstance.getHookID();
   const hooks = currentInstance.getHooks();
+
+  if (isQuickApp) {
+    return currentInstance._internal.$element(name) || {};
+  }
 
   if (!hooks[hookID]) {
     // currentInstance._internal.,

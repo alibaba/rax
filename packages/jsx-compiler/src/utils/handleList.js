@@ -87,11 +87,8 @@ module.exports = function(
     replaceNode.__originalExpression = originalExpression;
     replaceNode.__index = targetPath.node.__index;
     node.value = replaceNode;
-    // Record current properties info
-    replaceNode.__properties = {
-      value: properties,
-      index: propertyIndex
-    };
+    // Record current properties
+    replaceNode.__properties = properties;
     targetPath.replaceWith(replaceNode);
   }
 };

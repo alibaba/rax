@@ -5,6 +5,7 @@ const CodeError = require('../utils/CodeError');
 const getCompiledComponents = require('../getCompiledComponents');
 const DynamicBinding = require('../utils/DynamicBinding');
 const handleRefAttr = require('../utils/handleRefAttr');
+const isNativeComponent = require('../utils/isNativeComponent');
 
 function transformAttribute(ast, code, adapter) {
   const refs = [];
@@ -40,6 +41,15 @@ function transformAttribute(ast, code, adapter) {
             node.name.name = 'class';
           }
           break;
+        case 'id':
+          if (adapter.styleKeyword) {
+            if (!isNativeComponent(path, adapter.platform)) {
+              // Object.assign for shallow copy, avoid self tag is same reference
+              path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('componentId'),
+                Object.assign({}, node.value)));
+            }
+          }
+          break;
         case 'style':
           if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform)) {
             node.name.name = 'styleSheet';
@@ -60,7 +70,7 @@ function transformAttribute(ast, code, adapter) {
             }
             refs.push(handleRefAttr(path, childExpression, node.value, adapter));
           } else {
-            throw new CodeError(code, node, path.loc, "Ref's type must be JSXExpressionContainer, like <View ref = { scrollRef }/>");
+            throw new CodeError(code, node, node.loc, "Ref's type must be JSXExpressionContainer, like <View ref={ viewRef }/>");
           }
           break;
         default:
@@ -72,13 +82,6 @@ function transformAttribute(ast, code, adapter) {
     refs,
     dynamicRef
   };
-}
-
-function isNativeComponent(path, platform) {
-  const {
-    node: { name: tagName }
-  } = path.parentPath.get('name');
-  return !!getCompiledComponents(platform)[tagName];
 }
 
 module.exports = {

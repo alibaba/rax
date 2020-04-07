@@ -1,15 +1,26 @@
-/* global PROPS */
+/* global PROPS, TAGID */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isQuickApp } from 'universal-env';
 import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
 import { setComponentInstance, getComponentProps } from './updater';
-import getNativeComponentLifecycle from './adapter/getNativeComponentLifecycle';
-import getComponentBaseConfig from './adapter/getComponentBaseConfig';
+import {
+  getNativePageLifecycle,
+  getNativeComponentLifecycle,
+  getComponentBaseConfig,
+  getEventProps,
+} from './adapter/index';
 import { createMiniAppHistory, getMiniAppHistory } from './history';
 import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
 import { registerEventsInConfig } from './nativeEventListener';
+import { isPlainObject } from './types';
+import { enqueueRender } from './enqueueRender';
+import shallowEqual from './shallowEqual';
+
+const { TYPE, TARGET, TIMESTAMP } = getEventProps();
 
 const GET_DERIVED_STATE_FROM_PROPS = 'getDerivedStateFromProps';
 let _appConfig;
@@ -31,8 +42,8 @@ const eventsMap = {};
  *    setData     <--------------    setState
  */
 function getPageCycles(Klass) {
-  let config = {
-    onLoad(options) {
+  let config = getNativePageLifecycle({
+    mount(options) {
       // Ensure page has loaded
       const history = createMiniAppHistory();
       const { instanceId, props } = generateBaseOptions(this, Klass.defaultProps, {
@@ -55,10 +66,10 @@ function getPageCycles(Klass) {
       this.instance.__ready = true;
       this.instance._mountComponent();
     },
-    onUnload() {
+    unmount() {
       this.instance._unmountComponent();
     },
-    onShow() {
+    show() {
       if (this.instance && this.instance.__mounted) {
         // Update current location pageId
         const history = getMiniAppHistory();
@@ -66,8 +77,11 @@ function getPageCycles(Klass) {
         history.location.__updatePageId(this.instance.instanceId);
         this.instance._trigger(ON_SHOW);
       }
+    },
+    hide() {
+      if (this.instance.__mounted) this.instance._trigger(ON_HIDE);
     }
-  };
+  });
   return config;
 }
 
@@ -97,6 +111,16 @@ function getComponentCycles(Klass) {
       this.data = this.instance.state;
       this.instance._mountComponent();
     },
+    didUpdate(prevProps, nextProps) {
+      // Ensure this component is used in native project & has been rendered & prevProps and this.props are different
+      if (
+        /^t_\d+$/.test(this.instance.instanceId)
+        && this.data.$ready
+        && !shallowEqual(prevProps, nextProps)) {
+        this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
+        enqueueRender(this.instance);
+      }
+    },
     unmount: function() {
       this.instance._unmountComponent();
     }
@@ -109,63 +133,84 @@ function createProxyMethods(events) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
-        const event = args[0];
+        let event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
 
-        // set stopPropagation method
-        event.stopPropagation = () => {
-          eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
-            detail: event.detail,
-            type: event.type
-          };
+        // Context default to Rax component instance.
+        const contextInfo = {
+          context: this.instance
         };
 
-        const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
-        // If prevEvent exists, and event type & event detail are the same, stop event triggle
-        if (prevEvent && prevEvent.type === event.type) {
-          let isSame = true;
-          for (let key in prevEvent.detail) {
-            if (prevEvent.detail[key] !== event.detail[key]) {
-              isSame = false;
-              break;
+        // proxyed event arguments
+        let proxyedArgs = [];
+
+        if (event) {
+          if (isQuickApp) {
+            // shallow copy event & event._target
+            event = {...event};
+            event._target = {...event._target};
+            // align the currentTarget variable for quickapp
+            event.currentTarget = event._target;
+            event.currentTarget.dataset = event._target._dataset;
+          } else {
+            // set stopPropagation method
+            event.stopPropagation = () => {
+              eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
+                detail: event.detail,
+                type: event.type
+              };
+            };
+
+            const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
+            // If prevEvent exists, and event type & event detail are the same, stop event triggle
+            if (prevEvent && prevEvent.type === event.type) {
+              let isSame = true;
+              for (let key in prevEvent.detail) {
+                if (prevEvent.detail[key] !== event.detail[key]) {
+                  isSame = false;
+                  break;
+                }
+              }
+              if (isSame) {
+                return;
+              }
             }
           }
-          if (isSame) {
-            return;
-          }
-        }
 
-        let context = this.instance; // Context default to Rax component instance.
+          const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
 
-        const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
-        const datasetArgs = [];
-        // Universal event args
-        const datasetKeys = Object.keys(dataset);
-        if (datasetKeys.length > 0) {
-          datasetKeys.forEach((key) => {
-            if ('argContext' === key || 'arg-context' === key) {
-              context = dataset[key] === 'this' ? this.instance : dataset[key];
+          // Universal event args
+          const datasetKeys = Object.keys(dataset);
+          const formatedEventName = formatEventName(eventName);
+          datasetKeys.forEach((key, idx) => {
+            if (`${formatedEventName}ArgContext` === key || `${formatedEventName}-arg-context` === key) {
+              contextInfo.context = dataset[key] === 'this' ? this.instance : dataset[key];
+              contextInfo.changed = true;
             } else if (isDatasetArg(key)) {
-              // eg. arg0, arg1, arg-0, arg-1
-              const index = DATASET_ARG_REG.exec(key)[1];
-              datasetArgs[index] = dataset[key];
+            // eg. arg0, arg1, arg-0, arg-1
+              const index = Number(DATASET_ARG_REG.exec(key)[1]);
+              proxyedArgs[index] = dataset[key];
+
+              if (!contextInfo.changed && idx !== index) {
+              // event does not exist on dataset
+                proxyedArgs[idx] = event;
+              }
             }
           });
+
+          /**
+           * event should be last param
+           * when onClick={handleClick.bind(this, 1)}
+           * or onClick={handleClick}
+           */
+          if (contextInfo.changed || !proxyedArgs.length) {
+            proxyedArgs.push(event);
+          }
         } else {
-          const formatName = formatEventName(eventName);
-          Object.keys(this[PROPS]).forEach(key => {
-            if (`data-${formatName}-arg-context` === key) {
-              context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
-            } else if (isDatasetKebabArg(key)) {
-              // `data-arg-` length is 9.
-              const len = `data-${formatName}-arg-`.length;
-              datasetArgs[key.slice(len)] = this[PROPS][key];
-            }
-          });
+          proxyedArgs = args;
         }
-        // Concat args.
-        args = datasetArgs.concat(args);
+
         if (this.instance._methods[eventName]) {
-          return this.instance._methods[eventName].apply(context, args);
+          return this.instance._methods[eventName].apply(contextInfo.context, proxyedArgs);
         } else {
           console.warn(`instance._methods['${eventName}'] not exists.`);
         }
@@ -234,7 +279,12 @@ function createConfig(component, options) {
     Klass.__proto__.__config = config;
     registerEventsInConfig(Klass, component.__nativeEvents);
   } else {
-    config.methods = proxiedMethods;
+    if (isQuickApp) {
+      // quickapp's component and page share the same structure
+      Object.assign(config, proxiedMethods);
+    } else {
+      config.methods = proxiedMethods;
+    }
   }
 
   return config;
@@ -277,8 +327,29 @@ export function runApp(appConfig, pageProps = {}) {
     }
   };
 
-  // eslint-disable-next-line
-  App(appOptions);
+  if (isQuickApp) {
+    // Quickapp's app returns config as JSON
+    return Object.assign(appOptions, {
+      onCreate: function(launchOptions) {
+        // excute quickapp's create cycle
+        const _onCreate = appConfig.onCreate;
+        _onCreate && _onCreate();
+        const launchQueue = appCycles.create;
+        if (Array.isArray(launchQueue) && launchQueue.length > 0) {
+          let fn;
+          while (fn = launchQueue.pop()) {
+            // eslint-disable-line
+            fn.call(this, launchOptions);
+          }
+        }
+      },
+      globalRoutes: __updateRouterMap(appConfig), // store globalRoutes in case overrided when page reinited
+      login: appConfig.login, // store global login object for common login page
+    });
+  } else {
+    // eslint-disable-next-line
+    App(appOptions);
+  }
 }
 
 export function createPage(definition, options = {}) {
@@ -292,12 +363,6 @@ export function createComponent(definition, options = {}) {
 
 function isClassComponent(Klass) {
   return Klass.prototype instanceof Component;
-}
-
-const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;
-
-function isDatasetKebabArg(str) {
-  return DATASET_KEBAB_ARG_REG.test(str);
 }
 
 const DATASET_ARG_REG = /\w+-?[aA]rg?-?(\d+)/;
@@ -319,7 +384,12 @@ function generateBaseOptions(internal, defaultProps, ...restProps) {
   const instanceId = getId('tag', internal);
 
   const props = Object.assign({}, defaultProps, internal[PROPS], {
-    __tagId: instanceId,
+    TAGID: instanceId,
+    // In MiniApp every slot is scopedSlots
+    $slots: {
+      ...internal[PROPS].$slots,
+      ...internal[PROPS].$scopedSlots
+    }
   }, getComponentProps(instanceId), ...restProps);
   return {
     instanceId,
