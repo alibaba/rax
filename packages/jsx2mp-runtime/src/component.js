@@ -337,14 +337,14 @@ export default class Component {
       }
       if (!isEmptyObj(normalData)) {
         $ready = normalData.$ready;
-        setDataTask.push(new Promise(resolve => {
-          this._internal.setData(normalData, resolve);
-        }));
+        setDataTask.push(cb => {
+          this._internal.setData(normalData, cb);
+        });
       }
       if (!isEmptyObj(arrayData)) {
-        setDataTask.push(new Promise(resolve => {
-          this._internal.$spliceData(arrayData, resolve);
-        }));
+        setDataTask.push(cb => {
+          this._internal.$spliceData(arrayData, cb);
+        });
       }
     } else {
       const normalData = {};
@@ -354,7 +354,7 @@ export default class Component {
         }
       }
       if (!isEmptyObj(normalData)) {
-        setDataTask.push(new Promise(resolve => {
+        setDataTask.push(cb => {
           $ready = normalData.$ready;
           if (isQuickApp) {
             for (let key in normalData) {
@@ -364,15 +364,24 @@ export default class Component {
                 this._internal[key] = normalData[key];
               }
             }
-            nextTick(resolve);
+            nextTick(cb);
           } else {
-            this._internal.setData(normalData, resolve);
+            this._internal.setData(normalData, cb);
           }
-        }));
+        });
       }
     }
     if (setDataTask.length > 0) {
-      Promise.all(setDataTask).then(() => {
+      const $batchedUpdates = this._internal.$batchedUpdates || (cb => { cb(); });
+
+
+      $batchedUpdates(() => {
+        const setDataPromiseTask = setDataTask.map(task => {
+          return new Promise(resolve => {
+            task(resolve);
+          })
+        })
+        Promise.all(setDataPromiseTask).then(() => {
         // Ensure this.state is latest in set data callback
         Object.assign(this.state, data);
         if ($ready) {
@@ -383,6 +392,7 @@ export default class Component {
         while (callback = this._pendingCallbacks.pop()) {
           callback();
         }
+        });
       });
     }
   }
