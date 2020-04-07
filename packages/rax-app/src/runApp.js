@@ -1,8 +1,9 @@
 import { render, createElement, useState, useEffect, Fragment } from 'rax';
 import { Navigation, TabBar } from 'rax-pwa';
-import { isWeex, isWeb, isKraken } from 'universal-env';
+import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
+import { createMiniAppHistory } from 'miniapp-history';
 import UniversalDriver from 'driver-universal';
 import pathRedirect from './pathRedirect';
 import { emit } from './app';
@@ -109,6 +110,13 @@ export default function runApp(appConfig, pageProps = {}) {
   } else {
     // In other situation use memory history.
     history = createMemoryHistory();
+  }
+
+  // In MiniApp, it needn't return App Component
+  if (isMiniApp || isWeChatMiniProgram) {
+    window.history = createMiniAppHistory(routes);
+    window.__pageProps = pageProps;
+    return;
   }
 
   // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
