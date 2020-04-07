@@ -101,6 +101,8 @@ function transformTemplate(ast, templateMap, adapter, code) {
     LogicalExpression(path) {
       if (path.parentPath.isJSXExpressionContainer()) {
         const { right, left, operator } = path.node;
+        const rightPath = path.get('right');
+        const rightIsJSX = isJSX(right);
         let replacement = [];
         if (isJSX(left)) {
           if (operator === '&&') {
@@ -110,7 +112,7 @@ function transformTemplate(ast, templateMap, adapter, code) {
           } else {
             throw new CodeError(code, path.node, path.node.loc, 'Logical operator only support && or ||');
           }
-        } else {
+        } else if (rightIsJSX || hasJSX(rightPath)) {
           let test;
           if (operator === '||') {
             test = t.unaryExpression('!', left);
@@ -120,11 +122,12 @@ function transformTemplate(ast, templateMap, adapter, code) {
             throw new CodeError(code, path.node, path.node.loc, 'Logical operator only support && or ||');
           }
           const children = [];
-          if (isJSX(right)) {
+          if (rightIsJSX) {
             children.push(right);
           } else {
             children.push(t.jsxExpressionContainer(right));
           }
+
           replacement.push(createJSX('block', {
             [adapter.if]: generateConditionValue(test, { adapter })
           }, children));
@@ -132,7 +135,9 @@ function transformTemplate(ast, templateMap, adapter, code) {
             [adapter.else]: null,
           }, [t.jsxExpressionContainer(left)]));
         }
-        path.parentPath.replaceWithMultiple(replacement);
+        if (replacement.length > 0) {
+          path.parentPath.replaceWithMultiple(replacement);
+        }
       } else {
         path.skip();
       }
