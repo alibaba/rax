@@ -9,5 +9,10 @@ module.exports = function(platform) {
         'rax-view': 'view',
         'rax-text': 'text'
       };
+    case 'bytedance':
+      return {
+        'rax-view': 'view',
+        'rax-text': 'text'
+      };
   }
 };

@@ -8,7 +8,7 @@ function getPropsIdentifierName(platform) {
   switch (platform) {
     case 'wechat':
     case 'baidu':
-    case 'toutiao':
+    case 'bytedance':
       return 'properties';
 
     case 'quickapp':
@@ -84,4 +84,5 @@ export default [
   getRollupConfig('ali'),
   getRollupConfig('wechat'),
   getRollupConfig('quickapp'),
+  getRollupConfig('bytedance'),
 ];

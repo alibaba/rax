@@ -36,7 +36,8 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   // Miniapp template tag name does not support special characters.
   const aliasName = alias.name.replace(/@|\//g, '_');
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
-  replaceComponentTagName(path, t.jsxIdentifier(componentTag));
+  const pureComponentTag = componentTag.replace('_ali_', '');
+  replaceComponentTagName(path, t.jsxIdentifier(pureComponentTag));
   node.isCustomEl = alias.isCustomEl;
   node.name.isCustom = true;
 
@@ -294,7 +295,8 @@ module.exports = {
       if (!parsed.usingComponents) {
         parsed.usingComponents = {};
       }
-      parsed.usingComponents[componentTag] = getComponentPath(componentsAlias[componentTag], options);
+      const key = componentTag.replace('_ali_', '');
+      parsed.usingComponents[key] = getComponentPath(componentsAlias[componentTag], options);
     });
     // Assign used context
     parsed.contextList = contextList;

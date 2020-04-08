@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
 import nextTick from '../nextTick';
 
 export default function(instance, bindComRef, isFunctionComponent) {
@@ -16,7 +16,7 @@ export default function(instance, bindComRef, isFunctionComponent) {
 function triggerSetRef(instance, bindComRef) {
   if (isMiniApp) {
     bindComRef(instance);
-  } else if (isWeChatMiniProgram) {
+  } else if (isWeChatMiniProgram || isByteDanceMicroApp) {
     // Wait register ref in parent componnent
     nextTick(() => {
       instance._internal.triggerEvent('ComRef', instance);
