@@ -2,9 +2,9 @@
 import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
 import nextTick from '../nextTick';
 
-export default function(instance, bindComRef, isFunctionComponent) {
+export default function(instance, bindComRef) {
   if (bindComRef) {
-    if (isFunctionComponent) {
+    if (instance.isFunctionComponent) {
       console.warn('Warning: Do not attach ref to function component because they don’t have instances.');
       triggerSetRef(null, bindComRef);
     } else {

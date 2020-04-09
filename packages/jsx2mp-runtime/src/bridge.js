@@ -56,14 +56,13 @@ function getPageCycles(Klass) {
       this.instance.__pageOptions = options;
       setPageInstance(this.instance);
       this.instance._internal = this;
-      Object.assign(this.instance.state, this.data);
       // Add route information for page.
       history.location.__updatePageOption(options);
       history.location.__updatePageId(this.instance.instanceId);
-      this.data = this.instance.state;
 
       if (this.instance.__ready) return;
       this.instance.__ready = true;
+      this.data = this.instance.state;
       this.instance._mountComponent();
     },
     unmount() {
@@ -97,17 +96,16 @@ function getComponentCycles(Klass) {
           location: history.location
         });
       }
-      this.instance = new Klass(props, this);
+      this.instance = new Klass(props);
+      this.instance._internal = this;
       this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
       }
-
       this.data = this.instance.state;
       this.instance._mountComponent();
     },
@@ -222,8 +220,8 @@ function createProxyMethods(events) {
 
 function createAnonymousClass(render) {
   const Klass = class extends Component {
-    constructor(props, _internal) {
-      super(props, _internal, true);
+    constructor(props) {
+      super(props);
       this.__compares = render.__compares;
       // Handle functional component shouldUpdateComponent
       if (!this.shouldComponentUpdate && this.__compares) {
@@ -249,6 +247,8 @@ function createAnonymousClass(render) {
   };
   // Transfer __injectHistory
   Klass.__injectHistory = render.__injectHistory;
+  // Set as function component
+  Klass.prototype.isFunctionComponent = true;
   return Klass;
 }
 
