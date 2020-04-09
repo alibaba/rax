@@ -5,7 +5,7 @@ jest.mock('universal-env', () => {
   return {
     isMiniApp: false,
     isNode: false,
-    isWeChatMiniprogram: false,
+    isWeChatMiniProgram: false,
     isWeb: true,
     isWeex: false
   };
