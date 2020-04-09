@@ -28,5 +28,5 @@ module.exports = [
   // Parse and generate template.
   require('./template'),
   // Handle function
-  require('./function'),
+  require('./function')
 ];

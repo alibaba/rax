@@ -25,12 +25,11 @@ import apiCore from './adapter/getNativeAPI';
 import setComponentRef from './adapter/setComponentRef';
 
 export default class Component {
-  constructor(props, _internal, isFunctionComponent) {
+  constructor(props) {
     this.state = {};
     this.props = props;
     this.refs = {};
 
-    this._internal = _internal;
     this.__dependencies = {}; // for context
 
     this.__mounted = false;
@@ -42,8 +41,7 @@ export default class Component {
 
     this._pendingStates = [];
     this._pendingCallbacks = [];
-
-    setComponentRef(this, props.bindComRef || props.ref, isFunctionComponent);
+    setComponentRef(this, props.bindComRef || props.ref);
   }
 
   // Bind to this instance.
@@ -317,18 +315,19 @@ export default class Component {
     const setDataTask = [];
     let $ready = false;
     // In alibaba miniapp can use $spliceData optimize long list
-    if (!isQuickApp && this._internal.$spliceData) {
+    if (this._internal.$spliceData) {
+      const currentData = this._internal.data;
       // Use $spliceData update
       const arrayData = {};
       // Use setData update
       const normalData = {};
       for (let key in data) {
-        if (Array.isArray(data[key]) && diffArray(this.state[key], data[key])) {
-          arrayData[key] = [this.state[key].length, 0].concat(data[key].slice(this.state[key].length));
+        if (Array.isArray(data[key]) && diffArray(currentData[key], data[key])) {
+          arrayData[key] = [currentData[key].length, 0].concat(data[key].slice(currentData[key].length));
         } else {
-          if (diffData(this.state[key], data[key])) {
+          if (diffData(currentData[key], data[key])) {
             if (isPlainObject(data[key])) {
-              normalData[key] = Object.assign({}, this.state[key], data[key]);
+              normalData[key] = Object.assign({}, currentData[key], data[key]);
             } else {
               normalData[key] = data[key];
             }
@@ -346,55 +345,63 @@ export default class Component {
           this._internal.$spliceData(arrayData, cb);
         });
       }
+    } else if (isQuickApp) {
+      setDataTask.push(cb => {
+        for (let key in data) {
+          if (key === '$ready') {
+            // Only this._interanal.$ready !== data.ready, it will trigger componentDidMount
+            $ready = this._internal.$ready !== data.ready;
+          }
+          if (!(key in this._internal)) {
+            this._internal.$set(key, data[key]);
+          } else if (diffData(this._internal, data)) {
+            this._internal[key] = data[key];
+          }
+        }
+        nextTick(cb);
+      });
     } else {
       const normalData = {};
       for (let key in data) {
-        if (diffData(this.state[key], data[key])) {
+        if (diffData(this._internal.data[key], data[key])) {
           normalData[key] = data[key];
         }
       }
       if (!isEmptyObj(normalData)) {
         setDataTask.push(cb => {
           $ready = normalData.$ready;
-          if (isQuickApp) {
-            for (let key in normalData) {
-              if (!(key in this._internal)) {
-                this._internal.$set(key, normalData[key]);
-              } else {
-                this._internal[key] = normalData[key];
-              }
-            }
-            nextTick(cb);
-          } else {
-            this._internal.setData(normalData, cb);
-          }
+          this._internal.setData(normalData, cb);
         });
       }
     }
-    if (setDataTask.length > 0) {
-      const $batchedUpdates = this._internal.$batchedUpdates || (cb => { cb(); });
 
+    if (setDataTask.length > 0) {
+      const $batchedUpdates = this._internal.$batchedUpdates || (cb => cb());
 
       $batchedUpdates(() => {
-        const setDataPromiseTask = setDataTask.map(task => {
+        const setDataPromiseTask = setDataTask.map(invokeTask => {
           return new Promise(resolve => {
-            task(resolve);
+            invokeTask(resolve);
           })
         })
         Promise.all(setDataPromiseTask).then(() => {
-        // Ensure this.state is latest in set data callback
-        Object.assign(this.state, data);
-        if ($ready) {
-          // trigger did mount
-          this._trigger(COMPONENT_DID_MOUNT);
-        }
-        let callback;
-        while (callback = this._pendingCallbacks.pop()) {
-          callback();
-        }
+          if ($ready) {
+            // trigger did mount
+            this._trigger(COMPONENT_DID_MOUNT);
+          }
+          triggerCallbacks(this._pendingCallbacks);
         });
-      });
+      })
+    } else {
+      triggerCallbacks(this._pendingCallbacks);
     }
+  }
+}
+
+function triggerCallbacks(callbacks) {
+  let callback;
+  while (callback = callbacks.pop()) {
+    callback();
   }
 }
 
