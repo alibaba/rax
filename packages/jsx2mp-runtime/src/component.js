@@ -117,11 +117,20 @@ export default class Component {
         if (type === 'component') {
           this._internal[name] = method;
           if (this._internal.selectComponent) {
-            const instance = this._internal.selectComponent(`#${id}`);
-            this.refs[name] = {
-              current: instance
-            };
-            method(instance, true);
+            new Promise((resolve, reject) => {
+              const instance = this._internal.selectComponent(`#${id}`, (res) => {
+                resolve(res);
+              });
+              if (instance) {
+                return resolve(instance);
+              }
+            })
+              .then(instance => {
+                this.refs[name] = {
+                  current: instance
+                };
+                method(instance, true);
+              });
           } else {
             this.refs[name] = method;
           }
