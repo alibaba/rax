@@ -336,17 +336,17 @@ export default class Component {
       }
       if (!isEmptyObj(normalData)) {
         $ready = normalData.$ready;
-        setDataTask.push(cb => {
-          this._internal.setData(normalData, cb);
+        setDataTask.push(callback => {
+          this._internal.setData(normalData, callback);
         });
       }
       if (!isEmptyObj(arrayData)) {
-        setDataTask.push(cb => {
-          this._internal.$spliceData(arrayData, cb);
+        setDataTask.push(callback => {
+          this._internal.$spliceData(arrayData, callback);
         });
       }
     } else if (isQuickApp) {
-      setDataTask.push(cb => {
+      setDataTask.push(callback => {
         for (let key in data) {
           if (key === '$ready') {
             // Only this._interanal.$ready !== data.ready, it will trigger componentDidMount
@@ -358,7 +358,7 @@ export default class Component {
             this._internal[key] = data[key];
           }
         }
-        nextTick(cb);
+        nextTick(callback);
       });
     } else {
       const normalData = {};
@@ -368,22 +368,22 @@ export default class Component {
         }
       }
       if (!isEmptyObj(normalData)) {
-        setDataTask.push(cb => {
+        setDataTask.push(callback => {
           $ready = normalData.$ready;
-          this._internal.setData(normalData, cb);
+          this._internal.setData(normalData, callback);
         });
       }
     }
 
     if (setDataTask.length > 0) {
-      const $batchedUpdates = this._internal.$batchedUpdates || (cb => cb());
+      const $batchedUpdates = this._internal.$batchedUpdates || (callback => callback());
 
       $batchedUpdates(() => {
         const setDataPromiseTask = setDataTask.map(invokeTask => {
           return new Promise(resolve => {
             invokeTask(resolve);
-          })
-        })
+          });
+        });
         Promise.all(setDataPromiseTask).then(() => {
           if ($ready) {
             // trigger did mount
@@ -391,7 +391,7 @@ export default class Component {
           }
           triggerCallbacks(this._pendingCallbacks);
         });
-      })
+      });
     } else {
       triggerCallbacks(this._pendingCallbacks);
     }
