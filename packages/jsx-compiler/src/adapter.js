@@ -38,7 +38,9 @@ const parserAdapters = {
     needTransformEvent: false,
     slotScope: true,
     // Need transform key
-    needTransformKey: false
+    needTransformKey: false,
+    // Handle rax-slider
+    processSlider: false
   },
   'wechat': {
     platform: 'wechat',
@@ -63,7 +65,8 @@ const parserAdapters = {
     needTransformEvent: true,
     slotScope: false,
     needTransformKey: true,
-    triggerRef: true
+    triggerRef: true,
+    processSlider: true
   },
 };
 
