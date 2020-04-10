@@ -90,6 +90,20 @@ describe('Transform condition', () => {
         <block a:if={!a}><block a:if={b}><View>1</View></block><block a:else>{b}</block></block><block a:else>{a}</block>
       </View>`);
   });
+
+  it('transform logical expression with jsx', () => {
+    const ast = parseExpression(`
+      <View>
+        { <View>1</View> && <View>2</View> }
+        { <View>1</View> || <View>2</View> }
+      </View>
+    `);
+    _transformTemplate(ast, {}, adapter, {});
+    expect(genCode(ast).code).toEqual(`<View>
+        <View>2</View>
+        <View>1</View>
+      </View>`);
+  });
 });
 
 describe('Transiform condition render function', () => {

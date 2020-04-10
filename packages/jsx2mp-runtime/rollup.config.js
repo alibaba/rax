@@ -11,9 +11,22 @@ function getPropsIdentifierName(platform) {
     case 'toutiao':
       return 'properties';
 
+    case 'quickapp':
+      return '_attrs';
+
     case 'ali':
     default:
       return 'props';
+  }
+}
+
+function getTagIdIdentifierName(platform) {
+  switch (platform) {
+    case 'quickapp':
+      return 'tagId';
+
+    default:
+      return '__tagId';
   }
 }
 
@@ -58,6 +71,7 @@ function getRollupConfig(platform) {
       replace({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
         'PROPS': JSON.stringify(getPropsIdentifierName(platform)),
+        'TAGID': JSON.stringify(getTagIdIdentifierName(platform))
       }),
       babel(getBabelConfig({ platform })),
       filesize(),
@@ -69,4 +83,5 @@ function getRollupConfig(platform) {
 export default [
   getRollupConfig('ali'),
   getRollupConfig('wechat'),
+  getRollupConfig('quickapp'),
 ];

@@ -206,16 +206,18 @@ describe('Directives', () => {
       }, code, adapter);
       const index = 'index' + count++;
       expect(genExpression(ast)).toEqual(`<View>
-        <View ref="{{item._d0}}" a:for={data.map((item, ${index}) => {
+        <View ref="{{item._d0}}" id="id_${id}{{${index}}}" a:for={data.map((item, ${index}) => {
     this._registerRefs([{
-      "name": "${id}" + "${index}",
-      "method": refs[${index}]
+      "name": "${id}" + ${index},
+      "method": refs[${index}],
+      "type": "native",
+      "id": "id_${id}" + ${index}
     }]);
 
     return {
       item: item,
       ${index}: ${index},
-      _d0: "${id}" + "${index}"
+      _d0: "${id}" + ${index}
     };
   })} a:for-item="item" a:for-index="${index}">test</View>
       </View>`);
@@ -241,21 +243,23 @@ describe('Directives', () => {
       item: { ...item,
         list: item.list.map((item, ${index2}) => {
           this._registerRefs([{
-            "name": "${id}" + "${index2}",
-            "method": refs[${index2}]
+            "name": "${id}" + ${index2},
+            "method": refs[${index2}],
+            "type": "native",
+            "id": "id_${id}" + ${index2}
           }]);
 
           return {
             item: item,
             ${index2}: ${index2},
-            _d0: "${id}" + "${index2}"
+            _d0: "${id}" + ${index2}
           };
         })
       },
       ${index1}: ${index1}
     };
   })} a:for-item="item" a:for-index="${index1}">
-            <View ref="{{item._d0}}" a:for={item.list} a:for-item="item" a:for-index="${index2}">test</View>
+            <View ref="{{item._d0}}" id="id_${id}{{${index2}}}" a:for={item.list} a:for-item="item" a:for-index="${index2}">test</View>
         </View>
       </View>`);
     id++;

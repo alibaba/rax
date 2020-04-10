@@ -14,6 +14,9 @@ module.exports = function isClassComponent(path) {
   if (!path) return false;
 
   const { node, scope } = path;
+
+  if (!node) return false;
+
   if (t.isIdentifier(node)) {
     const binding = scope.getBinding(node.name);
     if (t.isVariableDeclarator(binding.path.node)) {
