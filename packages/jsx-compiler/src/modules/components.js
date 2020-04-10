@@ -37,6 +37,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   const aliasName = alias.name.replace(/@|\//g, '_');
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
   replaceComponentTagName(path, t.jsxIdentifier(componentTag));
+  node.isCustomEl = alias.isCustomEl;
   node.name.isCustom = true;
 
   if (!getCompiledComponents(options.adapter.platform)[componentTag]) {

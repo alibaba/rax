@@ -17,6 +17,8 @@ import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
 import { registerEventsInConfig } from './nativeEventListener';
 import { isPlainObject } from './types';
+import { enqueueRender } from './enqueueRender';
+import shallowEqual from './shallowEqual';
 
 const { TYPE, TARGET, TIMESTAMP } = getEventProps();
 
@@ -54,14 +56,13 @@ function getPageCycles(Klass) {
       this.instance.__pageOptions = options;
       setPageInstance(this.instance);
       this.instance._internal = this;
-      Object.assign(this.instance.state, this.data);
       // Add route information for page.
       history.location.__updatePageOption(options);
       history.location.__updatePageId(this.instance.instanceId);
-      this.data = this.instance.state;
 
       if (this.instance.__ready) return;
       this.instance.__ready = true;
+      this.data = this.instance.state;
       this.instance._mountComponent();
     },
     unmount() {
@@ -95,19 +96,28 @@ function getComponentCycles(Klass) {
           location: history.location
         });
       }
-      this.instance = new Klass(props, this);
+      this.instance = new Klass(props);
+      this.instance._internal = this;
       this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
       }
-
       this.data = this.instance.state;
       this.instance._mountComponent();
+    },
+    didUpdate(prevProps, nextProps) {
+      // Ensure this component is used in native project & has been rendered & prevProps and this.props are different
+      if (
+        /^t_\d+$/.test(this.instance.instanceId)
+        && this.data.$ready
+        && !shallowEqual(prevProps, nextProps)) {
+        this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
+        enqueueRender(this.instance);
+      }
     },
     unmount: function() {
       this.instance._unmountComponent();
@@ -121,85 +131,84 @@ function createProxyMethods(events) {
     events.forEach(eventName => {
       methods[eventName] = function(...args) {
         // `this` point to page/component instance.
-        const event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
-        let context = this.instance; // Context default to Rax component instance.
+        let event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
 
-        if (!isQuickApp && event) {
-          // set stopPropagation method
-          event.stopPropagation = () => {
-            eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
-              detail: event.detail,
-              type: event.type
+        // Context default to Rax component instance.
+        const contextInfo = {
+          context: this.instance
+        };
+
+        // proxyed event arguments
+        let proxyedArgs = [];
+
+        if (event) {
+          if (isQuickApp) {
+            // shallow copy event & event._target
+            event = {...event};
+            event._target = {...event._target};
+            // align the currentTarget variable for quickapp
+            event.currentTarget = event._target;
+            event.currentTarget.dataset = event._target._dataset;
+          } else {
+            // set stopPropagation method
+            event.stopPropagation = () => {
+              eventsMap[toleranceEventTimeStamp(event.timeStamp)] = {
+                detail: event.detail,
+                type: event.type
+              };
             };
-          };
 
-          const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
-          // If prevEvent exists, and event type & event detail are the same, stop event triggle
-          if (prevEvent && prevEvent.type === event.type) {
-            let isSame = true;
-            for (let key in prevEvent.detail) {
-              if (prevEvent.detail[key] !== event.detail[key]) {
-                isSame = false;
-                break;
+            const prevEvent = eventsMap[toleranceEventTimeStamp(event.timeStamp)];
+            // If prevEvent exists, and event type & event detail are the same, stop event triggle
+            if (prevEvent && prevEvent.type === event.type) {
+              let isSame = true;
+              for (let key in prevEvent.detail) {
+                if (prevEvent.detail[key] !== event.detail[key]) {
+                  isSame = false;
+                  break;
+                }
+              }
+              if (isSame) {
+                return;
               }
             }
-            if (isSame) {
-              return;
-            }
           }
-        }
 
-        let et = null;
-        if (isQuickApp) {
-          // inner target property in quickapp is _target
-          et = event && event._target;
-        } else {
-          et = event && event.currentTarget;
-        }
-        const dataset = et ? et.dataset : {};
-        const datasetArgs = [];
-        // Universal event args
-        const datasetKeys = Object.keys(dataset);
-        if (datasetKeys.length > 0) {
-          datasetKeys.forEach((key) => {
-            if ('argContext' === key || 'arg-context' === key) {
-              context = dataset[key] === 'this' ? this.instance : dataset[key];
+          const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
+
+          // Universal event args
+          const datasetKeys = Object.keys(dataset);
+          const formatedEventName = formatEventName(eventName);
+          datasetKeys.forEach((key, idx) => {
+            if (`${formatedEventName}ArgContext` === key || `${formatedEventName}-arg-context` === key) {
+              contextInfo.context = dataset[key] === 'this' ? this.instance : dataset[key];
+              contextInfo.changed = true;
             } else if (isDatasetArg(key)) {
-              // eg. arg0, arg1, arg-0, arg-1
-              const index = DATASET_ARG_REG.exec(key)[1];
-              datasetArgs[index] = dataset[key];
-            }
-          });
-        } else {
-          const formatName = formatEventName(eventName);
-          Object.keys(this[PROPS]).forEach(key => {
-            if (`data-${formatName}-arg-context` === key) {
-              context = this[PROPS][key] === 'this' ? this.instance : this[PROPS][key];
-            } else if (isDatasetKebabArg(key)) {
-            // `data-arg-` length is 9.
-              const len = `data-${formatName}-arg-`.length;
-              datasetArgs[key.slice(len)] = this[PROPS][key];
-            }
-          });
-        }
-        // Concat args.
-        args = datasetArgs.concat(args);
+            // eg. arg0, arg1, arg-0, arg-1
+              const index = Number(DATASET_ARG_REG.exec(key)[1]);
+              proxyedArgs[index] = dataset[key];
 
-        if (isQuickApp) {
-          // align the currentTarget variable for quickapp
-          const evt = Object.assign({}, event);
-          // Built-in target of event's callback in quickapp is _target
-          if (event && event._target) {
-            evt.currentTarget = Object.assign({}, event._target);
-            evt.currentTarget.dataset = event._target._dataset;
+              if (!contextInfo.changed && idx !== index) {
+              // event does not exist on dataset
+                proxyedArgs[idx] = event;
+              }
+            }
+          });
+
+          /**
+           * event should be last param
+           * when onClick={handleClick.bind(this, 1)}
+           * or onClick={handleClick}
+           */
+          if (contextInfo.changed || !proxyedArgs.length) {
+            proxyedArgs.push(event);
           }
-          args = [evt, ...args.slice(1)];
+        } else {
+          proxyedArgs = args;
         }
 
-        // Concat args.
-        args = datasetArgs.concat(args);
         if (this.instance._methods[eventName]) {
-          return this.instance._methods[eventName].apply(context, args);
+          return this.instance._methods[eventName].apply(contextInfo.context, proxyedArgs);
         } else {
           console.warn(`instance._methods['${eventName}'] not exists.`);
         }
@@ -211,8 +220,8 @@ function createProxyMethods(events) {
 
 function createAnonymousClass(render) {
   const Klass = class extends Component {
-    constructor(props, _internal) {
-      super(props, _internal, true);
+    constructor(props) {
+      super(props);
       this.__compares = render.__compares;
       // Handle functional component shouldUpdateComponent
       if (!this.shouldComponentUpdate && this.__compares) {
@@ -238,6 +247,8 @@ function createAnonymousClass(render) {
   };
   // Transfer __injectHistory
   Klass.__injectHistory = render.__injectHistory;
+  // Set as function component
+  Klass.prototype.isFunctionComponent = true;
   return Klass;
 }
 
@@ -352,12 +363,6 @@ export function createComponent(definition, options = {}) {
 
 function isClassComponent(Klass) {
   return Klass.prototype instanceof Component;
-}
-
-const DATASET_KEBAB_ARG_REG = /data-\w+\d+-arg-\d+/;
-
-function isDatasetKebabArg(str) {
-  return DATASET_KEBAB_ARG_REG.test(str);
 }
 
 const DATASET_ARG_REG = /\w+-?[aA]rg?-?(\d+)/;
