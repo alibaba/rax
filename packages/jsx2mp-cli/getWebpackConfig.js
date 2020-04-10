@@ -109,8 +109,6 @@ function addRelativePathPrefix(filepath) {
   return filepath[0] !== '.' ? `.${sep}${filepath}` : filepath;
 }
 
-const cwd = process.cwd();
-
 module.exports = (options = {}) => {
   let { entryPath, type, workDirectory, distDirectory, platform = 'ali', mode, constantDir, disableCopyNpm, turnOffSourceMap } = options;
   entryPath = addRelativePathPrefix(entryPath);
@@ -119,12 +117,12 @@ module.exports = (options = {}) => {
 
   const config = {
     mode: 'production', // Will be fast
-    entry: getEntry(type, cwd, relativeEntryFilePath, options),
+    entry: getEntry(type, workDirectory, relativeEntryFilePath, options),
     output: {
       path: distDirectory
     },
     target: 'node',
-    context: cwd,
+    context: workDirectory,
     module: {
       rules: [
         {
