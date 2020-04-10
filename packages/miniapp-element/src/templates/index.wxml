@@ -91,7 +91,7 @@
     class="{{class}}"
     style="{{style}}"
     hidden="{{hidden}}"
-    mindicator-dotsin="{{indicatorDots}}"
+    indicator-dots="{{indicatorDots}}"
     indicator-color="{{indicatorColor}}"
     indicator-active-color="{{indicatorActiveColor}}"
     autoplay="{{autoplay}}"
