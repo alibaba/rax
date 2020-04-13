@@ -1,4 +1,4 @@
-import mock from '../mock';
+import mock from '../../renderMock';
 import tool from '../../src/util/tool';
 import cache from '../../src/util/cache';
 

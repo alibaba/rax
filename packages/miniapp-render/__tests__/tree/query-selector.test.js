@@ -1,4 +1,3 @@
-import mock from '../mock';
 import QuerySelector from '../../src/tree/query-selector';
 
 const querySelector = new QuerySelector();

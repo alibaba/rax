@@ -1,4 +1,4 @@
-import render from '../src';
+import render from './src';
 
 const config = {
   optimization: {

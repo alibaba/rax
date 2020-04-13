@@ -1,4 +1,4 @@
-import mock from './mock';
+import mock from '../renderMock';
 import Node from '../src/node/node';
 
 let window;

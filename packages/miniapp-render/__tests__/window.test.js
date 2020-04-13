@@ -1,5 +1,5 @@
 /* eslint-disable no-proto */
-import mock from './mock';
+import mock from '../renderMock';
 
 let window;
 let document;

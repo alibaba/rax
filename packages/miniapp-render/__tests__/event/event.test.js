@@ -1,4 +1,4 @@
-import mock from '../mock';
+import mock from '../../renderMock';
 import EventTarget from '../../src/event/event-target';
 import Event from '../../src/event/event';
 

@@ -86,8 +86,12 @@ class Style {
   }
 
   get cssText() {
-    const joinText = Object.keys(this.__settedStyle).filter(name => this.__settedStyle[name]).map(name => `${tool.toDash(name)}:${this.__settedStyle[name]}` ).join(';').trim();
-    return joinText ? `${joinText};` : '';
+    return Object.keys(this.__settedStyle).reduce((cssText, name) => {
+      if (this.__settedStyle[name]) {
+        return cssText + `${tool.toDash(name)}:${this.__settedStyle[name].trim()};`;
+      }
+      return cssText;
+    }, '');
   }
 
   set cssText(styleText) {
