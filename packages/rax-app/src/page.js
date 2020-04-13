@@ -1,6 +1,6 @@
 import { useEffect } from 'rax';
 import { getHistory } from './runApp';
-import { isWeb, isWeex } from 'universal-env';
+import { isWeb, isWeex, isMiniApp, isWeChatMiniProgram } from 'universal-env';
 
 const SHOW = 'show';
 const HIDE = 'hide';
@@ -69,4 +69,11 @@ if (isWeb) {
   } catch (err) {
     console.log('@weex-module/globalEvent error: ' + err);
   }
+} else if (isMiniApp || isWeChatMiniProgram) {
+  window.addEventListener('pageshow', () => {
+    emit(SHOW);
+  });
+  window.addEventListener('pagehide', () => {
+    emit(HIDE);
+  });
 }
