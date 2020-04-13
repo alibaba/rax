@@ -1,17 +1,3 @@
-const componentCommonProps = {
-  ali: {
-    onClick: 'onTap',
-  },
-  wechat: {
-    onClick: 'bindtap',
-    onLongPress: 'bindlongpress',
-    onTouchStart: 'bindtouchstart',
-    onTouchEnd: 'bindtouchend',
-    onTouchMove: 'bindtouchmove',
-    onTouchCancel: 'bindtouchcancel',
-  }
-};
-
 /**
  * Extendable
  */

@@ -40,16 +40,16 @@ output:
 - exported
   - Exported identifiers
 - template
-  - axml template for miniapp
+  - axml template for quickapp
 - code
   - Transformed JS code.
 - map
   - Source map of JS code
 - config
-  - JS Object, miniapp config
+  - JS Object, quickapp config
 - style
   - String, acss of style.
-- usingComponents
+- importComponents
 
 eg.
 
@@ -75,9 +75,8 @@ eg.
     component: true
   },
   style: "",
-  usingComponents: {},
   importComponents: {},
   iconfontMap: [],
-  template: "<view>hello world</view>"
+  template: "<div>hello world</div>"
 }
 ```
