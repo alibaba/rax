@@ -174,9 +174,7 @@ function transformMapMethod(path, parsed, code, adapter) {
         });
 
         const listAttr = {
-          [adapter.for]: t.jsxExpressionContainer(forNode),
-          [adapter.forItem]: t.stringLiteral(forItem.name),
-          [adapter.forIndex]: t.stringLiteral(renamedIndex.name),
+          [adapter.for]: t.jsxExpressionContainer(forNode)
         };
 
         if (adapter.needTransformKey && t.isJSXElement(returnElPath.node)) {

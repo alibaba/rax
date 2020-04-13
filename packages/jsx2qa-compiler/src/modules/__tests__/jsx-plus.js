@@ -32,7 +32,7 @@ describe('Directives', () => {
       val: val,
       ${index}: ${index}
     };
-  })} a:for-item="val" a:for-index="${index}">{{
+  })}>{{
       val.val
     }}</View>
       </View>`);
@@ -64,8 +64,8 @@ describe('Directives', () => {
       }),
       ${index1}: ${index1}
     };
-  })} a:for-item="item" a:for-index="${index1}">
-          <View for={item} a:for-item="item2" a:for-index="${index2}">{{
+  })}>
+          <View for={item}>{{
         item2.item2
       }}</View>
       </View>
@@ -105,8 +105,8 @@ describe('Directives', () => {
       ${index1}: ${index1},
       d0: 'test_' + ${index1}
     };
-  })} a:for-item="row" a:for-index="${index1}">
-          <View for={row} a:for-item="col" a:for-index="${index2}">
+  })}>
+          <View for={row}>
             <Text key="{{col.${index2}}}">{{
           col.${index2}
         }}</Text>
@@ -134,7 +134,7 @@ describe('Directives', () => {
       ${index}: ${index},
       d0: format(val)
     };
-  })} a:for-item="val" a:for-index="${index}">{{
+  })}>{{
       val.d0
     }}</View>
       </View>`);
@@ -212,7 +212,7 @@ describe('Directives', () => {
       ${index}: ${index},
       d0: "${id}" + ${index}
     };
-  })} a:for-item="item" a:for-index="${index}">test</View>
+  })}>test</View>
       </View>`);
     });
   });
@@ -251,8 +251,8 @@ describe('Directives', () => {
       },
       ${index1}: ${index1}
     };
-  })} a:for-item="item" a:for-index="${index1}">
-            <View ref="{{item.d0}}" id="id_${id}{{${index2}}}" componentId="id_1{{${index2}}}" for={item.list} a:for-item="item" a:for-index="${index2}">test</View>
+  })}>
+            <View ref="{{item.d0}}" id="id_${id}{{${index2}}}" componentId="id_1{{${index2}}}" for={item.list}>test</View>
         </View>
       </View>`);
     id++;

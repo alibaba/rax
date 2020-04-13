@@ -356,12 +356,12 @@ function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code,
       )
     );
     args.forEach((arg, index) => {
-      attributes.push(
-        t.jsxAttribute(
-          t.jsxIdentifier([adapter.forItem, adapter.forIndex][index]),
-          t.stringLiteral(arg.name)
-        )
-      );
+      // attributes.push(
+      //   t.jsxAttribute(
+      //     t.jsxIdentifier([adapter.forItem, adapter.forIndex][index]),
+      //     t.stringLiteral(arg.name)
+      //   )
+      // );
       // Mark skip ids.
       const skipIds = node.skipIds = node.skipIds || new Map();
       skipIds.set(arg.name, true);
