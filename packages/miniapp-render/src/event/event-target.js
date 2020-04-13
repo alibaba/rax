@@ -1,5 +1,5 @@
-/* global isMiniApp, isWeChatMiniProgram */
-
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isWeChatMiniProgram, isMiniApp } from 'universal-env';
 import Event from './event';
 import CustomEvent from './custom-event';
 
@@ -74,11 +74,8 @@ class EventTarget {
     this.$$init(...args);
   }
 
-  /**
-     * 初始化实例
-     */
   $$init() {
-    // 补充实例的属性，用于 'xxx' in XXX 判断
+    // Supplement the instance's properties for the 'XXX' in XXX judgment
     this.ontouchstart = null;
     this.ontouchmove = null;
     this.ontouchend = null;
@@ -88,18 +85,17 @@ class EventTarget {
     this.onblur = null;
     this.onchange = null;
 
-    this.$_miniappEvent = null; // 记录已触发的小程序事件
+    // Logs the triggered miniapp events
+    this.$_miniappEvent = null;
     this.$_eventHandlerMap = null;
   }
 
-  /**
-     * 销毁实例
-     */
+  // Destroy instance
   $$destroy() {
     Object.keys(this).forEach(key => {
-      // 处理 on 开头的属性
+      // Handles properties beginning with on
       if (key.indexOf('on') === 0) this[key] = null;
-      // 处理外部挂进来的私有的属性
+      // Handles private properties that are hung externally
       if (key[0] === '_') this[key] = null;
       if (key[0] === '$' && (key[1] !== '_' && key[1] !== '$')) this[key] = null;
     });
@@ -117,14 +113,12 @@ class EventTarget {
     return this.$__eventHandlerMap;
   }
 
-  /**
-     * 触发事件捕获、冒泡流程
-     */
+  // Trigger event capture, bubble flow
   static $$process(target, eventName, miniprogramEvent, extra, callback) {
     let event;
 
     if (eventName instanceof CustomEvent || eventName instanceof Event) {
-      // 传入的是事件对象
+      // The event object is passed in
       event = eventName;
       eventName = event.type;
     }
@@ -140,28 +134,29 @@ class EventTarget {
     }
 
     if (path[path.length - 1].tagName === 'BODY') {
-      // 如果最后一个节点是 document.body，则追加 document.documentElement
+      // If the last node is document.body, the document.documentelement is appended
       path.push(parentNode);
     }
 
     if (!event) {
-      // 此处特殊处理，不直接返回小程序的 event 对象
+      // Special handling here, not directly return the applet's event object
       event = new Event({
         name: eventName,
         target,
         timeStamp: miniprogramEvent.timeStamp,
         touches: miniprogramEvent.touches,
         changedTouches: miniprogramEvent.changedTouches,
-        bubbles: true, // 默认都可以冒泡 TODO
+        bubbles: true,
         $$extra: extra,
       });
     }
 
-    // 捕获
+    // Capture
     for (let i = path.length - 1; i >= 0; i--) {
       const currentTarget = path[i];
 
-      if (!event.$$canBubble) break; // 判定冒泡是否结束
+      // Determine if the bubble is over
+      if (!event.$$canBubble) break;
       if (currentTarget === target) continue;
 
       event.$$setCurrentTarget(currentTarget);
@@ -174,12 +169,11 @@ class EventTarget {
       if (callback) callback(currentTarget, event, true);
     }
 
-    // 目标
     if (event.$$canBubble) {
       event.$$setCurrentTarget(target);
       event.$$setEventPhase(Event.AT_TARGET);
 
-      // 捕获和冒泡阶段监听的事件都要触发
+      // Both capture and bubble phase listening events are triggered
       target.$$trigger(eventName, {
         event,
         isCapture: true,
@@ -196,9 +190,9 @@ class EventTarget {
     }
 
     if (event.bubbles) {
-      // 冒泡
       for (const currentTarget of path) {
-        if (!event.$$canBubble) break; // 判定冒泡是否结束
+        // Determine if the bubble is over
+        if (!event.$$canBubble) break;
         if (currentTarget === target) continue;
 
         event.$$setCurrentTarget(currentTarget);
@@ -212,16 +206,14 @@ class EventTarget {
       }
     }
 
-    // 重置事件
+    // Reset event
     event.$$setCurrentTarget(null);
     event.$$setEventPhase(Event.NONE);
 
     return event;
   }
 
-  /**
-     * 获取 handlers
-     */
+  // Get handlers
   $_getHandlers(eventName, isCapture, isInit) {
     const handlerMap = this.$_eventHandlerMap;
 
@@ -241,16 +233,14 @@ class EventTarget {
     }
   }
 
-  /**
-     * 触发节点事件
-     */
+  // Trigger node event
   $$trigger(eventName, { event, args = [], isCapture, isTarget } = {}) {
     eventName = eventName.toLowerCase();
     const handlers = this.$_getHandlers(eventName, isCapture);
     const onEventName = `on${eventName}`;
 
     if ((!isCapture || !isTarget) && typeof this[onEventName] === 'function') {
-      // 触发 onXXX 绑定的事件
+      // The event that triggers the onXXX binding
       if (event && event.$$immediateStop) return;
       try {
         this[onEventName].call(this || null, event, ...args);
@@ -260,7 +250,7 @@ class EventTarget {
     }
 
     if (handlers && handlers.length) {
-      // 触发 addEventListener 绑定的事件
+      // Trigger addEventListener binded events
       handlers.forEach(handler => {
         if (event && event.$$immediateStop) return;
         try {
@@ -291,9 +281,7 @@ class EventTarget {
     return flag;
   }
 
-  /**
-     * 清空某个事件的所有句柄
-     */
+  // Empty all handles to an event
   $$clearEvent(eventName, isCapture = false) {
     if (typeof eventName !== 'string') return;
 
@@ -303,9 +291,6 @@ class EventTarget {
     if (handlers && handlers.length) handlers.length = 0;
   }
 
-  /**
-     * 对外属性和方法
-     */
   addEventListener(eventName, handler, options) {
     if (typeof eventName !== 'string' || typeof handler !== 'function') return;
 
@@ -334,7 +319,7 @@ class EventTarget {
       EventTarget.$$process(this, evt);
     }
 
-    // 因为不支持 preventDefault，所以永远返回 true
+    // preventDefault is not supported, so it always returns true
     return true;
   }
 }

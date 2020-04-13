@@ -6,9 +6,9 @@ let window;
 let document;
 
 beforeAll(() => {
-  const res = mock.createPage('home');
-  window = res.window;
-  document = res.document;
+  const page = mock.createPage('home');
+  window = page.window;
+  document = page.document;
 });
 
 test('event', () => {
@@ -244,14 +244,14 @@ test('event: CustomEvent/dispatchEvent', () => {
   // 普通
   customEvent = new window.CustomEvent('testevent');
   expect(customEvent.type).toBe('testevent');
-  expect(customEvent).toBeInstanceOf(window.CustomEvent);
+  expect(customEvent).toBeInstanceOf(Event);
 
   b.dispatchEvent(customEvent);
-  expect(seqList).toEqual(['b', 'b']);
+  expect(seqList).toEqual(['a', 'b', 'b']);
 
   seqList.length = 0;
   c.dispatchEvent(customEvent);
-  expect(seqList).toEqual(['c', 'c']);
+  expect(seqList).toEqual(['a', 'b', 'c', 'c']);
 
   // 带 detail，可冒泡
   detail = {a: 123};
@@ -277,18 +277,4 @@ test('event: CustomEvent/dispatchEvent', () => {
   a.removeEventListener('testevent', onAEvent2);
   b.removeEventListener('testevent', onBEvent2);
   c.removeEventListener('testevent', onCEvent2);
-});
-
-test('error catch', () => {
-  const a = document.querySelector('.aa');
-  const list = [];
-  const miniprogramEvent = {timeStamp: Date.now};
-
-  const onEvent1 = () => list.push(1);
-  const onEvent2 = () => list.push(3);
-  a.addEventListener('click', onEvent1);
-  a.addEventListener('click', onEvent2);
-
-  EventTarget.$$process(a, 'click', miniprogramEvent);
-  expect(list).toEqual([1, 3]);
 });

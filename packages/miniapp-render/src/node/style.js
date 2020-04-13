@@ -6,14 +6,15 @@ import tool from '../util/tool';
 const pool = new Pool();
 
 /**
- * 解析样式串
+ * Parse style string
  */
 function parse(styleText) {
   const rules = {};
 
   if (styleText) {
     styleText = tool.decodeContent(styleText);
-    styleText = styleText.replace(/url\([^)]+\)/ig, all => all.replace(/;/ig, ':#||#:')); // 先处理值里面的分号
+    // deal with the semicolon in the value first
+    styleText = styleText.replace(/url\([^)]+\)/ig, all => all.replace(/;/ig, ':#||#:'));
     styleText.split(';').forEach(rule => {
       rule = rule.trim();
       if (!rule) return;
@@ -35,14 +36,11 @@ class Style {
     this.$$init(onUpdate);
   }
 
-  /**
-     * 创建实例
-     */
   static $$create(onUpdate) {
     const config = cache.getConfig();
 
     if (config.optimization.domExtendMultiplexing) {
-      // 复用 dom 扩展对象
+      // reuse dom extension objects
       const instance = pool.get();
 
       if (instance) {
@@ -54,17 +52,13 @@ class Style {
     return new Style(onUpdate);
   }
 
-  /**
-     * 初始化实例
-     */
+  // Init instance
   $$init(onUpdate) {
     this.$_doUpdate = onUpdate || (() => {});
-    this.$_disableCheckUpdate = false; // 是否禁止检查更新
+    // Whether checking for updates is disabled
+    this.$_disableCheckUpdate = false;
   }
 
-  /**
-     * 销毁实例
-     */
   $$destroy() {
     this.$_doUpdate = null;
     this.$_disableCheckUpdate = false;
@@ -74,34 +68,25 @@ class Style {
     });
   }
 
-  /**
-     * 回收实例
-     */
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.domExtendMultiplexing) {
-      // 复用 dom 扩展对象
+      // reuse dom extension objects
       pool.add(this);
     }
   }
 
-  /**
-     * 检查更新
-     */
   $_checkUpdate() {
     if (!this.$_disableCheckUpdate) {
       this.$_doUpdate();
     }
   }
 
-  /**
-     * 对外属性和方法
-     */
   get cssText() {
-    const joinText = Object.keys(this.__settedStyle).map(name => `${tool.toDash(name)}:${this.__settedStyle[name]}` ).join(';').trim();
+    const joinText = Object.keys(this.__settedStyle).filter(name => this.__settedStyle[name]).map(name => `${tool.toDash(name)}:${this.__settedStyle[name]}` ).join(';').trim();
     return joinText ? `${joinText};` : '';
   }
 
@@ -110,10 +95,11 @@ class Style {
 
     styleText = styleText.replace(/"/g, '\'');
 
-    // 解析样式
+    // Parse style
     const rules = parse(styleText);
 
-    this.$_disableCheckUpdate = true; // 将每条规则的设置合并为一次更新
+    // Merge the Settings for each rule into an update
+    this.$_disableCheckUpdate = true;
     for (const name of styleList) {
       this[name] = rules[name];
     }
@@ -130,7 +116,7 @@ class Style {
 }
 
 /**
- * 设置各个属性的 getter、setter
+ * Set the getters and setters for each property
  */
 const properties = {};
 styleList.forEach(name => {

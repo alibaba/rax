@@ -1,52 +1,6 @@
-import render from '../dist/wechat';
+import render from '../src';
 
 const config = {
-  origin: 'https://test.miniprogram.com',
-  entry: '/',
-  router: {
-    home: [
-      {regexp: '^(?:\\/home)?(?:\\/)?$', options: 'i'},
-      {regexp: '^\\/index\\/(aaa|bbb)(?:\\/)?$', options: 'i'}
-    ],
-    list: [
-      {regexp: '^\\/index\\/aaa\\/list\\/([^\\/]+?)(?:\\/)?$', options: 'i'},
-      {regexp: '^\\/index\\/bbb\\/list\\/([^\\/]+?)(?:\\/)?$', options: 'i'}
-    ],
-    detail: [
-      {regexp: '^\\/index\\/aaa\\/detail\\/([^\\/]+?)(?:\\/)?$', options: 'i'},
-      {regexp: '^\\/index\\/bbb\\/detail\\/([^\\/]+?)(?:\\/)?$', options: 'i'}
-    ],
-  },
-  runtime: {
-    subpackagesMap: {},
-  },
-  pages: {
-    home: {
-      loadingText: '拼命加载页面中...',
-      share: true,
-      windowScroll: false,
-      backgroundColor: '#F7F7F7',
-      reachBottom: true,
-      reachBottomDistance: 200,
-      pullDownRefresh: true
-    },
-    list: {
-      loadingText: '拼命加载页面中...',
-      share: true,
-      windowScroll: false,
-      backgroundColor: '#F7F7F7'
-    },
-    detail: {
-      loadingText: '拼命加载页面中...',
-      share: true,
-      windowScroll: false,
-      backgroundColor: '#F7F7F7'
-    },
-  },
-  redirect: {
-    notFound: 'home',
-    accessDenied: 'home'
-  },
   optimization: {
     elementMultiplexing: true,
     textMultiplexing: true,
@@ -97,16 +51,16 @@ global.wx = {
   login() {}
 };
 
+global.CONTAINER = global.wx;
+
 export default {
   html,
-  createPage(type = 'home', realUrl) {
+  createPage(type = 'home') {
     const route = `pages/${type}/index`;
-    const res = render.createPage(route, config);
-    realUrl = realUrl || (type === 'home' ? '/' : type === 'list' ? '/index/aaa/list/123' : 'index/aaa/detail/123');
-    res.window.$$miniprogram.init(realUrl);
-    res.document.body.innerHTML = html;
+    const page = render.createPage(route, config);
+    page.document.body.innerHTML = html;
 
-    return res;
+    return page;
   },
   async sleep(time) {
     return new Promise(resolve => setTimeout(resolve, time));

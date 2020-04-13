@@ -35,10 +35,6 @@ test('document: defaultView', () => {
   expect(document.defaultView).toBe(window);
 });
 
-test('document: URL', () => {
-  expect(document.URL).toBe(window.location.href);
-});
-
 test('document: getElementById', () => {
   const node1 = document.getElementById('bb');
   expect(node1.tagName).toBe('DIV');
@@ -102,9 +98,6 @@ test('document: createElement/createElementNS', () => {
 
   const node4 = document.createElement('img');
   expect(node4.tagName).toBe('IMG');
-
-  const node5 = document.createElement('iframe');
-  expect(node5.tagName).toBe('IFRAME');
 });
 
 test('document: createTextNode', () => {

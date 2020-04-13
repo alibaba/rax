@@ -123,11 +123,12 @@ class Element extends Node {
 
   // Init attribute
   $_initAttrs(attrs = {}) {
-    // 防止一开始就创建 $_attrs
+    // Avoid create $_attrs when component init
     const attrKeys = Object.keys(attrs);
     if (!attrKeys.length) return;
 
-    this.$_notTriggerUpdate = true; // 初始化不触发更新
+    // Initialization does not trigger updates
+    this.$_notTriggerUpdate = true;
 
     attrKeys.forEach(name => {
       if (name.indexOf('data-') === 0) {
@@ -135,12 +136,12 @@ class Element extends Node {
         const datasetName = tool.toCamel(name.substr(5));
         this.$_dataset[datasetName] = attrs[name];
       } else {
-        // 其他属性
+        // Other attributes
         this.setAttribute(name, attrs[name]);
       }
     });
 
-    // 重启触发更新
+    // Restart triggers update
     this.$_notTriggerUpdate = false;
   }
 
@@ -161,9 +162,7 @@ class Element extends Node {
     if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
   }
 
-  /**
-     * 更新子节点变动引起的映射表修改
-     */
+  // Changes to the mapping table caused by changes to update child nodes
   $_updateChildrenExtra(node, isRemove) {
     const id = node.id;
 
@@ -240,7 +239,8 @@ class Element extends Node {
       content = '',
     } = node;
 
-    const nodeId = `b-${tool.getId()}`; // 运行时生成，使用 b- 前缀
+    // generated at runtime, using the b- prefix
+    const nodeId = `b-${tool.getId()}`;
 
     if (type === 'element') {
       // Element
@@ -310,7 +310,8 @@ class Element extends Node {
   }
 
   $$getBoundingClientRect() {
-    tool.flushThrottleCache(); // 先清空 setData
+    // Clears out setData
+    tool.flushThrottleCache();
     const window = cache.getWindow(this.$_pageId);
     return new Promise((resolve, reject) => {
       if (!window) reject();
@@ -325,13 +326,14 @@ class Element extends Node {
 
   // Gets the context object of the corresponding widget component
   $$getContext() {
-    tool.flushThrottleCache(); // 先清空 setData
+    // Clears out setData
+    tool.flushThrottleCache();
     const window = cache.getWindow(this.$_pageId);
     return new Promise((resolve, reject) => {
       if (!window) reject();
 
       if (this.tagName === 'CANVAS') {
-        // TODO，为了兼容基础库的一个 bug，暂且如此实现
+        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
         CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
           .exec();
       } else {
@@ -349,7 +351,7 @@ class Element extends Node {
       if (!window) reject();
 
       if (this.tagName === 'CANVAS') {
-        // TODO，为了兼容基础库的一个 bug，暂且如此实现
+        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
         resolve(CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
       } else {
         resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
@@ -511,21 +513,22 @@ class Element extends Node {
     }
 
     if (ast) {
-      // 生成 dom 树
+      // Generate dom tree
       const node = this.$_generateDomTree(ast);
 
-      // 删除所有子节点
+      // Delete all child nodes
       this.$_children.forEach(node => {
         node.$$updateParent(null);
 
-        // 更新映射表
+        // Update the mapping table
         this.$_updateChildrenExtra(node, true);
       });
       this.$_children.length = 0;
 
-      this.$_notTriggerUpdate = true; // 先不触发更新
+      // When first render doesn't trigger update
+      this.$_notTriggerUpdate = true;
 
-      // 追加新子节点
+      // Append new child nodes
       const children = [].concat(node.childNodes);
       for (const child of children) {
         this.appendChild(child);
@@ -540,13 +543,14 @@ class Element extends Node {
 
       this.$$dealWithAttrsForOuterHTML(node);
 
-      this.$_notTriggerUpdate = false; // 重启触发更新
+      // Trigger update
+      this.$_notTriggerUpdate = false;
       this.$_triggerParentUpdate();
     }
   }
 
   get innerText() {
-    // WARN：此处处理成和 textContent 一致，不去判断是否会渲染出来的情况
+    // WARN: this is handled in accordance with the textContent, not to determine whether it will be rendered or not
     return this.textContent;
   }
 
@@ -561,19 +565,20 @@ class Element extends Node {
   set textContent(text) {
     text = '' + text;
 
-    // 删除所有子节点
+    // Delete all child nodes
     this.$_children.forEach(node => {
       node.$$updateParent(null);
 
-      // 更新映射表
+      // Update mapping table
       this.$_updateChildrenExtra(node, true);
     });
     this.$_children.length = 0;
 
-    // 空串不新增 textNode 节点
+    // An empty string does not add a textNode node
     if (!text) return;
 
-    const nodeId = `b-${tool.getId()}`; // 运行时生成，使用 b- 前缀
+    // Generated at run time, using the b- prefix
+    const nodeId = `b-${tool.getId()}`;
     const child = this.ownerDocument.$$createTextNode({content: text, nodeId});
 
     this.appendChild(child);
@@ -624,7 +629,7 @@ class Element extends Node {
         ...this.$$dealWithAttrsForCloneNode(),
       },
       nodeType: this.$_nodeType,
-      nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+      nodeId: `b-${tool.getId()}`,
     });
 
     if (deep) {
@@ -716,23 +721,23 @@ class Element extends Node {
       const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
 
       if (insertIndex === -1) {
-        // 插入到末尾
+        // Insert to the end
         this.$_children.push(node);
       } else {
-        // 插入到 ref 之前
+        // Inserted before ref
         this.$_children.splice(insertIndex, 0, node);
       }
+      // Set parentNode
+      node.$$updateParent(this);
 
-      node.$$updateParent(this); // 设置 parentNode
-
-      // 更新映射表
+      // Update the mapping table
       this.$_updateChildrenExtra(node);
 
       hasUpdate = true;
     }
 
 
-    // 触发 webview 端更新
+    // Trigger the webview update
     if (hasUpdate) this.$_triggerMeUpdate();
 
     return node;
@@ -748,7 +753,7 @@ class Element extends Node {
       // documentFragment
       nodes = [];
       for (let i = node.childNodes.length - 1; i >= 0; i--) {
-        // 因为是逐个插入，所以需要逆序
+        // Inserted one by one, it need to reverse the order
         nodes.push(node.childNodes[i]);
       }
     } else {
@@ -763,23 +768,22 @@ class Element extends Node {
       if (node.parentNode) node.parentNode.removeChild(node);
 
       if (replaceIndex === -1) {
-        // 插入到末尾
+        // Insert to the end
         this.$_children.push(node);
       } else {
-        // 替换到 old
+        // Replace to old
         this.$_children.splice(replaceIndex, 0, node);
       }
-
-      node.$$updateParent(this); // 设置 parentNode
-
-      // 更新映射表
+      // Set parentNode
+      node.$$updateParent(this);
+      // Update the mapping table
       this.$_updateChildrenExtra(node);
       this.$_updateChildrenExtra(old, true);
 
       hasUpdate = true;
     }
 
-    // 触发 webview 端更新
+    // Trigger the webview side update
     if (hasUpdate) this.$_triggerMeUpdate();
 
     return old;
@@ -816,12 +820,12 @@ class Element extends Node {
   setAttribute(name, value) {
     if (typeof name !== 'string') return;
 
-    // 保留对象/数组/布尔值/undefined 原始内容，方便处理小程序内置组件的使用
+    // preserve the original contents of the object/Array/boolean/undefined to facilitate the use of the built-in components of miniapp
     const valueType = typeof value;
     if (valueType !== 'object' && valueType !== 'boolean' && value !== undefined && !Array.isArray(value)) value = '' + value;
 
     if (name === 'id') {
-      // id 要提前到此处特殊处理
+      // id to be handled here in advance
       this.id = value;
     } else {
       this.$_attrs.set(name, value);
@@ -865,7 +869,7 @@ class Element extends Node {
   }
 
   getBoundingClientRect() {
-    // 不作任何实现，只作兼容使用
+    // Do not make any implementation, only for compatible use
     console.warn('getBoundingClientRect is not supported, please use npm package universal-element to get DOM info in miniapp');
     return {};
   }

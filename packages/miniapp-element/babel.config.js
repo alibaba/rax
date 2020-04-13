@@ -3,7 +3,9 @@ module.exports = {
     [
       '@babel/preset-env',
       {
-        targets: 'iOS >= 8',
+        targets: {
+          esmodules: true,
+        },
         loose: true,
         include: ['transform-computed-properties']
       }

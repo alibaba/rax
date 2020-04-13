@@ -11,16 +11,6 @@ beforeAll(() => {
 });
 
 test('window: $$getPrototype/$$extend/$$addAspect', () => {
-  // window.location
-  window.$$extend('window.location', {
-    testStr: 'window.location',
-    testFunc() {
-      return this;
-    },
-  });
-  expect(window.location.testFunc()).toMatchObject(window.location);
-  expect(window.location.testStr).toBe('window.location');
-
   // window.event
   const evt = new window.CustomEvent('test');
   window.$$extend('window.event', {
@@ -129,75 +119,9 @@ test('window: $$getPrototype/$$extend/$$addAspect', () => {
     expect(arg1).toBe(this);
     this.testStr = this.testStr + '-after3';
   };
-  let originalFunc = window.location.testFunc;
-  window.$$addAspect('window.location.testFunc.before', beforeAspect);
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('before-window.location');
-  expect(window.location.testFunc).not.toBe(originalFunc);
-  window.$$addAspect('window.location.testFunc.after', afterAspect);
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('before-before-window.location-after');
-  expect(window.location.testFunc).not.toBe(originalFunc);
-  window.$$removeAspect('window.location.testFunc.before', beforeAspect);
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('before-before-window.location-after-after');
-  expect(window.location.testFunc).not.toBe(originalFunc);
-  window.$$removeAspect('window.location.testFunc.after', afterAspect);
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('before-before-window.location-after-after');
-  expect(window.location.testFunc).toBe(originalFunc);
-
-  // multiple aspect
-  window.$$addAspect('window.location.testFunc.before', beforeAspect);
-  window.$$addAspect('window.location.testFunc.before', beforeAspect2);
-  window.$$addAspect('window.location.testFunc.after', afterAspect);
-  window.$$addAspect('window.location.testFunc.after', afterAspect2);
-  window.$$addAspect('window.location.testFunc.after', afterAspect3);
-  window.location.testStr = 'window.location';
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('before2-before-window.location-after-after2-after3');
-  expect(window.location.testFunc).not.toBe(originalFunc);
-  window.$$removeAspect('window.location.testFunc.before', beforeAspect);
-  window.$$removeAspect('window.location.testFunc.after', afterAspect);
-  window.location.testStr = 'window.location';
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('before2-window.location-after2-after3');
-  expect(window.location.testFunc).not.toBe(originalFunc);
-  window.$$removeAspect('window.location.testFunc.before', beforeAspect2);
-  window.$$removeAspect('window.location.testFunc.after', afterAspect3);
-  window.location.testStr = 'window.location';
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('window.location-after2');
-  expect(window.location.testFunc).not.toBe(originalFunc);
-  window.$$removeAspect('window.location.testFunc.after', afterAspect2);
-  window.location.testStr = 'window.location';
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('window.location');
-  expect(window.location.testFunc).toBe(originalFunc);
-
-  // before aspect stop
-  const beforeAspect3 = function(arg1, arg2) {
-    expect(arg1).toBe(expectArg1);
-    expect(arg2).toBe(expectArg2);
-    if (this.testStr === 'before-before-before-window.location') return true;
-    this.testStr = 'before-' + this.testStr;
-  };
-  window.$$addAspect('window.location.testFunc.before', beforeAspect3);
-  window.location.testStr = 'window.location';
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testStr).toBe('before-before-before-window.location');
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(undefined);
-  expect(window.location.testStr).toBe('before-before-before-window.location');
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(undefined);
-  expect(window.location.testStr).toBe('before-before-before-window.location');
-  window.$$removeAspect('window.location.testFunc.before', beforeAspect3);
-  expect(window.location.testFunc(expectArg1, expectArg2)).toBe(window.location);
-  expect(window.location.testFunc).toBe(originalFunc);
 
   // parent class method aspect
-  originalFunc = element.hasChildNodes;
+  let originalFunc = element.hasChildNodes;
   const beforeAspect4 = function(arg1, arg2) {
     expect(arg1).toBe(expectArg1);
     expect(arg2).toBe(expectArg2);
@@ -263,64 +187,6 @@ test('window: setTimeout/clearTimeout/setInterval/clearInterval', async() => {
   await mock.sleep(200);
   window.clearInterval(timer2);
   expect(res.splice(0, 3)).toEqual([2, 4, 4]);
-});
-
-test('window: HTMLElement', () => {
-  // TODO
-});
-
-test('window: open', () => {
-  const location = window.location;
-
-  let hashChangeCount = 0;
-  let pageAccessDeniedCount = 0;
-  let pageNotFoundCount = 0;
-  let tempURL = '';
-  let tempType = '';
-  const onHashChange = () => {
-    hashChangeCount++;
-  };
-  const onPageAccessDenied = evt => {
-    tempURL = evt.url;
-    tempType = evt.type;
-    pageAccessDeniedCount++;
-  };
-  const onPageNotFound = evt => {
-    tempURL = evt.url;
-    tempType = evt.type;
-    pageNotFoundCount++;
-  };
-  location.addEventListener('hashchange', onHashChange);
-  window.addEventListener('pageaccessdenied', onPageAccessDenied);
-  window.addEventListener('pagenotfound', onPageNotFound);
-
-  window.$$miniprogram.init('https://test.miniprogram.com/p/a/t/h?query=string#hash');
-  global.expectPagePath = `/pages/detail/index?type=open&targeturl=${encodeURIComponent('https://test.miniprogram.com/index/aaa/detail/123?query=string#hash')}&search=${encodeURIComponent('?query=string')}&hash=${encodeURIComponent('#hash')}`;
-  global.expectCallMethod = 'navigateTo';
-  window.open('https://test.miniprogram.com/index/aaa/detail/123?query=string#hash');
-  expect(location.href).toBe('https://test.miniprogram.com/p/a/t/h?query=string#hash');
-  window.open('https://test.miniprogram.com/index/hahaha?query=string#321');
-  expect(location.href).toBe('https://test.miniprogram.com/p/a/t/h?query=string#hash');
-  expect(pageNotFoundCount).toBe(1);
-  expect(tempURL).toBe('https://test.miniprogram.com/index/hahaha?query=string#321');
-  expect(tempType).toBe('open');
-  window.open('http://test.miniprogram.com/index/aaa/detail/123?query=string#hash');
-  expect(location.href).toBe('https://test.miniprogram.com/p/a/t/h?query=string#hash');
-  expect(pageAccessDeniedCount).toBe(1);
-  expect(tempURL).toBe('http://test.miniprogram.com/index/aaa/detail/123?query=string#hash');
-  expect(tempType).toBe('open');
-
-  expect(hashChangeCount).toBe(0);
-  expect(pageAccessDeniedCount).toBe(1);
-  expect(pageNotFoundCount).toBe(1);
-
-  location.removeEventListener('hashchange', onHashChange);
-  window.removeEventListener('pageaccessdenied', onPageAccessDenied);
-  window.removeEventListener('pagenotfound', onPageNotFound);
-});
-
-test('window: getComputedStyle', () => {
-  // TODO
 });
 
 test('window: requestAnimationFrame/cancelAnimationFrame', async() => {

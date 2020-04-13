@@ -1,6 +1,6 @@
 {
   "name": "miniapp-render",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "DOM simulator for MiniApp",
   "files": [
     "dist"
@@ -8,10 +8,10 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
-    "test": "npm run build && jest --bail",
-    "test-debug": "npm run build && node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
-    "coverage": "npm run build && jest --coverage --bail",
-    "codecov": "npm run build && jest --coverage && codecov"
+    "test": "jest --bail",
+    "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
+    "coverage": "jest --coverage --bail",
+    "codecov": "jest --coverage && codecov"
   },
   "jest": {
     "testEnvironment": "node",
@@ -53,6 +53,7 @@
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-filesize": "^6.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-replace": "^2.2.0"
+    "rollup-plugin-replace": "^2.2.0",
+    "universal-env": "^3.2.0"
   }
 }

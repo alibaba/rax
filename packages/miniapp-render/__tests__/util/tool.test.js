@@ -47,20 +47,6 @@ test('tool: throttle/flushThrottleCache', async() => {
   expect(count).toBe(2);
 });
 
-test('tool: completeURL', () => {
-  const config = cache.getConfig();
-
-  expect(tool.completeURL('abc/asd.xxx')).toBe('abc/asd.xxx');
-  expect(tool.completeURL('//aaa.bbb.ccc/abc/asd.xxx')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
-  expect(tool.completeURL('http://aaa.bbb.ccc/abc/asd.xxx')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
-  expect(tool.completeURL('http://aaa.bbb.ccc/abc/asd.xxx', '', true)).toBe('http://aaa.bbb.ccc/abc/asd.xxx');
-  const oldOrigin = config.origin;
-  config.origin = '';
-  expect(tool.completeURL('/abc/asd.xxx', 'http://aaa.bbb.ccc')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
-  expect(tool.completeURL('/abc/asd.xxx', 'http://aaa.bbb.ccc', true)).toBe('http://aaa.bbb.ccc/abc/asd.xxx');
-  config.origin = oldOrigin;
-});
-
 test('tool: decodeContent', () => {
   expect(tool.decodeContent('asdc&nbsp;s &ensp;d &emsp; weq&lt;&gt;s sw&quot;wwee&quot;w&apos;w&amp;')).toBe('asdc\u00A0s \u2002d \u2003 weq<>s sw"wwee"w\'w&');
 });

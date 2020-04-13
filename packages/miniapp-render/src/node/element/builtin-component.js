@@ -5,14 +5,12 @@ import Pool from '../../util/pool';
 const pool = new Pool();
 
 class BuiltInComponent extends Element {
-  /**
-     * 创建实例
-     */
+  // Create instance
   static $$create(options, tree) {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Multiplexed element node
       const instance = pool.get();
 
       if (instance) {
@@ -24,16 +22,14 @@ class BuiltInComponent extends Element {
     return new BuiltInComponent(options, tree);
   }
 
-  /**
-     * 覆写父类的回收实例方法
-     */
+  // Override the parent class's recovery instance method
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Multiplexed element node
       pool.add(this);
     }
   }

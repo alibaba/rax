@@ -3,12 +3,12 @@ import cache from '../util/cache';
 
 class Node extends EventTarget {
   /**
-     * 覆写父类的 $$init 方法
-     */
+   * Override parent class $$init method
+   */
   $$init(options, tree) {
     super.$$init();
 
-    this.$_nodeId = options.nodeId; // 唯一标识
+    this.$_nodeId = options.nodeId; // unique
     this.$_type = options.type;
     this.$_parentNode = null;
     this.$_tree = tree;
@@ -16,8 +16,8 @@ class Node extends EventTarget {
   }
 
   /**
-     * 覆写父类的 $$destroy 方法
-     */
+   * Override parent class $$destroy method
+   */
   $$destroy() {
     super.$$destroy();
 
@@ -29,29 +29,26 @@ class Node extends EventTarget {
   }
 
   /**
-     * 内部 nodeId
-     */
+   * private nodeId
+   */
   get $$nodeId() {
     return this.$_nodeId;
   }
 
   /**
-     * 内部 pageId
-     */
+   * private pageId
+   */
   get $$pageId() {
     return this.$_pageId;
   }
 
   /**
-     * 更新 parentNode
-     */
+   * update parent node
+   */
   $$updateParent(parentNode = null) {
     this.$_parentNode = parentNode;
   }
 
-  /**
-     * 对外属性和方法
-     */
   get parentNode() {
     return this.$_parentNode;
   }
@@ -117,7 +114,7 @@ class Node extends EventTarget {
   }
 }
 
-// 静态属性
+// static props
 Node.ELEMENT_NODE = 1;
 Node.TEXT_NODE = 3;
 Node.CDATA_SECTION_NODE = 4;

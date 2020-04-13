@@ -35,7 +35,7 @@ export default {
     return new Window('app');
   },
 
-  // 开放给 miniprogram-element
+  // For miniprogram-element
   $$adapter: {
     cache,
     EventTarget,
