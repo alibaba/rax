@@ -1,7 +1,7 @@
 import tool from './util/tool';
 import cache from './util/cache';
-import Window from './Window';
-import Document from './Document';
+import Window from './window';
+import Document from './document';
 import EventTarget from './event/event-target';
 import Event from './event/event';
 

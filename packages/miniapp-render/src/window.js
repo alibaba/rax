@@ -5,7 +5,7 @@ import cache from './util/cache';
 import Node from './node/node';
 import Element from './node/element';
 import Event from './event/event';
-import Document from './Document';
+import Document from './document';
 import TextNode from './node/text-node';
 import Miniprogram from './bom/miniprogram';
 import Comment from './node/comment';
