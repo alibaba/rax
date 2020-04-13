@@ -1,6 +1,6 @@
-# jsx-compiler
+# jsx2qa-compiler
 
-Transform JSX styled Rax Components into miniapp parts.
+Transform JSX styled Rax Components into quickapp parts.
 
 ## example
 
@@ -17,7 +17,7 @@ export default class extends Component {
 }
 ```
 
-Run jsx compiler.
+Run jsx2qa compiler.
 
 - type: Required, enum of `app`, `page`, `component`.
 - outputPath: Required, string of dist path.
@@ -25,7 +25,7 @@ Run jsx compiler.
 - resourcePath: Required, string of original file path.
 
 ```js
-const compile = require('jsx-compiler');
+const compile = require('jsx2qa-compiler');
 const { baseOptions } = compile;
 
 const output = compile(code, { ...baseOptions, type: 'component' });
@@ -76,6 +76,8 @@ eg.
   },
   style: "",
   usingComponents: {},
+  importComponents: {},
+  iconfontMap: [],
   template: "<view>hello world</view>"
 }
 ```
