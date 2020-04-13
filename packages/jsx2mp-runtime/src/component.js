@@ -336,17 +336,17 @@ export default class Component {
       }
       if (!isEmptyObj(normalData)) {
         $ready = normalData.$ready;
-        setDataTask.push(new Promise(resolve => {
-          this._internal.setData(normalData, resolve);
-        }));
+        setDataTask.push(callback => {
+          this._internal.setData(normalData, callback);
+        });
       }
       if (!isEmptyObj(arrayData)) {
-        setDataTask.push(new Promise(resolve => {
-          this._internal.$spliceData(arrayData, resolve);
-        }));
+        setDataTask.push(callback => {
+          this._internal.$spliceData(arrayData, callback);
+        });
       }
     } else if (isQuickApp) {
-      setDataTask.push(new Promise(resolve => {
+      setDataTask.push(callback => {
         for (let key in data) {
           if (key === '$ready') {
             // Only this._interanal.$ready !== data.ready, it will trigger componentDidMount
@@ -358,8 +358,8 @@ export default class Component {
             this._internal[key] = data[key];
           }
         }
-        nextTick(resolve);
-      }));
+        nextTick(callback);
+      });
     } else {
       const normalData = {};
       for (let key in data) {
@@ -368,19 +368,29 @@ export default class Component {
         }
       }
       if (!isEmptyObj(normalData)) {
-        setDataTask.push(new Promise(resolve => {
+        setDataTask.push(callback => {
           $ready = normalData.$ready;
-          this._internal.setData(normalData, resolve);
-        }));
+          this._internal.setData(normalData, callback);
+        });
       }
     }
+
     if (setDataTask.length > 0) {
-      Promise.all(setDataTask).then(() => {
-        if ($ready) {
-          // trigger did mount
-          this._trigger(COMPONENT_DID_MOUNT);
-        }
-        triggerCallbacks(this._pendingCallbacks);
+      const $batchedUpdates = this._internal.$batchedUpdates || (callback => callback());
+
+      $batchedUpdates(() => {
+        const setDataPromiseTask = setDataTask.map(invokeTask => {
+          return new Promise(resolve => {
+            invokeTask(resolve);
+          });
+        });
+        Promise.all(setDataPromiseTask).then(() => {
+          if ($ready) {
+            // trigger did mount
+            this._trigger(COMPONENT_DID_MOUNT);
+          }
+          triggerCallbacks(this._pendingCallbacks);
+        });
       });
     } else {
       triggerCallbacks(this._pendingCallbacks);
