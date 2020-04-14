@@ -11,11 +11,9 @@ function transformRaxSlider(ast, adapter) {
         const children = path.parent.children.filter(
           (child) => {
             if (child.openingElement && t.isJSXIdentifier(child.openingElement.name)) {
-              const componentName = child.openingElement.name;
+              const componentName = child.openingElement.name.name;
               // For <swiper-item a:for="{{list}}"/> or <block a:for="{{list}}" />
-              if (componentName === 'swiper-item' || componentName === 'block') {
-                return true;
-              }
+              return componentName === 'swiper-item' || componentName === 'block';
             }
             return false;
           }
