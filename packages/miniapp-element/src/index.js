@@ -13,7 +13,8 @@ import getLifeCycle from './adapter/getLifeCycle';
 import callEvent from './events/callEvent';
 import callSimpleEvent from './events/callSimpleEvent';
 
-const { cache, tool } = render.$$adapter;
+const { cache, tool, perf, constants } = render.$$adapter;
+const { PAGE_INIT } = constants;
 
 // The number of levels of dom subtrees rendered as custom components
 const MAX_DOM_SUB_TREE_LEVEL = 10;
@@ -230,7 +231,9 @@ const lifeCycles = getLifeCycle({
       data.innerChildNodes = [];
       data.childNodes = dataChildNodes;
     }
-    this.setData(data);
+    this.setData(data, () => {
+      perf.stop(PAGE_INIT);
+    });
     if (isMiniApp) {
       if (this.domNode.tagName === 'CANVAS') {
         this.domNode.$$trigger('canvasReady');
