@@ -49,6 +49,7 @@ function Style(props, context) {
 function Script(props, context) {
   const { __scripts = [] } = context;
 
+  // props such as crossorigin can be passed to script tag
   return __scripts.map(
     (src, index) => <script {...props} src={src} key={`script_${index}`}>
       {/* self-closing script element will not work in HTML */}
