@@ -1,5 +1,7 @@
 import tool from './util/tool';
 import cache from './util/cache';
+import perf from './util/perf';
+import constants from './util/constants';
 import Window from './window';
 import Document from './document';
 import EventTarget from './event/event-target';
@@ -40,6 +42,8 @@ export default {
     cache,
     EventTarget,
     Event,
-    tool
+    tool,
+    perf,
+    constants
   }
 };
