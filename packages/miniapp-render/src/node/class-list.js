@@ -7,14 +7,10 @@ function ClassList(onUpdate) {
   this.$$init(onUpdate);
 }
 
-/**
- * 创建实例
- */
 ClassList.$$create = function(onUpdate) {
   const config = cache.getConfig();
 
   if (config.optimization.domExtendMultiplexing) {
-    // 复用 dom 扩展对象
     const instance = pool.get();
 
     if (instance) {
@@ -27,40 +23,27 @@ ClassList.$$create = function(onUpdate) {
 };
 
 ClassList.prototype = Object.assign([], {
-  /**
-     * 初始化实例
-     */
   $$init(onUpdate) {
     this.$_doUpdate = onUpdate;
   },
 
-  /**
-     * 销毁实例
-     */
   $$destroy() {
     this.$_doUpdate = null;
     this.length = 0;
   },
 
-  /**
-     * 回收实例
-     */
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.domExtendMultiplexing) {
-      // 复用 dom 扩展对象
       pool.add(this);
     }
   },
 
-  /**
-     * 解析 className
-     */
   $$parse(className = '') {
-    this.length = 0; // 置空当前内容
+    this.length = 0;
 
     className = className.trim();
     className = className ? className.split(/\s+/) : [];
@@ -72,9 +55,6 @@ ClassList.prototype = Object.assign([], {
     this.$_doUpdate();
   },
 
-  /**
-     * 对外属性和方法
-     */
   item(index) {
     return this[index];
   },

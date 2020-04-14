@@ -24,22 +24,20 @@ class HTMLTextAreaElement extends Element {
     return new HTMLTextAreaElement(options, tree);
   }
 
-  /**
-   * 覆写父类的回收实例方法
-   */
+  // Override the parent class's recovery instance method
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reuse element node
       pool.add(this);
     }
   }
 
   /**
-   * 调用 $_generateHtml 接口时用于处理额外的属性，
+   * $_generateHtml handle other attributes
    */
   $$dealWithAttrsForGenerateHtml(html, node) {
     const type = node.type;
@@ -61,9 +59,7 @@ class HTMLTextAreaElement extends Element {
     return html;
   }
 
-  /**
-   * 调用 outerHTML 的 setter 时用于处理额外的属性
-   */
+  // outerHtml
   $$dealWithAttrsForOuterHTML(node) {
     this.type = node.type || '';
     this.value = node.value || '';
@@ -71,12 +67,12 @@ class HTMLTextAreaElement extends Element {
     this.maxlength = node.maxlength;
     this.placeholder = node.placeholder || '';
 
-    // 特殊字段
+    // Special field
     this.mpplaceholderclass = node.mpplaceholderclass || '';
   }
 
   /**
-   * 调用 cloneNode 接口时用于处理额外的属性
+   * The cloneNode interface is invoked to handle additional properties
    */
   $$dealWithAttrsForCloneNode() {
     return {
@@ -86,7 +82,7 @@ class HTMLTextAreaElement extends Element {
       maxlength: this.maxlength,
       placeholder: this.placeholder,
 
-      // 特殊字段
+      // Special field
       mpplaceholderclass: this.mpplaceholderclass
     };
   }

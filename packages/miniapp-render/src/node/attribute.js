@@ -9,14 +9,10 @@ class Attribute {
     this.$$init(element, onUpdate);
   }
 
-  /**
-     * 创建实例
-     */
   static $$create(element, onUpdate) {
     const config = cache.getConfig();
 
     if (config.optimization.domExtendMultiplexing) {
-      // 复用 dom 扩展对象
       const instance = pool.get();
 
       if (instance) {
@@ -28,9 +24,6 @@ class Attribute {
     return new Attribute(element, onUpdate);
   }
 
-  /**
-     * 初始化实例
-     */
   $$init(element, onUpdate) {
     this.$_element = element;
     this.$_doUpdate = onUpdate;
@@ -40,9 +33,6 @@ class Attribute {
     this.triggerUpdate();
   }
 
-  /**
-     * 销毁实例
-     */
   $$destroy() {
     this.$_element = null;
     this.$_doUpdate = null;
@@ -50,30 +40,20 @@ class Attribute {
     this.$_list = null;
   }
 
-  /**
-     * 回收实例
-     */
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.domExtendMultiplexing) {
-      // 复用 dom 扩展对象
       pool.add(this);
     }
   }
 
-  /**
-     * 属性列表，需要动态更新
-     */
   get list() {
     return this.$_list;
   }
 
-  /**
-     * 设置属性
-     */
   set(name, value) {
     const element = this.$_element;
     const map = this.$_map;
@@ -98,16 +78,12 @@ class Attribute {
 
       map[name] = value;
 
-      // 其他字段的设置需要触发父组件更新
       this.$_doUpdate();
     }
 
     this.triggerUpdate();
   }
 
-  /**
-     * 取属性
-     */
   get(name) {
     const element = this.$_element;
     const map = this.$_map;
@@ -127,9 +103,6 @@ class Attribute {
     }
   }
 
-  /**
-     * 判断属性是否存在
-     */
   has(name) {
     const element = this.$_element;
     const map = this.$_map;
@@ -149,9 +122,6 @@ class Attribute {
     }
   }
 
-  /**
-     * 删除属性
-     */
   remove(name) {
     const element = this.$_element;
     const map = this.$_map;
@@ -164,7 +134,7 @@ class Attribute {
       const datasetName = tool.toCamel(name.substr(5));
       if (element.$__dataset) delete element.dataset[datasetName];
     } else {
-      // 其他字段的设置需要触发父组件更新
+      // The Settings for the other fields need to trigger the parent component to update
       delete map[name];
       this.$_doUpdate();
     }
@@ -172,14 +142,11 @@ class Attribute {
     this.triggerUpdate();
   }
 
-  /**
-     * 更新属性列表
-     */
   triggerUpdate() {
     const map = this.$_map;
     const list = this.$_list;
 
-    // 清空旧的列表
+    // Empty the old list
     list.forEach(item => {
       delete list[item.name];
     });
@@ -187,7 +154,7 @@ class Attribute {
     delete list.style;
     list.length = 0;
 
-    // 添加新列表
+    // Add a new list
     Object.keys(map).forEach(name => {
       if (name !== 'id') {
         const item = {name, value: map[name]};

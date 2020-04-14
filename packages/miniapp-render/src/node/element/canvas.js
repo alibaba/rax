@@ -7,14 +7,12 @@ import Pool from '../../util/pool';
 const pool = new Pool();
 
 class HTMLCanvasElement extends Element {
-  /**
-   * 创建实例
-   */
+  // Create instance
   static $$create(options, tree) {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reuse element node
       const instance = pool.get();
 
       if (instance) {
@@ -26,9 +24,7 @@ class HTMLCanvasElement extends Element {
     return new HTMLCanvasElement(options, tree);
   }
 
-  /**
-   * 覆写父类的 $$init 方法
-   */
+  // Override the parent class's $$init method
   $$init(options, tree) {
     const width = options.width;
     const height = options.height;
@@ -43,23 +39,19 @@ class HTMLCanvasElement extends Element {
     this.$_initRect();
   }
 
-  /**
-   * 覆写父类的回收实例方法
-   */
+  // Override the parent class's recovery instance method
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reuse element node
       pool.add(this);
     }
   }
 
-  /**
-   * 准备 canvas 节点
-   */
+  // Prepare canvas node
   $$prepare() {
     return new Promise((resolve, reject) => {
       if (isMiniApp) {
@@ -70,7 +62,7 @@ class HTMLCanvasElement extends Element {
         this.$$getNodesRef().then(nodesRef => nodesRef.node(res => {
           this.$_node = res.node;
 
-          // 设置 canvas 宽高
+          // Set canvas width & height
           this.$_node.width = this.width;
           this.$_node.height = this.height;
 
@@ -81,7 +73,7 @@ class HTMLCanvasElement extends Element {
   }
 
   /**
-   * 更新父组件树
+   * Update parent node
    */
   $_triggerParentUpdate() {
     this.$_initRect();
@@ -89,7 +81,7 @@ class HTMLCanvasElement extends Element {
   }
 
   /**
-   * 初始化长宽
+   * Init length
    */
   $_initRect() {
     const width = parseInt(this.$_attrs.get('width'), 10);
@@ -105,9 +97,6 @@ class HTMLCanvasElement extends Element {
     }
   }
 
-  /**
-   * 对外属性和方法
-   */
   get width() {
     return +this.$_attrs.get('width') || 0;
   }

@@ -227,7 +227,7 @@ class Document extends EventTarget {
   }
 
   createComment() {
-    // 忽略注释内容的传入
+    // Ignore the incoming comment content
     return this.$$createComment({
       nodeId: `b-${tool.getId()}`,
     });

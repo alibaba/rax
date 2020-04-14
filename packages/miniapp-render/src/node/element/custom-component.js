@@ -5,9 +5,7 @@ import Pool from '../../util/pool';
 const pool = new Pool();
 
 class CustomComponent extends Element {
-  /**
-     * 创建实例
-     */
+  // Create instance
   static $$create(options, tree) {
     const config = cache.getConfig();
 

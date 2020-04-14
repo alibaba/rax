@@ -10,7 +10,7 @@ class HTMLInputElement extends Element {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reuse element node
       const instance = pool.get();
 
       if (instance) {
@@ -29,7 +29,7 @@ class HTMLInputElement extends Element {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reuse element node
       pool.add(this);
     }
   }
@@ -78,7 +78,7 @@ class HTMLInputElement extends Element {
       maxlength: this.maxlength,
       placeholder: this.placeholder,
 
-      // 特殊字段
+      // Special field
       mpplaceholderclass: this.mpplaceholderclass
     };
   }

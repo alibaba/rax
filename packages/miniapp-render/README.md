@@ -25,11 +25,6 @@ Page({
     // Create page
     const { pageId, window, document } = render.createPage(this.route, config)
     this.pageId = pageId
-
-    // Set url of the page
-    window.$$miniprogram.setRealUrl('http://test.miniprogram.com')
-    // Init the page
-    window.$$miniprogram.init()
   },
   onUnload() {
     // Destroy the page
@@ -50,8 +45,8 @@ Create the page.
 | config | Object | Global config of the page. It's shared by all pages. Every time the page creates, passed-in config will override current one |
 
 ```js
-const page1 = mp.createPage('/pages/home/index', config1) // Pass in config1
-const page2 = mp.createPage('/pages/home/index', config2) // Pass in config2
+const page1 = render.createPage('/pages/home/index', config1) // Pass in config1
+const page2 = render.createPage('/pages/home/index', config2) // Pass in config2
 
 // The latter config2 will override config1,  all pages will use config2 and config1 will be deprecated.
 ```

@@ -68,10 +68,10 @@ export default {
     }
   }],
   handles: {
-    onScrolltoupper(evt) {
+    onScrollToUpper(evt) {
       callSimpleEvent('scrolltoupper', evt, this.domNode);
     },
-    onScrolltolower(evt) {
+    onScrollToLower(evt) {
       callSimpleEvent('scrolltolower', evt, this.domNode);
     },
     onScroll(evt) {

@@ -1,5 +1,5 @@
 /**
- * 支持的样式属性列表，默认只包含常用的样式属性
+ * A list of supported style properties that by default contain only commonly used style properties
  */
 
 export default [

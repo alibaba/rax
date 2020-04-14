@@ -1,6 +1,6 @@
 {
   "name": "miniapp-element",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Custom element for MiniApp",
   "files": [
     "dist"

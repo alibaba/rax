@@ -10,7 +10,7 @@ class BuiltInComponent extends Element {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // Multiplexed element node
+      // Reuse element node
       const instance = pool.get();
 
       if (instance) {
@@ -29,7 +29,7 @@ class BuiltInComponent extends Element {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // Multiplexed element node
+      // Reuse element node
       pool.add(this);
     }
   }

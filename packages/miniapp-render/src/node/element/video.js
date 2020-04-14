@@ -5,14 +5,10 @@ import Pool from '../../util/pool';
 const pool = new Pool();
 
 class HTMLVideoElement extends Element {
-  /**
-     * 创建实例
-     */
   static $$create(options, tree) {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
       const instance = pool.get();
 
       if (instance) {
@@ -24,9 +20,6 @@ class HTMLVideoElement extends Element {
     return new HTMLVideoElement(options, tree);
   }
 
-  /**
-     * 覆写父类的 $$init 方法
-     */
   $$init(options, tree) {
     const width = options.width;
     const height = options.height;
@@ -39,31 +32,21 @@ class HTMLVideoElement extends Element {
     this.$_initRect();
   }
 
-  /**
-     * 覆写父类的回收实例方法
-     */
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
       pool.add(this);
     }
   }
 
-  /**
-     * 更新父组件树
-     */
   $_triggerParentUpdate() {
     this.$_initRect();
     super.$_triggerParentUpdate();
   }
 
-  /**
-     * 初始化长宽
-     */
   $_initRect() {
     const width = parseInt(this.$_attrs.get('width'), 10);
     const height = parseInt(this.$_attrs.get('height'), 10);
@@ -72,9 +55,6 @@ class HTMLVideoElement extends Element {
     if (typeof height === 'number' && height >= 0) this.$_style.height = `${height}px`;
   }
 
-  /**
-     * 对外属性和方法
-     */
   get src() {
     return this.$_attrs.get('src') || '';
   }

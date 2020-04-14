@@ -35,9 +35,8 @@ function getWindow(pageId) {
 function setNode(pageId, nodeId, domNode = null) {
   const document = pageMap[pageId] && pageMap[pageId].document;
 
-  // 运行前调用，不做任何操作
+  // Call before run, do nothing
   if (!document) return;
-  // 相当于删除映射
   if (!domNode) return pageMap[pageId].nodeIdMap[nodeId] = domNode;
 
   let parentNode = domNode.parentNode;
@@ -49,23 +48,17 @@ function setNode(pageId, nodeId, domNode = null) {
   pageMap[pageId].nodeIdMap[nodeId] = parentNode === document.body ? domNode : null;
 }
 
-/**
- * 根据 nodeId 获取 domNode
- */
+// Get the domNode by nodeId
 function getNode(pageId, nodeId) {
   return pageMap[pageId] && pageMap[pageId].nodeIdMap[nodeId];
 }
 
-/**
- * 存储全局 config
- */
+// Store global config
 function setConfig(config) {
   configCache = config;
 }
 
-/**
- * 获取全局 config
- */
+// Get global config
 function getConfig() {
   return configCache;
 }

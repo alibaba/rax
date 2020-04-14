@@ -1,6 +1,6 @@
 <import src="./template/subtree.wxml"/>
 <import src="./template/subtree-cover.wxml"/>
-<!-- 视图容器 -->
+<!-- Container -->
 <cover-image
     wx:if="{{builtinComponentName === 'cover-image'}}"
     id="{{id}}"
@@ -80,9 +80,9 @@
     scroll-with-animation="{{scrollWithAnimation}}"
     enable-back-to-top="{{enableBackToTop}}"
     enable-flex="{{enableFlex}}"
-    bindscrolltoupper="onScrollViewScrolltoupper"
-    bindscrolltolower="onScrollViewScrolltolower"
-    bindscroll="onScrollViewScroll"
+    bindscrolltoupper="onScrollToUpper"
+    bindscrolltolower="onScrollToLower"
+    bindscroll="onScroll"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></scroll-view>
 <swiper
     wx:elif="{{builtinComponentName === 'swiper'}}"
@@ -109,7 +109,7 @@
     bindtransition="onSwiperTransition"
     bindanimationfinish="onSwiperAnimationfinish"
 ><block wx:for="{{innerChildNodes}}" wx:key="nodeId">
-    <!-- swiper-item 无法设置 style，不然会覆盖内置组件自己的滚动样式 -->
+    <!-- swiper-item cannot set style, otherwise it overrides the built-in component's own scrolling style -->
     <swiper-item
         wx:if="{{item.type === 'element' && item.compName === 'swiper-item'}}"
         data-private-node-id="{{item.nodeId}}"
@@ -138,7 +138,7 @@
     hover-start-time="{{hoverStayTime}}"
     hover-stay-time="{{hoverStayTime}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></view>
-<!-- 基础内容 -->
+<!--Base content -->
 <icon
     wx:elif="{{builtinComponentName === 'icon'}}"
     id="{{id}}"
@@ -180,7 +180,7 @@
     space="{{space}}"
     decode="{{decode}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></text>
-<!-- 表单组件 -->
+<!-- Form component -->
 <button
     wx:elif="{{builtinComponentName === 'button'}}"
     id="{{id}}"
@@ -415,7 +415,7 @@
     bindconfirm="onTextareaConfirm"
     bindkeyboardheightchange="onTextareaKeyBoardHeightChange"
 ></textarea>
-<!-- 导航 -->
+<!-- Navigator -->
 <navigator
     wx:elif="{{builtinComponentName === 'navigator'}}"
     id="{{id}}"
@@ -439,7 +439,7 @@
     bindfail="onNavigatorFail"
     bindcomplete="onNavigatorComplete"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></navigator>
-<!-- 媒体组件 -->
+<!-- Media component -->
 <camera
     wx:elif="{{builtinComponentName === 'camera'}}"
     id="{{id}}"
@@ -568,7 +568,7 @@
     binderror="onVideoError"
     bindprogress="onVideoProgress"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></video>
-<!-- 地图 -->
+<!-- Map -->
 <map
     wx:elif="{{builtinComponentName === 'map'}}"
     id="{{id}}"
@@ -606,7 +606,7 @@
     bindregionchange="onMapRegionChange"
     bindpoitap="onMapPoiTap"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></map>
-<!-- 画布 -->
+<!-- Canvas -->
 <canvas
     wx:elif="{{builtinComponentName === 'canvas'}}"
     id="{{id}}"
@@ -624,7 +624,7 @@
     bindlongtap="onCanvasLongTap"
     binderror="onCanvasError"
 ><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></canvas>
-<!-- 开放能力 -->
+<!-- Open -->
 <ad
     wx:elif="{{builtinComponentName === 'ad'}}"
     id="{{id}}"
@@ -671,16 +671,16 @@
     bindload="onWebviewLoad"
     binderror="onWebviewError"
 ></web-view>
-<!-- 其他 -->
+<!-- Others -->
 <block
     wx:elif="{{builtinComponentName === 'not-support'}}"
 >{{content}}</block>
-<!-- 自定义组件 -->
+<!-- Custom component -->
 <custom-component
     wx:elif="{{!!customComponentName}}"
     name="{{customComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></custom-component>
-<!-- 子节点 -->
+<!-- Child Node -->
 <template wx:else is="subtree" data="{{childNodes, inCover}}"/>

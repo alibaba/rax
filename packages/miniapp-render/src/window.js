@@ -7,7 +7,6 @@ import Element from './node/element';
 import Event from './event/event';
 import Document from './document';
 import TextNode from './node/text-node';
-import Miniprogram from './bom/miniprogram';
 import Comment from './node/comment';
 import ClassList from './node/class-list';
 import Style from './node/style';
@@ -31,13 +30,6 @@ class Window extends EventTarget {
 
     this.$_pageId = pageId;
 
-    this.$_miniprogram = new Miniprogram(pageId);
-
-    this.$_nowFetchingWebviewInfoPromise = null; // 正在拉取 webview 端信息的 promise 实例
-
-    // 补充实例的属性，用于 'xxx' in XXX 判断
-    this.onhashchange = null;
-
     this.$_elementConstructor = function HTMLElement(...args) {
       return Element.$$create(...args);
     };
@@ -48,13 +40,11 @@ class Window extends EventTarget {
       }
     };
 
-    // react 环境兼容
+    // React environment compatibility
     this.HTMLIFrameElement = function() {};
   }
 
-  /**
-     * 拉取处理切面必要的信息
-     */
+  // Pull handles the necessary information for the section
   $_getAspectInfo(descriptor) {
     if (!descriptor || typeof descriptor !== 'string') return;
 
@@ -93,26 +83,14 @@ class Window extends EventTarget {
     return {prototype, method, type};
   }
 
-  /**
-   * An object that is exposed to miniapp
-  */
-  get $$miniprogram() {
-    return this.$_miniprogram;
-  }
-
-  /**
-     * 强制清空 setData 缓存
-     */
+  // Forces the setData cache to be emptied
   $$forceRender() {
     tool.flushThrottleCache();
   }
 
-  /**
-     * 触发节点事件
-     */
+  // Trigger node event
   $$trigger(eventName, options = {}) {
     if (eventName === 'error' && typeof options.event === 'string') {
-      // 此处触发自 App.onError 钩子
       const errStack = options.event;
       const errLines = errStack.split('\n');
       let message = '';
@@ -139,22 +117,18 @@ class Window extends EventTarget {
       });
       options.args = [message, error];
 
-      // window.onerror 比较特殊，需要调整参数
       if (typeof this.onerror === 'function' && !this.onerror.$$isOfficial) {
         const oldOnError = this.onerror;
         this.onerror = (event, message, error) => {
           oldOnError.call(this, message, '', 0, 0, error);
         };
-        this.onerror.$$isOfficial = true; // 标记为官方封装的方法
+        this.onerror.$$isOfficial = true;
       }
     }
 
     super.$$trigger(eventName, options);
   }
 
-  /**
-     * 获取原型
-     */
   $$getPrototype(descriptor) {
     if (!descriptor || typeof descriptor !== 'string') return;
 
@@ -189,9 +163,7 @@ class Window extends EventTarget {
     }
   }
 
-  /**
-     * 扩展 dom/bom 对象
-     */
+  // Extend bom & dom
   $$extend(descriptor, options) {
     if (!descriptor || !options || typeof descriptor !== 'string' || typeof options !== 'object') return;
 
@@ -201,20 +173,17 @@ class Window extends EventTarget {
     if (prototype) keys.forEach(key => prototype[key] = options[key]);
   }
 
-  /**
-     * 对 dom/bom 对象方法追加切面方法
-     */
+  // Appends the section method to the dom/bom object method
   $$addAspect(descriptor, func) {
     if (!descriptor || !func || typeof descriptor !== 'string' || typeof func !== 'function') return;
 
     const {prototype, method, type} = this.$_getAspectInfo(descriptor);
 
-    // 处理切面
+    // Processing section
     if (prototype && method && type) {
       const methodInPrototype = prototype[method];
       if (typeof methodInPrototype !== 'function') return;
 
-      // 重写原始方法
       if (!methodInPrototype.$$isHook) {
         prototype[method] = function(...args) {
           const beforeFuncs = prototype[method].$$before || [];
@@ -241,7 +210,7 @@ class Window extends EventTarget {
         prototype[method].$$originalMethod = methodInPrototype;
       }
 
-      // 追加切面方法
+      // Append the section method
       if (type === 'before') {
         prototype[method].$$before = prototype[method].$$before || [];
         prototype[method].$$before.push(func);
@@ -252,20 +221,16 @@ class Window extends EventTarget {
     }
   }
 
-  /**
-     * 删除对 dom/bom 对象方法追加前置/后置处理
-     */
+  // Remove the preprocessing/postprocessing of dom/bom object methods
   $$removeAspect(descriptor, func) {
     if (!descriptor || !func || typeof descriptor !== 'string' || typeof func !== 'function') return;
 
     const {prototype, method, type} = this.$_getAspectInfo(descriptor);
 
-    // 处理切面
     if (prototype && method && type) {
       const methodInPrototype = prototype[method];
       if (typeof methodInPrototype !== 'function' || !methodInPrototype.$$isHook) return;
 
-      // 移除切面方法
       if (type === 'before' && methodInPrototype.$$before) {
         methodInPrototype.$$before.splice(methodInPrototype.$$before.indexOf(func), 1);
       } else if (type === 'after' && methodInPrototype.$$after) {

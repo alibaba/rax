@@ -1,5 +1,5 @@
 /**
- * 检查节点间的关系
+ * Check the relationships between nodes
  */
 function checkRelation(node1, node2) {
   if (node1 === node2) return true;
@@ -29,7 +29,7 @@ class Event {
     this.$_changedTouches = null;
     this.$_cancelable = false;
 
-    // 补充字段
+    // Add fields
     const extra = options.$$extra;
     if (extra) {
       Object.keys(extra).forEach(key => {
@@ -37,67 +37,52 @@ class Event {
       });
     }
 
-    // 处理 touches
+    // Handle touches
     if (options.touches && options.touches.length) {
       this.$_touches = options.touches.map(touch => ({...touch, target: options.target}));
 
       this.$$checkTargetTouches();
     }
 
-    // 处理 changedTouches
+    // Handle changedTouches
     if (options.changedTouches && options.changedTouches.length) {
       this.$_changedTouches = options.changedTouches.map(touch => ({...touch, target: options.target}));
     }
   }
 
-  /**
-     * 返回事件是否立即停止
-     */
+  // Whether the event is stopped immediately
   get $$immediateStop() {
     return this.$_immediateStop;
   }
 
-  /**
-     * 返回事件时否还可以冒泡
-     */
+  // Whether can bubble
   get $$canBubble() {
     return this.$_canBubble;
   }
 
-  /**
-     * 设置 target
-     */
+  // Set target
   $$setTarget(target) {
     this.$_target = target;
   }
 
-  /**
-     * 设置 currentTarget
-     */
+  // Set currentTarget
   $$setCurrentTarget(currentTarget) {
     this.$_currentTarget = currentTarget;
     this.$$checkTargetTouches();
   }
 
-  /**
-     * 设置事件所处阶段
-     */
+  // Set the stage of the event
   $$setEventPhase(eventPhase) {
     this.$_eventPhase = eventPhase;
   }
 
-  /**
-     * 检查 targetTouches
-     */
+  // Check targetTouches
   $$checkTargetTouches() {
     if (this.$_touches && this.$_touches.length) {
       this.$_targetTouches = this.$_touches.filter(touch => checkRelation(touch.target, this.$_currentTarget));
     }
   }
 
-  /**
-     * 对外属性和方法
-     */
   get bubbles() {
     return this.$_bubbles;
   }
@@ -147,7 +132,6 @@ class Event {
   }
 
   preventDefault() {
-    // 目前仅支持 a 标签的点击阻止
     this.$_cancelable = true;
   }
 
@@ -172,7 +156,7 @@ class Event {
   }
 }
 
-// 静态属性
+// Static props
 Event.NONE = 0;
 Event.CAPTURING_PHASE = 1;
 Event.AT_TARGET = 2;

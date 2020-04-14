@@ -7,14 +7,12 @@ import Event from '../../event/event';
 const pool = new Pool();
 
 class Image extends Element {
-  /**
-     * 创建实例
-     */
+  // Create instance
   static $$create(options, tree) {
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reuse element node
       const instance = pool.get();
 
       if (instance) {
@@ -26,9 +24,7 @@ class Image extends Element {
     return new Image(options, tree);
   }
 
-  /**
-     * 覆写父类的 $$init 方法
-     */
+  // Override the parent class's $$init instance method
   $$init(options, tree) {
     const width = options.width;
     const height = options.height;
@@ -44,9 +40,7 @@ class Image extends Element {
     this.$_initRect();
   }
 
-  /**
-     * 覆写父类的 $$destroy 方法
-     */
+  // Override the parent class's destroy instance method
   $$destroy() {
     super.$$destroy();
 
@@ -54,31 +48,25 @@ class Image extends Element {
     this.$_naturalHeight = null;
   }
 
-  /**
-     * 覆写父类的回收实例方法
-     */
+  // Override the parent class's recovery instance method
   $$recycle() {
     this.$$destroy();
 
     const config = cache.getConfig();
 
     if (config.optimization.elementMultiplexing) {
-      // 复用 element 节点
+      // Reuse element node
       pool.add(this);
     }
   }
 
-  /**
-     * 更新父组件树
-     */
+  // Update parent
   $_triggerParentUpdate() {
     this.$_initRect();
     super.$_triggerParentUpdate();
   }
 
-  /**
-     * 初始化长宽
-     */
+  // Init length
   $_initRect() {
     const width = parseInt(this.$_attrs.get('width'), 10);
     const height = parseInt(this.$_attrs.get('height'), 10);
@@ -87,9 +75,7 @@ class Image extends Element {
     if (typeof height === 'number' && height >= 0) this.$_style.height = `${height}px`;
   }
 
-  /**
-     * 重置长宽
-     */
+  // Reset width & height
   $_resetRect(rect = {}) {
     this.$_naturalWidth = rect.width || 0;
     this.$_naturalHeight = rect.height || 0;
@@ -97,9 +83,6 @@ class Image extends Element {
     this.$_initRect();
   }
 
-  /**
-     * 对外属性和方法
-     */
   get src() {
     return this.$_attrs.get('src') || '';
   }
@@ -114,10 +97,10 @@ class Image extends Element {
         CONTAINER.getImageInfo({
           src: this.src,
           success: res => {
-            // 加载成功，调整图片的宽高
+            // Load successfully, adjust the width and height of the picture
             this.$_resetRect(res);
 
-            // 触发 load 事件
+            // Load event
             this.$$trigger('load', {
               event: new Event({
                 name: 'load',
@@ -128,10 +111,10 @@ class Image extends Element {
             });
           },
           fail: () => {
-            // 加载失败，调整图片的宽高
+            // Load failed, adjust the width and height of the image
             this.$_resetRect({width: 0, height: 0});
 
-            // 触发 error 事件
+            // Trigger error event
             this.$$trigger('error', {
               event: new Event({
                 name: 'error',
