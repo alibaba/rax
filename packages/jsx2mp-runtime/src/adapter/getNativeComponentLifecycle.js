@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram, isQuickApp } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isQuickApp, isByteDanceMicroApp } from 'universal-env';
 
 export default function({ mount, unmount, didUpdate }) {
   // For alibaba miniapp
@@ -18,7 +18,7 @@ export default function({ mount, unmount, didUpdate }) {
   }
 
   // For wechat miniprogram
-  if (isWeChatMiniProgram) {
+  if (isWeChatMiniProgram || isByteDanceMicroApp) {
     function attached() {
       return mount.apply(this, arguments);
     }
