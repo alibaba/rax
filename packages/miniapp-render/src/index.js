@@ -1,7 +1,7 @@
 import tool from './util/tool';
 import cache from './util/cache';
-import Window from './Window';
-import Document from './Document';
+import Window from './window';
+import Document from './document';
 import EventTarget from './event/event-target';
 import Event from './event/event';
 
@@ -35,7 +35,7 @@ export default {
     return new Window('app');
   },
 
-  // 开放给 miniprogram-element
+  // For miniprogram-element
   $$adapter: {
     cache,
     EventTarget,

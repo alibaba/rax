@@ -1,11 +1,11 @@
-import mock from '../mock';
+import mock from '../../renderMock';
 import Node from '../../src/node/node';
 
 let document;
 
 beforeAll(() => {
-  const res = mock.createPage('home');
-  document = res.document;
+  const page = mock.createPage('home');
+  document = page.document;
 });
 
 test('element: id/tagName', () => {

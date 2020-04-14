@@ -1,4 +1,4 @@
-import mock from '../mock';
+import mock from '../../renderMock';
 import tool from '../../src/util/tool';
 import cache from '../../src/util/cache';
 
@@ -45,20 +45,6 @@ test('tool: throttle/flushThrottleCache', async() => {
   expect(count).toBe(2);
   await mock.sleep(10);
   expect(count).toBe(2);
-});
-
-test('tool: completeURL', () => {
-  const config = cache.getConfig();
-
-  expect(tool.completeURL('abc/asd.xxx')).toBe('abc/asd.xxx');
-  expect(tool.completeURL('//aaa.bbb.ccc/abc/asd.xxx')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
-  expect(tool.completeURL('http://aaa.bbb.ccc/abc/asd.xxx')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
-  expect(tool.completeURL('http://aaa.bbb.ccc/abc/asd.xxx', '', true)).toBe('http://aaa.bbb.ccc/abc/asd.xxx');
-  const oldOrigin = config.origin;
-  config.origin = '';
-  expect(tool.completeURL('/abc/asd.xxx', 'http://aaa.bbb.ccc')).toBe('https://aaa.bbb.ccc/abc/asd.xxx');
-  expect(tool.completeURL('/abc/asd.xxx', 'http://aaa.bbb.ccc', true)).toBe('http://aaa.bbb.ccc/abc/asd.xxx');
-  config.origin = oldOrigin;
 });
 
 test('tool: decodeContent', () => {

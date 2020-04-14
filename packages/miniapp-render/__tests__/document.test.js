@@ -1,4 +1,4 @@
-import mock from './mock';
+import mock from '../renderMock';
 import Node from '../src/node/node';
 
 let window;
@@ -33,10 +33,6 @@ test('document: head', () => {
 
 test('document: defaultView', () => {
   expect(document.defaultView).toBe(window);
-});
-
-test('document: URL', () => {
-  expect(document.URL).toBe(window.location.href);
 });
 
 test('document: getElementById', () => {
@@ -102,9 +98,6 @@ test('document: createElement/createElementNS', () => {
 
   const node4 = document.createElement('img');
   expect(node4.tagName).toBe('IMG');
-
-  const node5 = document.createElement('iframe');
-  expect(node5.tagName).toBe('IFRAME');
 });
 
 test('document: createTextNode', () => {

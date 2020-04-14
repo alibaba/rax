@@ -1,9 +1,7 @@
 const pageMap = {};
 let configCache = {};
 
-/**
- * 初始化
- */
+// Init
 function init(pageId, options) {
   pageMap[pageId] = {
     window: options.window,
@@ -12,29 +10,27 @@ function init(pageId, options) {
   };
 }
 
-/**
- * 销毁
- */
+// Destroy
 function destroy(pageId) {
   delete pageMap[pageId];
 }
 
 /**
- * 获取 document
+ * Get document
  */
 function getDocument(pageId) {
   return pageMap[pageId] && pageMap[pageId].document;
 }
 
 /**
- * 获取 window
+ * Get window
  */
 function getWindow(pageId) {
   return pageMap[pageId] && pageMap[pageId].window;
 }
 
 /**
- * 存储 domNode 映射
+ * Save domNode map
  */
 function setNode(pageId, nodeId, domNode = null) {
   const document = pageMap[pageId] && pageMap[pageId].document;
