@@ -84,7 +84,7 @@ function insertSlotName(currentEl, name) {
 function getSwiperItemAttributes(currentEl) {
   const currentElOpeningElement = currentEl.openingElement;
   // <swiper-item a:for={{list}} />
-  if (currentElOpeningElement.name.name === 'swiper') {
+  if (currentElOpeningElement.name.name === 'swiper-item') {
     return currentElOpeningElement.attributes;
   }
   // <block a:for={{list}}><swiper-item/></block>
