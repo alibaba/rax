@@ -30,7 +30,7 @@ function transformRaxSlider(ast, adapter) {
           if (forAttriute) {
             const forIndex = childAttributes.find((attr) => genExpression(attr.name) === adapter.forIndex);
             insertSlotName(
-              childAttributes,
+              child,
               // 1 + arr1.length + index
               index - childList.length + getChildListLengthExpression(childList) + '+' + forIndex.value.value
             );
@@ -39,7 +39,7 @@ function transformRaxSlider(ast, adapter) {
             );
           } else {
             insertSlotName(
-              childAttributes,
+              child,
               index - childList.length + getChildListLengthExpression(childList)
             );
             swiperItemLength++;
@@ -72,13 +72,23 @@ function getChildListLengthExpression(childList) {
   );
 }
 
-function insertSlotName(attributes, name) {
-  attributes.push(
+function insertSlotName(currentEl, name) {
+  getSwiperItemAttributes(currentEl).push(
     t.jsxAttribute(
       t.jsxIdentifier('slot'),
       t.stringLiteral('slider-item-' + createBinding(name))
     )
   );
+}
+
+function getSwiperItemAttributes(currentEl) {
+  const currentElOpeningElement = currentEl.openingElement;
+  // <swiper-item a:for={{list}} />
+  if (currentElOpeningElement.name.name === 'swiper') {
+    return currentElOpeningElement.attributes;
+  }
+  // <block a:for={{list}}><swiper-item/></block>
+  return currentEl.children[0].openingElement.attributes;
 }
 
 module.exports = {
