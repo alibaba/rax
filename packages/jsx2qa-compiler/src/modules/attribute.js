@@ -29,11 +29,15 @@ function transformAttribute(ast, code, adapter) {
           if (t.isJSXExpressionContainer(node.value) && !t.isStringLiteral(node.value.expression)) {
             node.name.name = 'id';
             const childExpression = node.value.expression;
+            // For this.xxx = createRef();
+            node.value = t.stringLiteral(genExpression(childExpression));
             const refInfo = {
               name: node.value,
               method: childExpression
             };
             const attributes = path.parent.attributes;
+            const componentNameNode = path.parent.name;
+            refInfo.type = t.stringLiteral('native');
             // Get all attributes
             let idAttr = attributes.find(attr => t.isJSXIdentifier(attr.name, { name: 'id' }));
             if (!idAttr) {
@@ -63,6 +67,19 @@ function isNativeComponent(path, platform) {
     node: { name: tagName }
   } = path.parentPath.get('name');
   return !!getCompiledComponents(platform)[tagName];
+}
+
+function insertBindComRef(attributes, childExpression, ref, triggerRef) {
+  // Inset setCompRef
+  // <Child bindComRef={fn} /> in MiniApp
+  // <Child bindComRef="scrollRef" /> in WechatMiniProgram
+  attributes.push(
+    t.jsxAttribute(t.jsxIdentifier('bindComRef'),
+      triggerRef ? ref :
+        t.jsxExpressionContainer(
+          childExpression
+        ))
+  );
 }
 
 module.exports = {
