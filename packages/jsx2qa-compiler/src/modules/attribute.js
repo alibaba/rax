@@ -69,19 +69,6 @@ function isNativeComponent(path, platform) {
   return !!getCompiledComponents(platform)[tagName];
 }
 
-function insertBindComRef(attributes, childExpression, ref, triggerRef) {
-  // Inset setCompRef
-  // <Child bindComRef={fn} /> in MiniApp
-  // <Child bindComRef="scrollRef" /> in WechatMiniProgram
-  attributes.push(
-    t.jsxAttribute(t.jsxIdentifier('bindComRef'),
-      triggerRef ? ref :
-        t.jsxExpressionContainer(
-          childExpression
-        ))
-  );
-}
-
 module.exports = {
   parse(parsed, code, options) {
     const { refs, dynamicRef } = transformAttribute(parsed.templateAST, code, options.adapter);
