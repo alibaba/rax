@@ -177,17 +177,6 @@ function transformMapMethod(path, parsed, code, adapter) {
           [adapter.for]: t.jsxExpressionContainer(forNode)
         };
 
-        if (adapter.needTransformKey && t.isJSXElement(returnElPath.node)) {
-          const attributes = returnElPath.node.openingElement.attributes;
-          const keyIndex = findIndex(attributes, attr => t.isJSXIdentifier(attr.name, { name: 'key' }));
-          if (keyIndex > -1) {
-            listAttr.key = attributes[keyIndex].value;
-            attributes.splice(keyIndex, 1);
-          } else {
-            listAttr.key = t.stringLiteral('*this');
-          }
-        }
-
         // Use renamed index instead of original params[1]
         params[1] = renamedIndex;
         const listBlock = createJSX('block', listAttr, [returnElPath.node]);

@@ -41,9 +41,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   // Miniapp template tag name does not support special characters.
   const aliasName = alias.name.replace(/@|\//g, '_');
   const componentTag = alias.default ? aliasName : `${aliasName}-${alias.local.toLowerCase()}`;
-  // todo delete
-  const pureComponentTag = componentTag.replace('_ali_', '');
-  replaceComponentTagName(path, t.jsxIdentifier(pureComponentTag));
+  replaceComponentTagName(path, t.jsxIdentifier(componentTag));
   node.isCustomEl = alias.isCustomEl;
   node.name.isCustom = true;
 
@@ -91,7 +89,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
     if (componentTag === 'slot') return;
 
     // handle with icon in adapter.singleFileComponent
-    if (pureComponentTag.indexOf('rax-icon') > -1) {
+    if (componentTag.indexOf('rax-icon') > -1) {
       const fontAttr = {};
       node.attributes.forEach((attr) => {
         if (attr.name.name === 'fontFamily') {
@@ -360,9 +358,7 @@ module.exports = {
       if (!parsed.usingComponents) {
         parsed.usingComponents = {};
       }
-      // todo delete
-      const key = componentTag.replace('_ali_', '');
-      parsed.usingComponents[key] = getComponentPath(componentsAlias[componentTag], options);
+      parsed.usingComponents[componentTag] = getComponentPath(componentsAlias[componentTag], options);
     });
     // Assign used context
     parsed.contextList = contextList;
@@ -452,18 +448,18 @@ function getComponentPath(alias, options) {
       );
       return;
     } else {
-      const miniappComponentPath = isSingleComponent ?
+      const quickappComponentPath = isSingleComponent ?
         pkg[componentConfig][mainName] :
         alias.isSubComponent ?
           pkg[componentConfig].subPackages[alias.local].subComponents[alias.subComponentName][mainName] :
           pkg[componentConfig].subPackages[alias.local][mainName];
       if (disableCopyNpm) {
-        return normalizeOutputFilePath(join(pkg.name, miniappComponentPath));
+        return normalizeOutputFilePath(join(pkg.name, quickappComponentPath));
       }
-      const miniappConfigRelativePath = relative(pkg.main, miniappComponentPath);
-      const realMiniappAbsPath = resolve(realNpmFile, miniappConfigRelativePath);
-      const realMiniappRelativePath = realMiniappAbsPath.slice(realMiniappAbsPath.indexOf(realPkgName) + realPkgName.length);
-      return normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, realPkgName, realMiniappRelativePath))));
+      const quickappConfigRelativePath = relative(pkg.main, quickappComponentPath);
+      const realquickappAbsPath = resolve(realNpmFile, quickappConfigRelativePath);
+      const realquickappRelativePath = realquickappAbsPath.slice(realquickappAbsPath.indexOf(realPkgName) + realPkgName.length);
+      return normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, realPkgName, realquickappRelativePath))));
     }
   }
 }

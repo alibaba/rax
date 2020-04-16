@@ -120,7 +120,7 @@ module.exports = {
     const targetFileDir = dirname(join(outputPath, relative(sourcePath, resourcePath)));
     const runtimePath = getRuntimePath(outputPath, targetFileDir, platform, disableCopyNpm);
     removeRaxImports(ast);
-    ensureIndexPathInImports(ast, resourcePath); // In WeChat miniapp, `require` can't get index file if index is omitted
+    ensureIndexPathInImports(ast, resourcePath); // In quickapp, `require` can't get index file if index is omitted
     renameCoreModule(ast, runtimePath);
     renameFileModule(ast);
     // const inputEl = useRef(null) => const inputEl = useRef(null, 'inputEl');

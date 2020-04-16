@@ -4,7 +4,7 @@
  */
 module.exports = [
   // Generate JSON config.
-  require('./config'),
+  // require('./config'),
   // Extract css from files.
   require('./css'),
   // Handle js code.

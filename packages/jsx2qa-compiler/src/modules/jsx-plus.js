@@ -267,34 +267,6 @@ function transformSlotDirective(ast, adapter) {
       const { node } = path;
       if (t.isJSXNamespacedName(node.name) && t.isJSXIdentifier(node.name.namespace, { name: 'x-slot' })) {
         const slotName = node.name.name;
-        const slotScopeName =
-          node.value || t.stringLiteral('__defaultScopeName');
-        const parentJSXOpeningEl = path.parentPath.node;
-
-        if (adapter.slotScope && slotScopeName) {
-          parentJSXOpeningEl.attributes.push(t.jsxAttribute(t.jsxIdentifier('slot-scope'), slotScopeName));
-        }
-
-        const parentJSXElPath = path.parentPath.parentPath;
-        parentJSXElPath.traverse({
-          Identifier(innerPath) {
-            if (
-              innerPath.node.name === slotScopeName.value &&
-              !(
-                innerPath.parentPath.isMemberExpression() &&
-                innerPath.parent.property === innerPath.node
-              )
-            ) {
-              innerPath.node.__slotScope = true;
-            }
-          },
-          JSXOpeningElement(innerPath) {
-            // mark slot element
-            innerPath.node.__slotChildEl = {
-              scopeName: slotScopeName
-            };
-          }
-        });
         path.replaceWith(t.jsxAttribute(t.jsxIdentifier('slot'), t.stringLiteral(slotName.name)));
       }
     }
@@ -356,12 +328,6 @@ function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code,
       )
     );
     args.forEach((arg, index) => {
-      // attributes.push(
-      //   t.jsxAttribute(
-      //     t.jsxIdentifier([adapter.forItem, adapter.forIndex][index]),
-      //     t.stringLiteral(arg.name)
-      //   )
-      // );
       // Mark skip ids.
       const skipIds = node.skipIds = node.skipIds || new Map();
       skipIds.set(arg.name, true);
