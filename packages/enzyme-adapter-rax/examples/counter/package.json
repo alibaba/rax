@@ -1,0 +1,20 @@
+{
+  "name": "enzyme-rax-counter-example",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "setupFilesAfterEnv": ["./setup.js"]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0",
+    "jest": "^25.3.0",
+    "jsdom": "^15.1.1"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  }
+}
