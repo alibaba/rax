@@ -14,11 +14,13 @@ import callEvent from './events/callEvent';
 import callSimpleEvent from './events/callSimpleEvent';
 
 const { cache, tool, perf, constants } = render.$$adapter;
-const { PAGE_INIT } = constants;
+const { PAGE_INIT, SET_DATA } = constants;
 
 // The number of levels of dom subtrees rendered as custom components
 const MAX_DOM_SUB_TREE_LEVEL = 10;
 let DOM_SUB_TREE_LEVEL = 10;
+
+const renderStacks = [];
 
 const config = {
   data: {
@@ -32,8 +34,27 @@ const config = {
     addGlobalClass: true // global style
   },
   methods: {
+    enqueueRender(payload) {
+      renderStacks.push(payload);
+      if (this.pendingRender) return;
+      this.executeRender();
+    },
+    executeRender() {
+      this.pendingRender = true;
+      setTimeout(() => {
+        perf.start(SET_DATA);
+        this.pendingRender = false;
+        if (typeof this.$spliceData === 'function') {
+
+          this.pendingRender = false;
+          renderStacks = [];
+          return;
+        }
+        renderStacks = [];
+      }, 0);
+    },
     // Watch child nodes update
-    onChildNodesUpdate() {
+    onChildNodesUpdate(...args) {
       // Node unomunted
       if (!this.pageId || !this.nodeId) return;
 
@@ -70,7 +91,7 @@ const config = {
           !childNode.isLeaf &&
           !childNode.isSimple
         ) {
-          childNode.domNode.$$trigger('$$childNodesUpdate');
+          childNode.domNode.$$trigger('$$childNodesUpdate', { args });
         }
 
         if (childNode.childNodes && childNode.childNodes.length)

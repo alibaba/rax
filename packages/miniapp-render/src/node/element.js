@@ -153,13 +153,14 @@ class Element extends Node {
 
   // Update parent tree
   $_triggerParentUpdate() {
-    if (this.parentNode && !this.$_notTriggerUpdate) this.parentNode.$$trigger('$$childNodesUpdate');
+    if (this.parentNode && !this.$_notTriggerUpdate) this.parentNode.$$trigger('$$childNodesUpdate', {args: [123,456]});
     if (!this.$_notTriggerUpdate) this.$$trigger('$$domNodeUpdate');
   }
 
   // Update child nodes
-  $_triggerMeUpdate() {
-    if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
+  $_triggerMeUpdate(...args) {
+    console.log('$_triggerMeUpdate args', args);
+    if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate', { args });
   }
 
   // Changes to the mapping table caused by changes to update child nodes
@@ -670,7 +671,10 @@ class Element extends Node {
     }
 
     // Trigger webview update
-    if (hasUpdate) this.$_triggerMeUpdate();
+    if (hasUpdate) {
+      const payload = [`${this.$_path}.cn`, this.$_children.length - 1, 0, node];
+      this.$_triggerMeUpdate(payload);
+    }
 
     return this;
   }
@@ -690,7 +694,8 @@ class Element extends Node {
       this.$_updateChildrenExtra(node, true);
 
       // Trigger webview update
-      this.$_triggerMeUpdate();
+      const payload = [`${this.$_path}.cn`, index, 1];
+      this.$_triggerMeUpdate(payload);
     }
 
     return node;
@@ -734,12 +739,14 @@ class Element extends Node {
       this.$_updateChildrenExtra(node);
 
       hasUpdate = true;
+      const payload = [
+        `${this.$_path}.cn`,
+        insertIndex === -1 ? this.$_children.length - 1 : insertIndex,
+        0,
+        node
+      ];
+      this.$_triggerMeUpdate(payload);
     }
-
-
-    // Trigger the webview update
-    if (hasUpdate) this.$_triggerMeUpdate();
-
     return node;
   }
 
@@ -784,7 +791,15 @@ class Element extends Node {
     }
 
     // Trigger the webview side update
-    if (hasUpdate) this.$_triggerMeUpdate();
+    if (hasUpdate) {
+      const payload = [
+        `${this.$_path}.cn`,
+        replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
+        replaceIndex === -1 ? 0 : 1,
+        node
+      ];
+      this.$_triggerMeUpdate(payload);
+    }
 
     return old;
   }
