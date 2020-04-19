@@ -76,16 +76,14 @@ wrapper.update();
 // Test that parent component updated as expected.
 ```
 
+### Re-render
+When target tested component is triggered rerender, you need use `jest.runAllTimers()` to resolve the async render.
 
-### Property names
-
-In order to support Enzyme's class selectors, `class` props on Rax components
-are mapped to `className`.
+**Example:**
 
 ```js
-import { mount } from 'enzyme';
-
-const wrapper = mount(<div class="widget"/>);
-wrapper.props() // Returns `{ children: [], className: 'widget' }`
-wrapper.find('.widget').length // Returns `1`
+const wrapper = mount(<Counter initialCount={5} />);
+wrapper.find('button').simulate('click');
+jest.runAllTimers();
+expect(wrapper.text()).toEqual('Current value: 6');
 ```

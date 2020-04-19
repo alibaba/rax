@@ -11,16 +11,13 @@ describe('Counter', () => {
 
   it('should display initial count', () => {
     const wrapper = mount(<Counter initialCount={5} />);
-    jest.runAllTimers();
-    const text = wrapper.text();
-    expect(text).toEqual('Current value: 5');
+    expect(wrapper.text()).toEqual('Current value: 5');
   });
 
-  // it('should increment after "Increment" button is clicked', () => {
-  //   const wrapper = mount(<Counter initialCount={5} />);
-  //   jest.runAllTimers();
-  //   wrapper.find('button').simulate('click');
-
-  //   expect(wrapper.text()).to.include('Current value: 6');
-  // });
+  it('should increment after "Increment" button is clicked', () => {
+    const wrapper = mount(<Counter initialCount={5} />);
+    wrapper.find('button').simulate('click');
+    jest.runAllTimers();
+    expect(wrapper.text()).toEqual('Current value: 6');
+  });
 });

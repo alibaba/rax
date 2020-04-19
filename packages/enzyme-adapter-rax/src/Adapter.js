@@ -1,20 +1,54 @@
-const { createElement } = require('rax');
-const renderer = require('rax-test-renderer');
+const { createElement, render } = require('rax');
 const { renderToString } = require('rax-server-renderer');
 const { default: findDOMNode } = require('rax-find-dom-node');
 const { default: isValidElement } = require('rax-is-valid-element');
 const { EnzymeAdapter } = require('enzyme');
+const createMountWrapper = require('./createMountWrapper');
+const RootFinder = require('./RootFinder');
+const DriverDOM = require('driver-dom');
+const { isArrayLike, mapFind, flatten, ensureKeyOrUndefined } = require('./utils');
+const { CURRENT_ELEMENT, INSTANCE, INTERNAL, RENDERED_COMPONENT, RENDERED_CHILDREN, HOST_NODE } = require('./constants');
 
-const CURRENT_ELEMENT = '__currentElement';
-const RENDERED_COMPONENT = '_renderedComponent';
-const INSTANCE = '_instance';
-
-function childrenList(children) {
-  var res = [];
-  for (var name in children) {
-    res.push(children[name]);
+function findElement(el, predicate) {
+  if (el === null || typeof el !== 'object' || !('type' in el)) {
+    return undefined;
   }
-  return res;
+  if (predicate(el)) {
+    return el;
+  }
+  const { rendered } = el;
+  if (isArrayLike(rendered)) {
+    return mapFind(rendered, (x) => findElement(x, predicate), (x) => typeof x !== 'undefined');
+  }
+  return findElement(rendered, predicate);
+}
+
+function nodeType(instance) {
+  if (instance !== null) {
+    return instance.__isReactiveComponent ? 'function' : 'class';
+  }
+  return 'host';
+}
+
+function getNodeFromRootFinder(isCustomComponent, tree, options) {
+  if (!isCustomComponent(options.wrappingComponent)) {
+    return tree.rendered;
+  }
+  const rootFinder = findElement(tree, (node) => node.type === RootFinder);
+  if (!rootFinder) {
+    throw new Error('`wrappingComponent` must render its children!');
+  }
+  return rootFinder.rendered;
+}
+
+function childrenFromInstance(instance, el) {
+  if (instance[RENDERED_CHILDREN]) {
+    return Object.values(instance[RENDERED_CHILDREN]);
+  }
+  if (el.props) {
+    return Object.values({ '.0': el.props.children });
+  }
+  return [];
 }
 
 function propsWithKeysAndRef(node) {
@@ -28,120 +62,179 @@ function propsWithKeysAndRef(node) {
   return node.props;
 }
 
-function instanceToTree(element) {
-  var children = null;
-  var props = null;
-  var state = null;
-  var context = null;
-  var name = null;
-  var type = null;
-  var text = null;
-  var nodeType = 'Native';
-  // If the parent is a native node without rendered children, but with
-  // multiple string children, then the `element` that gets passed in here is
-  // a plain value -- a string or number.
-  if (typeof element !== 'object') {
-    nodeType = 'Text';
-    text = element + '';
-  } else if (element[CURRENT_ELEMENT] === null || element[CURRENT_ELEMENT] === false) {
-    nodeType = 'Empty';
-  } else if (element[RENDERED_COMPONENT]) {
-    nodeType = 'NativeWrapper';
-    children = [instanceToTree(element[RENDERED_COMPONENT])];
-    props = element[INSTANCE].props;
-    state = element[INSTANCE].state;
-    context = element[INSTANCE].context;
-    if (context && Object.keys(context).length === 0) {
-      context = null;
-    }
-  } else if (element[RENDERED_COMPONENT]) {
-    children = childrenList(instanceToTree(element[RENDERED_COMPONENT]));
-  } else if (element[CURRENT_ELEMENT] && element[CURRENT_ELEMENT].props) {
-    // This is a native node without rendered children -- meaning the children
-    // prop is just a string or (in the case of the <option>) a list of
-    // strings & numbers.
-    children = element[CURRENT_ELEMENT].props.children.map(child => instanceToTree(child));
-  }
-
-  if (!props && element[CURRENT_ELEMENT] && element[CURRENT_ELEMENT].props) {
-    props = element[CURRENT_ELEMENT].props;
-  }
-
-  // != used deliberately here to catch undefined and null
-  if (element[CURRENT_ELEMENT] != null) {
-    type = element[CURRENT_ELEMENT].type;
-    if (typeof type === 'string') {
-      name = type;
-    } else if (element.getName) {
-      nodeType = 'Composite';
-      name = element.getName();
-      // 0.14 top-level wrapper
-      // TODO(jared): The backend should just act as if these don't exist.
-      if (element._renderedComponent && element[CURRENT_ELEMENT].props === element._renderedComponent[CURRENT_ELEMENT]) {
-        nodeType = 'Wrapper';
+function getWrappingComponentMountRenderer({ toTree, getMountWrapperInstance }) {
+  return {
+    getNode() {
+      const instance = getMountWrapperInstance();
+      return instance ? toTree(instance).rendered : null;
+    },
+    render(el, context, callback) {
+      const instance = getMountWrapperInstance();
+      if (!instance) {
+        throw new Error('The wrapping component may not be updated if the root is unmounted.');
       }
-      if (name === null) {
-        name = 'No display name';
-      }
-    } else if (element._text) {
-      nodeType = 'Text';
-      text = element._text;
-    } else {
-      name = type.displayName || type.name || 'Unknown';
+      return instance.setWrappingComponentProps(el.props, callback);
+    },
+  };
+}
+
+function nodeTypeFromType(type) {
+  if (typeof type === 'string') {
+    return 'host';
+  }
+  if (type && type.prototype && type.prototype.__isReactiveComponent) {
+    return 'function';
+  }
+  return 'class';
+}
+
+function elementToTree(el) {
+  if (el === null || typeof el !== 'object' || !('type' in el)) {
+    return el;
+  }
+  const {
+    type,
+    props,
+    key,
+    ref,
+  } = el;
+  const { children } = props;
+  let rendered = null;
+  if (isArrayLike(children)) {
+    rendered = flatten(children).map((x) => elementToTree(x));
+  } else if (typeof children !== 'undefined') {
+    rendered = elementToTree(children);
+  }
+
+  const nodeType = nodeTypeFromType(type);
+
+  if (nodeType === 'host' && props.dangerouslySetInnerHTML) {
+    if (props.children != null) {
+      const error = new Error('Can only set one of `children` or `props.dangerouslySetInnerHTML`.');
+      error.name = 'Invariant Violation';
+      throw error;
     }
   }
 
-  if (element[INSTANCE]) {
-    let inst = element[INSTANCE];
-    if (inst[RENDERED_COMPONENT]) {
-      children = childrenList(instanceToTree(inst[RENDERED_COMPONENT]));
-    }
-  }
-
-  const result = {
+  return {
     nodeType,
     type,
-    name,
     props,
-    state,
-    context,
-    children,
-    text
+    key: ensureKeyOrUndefined(key),
+    ref,
+    instance: null,
+    rendered,
   };
+}
 
-  console.log('result', result);
+function instanceToTree(instance) {
+  if (!instance || typeof instance !== 'object') {
+    return instance;
+  }
 
-  return result;
+  const el = instance[CURRENT_ELEMENT];
+  if (!el) {
+    return null;
+  }
+  if (typeof el !== 'object') {
+    return el;
+  }
+
+  if (instance[HOST_NODE]) {
+    return {
+      nodeType: 'host',
+      type: el.type,
+      props: el.props,
+      key: ensureKeyOrUndefined(el.key),
+      ref: el.ref,
+      instance: instance[INSTANCE] || instance[HOST_NODE] || null,
+      rendered: childrenFromInstance(instance, el).map(instanceToTree),
+    };
+  }
+
+  if (instance[RENDERED_CHILDREN]) {
+    return {
+      nodeType: nodeType(instance[INSTANCE]),
+      type: el.type,
+      props: el.props,
+      key: ensureKeyOrUndefined(el.key),
+      ref: el.ref,
+      instance: instance[INSTANCE] || instance[HOST_NODE] || null,
+      rendered: Object.values(instance[RENDERED_CHILDREN]).map(instanceToTree),
+    };
+  }
+
+  if (instance[RENDERED_COMPONENT]) {
+    const rendered = instanceToTree(instance[RENDERED_COMPONENT]);
+    return {
+      nodeType: nodeType(instance[INSTANCE]),
+      type: el.type,
+      props: el.props,
+      key: ensureKeyOrUndefined(el.key),
+      ref: el.ref,
+      instance: instance[INSTANCE] || instance[HOST_NODE] || null,
+      rendered: rendered,
+    };
+  }
+  return {
+    nodeType: nodeType(instance[INSTANCE]),
+    type: el.type,
+    props: el.props,
+    key: ensureKeyOrUndefined(el.key),
+    ref: el.ref,
+    instance: instance[INSTANCE] || null,
+    rendered: childrenFromInstance(instance, el).map(instanceToTree),
+  };
 }
 
 class RaxAdapter extends EnzymeAdapter {
   constructor() {
     super();
-
     const { lifecycles } = this.options;
     this.options = {
       ...this.options,
-      supportPrevContextArgumentOfComponentDidUpdate: true,
+      enableComponentDidUpdateOnSetState: true,
       legacyContextMode: 'parent',
       lifecycles: {
         ...lifecycles,
         componentDidUpdate: {
-          prevContext: true,
+          onSetState: true,
+        },
+        setState: {
+          skipsComponentDidUpdateOnNullish: true,
         },
         getChildContext: {
-          calledByRenderer: true,
+          calledByRenderer: false,
         },
       },
     };
+
+    this.nodeToElement = this.nodeToElement.bind(this);
   }
 
   createMountRenderer(options) {
     let instance = null;
+    const adapter = this;
+    const domNode = options.attachTo || global.document.createElement('div');
     return {
       render(el, context, callback) {
-        instance = renderer.create(el);
-        if (typeof callback === 'function') {
-          callback();
+        if (instance === null) {
+          const { type, props, ref } = el;
+          const wrapperProps = {
+            Component: type,
+            wrappingComponentProps: options.wrappingComponentProps,
+            props,
+            context,
+            ...ref && { refProp: ref },
+          };
+          const RaxWrapperComponent = createMountWrapper(el, { ...options, adapter });
+          const wrappedEl = createElement(RaxWrapperComponent, wrapperProps);
+          instance = render(wrappedEl, domNode, { driver: DriverDOM });
+          if (typeof callback === 'function') {
+            callback();
+          }
+        } else {
+          instance.setChildProps(el.props, context, callback);
         }
       },
       unmount() {
@@ -152,20 +245,32 @@ class RaxAdapter extends EnzymeAdapter {
         if (!instance) {
           return null;
         }
-        return instanceToTree(instance);
+        return getNodeFromRootFinder(
+          adapter.isCustomComponent,
+          instanceToTree(instance[INTERNAL]),
+          options,
+        );
       },
       simulateEvent(node, eventName, args) {
         const event = new Event(eventName, {
-          bubbles: args.bubbles,
-          composed: args.composed,
-          cancelable: args.cancelable,
+          bubbles: args.bubbles || true,
+          composed: args.composed || false,
+          cancelable: args.cancelable || false,
         });
-        Object.assign(event, args);
 
-        node.instance.dispatchEvent(event);
+        node.instance[INTERNAL][HOST_NODE].dispatchEvent(event);
       },
       batchedUpdates(fn) {
-        fn();
+        return fn;
+      },
+      getWrappingComponentRenderer() {
+        return {
+          ...this,
+          ...getWrappingComponentMountRenderer({
+            toTree: (inst) => instanceToTree(inst[INTERNAL]),
+            getMountWrapperInstance: () => instance,
+          }),
+        };
       }
     };
   }
@@ -193,14 +298,17 @@ class RaxAdapter extends EnzymeAdapter {
   // converts an RSTNode to the corresponding JSX Pragma Element. This will be needed
   // in order to implement the `Wrapper.mount()` and `Wrapper.shallow()` methods, but should
   // be pretty straightforward for people to implement.
-  // eslint-disable-next-line class-methods-use-this, no-unused-vars
   nodeToElement(node) {
     if (!node || typeof node !== 'object') return null;
     return createElement(node.type, propsWithKeysAndRef(node));
   }
 
+  elementToTree(element) {
+    return elementToTree(element);
+  }
+
   nodeToHostNode(node) {
-    return findDOMNode(node.instance);
+    return findDOMNode(node.instance[INTERNAL]);
   }
 
   isValidElement(element) {
@@ -221,6 +329,10 @@ class RaxAdapter extends EnzymeAdapter {
 
   createElement(...args) {
     return createElement(...args);
+  }
+
+  invokeSetStateCallback(instance, callback) {
+    callback.call(instance);
   }
 }
 
