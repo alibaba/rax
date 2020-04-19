@@ -53,28 +53,7 @@ in behavior between this adapter and Enzyme's React adapters to be aware of:
 
 ### Shallow rendering
 
-Rax doesn't support shallow rendering.
-
-### Simulating events
-
-The [simulate](https://airbnb.io/enzyme/docs/api/ReactWrapper/simulate.html)
-API does not dispatch actual DOM events in the React adapters, it just calls
-the corresponding handler. The Rax adapter does dispatch an actual event
-using `element.dispatchEvent(...)`.
-
-**Example:**
-
-```js
-const wrapper = mount(<ParentComponent/>);
-
-// Trigger a state update outsize of Enzyme.
-wrapper.find(ChildComponent).props().onClick();
-
-// Update the Enzyme wrapper's snapshot.
-wrapper.update();
-
-// Test that parent component updated as expected.
-```
+The "shallow" rendering mode works differently under the hood. It is consistent with React in only rendering a component "one level deep" but, unlike React, it creates real DOM nodes. It also runs all of the normal lifecycle hooks and effects.
 
 ### Re-render
 When target tested component is triggered rerender, you need use `jest.runAllTimers()` to resolve the async render.

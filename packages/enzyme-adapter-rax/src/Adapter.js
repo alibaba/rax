@@ -1,12 +1,15 @@
+import { NATIVE_NODE } from '../../rax/lib/constant';
+
 const { createElement, render } = require('rax');
 const { renderToString } = require('rax-server-renderer');
 const { default: findDOMNode } = require('rax-find-dom-node');
+const renderer = require('rax-test-renderer');
 const { default: isValidElement } = require('rax-is-valid-element');
 const { EnzymeAdapter } = require('enzyme');
 const createMountWrapper = require('./createMountWrapper');
 const RootFinder = require('./RootFinder');
 const DriverDOM = require('driver-dom');
-const { isArrayLike, mapFind, flatten, ensureKeyOrUndefined } = require('./utils');
+const { isArrayLike, mapFind, flatten, ensureKeyOrUndefined, propFromEvent } = require('./utils');
 const { CURRENT_ELEMENT, INSTANCE, INTERNAL, RENDERED_COMPONENT, RENDERED_CHILDREN, HOST_NODE } = require('./constants');
 
 function findElement(el, predicate) {
@@ -24,7 +27,7 @@ function findElement(el, predicate) {
 }
 
 function nodeType(instance) {
-  if (instance !== null) {
+  if (instance) {
     return instance.__isReactiveComponent ? 'function' : 'class';
   }
   return 'host';
@@ -88,7 +91,7 @@ function nodeTypeFromType(type) {
   return 'class';
 }
 
-function elementToTree(el) {
+function elementToTree(el, renderedChildren) {
   if (el === null || typeof el !== 'object' || !('type' in el)) {
     return el;
   }
@@ -98,10 +101,10 @@ function elementToTree(el) {
     key,
     ref,
   } = el;
-  const { children } = props;
+  const { children = renderedChildren } = props;
   let rendered = null;
   if (isArrayLike(children)) {
-    rendered = flatten(children).map((x) => elementToTree(x));
+    rendered = flatten([...children]).map(elementToTree);
   } else if (typeof children !== 'undefined') {
     rendered = elementToTree(children);
   }
@@ -251,17 +254,14 @@ class RaxAdapter extends EnzymeAdapter {
           options,
         );
       },
-      simulateEvent(node, eventName, args) {
-        const event = new Event(eventName, {
-          bubbles: args.bubbles || true,
-          composed: args.composed || false,
-          cancelable: args.cancelable || false,
-        });
-
-        node.instance[INTERNAL][HOST_NODE].dispatchEvent(event);
+      simulateEvent(node, eventName, ...args) {
+        const handler = node.props[propFromEvent(eventName)];
+        if (handler) {
+          handler(...args);
+        }
       },
       batchedUpdates(fn) {
-        return fn;
+        fn();
       },
       getWrappingComponentRenderer() {
         return {
@@ -272,6 +272,58 @@ class RaxAdapter extends EnzymeAdapter {
           }),
         };
       }
+    };
+  }
+
+  createShallowRenderer(options) {
+    let isDOM = false;
+    let cachedNode = null;
+    let instance = null;
+    const adapter = this;
+    return {
+      render(el, context) {
+        cachedNode = el;
+        if (typeof el.type === 'string') {
+          isDOM = true;
+        } else {
+          isDOM = false;
+          if (instance === null) {
+            const { type, props, ref } = el;
+            const wrapperProps = {
+              Component: type,
+              wrappingComponentProps: options.wrappingComponentProps,
+              props,
+              context,
+              ...ref && { refProp: ref },
+            };
+            const RaxWrapperComponent = createMountWrapper(el, { ...options, adapter });
+            const wrappedEl = createElement(RaxWrapperComponent, wrapperProps);
+            const container = render(wrappedEl, null, { driver: DriverDOM });
+            instance = container[INTERNAL][RENDERED_COMPONENT];
+          } else {
+            instance.setChildProps(el.props, context);
+          }
+        }
+      },
+      getNode() {
+        if (isDOM) {
+          return cachedNode;
+        }
+        return elementToTree(instance[CURRENT_ELEMENT], instance[INSTANCE].__children);
+      },
+      simulateEvent(node, eventName, ...args) {
+        const handler = node.props[propFromEvent(eventName)];
+        if (handler) {
+          handler(...args);
+        }
+      },
+      unmount() {
+        instance.unmount();
+        instance = null;
+      },
+      batchedUpdates(fn) {
+        fn();
+      },
     };
   }
 
@@ -289,6 +341,7 @@ class RaxAdapter extends EnzymeAdapter {
   createRenderer(options) {
     switch (options.mode) {
       case EnzymeAdapter.MODES.MOUNT: return this.createMountRenderer(options);
+      case EnzymeAdapter.MODES.SHALLOW: return this.createShallowRenderer(options);
       case EnzymeAdapter.MODES.STRING: return this.createStringRenderer(options);
       default:
         throw new Error(`Enzyme Internal Error: Unrecognized mode: ${options.mode}`);
@@ -329,10 +382,6 @@ class RaxAdapter extends EnzymeAdapter {
 
   createElement(...args) {
     return createElement(...args);
-  }
-
-  invokeSetStateCallback(instance, callback) {
-    callback.call(instance);
   }
 }
 

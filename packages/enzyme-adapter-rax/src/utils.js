@@ -66,3 +66,7 @@ export function flatten(arrs) {
 export function ensureKeyOrUndefined(key) {
   return key || (key === '' ? '' : undefined);
 }
+
+export function propFromEvent(eventName, eventOptions = {}) {
+  return `on${eventName[0].toUpperCase()}${eventName.slice(1)}`;
+}
