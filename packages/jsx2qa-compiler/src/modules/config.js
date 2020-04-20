@@ -21,13 +21,7 @@ module.exports = {
     } else if (options.type === 'component') {
       parsed.config = { component: true };
     }
-  },
-  generate(ret, parsed, options) {
-    const config = ret.config = parsed.config;
-    if (parsed.usingComponents && Object.keys(parsed.usingComponents).length > 0) {
-      config.usingComponents = parsed.usingComponents;
-    }
-  },
+  }
 };
 
 function convertAstExpressionToVariable(node) {

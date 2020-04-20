@@ -566,39 +566,8 @@ function isNativeComponent(path, platform) {
   const {
     node: { name: tagName }
   } = path.parentPath.get('name');
-  console.log('tagName', tagName);
   return !!getCompiledComponents(platform)[tagName];
 }
-
-// function transformPreComponentAttr(ast) {
-//   traverse(ast, {
-//     JSXAttribute(path) {
-//       const { node, parentPath } = path;
-//       const attrName = node.name.name;
-//       if (typeof parentPath.node.isCustomEl !== 'undefined' && !parentPath.node.isCustomEl) {
-//         console.log(isNativeComponent(path))
-//         // origin components
-//         // onChange => bindChange
-//         if (attrName.slice(0, 2) === 'on') {
-//           node.name.name = attrName.replace('on', 'bind');
-//         }
-//         // bindChange => bind-change
-//         const newAttrName = node.name.name;
-//         if (/[A-Z]+/g.test(newAttrName) && newAttrName !== 'className') {
-//           node.name.name = newAttrName.replace(/[A-Z]+/g, (v, i) => {
-//             if (i !== 0) {
-//               return `-${v.toLowerCase()}`;
-//             }
-//             return v;
-//           });
-//         }
-//       }
-//       if (parentPath.node.name.name === 'div') {
-//         node.name.name = node.name.name.toLowerCase();
-//       }
-//     }
-//   });
-// }
 
 function getExpressionName(expression) {
   if (t.isIdentifier(expression.object)) {

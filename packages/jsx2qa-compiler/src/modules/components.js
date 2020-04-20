@@ -1,4 +1,4 @@
-const { join, relative, dirname, resolve, sep } = require('path');
+const { join, relative, dirname, resolve, sep, extname } = require('path');
 const { readJSONSync } = require('fs-extra');
 const resolveModule = require('resolve');
 const t = require('@babel/types');
@@ -355,10 +355,21 @@ module.exports = {
     transformDataset(parsed, options);
     // Collect used components
     Object.keys(componentsAlias).forEach(componentTag => {
-      if (!parsed.usingComponents) {
-        parsed.usingComponents = {};
+      if (!parsed.importComponents) {
+        parsed.importComponents = {};
       }
-      parsed.usingComponents[componentTag] = getComponentPath(componentsAlias[componentTag], options);
+      let src = getComponentPath(componentsAlias[componentTag], options);
+      if (/^c-/.test(componentTag)) {
+        let result = './' + relative(dirname(options.resourcePath), src); // components/Repo.jsx
+        src = `${removeExt(result)}.${options.adapter.ext}`;
+      }
+      parsed.importComponents[ src ] = genExpression(createJSX('import', {
+        src: t.stringLiteral(src),
+        name: t.stringLiteral(componentTag)
+      }), {
+        comments: false,
+        concise: true,
+      });
     });
     // Assign used context
     parsed.contextList = contextList;
@@ -370,13 +381,23 @@ module.exports = {
     }
   },
   generate(ret, parsed, options) {
-    ret.usingComponents = parsed.usingComponents;
+    const importComponents = [];
+    const parseComponents = parsed.importComponents || {};
+    Object.keys(parseComponents).forEach(component => {
+      importComponents.push(parseComponents[component]);
+    });
+    ret.importComponents = importComponents;
     ret.iconfontMap = parsed.iconfontMap;
   },
   // For test case.
   _transformComponents: transformComponents,
   _transformDataset: transformDataset
 };
+
+function removeExt(path) {
+  const ext = extname(path);
+  return path.slice(0, path.length - ext.length);
+}
 
 function getComponentAlias(tagName, imported) {
   if (imported) {
