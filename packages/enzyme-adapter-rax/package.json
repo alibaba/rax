@@ -6,13 +6,13 @@
   "repository": "https://github.com/alibaba/rax",
   "author": "Rax Team",
   "devDependencies": {
-    "rax": "^1.0.0",
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
-    "@babel/preset-react": "^7.0.0"
+    "@babel/preset-react": "^7.0.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "rax": "^1.0.0"
   },
   "peerDependencies": {
-    "enzyme": "^3.8.0",
     "rax": "^1.0.0"
   },
   "dependencies": {
@@ -23,7 +23,6 @@
     "rax-find-dom-node": "^1.0.1",
     "rax-is-valid-element": "^1.0.0",
     "rax-server-renderer": "^1.0.1",
-    "rax-test-renderer": "^1.0.0",
     "rax-unmount-component-at-node": "^1.0.0"
   }
 }

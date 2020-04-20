@@ -51,9 +51,12 @@ The general intent is that tests written using Enzyme + React can be easily made
 to work with Enzyme + Rax. However there are some differences
 in behavior between this adapter and Enzyme's React adapters to be aware of:
 
-### Shallow rendering
+### Simulating events
 
-The "shallow" rendering mode works differently under the hood. It is consistent with React in only rendering a component "one level deep" but, unlike React, it creates real DOM nodes. It also runs all of the normal lifecycle hooks and effects.
+The [simulate](https://airbnb.io/enzyme/docs/api/ReactWrapper/simulate.html)
+API does not dispatch actual DOM events in the React adapters, it just calls
+the corresponding handler. The Rax adapter does dispatch an actual event
+using `element.dispatchEvent(...)`.
 
 ### Re-render
 When target tested component is triggered rerender, you need use `jest.runAllTimers()` to resolve the async render.

@@ -101,6 +101,7 @@ function elementToTree(el, renderedChildren) {
     key,
     ref,
   } = el;
+
   const { children = renderedChildren } = props;
   let rendered = null;
   if (isArrayLike(children)) {
@@ -126,6 +127,7 @@ function elementToTree(el, renderedChildren) {
     key: ensureKeyOrUndefined(key),
     ref,
     instance: null,
+    [HOST_NODE]: el[HOST_NODE],
     rendered,
   };
 }
@@ -188,6 +190,21 @@ function instanceToTree(instance) {
     instance: instance[INSTANCE] || null,
     rendered: childrenFromInstance(instance, el).map(instanceToTree),
   };
+}
+
+function addNativeNodeToElement(instance) {
+  const renderedComponent = instance[RENDERED_COMPONENT];
+  if (renderedComponent) {
+    const element = renderedComponent[CURRENT_ELEMENT];
+    element[HOST_NODE] = renderedComponent[NATIVE_NODE];
+    if (renderedComponent[RENDERED_CHILDREN]) {
+      Object.values(renderedComponent[RENDERED_CHILDREN])
+        .filter(child => typeof child[CURRENT_ELEMENT].type === 'string')
+        .map(child => {
+          addNativeNodeToElement(child);
+        });
+    }
+  }
 }
 
 class RaxAdapter extends EnzymeAdapter {
@@ -255,10 +272,13 @@ class RaxAdapter extends EnzymeAdapter {
         );
       },
       simulateEvent(node, eventName, ...args) {
-        const handler = node.props[propFromEvent(eventName)];
-        if (handler) {
-          handler(...args);
-        }
+        const event = new Event(eventName, {
+          bubbles: args.bubbles || true,
+          composed: args.composed || false,
+          cancelable: args.cancelable || false,
+        });
+        Object.assign(event, args);
+        node.instance[INTERNAL][HOST_NODE].dispatchEvent(event);
       },
       batchedUpdates(fn) {
         fn();
@@ -309,13 +329,23 @@ class RaxAdapter extends EnzymeAdapter {
         if (isDOM) {
           return cachedNode;
         }
-        return elementToTree(instance[CURRENT_ELEMENT], instance[INSTANCE].__children);
+        const el = instance[CURRENT_ELEMENT];
+        el.instance = instance[INSTANCE];
+        const children = el.instance.__children;
+        if (Array.isArray(children)) {
+          throw new Error('ReactWrapper::getNode() can only be called when wrapping one node');
+        }
+        addNativeNodeToElement(instance);
+        return elementToTree(el, [children]);
       },
       simulateEvent(node, eventName, ...args) {
-        const handler = node.props[propFromEvent(eventName)];
-        if (handler) {
-          handler(...args);
-        }
+        const event = new Event(eventName, {
+          bubbles: args.bubbles || true,
+          composed: args.composed || false,
+          cancelable: args.cancelable || false,
+        });
+        Object.assign(event, args);
+        node[HOST_NODE].dispatchEvent(event);
       },
       unmount() {
         instance.unmount();
