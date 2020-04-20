@@ -1,8 +1,9 @@
 {
   "name": "enzyme-adapter-rax",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Enzyme adapter for Rax",
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "repository": "https://github.com/alibaba/rax",
   "author": "Rax Team",
   "devDependencies": {
@@ -13,12 +14,12 @@
     "rax": "^1.0.0"
   },
   "peerDependencies": {
+    "enzyme": "^3.8.0",
     "rax": "^1.0.0"
   },
   "dependencies": {
     "driver-dom": "^2.0.9",
     "driver-server": "^1.0.0",
-    "enzyme": "^3.8.0",
     "prop-types": "^15.7.2",
     "rax-find-dom-node": "^1.0.1",
     "rax-is-valid-element": "^1.0.0",

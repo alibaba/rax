@@ -1,7 +1,6 @@
 const { createElement, render } = require('rax');
 const { renderToString } = require('rax-server-renderer');
 const { default: findDOMNode } = require('rax-find-dom-node');
-const renderer = require('rax-test-renderer');
 const { default: isValidElement } = require('rax-is-valid-element');
 const { EnzymeAdapter } = require('enzyme');
 const createMountWrapper = require('./createMountWrapper');
