@@ -72,8 +72,8 @@ function transformRenderFunction(ast, renderFnPath) {
             const methodName = callee.name;
             const functionComponentBody = renderFnPath.get('body.body');
             const renderFunctionPath = functionComponentBody.find(path => {
-              return (path.isFunctionDeclaration() && path.node.id.name === methodName) ||
-                (path.isVariableDeclaration() && path.get('declarations').find(innerPath => innerPath.isVariableDeclarator() && innerPath.node.id.name === methodName));
+              return path.isFunctionDeclaration() && path.node.id.name === methodName ||
+                path.isVariableDeclaration() && path.get('declarations').find(innerPath => innerPath.isVariableDeclarator() && innerPath.node.id.name === methodName);
             });
             if (renderFunctionPath) {
               const tempDataName = `${methodName}State__temp${tempId++}`;

@@ -123,7 +123,7 @@ describe('Render closure function component', () => {
           <View><template is="renderItem" data="{{...renderItemState__temp0}}"></template></View>
         </View></block>`);
   });
-})
+});
 
 function transformReturnPath(path) {
   let returnArgument = path.get('argument').node;
@@ -160,7 +160,7 @@ function getDefaultComponentFunctionPath(path) {
   let defaultComponentFunctionPath = null;
   traverse(path, {
     ExportDefaultDeclaration(exportDefaultPath) {
-      const declarationPath = exportDefaultPath.get('declaration')
+      const declarationPath = exportDefaultPath.get('declaration');
       if (declarationPath.isFunctionDeclaration()) {
         defaultComponentFunctionPath = declarationPath;
       }
