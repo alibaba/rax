@@ -17,8 +17,10 @@ module.exports = function(path, ...args) {
     // Mark current loop
     path.node.__index = args[2];
     if (node.__originalExpression) {
-      const propertyIndex = findIndex(node.__properties, (property) => property === node.__originalExpression);
-      node.__properties.splice(propertyIndex, 1);
+      const propertyIndex = findIndex(node.__properties, ({ value }) => value === node.__originalExpression);
+      if (propertyIndex > -1) {
+        node.__properties.splice(propertyIndex, 1);
+      }
       node.expression = node.__originalExpression;
     }
     handleList(null, node.expression, path, ...args);

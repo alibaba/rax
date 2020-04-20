@@ -9,11 +9,14 @@ function transformRaxSlider(ast, adapter) {
     JSXOpeningElement(path) {
       if (path.get('name').isJSXIdentifier({ name: 'rax-slider' })) {
         const children = path.parent.children.filter(
-          (child) =>
-            child.openingElement &&
-            t.isJSXIdentifier(child.openingElement.name, {
-              name: 'swiper-item',
-            })
+          (child) => {
+            if (child.openingElement && t.isJSXIdentifier(child.openingElement.name)) {
+              const componentName = child.openingElement.name.name;
+              // For <swiper-item a:for="{{list}}"/> or <block a:for="{{list}}" />
+              return componentName === 'swiper-item' || componentName === 'block';
+            }
+            return false;
+          }
         );
         let swiperItemLength = 0;
         const childList = [];
@@ -27,7 +30,7 @@ function transformRaxSlider(ast, adapter) {
           if (forAttriute) {
             const forIndex = childAttributes.find((attr) => genExpression(attr.name) === adapter.forIndex);
             insertSlotName(
-              childAttributes,
+              child,
               // 1 + arr1.length + index
               index - childList.length + getChildListLengthExpression(childList) + '+' + forIndex.value.value
             );
@@ -36,7 +39,7 @@ function transformRaxSlider(ast, adapter) {
             );
           } else {
             insertSlotName(
-              childAttributes,
+              child,
               index - childList.length + getChildListLengthExpression(childList)
             );
             swiperItemLength++;
@@ -69,13 +72,23 @@ function getChildListLengthExpression(childList) {
   );
 }
 
-function insertSlotName(attributes, name) {
-  attributes.push(
+function insertSlotName(currentEl, name) {
+  getSwiperItemAttributes(currentEl).push(
     t.jsxAttribute(
       t.jsxIdentifier('slot'),
       t.stringLiteral('slider-item-' + createBinding(name))
     )
   );
+}
+
+function getSwiperItemAttributes(currentEl) {
+  const currentElOpeningElement = currentEl.openingElement;
+  // <swiper-item a:for={{list}} />
+  if (currentElOpeningElement.name.name === 'swiper-item') {
+    return currentElOpeningElement.attributes;
+  }
+  // <block a:for={{list}}><swiper-item/></block>
+  return currentEl.children[0].openingElement.attributes;
 }
 
 module.exports = {
