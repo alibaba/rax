@@ -69,8 +69,8 @@ if (isMiniApp || isWeChatMiniProgram) {
   window.addEventListener('apphide', ({ context }) => {
     emit(HIDE, context);
   });
-  window.addEventListener('apperror', ({ context }) => {
-    emit(ERROR, context);
+  window.addEventListener('apperror', ({ context, error }) => {
+    emit(ERROR, context, error);
   });
   window.addEventListener('pagenotfound', ({ context }) => {
     emit(NOT_FOUND, context);
