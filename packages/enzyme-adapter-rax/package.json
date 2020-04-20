@@ -1,6 +1,6 @@
 {
   "name": "enzyme-adapter-rax",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Enzyme adapter for Rax",
   "main": "src/index.js",
   "repository": "https://github.com/alibaba/rax",

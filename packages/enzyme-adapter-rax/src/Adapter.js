@@ -1,5 +1,3 @@
-import { NATIVE_NODE } from '../../rax/lib/constant';
-
 const { createElement, render } = require('rax');
 const { renderToString } = require('rax-server-renderer');
 const { default: findDOMNode } = require('rax-find-dom-node');
@@ -9,7 +7,7 @@ const { EnzymeAdapter } = require('enzyme');
 const createMountWrapper = require('./createMountWrapper');
 const RootFinder = require('./RootFinder');
 const DriverDOM = require('driver-dom');
-const { isArrayLike, mapFind, flatten, ensureKeyOrUndefined, propFromEvent } = require('./utils');
+const { isArrayLike, mapFind, flatten, ensureKeyOrUndefined } = require('./utils');
 const { CURRENT_ELEMENT, INSTANCE, INTERNAL, RENDERED_COMPONENT, RENDERED_CHILDREN, HOST_NODE } = require('./constants');
 
 function findElement(el, predicate) {
@@ -196,7 +194,7 @@ function addNativeNodeToElement(instance) {
   const renderedComponent = instance[RENDERED_COMPONENT];
   if (renderedComponent) {
     const element = renderedComponent[CURRENT_ELEMENT];
-    element[HOST_NODE] = renderedComponent[NATIVE_NODE];
+    element[HOST_NODE] = renderedComponent[HOST_NODE];
     if (renderedComponent[RENDERED_CHILDREN]) {
       Object.values(renderedComponent[RENDERED_CHILDREN])
         .filter(child => typeof child[CURRENT_ELEMENT].type === 'string')
