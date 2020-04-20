@@ -24,5 +24,6 @@ module.exports = {
     '/lib/',
     '/dist/',
     '/es/',
+    '/examples/'
   ]
 };
