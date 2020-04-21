@@ -100,7 +100,7 @@ app.listen(PORT, () => {
 
 options:
  * page
- * pathname 
+ * pathname
  * query
  * component
  * styles

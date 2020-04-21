@@ -1,0 +1,59 @@
+{
+  "name": "miniapp-render",
+  "version": "0.1.15",
+  "description": "DOM simulator for MiniApp",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "cross-env NODE_ENV=production rollup -c rollup.config.js",
+    "test": "jest --bail",
+    "test-debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --bail",
+    "coverage": "jest --coverage --bail",
+    "codecov": "jest --coverage && codecov"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/**/__tests__/**/*.test.js?(x)"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "setupFiles": [
+      "./scripts/build.js"
+    ]
+  },
+  "main": "dist/ali/index.js",
+  "miniprogram": "dist/wechat",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alibaba/rax.git"
+  },
+  "author": {
+    "name": "rax"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/runtime": "^7.7.7",
+    "@babel/types": "^7.8.7",
+    "babel-jest": "^24.9.0",
+    "cross-env": "^5.2.1",
+    "cross-spawn": "^7.0.1",
+    "fs-extra": "^8.1.0",
+    "jest": "^24.8.0",
+    "miniprogram-simulate": "^1.1.5",
+    "rollup": "^1.13.1",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-filesize": "^6.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "universal-env": "^3.2.0"
+  }
+}

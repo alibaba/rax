@@ -1,6 +1,9 @@
 /**
  * Driver for Kraken
  **/
+
+const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
+const NON_DIMENSIONAL_REG = /opa|ntw|ne[ch]|ex(?:s|g|n|p|$)|^ord|zoo|grid|orp|ows|mnc|^columns$|bs|erim|onit/i;
 const EVENT_PREFIX_REG = /^on[A-Z]/;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CLASS_NAME = 'className';
@@ -14,6 +17,9 @@ const CREATE_TEXT_NODE = 'createTextNode';
 const SET_ATTRIBUTE = 'setAttribute';
 const REMOVE_ATTRIBUTE = 'removeAttribute';
 const EMPTY = '';
+
+let viewportWidth = 750;
+let unitPrecision = 4;
 
 /**
  * Create a cached version of a pure function.
@@ -43,7 +49,7 @@ export function updateText(node, text) {
   node[TEXT_CONTENT_ATTR] = text;
 }
 
-export function createElement(type, props, component) {
+export function createElement(type, props, component, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
   const node = document[CREATE_ELEMENT](type);
 
   for (let prop in props) {
@@ -52,7 +58,7 @@ export function createElement(type, props, component) {
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyle(node, value);
+        setStyle(node, value, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw);
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
@@ -143,10 +149,53 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
-export function setStyle(node, style) {
+function toFixed(number, precision) {
+  const multiplier = Math.pow(10, precision + 1);
+  const wholeNumber = Math.floor(number * multiplier);
+  return Math.round(wholeNumber / 10) * 10 / multiplier;
+}
+
+function unitTransformer(n) {
+  return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
+}
+
+function isRpx(str) {
+  return RPX_REG.test(str);
+}
+
+function calcRpxToVw(value) {
+  return value.replace(RPX_REG, unitTransformer);
+}
+
+const isDimensionalProp = cached(prop => !NON_DIMENSIONAL_REG.test(prop));
+const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
+
+export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
   for (let prop in style) {
     const value = style[prop];
-    node.style[prop] = value;
+    let convertedValue;
+    if (typeof value === 'number' && isDimensionalProp(prop)) {
+      if (__shouldConvertUnitlessToRpx) {
+        convertedValue = value + 'rpx';
+        if (__shouldConvertRpxToVw) {
+          // Transfrom rpx to vw
+          convertedValue = convertUnit(convertedValue);
+        }
+      } else {
+        convertedValue = value + 'px';
+      }
+    } else {
+      convertedValue = __shouldConvertRpxToVw ? convertUnit(value) : value;
+    }
+
+    // Support CSS custom properties (variables) like { --main-color: "black" }
+    if (prop[0] === '-' && prop[1] === '-') {
+      // reference: https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/setProperty.
+      // style.setProperty do not support Camel-Case style properties.
+      node.style.setProperty(prop, convertedValue);
+    } else {
+      node.style[prop] = convertedValue;
+    }
   }
 }
 
