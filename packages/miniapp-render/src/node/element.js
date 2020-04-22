@@ -279,7 +279,7 @@ class Element extends Node {
   get $$domInfo() {
     return {
       nodeId: this.$$nodeId,
-      pageId: this.$$pageId,
+      pageId: this.__pageId,
       type: this.$_type,
       tagName: this.$_tagName,
       id: this.id,

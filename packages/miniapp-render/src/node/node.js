@@ -36,13 +36,6 @@ class Node extends EventTarget {
   }
 
   /**
-   * private pageId
-   */
-  get $$pageId() {
-    return this.__pageId;
-  }
-
-  /**
    * update parent node
    */
   $$updateParent(parentNode = null) {

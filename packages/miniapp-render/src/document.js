@@ -98,10 +98,6 @@ class Document extends EventTarget {
     return this.$_imageConstructor;
   }
 
-  get $$pageId() {
-    return this.__pageId;
-  }
-
   // Event trigger
   $$trigger(eventName, options) {
     this.documentElement.$$trigger(eventName, options);

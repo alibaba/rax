@@ -314,7 +314,7 @@ test('element: cloneNode', () => {
   const node7 = node1.cloneNode();
   expect(node7).not.toBe(node1);
   expect(node7.$$nodeId).not.toBe(node1.$$nodeId);
-  expect(node7.$$pageId).toBe(node1.$$pageId);
+  expect(node7.__pageId).toBe(node1.__pageId);
   expect(node7.id).toBe(node1.id);
   expect(node7.className).toBe(node1.className);
   expect(node7.style.cssText).toBe(node1.style.cssText);
@@ -323,7 +323,7 @@ test('element: cloneNode', () => {
   const node8 = node1.cloneNode(true);
   expect(node8).not.toBe(node1);
   expect(node7.$$nodeId).not.toBe(node1.$$nodeId);
-  expect(node7.$$pageId).toBe(node1.$$pageId);
+  expect(node7.__pageId).toBe(node1.__pageId);
   expect(node8.id).toBe(node1.id);
   expect(node8.className).toBe(node1.className);
   expect(node8.style.cssText).toBe(node1.style.cssText);
