@@ -21,7 +21,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
       // Delay triggering the jump until all synchronous callback processing is complete
       setTimeout(() => {
         if (evt.cancelable) return;
-        const window = cache.getWindow(pageId);
+        const window = cache.getWindow();
 
         // Handle special node event
         if (

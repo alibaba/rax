@@ -145,7 +145,7 @@ export default {
       callSimpleEvent('keyboardheightchange', evt, this.domNode);
     },
     onRadioChange(evt) {
-      const window = cache.getWindow(this.pageId);
+      const window = cache.getWindow();
       const domNode = this.domNode;
       const value = evt.detail.value;
       const name = domNode.name;
