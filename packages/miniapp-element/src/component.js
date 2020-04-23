@@ -8,9 +8,11 @@ import view from './builtInComponents/view';
 import icon from './builtInComponents/icon';
 import progress from './builtInComponents/progress';
 import text from './builtInComponents/text';
+import richText from './builtInComponents/rich-text';
 import button from './builtInComponents/button';
 import editor from './builtInComponents/editor';
 import form from './builtInComponents/form';
+import label from './builtInComponents/label';
 import input from './builtInComponents/input';
 import picker from './builtInComponents/picker';
 import pickerView from './builtInComponents/picker-view';
@@ -29,7 +31,6 @@ import ad from './builtInComponents/ad';
 import officialAccount from './builtInComponents/official-account';
 import openData from './builtInComponents/open-data';
 import webView from './builtInComponents/web-view';
-import label from './builtInComponents/label';
 
 // Sub components
 import movableView from './builtInComponents/movable-view';
@@ -38,9 +39,9 @@ import pickerViewColumn from './builtInComponents/picker-view-column';
 
 const components = [
   coverImage, coverView, movableArea, scrollView, swiper, view, icon, progress,
-  text, button, editor, form, input, picker, pickerView, slider, switchCom, textarea,
+  text, richText, button, editor, form, label, input, picker, pickerView, slider, switchCom, textarea,
   navigator, camera, image, livePlayer, livePusher, video, map, canvas, ad, officialAccount,
-  openData, webView, label
+  openData, webView
 ];
 
 const subComponents = [movableView, swiperItem, pickerViewColumn];

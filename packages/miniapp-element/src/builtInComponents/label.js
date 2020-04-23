@@ -1,5 +1,3 @@
-import callSimpleEvent from '../events/callSimpleEvent';
-
 export default {
   name: 'label',
   props: [{
