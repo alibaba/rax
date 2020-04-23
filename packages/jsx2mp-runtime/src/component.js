@@ -23,6 +23,7 @@ import nextTick from './nextTick';
 import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
 import apiCore from './adapter/getNativeAPI';
 import setComponentRef from './adapter/setComponentRef';
+import Event from './events';
 
 export default class Component {
   constructor(props, _internal, isFunctionComponent) {
@@ -266,6 +267,24 @@ export default class Component {
     this._internal = null;
     this.__mounted = false;
     removeComponentProps(this.instanceId);
+  }
+
+  _emitRenderPropsUpdate(name, args) {
+    Event.emit(name, args);
+  }
+
+  _onRenderPropsUpdate(name, handler) {
+    const updateCallback = (newState) => {
+      if (!is(this[`_${name}`], newState)) {
+        handler.call(this, newState);
+        this.__shouldUpdate = true;
+        this._updateComponent();
+      }
+    }
+    this._registerLifeCycle(COMPONENT_WILL_UNMOUNT, () => {
+      Event.off(updateCallback);
+    });
+    Event.on(name, updateCallback);
   }
 
   /**

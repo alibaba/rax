@@ -70,7 +70,7 @@ module.exports = {
   parse(parsed, code, options) {
     const { ast, programPath, defaultExportedPath, exportComponentPath, renderFunctionPath,
       useCreateStyle, useClassnames, dynamicValue, dynamicRef, dynamicStyle, dynamicEvents, imported,
-      contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
+      contextList, refs, componentDependentProps, renderItemFunctions, renderPropsFunctions, renderPropsEmitter, renderPropsListener, eventHandler, eventHandlers = [] } = parsed;
     const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
     if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
       // Can not found default export, otherwise app.js is excluded.
@@ -181,7 +181,8 @@ module.exports = {
           parentNode && parentNode.remove && parentNode.remove();
         }
       });
-      addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath);
+      addRenderProps(renderPropsEmitter, renderPropsListener, renderFunctionPath);
+      addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderPropsFunctions, renderFunctionPath);
       addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
       addProviderIniter(contextList, renderFunctionPath);
       addRegisterRefs(refs, renderFunctionPath);
@@ -464,7 +465,19 @@ function collectCoreMethods(raxExported) {
   return vaildList;
 }
 
-function addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath) {
+function addRenderProps(renderPropsEmitter, renderPropsListener, renderFunctionPath) {
+  const fnBody = renderFunctionPath.node.body.body;
+  if (renderPropsEmitter) {
+    fnBody.push(renderPropsEmitter);
+  }
+  if (renderPropsListener) {
+    const [renderClosureFunction, callOnRenderPropsUpdate] = renderPropsListener;
+    fnBody.unshift(renderClosureFunction);
+    fnBody.push(callOnRenderPropsUpdate);
+  }
+}
+
+function addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderPropsFunctions, renderFunctionPath) {
   const dataProperties = [];
   const dataStore = dynamicValue.getStore();
   const refStore = dynamicRef.getStore();
@@ -475,6 +488,9 @@ function addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctio
 
   renderItemFunctions.map(renderItemFn => {
     dataProperties.push(t.objectProperty(t.stringLiteral(renderItemFn.name), renderItemFn.node));
+  });
+  renderPropsFunctions.map(renderPropsFn => {
+    dataProperties.push(t.objectProperty(t.stringLiteral(renderPropsFn.name), renderPropsFn.node));
   });
 
   const updateData = t.memberExpression(
