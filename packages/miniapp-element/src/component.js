@@ -29,6 +29,7 @@ import ad from './builtInComponents/ad';
 import officialAccount from './builtInComponents/official-account';
 import openData from './builtInComponents/open-data';
 import webView from './builtInComponents/web-view';
+import label from './builtInComponents/label';
 
 // Sub components
 import movableView from './builtInComponents/movable-view';
@@ -39,7 +40,7 @@ const components = [
   coverImage, coverView, movableArea, scrollView, swiper, view, icon, progress,
   text, button, editor, form, input, picker, pickerView, slider, switchCom, textarea,
   navigator, camera, image, livePlayer, livePusher, video, map, canvas, ad, officialAccount,
-  openData, webView
+  openData, webView, label
 ];
 
 const subComponents = [movableView, swiperItem, pickerViewColumn];
