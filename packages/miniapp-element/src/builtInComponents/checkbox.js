@@ -12,7 +12,7 @@ export default {
     get(domNode) {
       return domNode.getAttribute('checked') || false;
     },
-  },  {
+  }, {
     name: 'disabled',
     get(domNode) {
       return domNode.getAttribute('disabled') || false;

@@ -2,38 +2,38 @@
 import callSimpleEvent from '../events/callSimpleEvent';
 
 let props = [{
-    name: 'openType',
-    get(domNode) {
-      return domNode.getAttribute('open-type') || 'navigate';
-    },
-  }, {
-    name: 'hoverClass',
-    get(domNode) {
-      return domNode.getAttribute('hover-class') || 'none';
-    },
-  }, {
-    name: 'hoverStartTime',
-    get(domNode) {
-      const value = parseInt(domNode.getAttribute('hover-start-time'), 10);
-      return !isNaN(value) ? value : 50;
-    },
-  }, {
-    name: 'hoverStayTime',
-    get(domNode) {
-      const value = parseInt(domNode.getAttribute('hover-stay-time'), 10);
-      return !isNaN(value) ? value : 600;
-    },
-  }, {
-    name: 'url',
-    get(domNode) {
-      return domNode.getAttribute('url') || '';
-    },
-  }, {
-    name: 'animation',
-    get(domNode) {
-      return domNode.getAttribute('animation');
-    }
-  }];
+  name: 'openType',
+  get(domNode) {
+    return domNode.getAttribute('open-type') || 'navigate';
+  },
+}, {
+  name: 'hoverClass',
+  get(domNode) {
+    return domNode.getAttribute('hover-class') || 'none';
+  },
+}, {
+  name: 'hoverStartTime',
+  get(domNode) {
+    const value = parseInt(domNode.getAttribute('hover-start-time'), 10);
+    return !isNaN(value) ? value : 50;
+  },
+}, {
+  name: 'hoverStayTime',
+  get(domNode) {
+    const value = parseInt(domNode.getAttribute('hover-stay-time'), 10);
+    return !isNaN(value) ? value : 600;
+  },
+}, {
+  name: 'url',
+  get(domNode) {
+    return domNode.getAttribute('url') || '';
+  },
+}, {
+  name: 'animation',
+  get(domNode) {
+    return domNode.getAttribute('animation');
+  }
+}];
 if (isWeChatMiniProgram) {
   props = props.concat([{
     name: 'target',
