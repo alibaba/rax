@@ -1,11 +1,27 @@
+/* global isWeChatMiniProgram */
 import callSimpleEvent from '../events/callSimpleEvent';
 
-export default {
-  name: 'navigator',
-  props: [{
-    name: 'target',
+let props = [{
+    name: 'openType',
     get(domNode) {
-      return domNode.getAttribute('target') || 'self';
+      return domNode.getAttribute('open-type') || 'navigate';
+    },
+  }, {
+    name: 'hoverClass',
+    get(domNode) {
+      return domNode.getAttribute('hover-class') || 'none';
+    },
+  }, {
+    name: 'hoverStartTime',
+    get(domNode) {
+      const value = parseInt(domNode.getAttribute('hover-start-time'), 10);
+      return !isNaN(value) ? value : 50;
+    },
+  }, {
+    name: 'hoverStayTime',
+    get(domNode) {
+      const value = parseInt(domNode.getAttribute('hover-stay-time'), 10);
+      return !isNaN(value) ? value : 600;
     },
   }, {
     name: 'url',
@@ -13,9 +29,16 @@ export default {
       return domNode.getAttribute('url') || '';
     },
   }, {
-    name: 'openType',
+    name: 'animation',
     get(domNode) {
-      return domNode.getAttribute('open-type') || 'navigate';
+      return domNode.getAttribute('animation');
+    }
+  }];
+if (isWeChatMiniProgram) {
+  props = props.concat([{
+    name: 'target',
+    get(domNode) {
+      return domNode.getAttribute('target') || 'self';
     },
   }, {
     name: 'delta',
@@ -44,33 +67,16 @@ export default {
       return domNode.getAttribute('version') || 'release';
     },
   }, {
-    name: 'hoverClass',
-    get(domNode) {
-      return domNode.getAttribute('hover-class') || 'navigator-hover';
-    },
-  }, {
     name: 'hoverStopPropagation',
     get(domNode) {
       return !!domNode.getAttribute('hover-stop-propagation');
     },
-  }, {
-    name: 'hoverStartTime',
-    get(domNode) {
-      const value = parseInt(domNode.getAttribute('hover-start-time'), 10);
-      return !isNaN(value) ? value : 50;
-    },
-  }, {
-    name: 'hoverStayTime',
-    get(domNode) {
-      const value = parseInt(domNode.getAttribute('hover-stay-time'), 10);
-      return !isNaN(value) ? value : 600;
-    },
-  }, {
-    name: 'animation',
-    get(domNode) {
-      return domNode.getAttribute('animation');
-    }
-  }],
+  }]);
+}
+
+export default {
+  name: 'navigator',
+  props,
   handles: {
     onNavigatorSuccess(evt) {
       callSimpleEvent('success', evt, this.domNode);

@@ -241,16 +241,17 @@
     onReset="onFormReset"
 ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></form>
 <block a:elif="{{builtinComponentName === 'input'}}">
-    <radio-group a:if="{{type === 'radio'}}" onChange="onRadioChange"><radio
-        id="{{id}}"
-        class="{{class}}"
-        animation="{{animation}}"
-        style="{{style}}"
-        hidden="{{hidden}}"
-        value="{{value}}"
-        disabled="{{disabled}}"
-        checked="{{checked}}"
-        color="{{color}}"
+  <radio-group a:if="{{type === 'radio'}}" onChange="onRadioChange">
+    <radio
+      id="{{id}}"
+      class="{{class}}"
+      animation="{{animation}}"
+      style="{{style}}"
+      hidden="{{hidden}}"
+      value="{{value}}"
+      disabled="{{disabled}}"
+      checked="{{checked}}"
+      color="{{color}}"
     ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></radio></radio-group>
     <checkbox-group a:elif="{{type === 'checkbox'}}" onChange="onCheckboxChange"><checkbox
         id="{{id}}"
@@ -292,6 +293,51 @@
         onKeyboardHeightChange="onInputKeyBoardHeightChange"
     ></input>
 </block>
+<radio-group
+  a:elif="{{builtinComponentName === 'radio-group'}}"
+  id="{{id}}"
+  animation="{{animation}}"
+  class="{{class}}"
+  style="{{style}}"
+  name="{{name}}"
+  onChange="onRadioChange"
+>
+  <subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree>
+</radio-group>
+<radio
+  a:elif="{{builtinComponentName === 'radio'}}"
+  id="{{id}}"
+  class="{{class}}"
+  animation="{{animation}}"
+  style="{{style}}"
+  hidden="{{hidden}}"
+  value="{{value}}"
+  disabled="{{disabled}}"
+  checked="{{checked}}"
+  color="{{color}}"
+>
+  <subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree>
+</radio>
+<checkbox-group
+  a:elif="{{builtinComponentName === 'checkbox-group'}}"
+  onChange="onCheckboxChange"
+>
+  <subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree>
+</checkbox-group>
+<checkbox
+  a:elif="{{builtinComponentName === 'checkbox'}}"
+  id="{{id}}"
+  class="{{class}}"
+  style="{{style}}"
+  hidden="{{hidden}}"
+  value="{{value}}"
+  disabled="{{disabled}}"
+  checked="{{checked}}"
+  color="{{color}}"
+  onChange="onCheckboxItemChange"
+>
+  <subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree>
+</checkbox>
 <picker
     a:elif="{{builtinComponentName === 'picker'}}"
     id="{{id}}"
@@ -327,23 +373,23 @@
     onPickEnd="onPickerViewPickend"
 ><block a:for="{{innerChildNodes}}" a:key="nodeId">
     <picker-view-column
-        a:if="{{item.type === 'element' && item.compName === 'picker-view-column'}}"
-        data-private-node-id="{{item.nodeId}}"
-        data-private-page-id="{{item.pageId}}"
-        id="{{item.id}}"
-        animation="{{animation}}"
-        class="{{item.class || ''}}"
-        style="{{item.style || ''}}"
-        onTouchStart="onTouchStart"
-        onTouchMove="onTouchMove"
-        onTouchEnd="onTouchEnd"
-        onTouchCancel="onTouchCancel"
-        onTap="onTap"
-        hidden="{{item.extra.hidden}}"
+      a:if="{{item.type === 'element' && item.compName === 'picker-view-column'}}"
+      data-private-node-id="{{item.nodeId}}"
+      data-private-page-id="{{item.pageId}}"
+      id="{{item.id}}"
+      animation="{{animation}}"
+      class="{{item.class || ''}}"
+      style="{{item.style || ''}}"
+      onTouchStart="onTouchStart"
+      onTouchMove="onTouchMove"
+      onTouchEnd="onTouchEnd"
+      onTouchCancel="onTouchCancel"
+      onTap="onTap"
+      hidden="{{item.extra.hidden}}"
     >
-    <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
-      <element in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}" id="{{pickerViewColumnItem.id}}" class="{{pickerViewColumnItem.class || ''}}" style="{{pickerViewColumnItem.style || ''}}" animation="{{pickerViewColumnItem.animation}}" onTouchStart="onTouchStart" onTouchmove="onTouchMove" onTouchend="onTouchEnd" onTouchcancel="onTouchCancel" onTap="onTap"></element>
-    </view>
+      <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
+        <element in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}" id="{{pickerViewColumnItem.id}}" class="{{pickerViewColumnItem.class || ''}}" style="{{pickerViewColumnItem.style || ''}}" animation="{{pickerViewColumnItem.animation}}" onTouchStart="onTouchStart" onTouchmove="onTouchMove" onTouchend="onTouchEnd" onTouchcancel="onTouchCancel" onTap="onTap"></element>
+      </view>
     </picker-view-column>
 </block></picker-view>
 <slider
