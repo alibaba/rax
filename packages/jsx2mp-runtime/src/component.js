@@ -22,7 +22,7 @@ import shallowEqual, { is } from './shallowEqual';
 import nextTick from './nextTick';
 import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
 import apiCore from './adapter/getNativeAPI';
-import setComponentRef from './adapter/setComponentRef';
+import attachRef from './adapter/attachRef';
 
 export default class Component {
   constructor(props) {
@@ -41,7 +41,10 @@ export default class Component {
 
     this._pendingStates = [];
     this._pendingCallbacks = [];
-    setComponentRef(this, props.bindComRef || props.ref);
+    nextTick(() => {
+      // For get latest instance
+      attachRef(this, this.props.bindComRef || this.props.ref);
+    });
   }
 
   // Bind to this instance.
