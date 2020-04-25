@@ -96,7 +96,7 @@ function getComponentCycles(Klass) {
           location: history.location
         });
       }
-      this.instance = new Klass(props, props.ref);
+      this.instance = new Klass(props);
       this.instance._internal = this;
       this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
