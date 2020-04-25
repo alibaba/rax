@@ -248,17 +248,20 @@ export default class Component {
     // Step8: trigger render
     if (this.__shouldUpdate) {
       this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
+      // Set prev props & state before update
+      this.prevProps = this.props;
+      this.prevState = this.state;
       // Update propsMap
       setComponentProps(this.instanceId);
       this.props = nextProps;
       this.state = nextState;
+      // Set forwardRef & prevForWardRef
+      this.__prevForwardRef = this._forwardRef;
+      this._forwardRef = nextProps.ref;
       this.__forceUpdate = false;
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
     }
-
-    this.prevProps = this.props;
-    this.prevState = this.state;
   }
 
   _unmountComponent() {

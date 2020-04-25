@@ -1,7 +1,7 @@
+import * as PropTypes from 'prop-types';
 import "./jsx";
 
 declare namespace Rax {
-
   //
   // Rax Element
   // -----------------------------------
@@ -24,6 +24,38 @@ declare namespace Rax {
   ): RaxElement<any>;
 
   function cloneElement(RaxElement: JSX.Element, props: any, ...children: ElementChildren[]): JSX.Element;
+
+
+  type ElementType<P = any> =
+    | {
+        [K in keyof JSX.IntrinsicElements]: P extends JSX.IntrinsicElements[K] ? K : never
+      }[keyof JSX.IntrinsicElements]
+    | ComponentType<P>;
+
+  type ComponentType<P = {}> = ComponentClass<P> | FunctionComponent<P>;
+
+  interface RaxComponentElement<
+    T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>,
+    P = Pick<ComponentProps<T>, Exclude<keyof ComponentProps<T>, 'key' | 'ref'>>
+  > extends RaxElement<P, T> {}
+
+  interface FunctionComponentElement<P> extends RaxElement<P, FunctionComponent<P>> {
+    ref?: 'ref' extends keyof P ? (P extends { ref?: infer R } ? R : never) : never;
+  }
+
+
+  type CElement<P, T extends Component<P, ComponentState>> = ComponentElement<P, T>;
+  interface ComponentElement<P, T extends Component<P, ComponentState>>
+    extends RaxElement<P, ComponentClass<P>> {
+    ref?: LegacyRef<T>;
+  }
+
+  type ClassicElement<P> = CElement<P, ClassicComponent<P, ComponentState>>;
+  interface ClassicComponent<P = {}, S = {}> extends Component<P, S> {
+    replaceState(nextState: S, callback?: () => void): void;
+    isMounted(): boolean;
+    getInitialState?(): S;
+  }
 
   //
   // Component interface
@@ -53,6 +85,44 @@ declare namespace Rax {
       __html: string;
     };
   }
+
+  //
+  // Rax.PropTypes
+  // ----------------------------------------------------------------------
+
+  type Validator<T> = PropTypes.Validator<T>;
+
+  type Requireable<T> = PropTypes.Requireable<T>;
+
+  type ValidationMap<T> = PropTypes.ValidationMap<T>;
+
+  type WeakValidationMap<T> = {
+    [K in keyof T]?: null extends T[K]
+      ? Validator<T[K] | null | undefined>
+      : undefined extends T[K]
+      ? Validator<T[K] | null | undefined>
+      : Validator<T[K]>
+  };
+
+  interface RaxPropTypes {
+    any: typeof PropTypes.any;
+    array: typeof PropTypes.array;
+    bool: typeof PropTypes.bool;
+    func: typeof PropTypes.func;
+    number: typeof PropTypes.number;
+    object: typeof PropTypes.object;
+    string: typeof PropTypes.string;
+    node: typeof PropTypes.node;
+    element: typeof PropTypes.element;
+    instanceOf: typeof PropTypes.instanceOf;
+    oneOf: typeof PropTypes.oneOf;
+    oneOfType: typeof PropTypes.oneOfType;
+    arrayOf: typeof PropTypes.arrayOf;
+    objectOf: typeof PropTypes.objectOf;
+    shape: typeof PropTypes.shape;
+    exact: typeof PropTypes.exact;
+  }
+
 
   type RenderableProps<P, RefType = any> = Readonly<
     P & Attributes & { children?: ElementChildren; ref?: Ref<RefType> }
@@ -112,6 +182,17 @@ declare namespace Rax {
     abstract render(props?: RenderableProps<P>, state?: Readonly<S>, context?: any): ElementChildren;
   }
 
+  class PureComponent<P = {}, S = {}, SS = any> extends Component<P, S, SS> {}
+  type FC<P = {}> = FunctionComponent<P>;
+
+  interface FunctionComponent<P = {}> {
+    (props: PropsWithChildren<P>, context?: any): RaxElement | null;
+    propTypes?: WeakValidationMap<P>;
+    contextTypes?: ValidationMap<any>;
+    defaultProps?: Partial<P>;
+    displayName?: string;
+  }
+
   //
   // Hooks
   // ----------------------------------------------------------------------
@@ -166,6 +247,10 @@ declare namespace Rax {
   interface RaxContext<T> {
     Consumer: RaxConsumer<T>;
     Provider: RaxProvider<T>;
+  }
+
+  interface ChildContextProvider<CC> {
+    getChildContext(): CC;
   }
 
   function createContext<T>(defaultValue: T): RaxContext<T>;
