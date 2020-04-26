@@ -181,7 +181,8 @@ module.exports = {
           parentNode && parentNode.remove && parentNode.remove();
         }
       });
-      addRenderProps(renderPropsEmitter, renderPropsListener, renderFunctionPath);
+      addRenderPropsEmitter(renderPropsEmitter, renderFunctionPath);
+      addRenderPropsListener(renderPropsListener, renderFunctionPath);
       addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderPropsFunctions, renderFunctionPath);
       addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
       addProviderIniter(contextList, renderFunctionPath);
@@ -465,15 +466,22 @@ function collectCoreMethods(raxExported) {
   return vaildList;
 }
 
-function addRenderProps(renderPropsEmitter, renderPropsListener, renderFunctionPath) {
-  const fnBody = renderFunctionPath.node.body.body;
-  if (renderPropsEmitter) {
-    fnBody.push(renderPropsEmitter);
+function addRenderPropsEmitter(renderPropsEmitter = [], renderFunctionPath) {
+  if (renderPropsEmitter.length > 0) {
+    renderPropsEmitter.forEach(emitter => {
+      renderFunctionPath.node.body.body.push(emitter);
+    })
   }
-  if (renderPropsListener) {
-    const [renderClosureFunction, callOnRenderPropsUpdate] = renderPropsListener;
-    fnBody.unshift(renderClosureFunction);
-    fnBody.push(callOnRenderPropsUpdate);
+}
+
+function addRenderPropsListener(renderPropsListener = [], renderFunctionPath) {
+  if (renderPropsListener.length > 0) {
+    renderPropsListener.forEach(listener => {
+      const fnBody = renderFunctionPath.node.body.body;
+      const [renderClosureFunction, callOnRenderPropsUpdate] = listener;
+      fnBody.unshift(renderClosureFunction);
+      fnBody.push(callOnRenderPropsUpdate);
+    })
   }
 }
 

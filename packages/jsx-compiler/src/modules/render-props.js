@@ -34,12 +34,12 @@ function injectRenderPropsListener(listenerName, renderClosureFunction) {
   return [renderClosureFunction, callOnRenderPropsUpdate];
 }
 
-function injectRenderPropsEmitter(emitterName, dependencyDataArguments) {
+function injectRenderPropsEmitter(originalEmitterName, dependencyDataArguments) {
   const emitRenderPropsUpdate = t.memberExpression(
     t.thisExpression(),
     t.identifier('_emitRenderPropsUpdate')
   );
-  const callEmitRenderPropsUpdate = t.expressionStatement(t.callExpression(emitRenderPropsUpdate, [t.stringLiteral(emitterName), ...dependencyDataArguments]));
+  const callEmitRenderPropsUpdate = t.expressionStatement(t.callExpression(emitRenderPropsUpdate, [t.stringLiteral(originalEmitterName), ...dependencyDataArguments]));
   return callEmitRenderPropsUpdate;
 }
 
@@ -49,21 +49,39 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
   let renderPropsEmitter = [];
   let renderPropsListener = [];
   let tempId = 0;
+  let renderPropsId = 0;
   traverse(ast, {
     CallExpression: {
       enter(path) {
         const { node } = path;
         const { callee } = node;
         // Handle render props
+        // e.g. this.props.renderCat()
         if (t.isIdentifier(callee) && callee.name.startsWith('render') && isDerivedFromProps(renderFunctionPath.scope, callee.name)) {
           if (!path.parentPath.isJSXExpressionContainer()) {
             throw new CodeError(code, node, node.loc, 'render props can only be used in JSX expression container');
           }
-          const renderPropsFuncName = /^render(\w+)/.exec(callee.name)[1].toLowerCase();
+          let componentName;
+          let componentDeclarationNode;
+          const renderFnParentPath = renderFunctionPath.parentPath;
+          if (renderFnParentPath.isClassBody()) {
+            // Class component
+            componentName = renderFnParentPath.parentPath.get('id') && renderFnParentPath.parentPath.get('id').node.name;
+            componentDeclarationNode = renderFnParentPath.parentPath.node;
+          } else {
+            // Function component
+            componentName = renderFunctionPath.get('id') && renderFunctionPath.get('id').node.name;
+            componentDeclarationNode = renderFunctionPath.node;
+          }
+          if (!componentName) {
+            throw new CodeError(code, componentDeclarationNode, componentDeclarationNode.loc, 'Component which contains render props must have a specific name');
+          }
+          const renderPropsName = renderPropsMap.get(`${componentName}_${callee.name}`);
+          const renderPropsSlotName = /^render(\w+)/.exec(callee.name)[1].toLowerCase();
           path.parentPath.replaceWith(createJSX('slot', {
-            name: t.stringLiteral(renderPropsFuncName)
+            name: t.stringLiteral(renderPropsSlotName)
           }));
-          renderPropsEmitter.push(injectRenderPropsEmitter(callee.name, node.arguments));
+          renderPropsEmitter.push(injectRenderPropsEmitter(renderPropsName, node.arguments));
         }
       }
     },
@@ -75,15 +93,17 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
         const JSXElementPath = path.parentPath.parentPath;
         if (t.isJSXIdentifier(name) && JSXElementPath.isJSXElement()) {
           const componentName = JSXElementPath.node.openingElement.name.name;
+          // <ComponentA renderCat={xxx}></ComponentA>
           if (isRenderPropsAttr(attrName)) {
-            const renderPropsAttrName = /^render(\w+)/.exec(attrName)[1].toLowerCase();
+            const renderPropsSlotName = /^render(\w+)/.exec(attrName)[1].toLowerCase();
+            const renderPropsAttrName = attrName + renderPropsId++;
             if (!t.isJSXExpressionContainer(value)) {
               throw new CodeError(code, node, node.loc, 'props that start with \'render\' can only pass a JSX expression which contains a JSX element');
             }
             const expression = value.expression;
             if (t.isArrowFunctionExpression(expression)) {
               const tempDataName = `${attrName}State__temp${tempId++}`;
-              const templateName = t.stringLiteral(attrName);
+              const templateName = t.stringLiteral(renderPropsAttrName);
               const returnStatementPath = getReturnElementPath(expression) || path.get('value.expression.body');
               if (!returnStatementPath) return;
               let returnArgumentPath;
@@ -99,8 +119,8 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                 }
                 // Replace the expression with render closure function
                 const callRenderClsoureFunction = t.callExpression(
-                  t.identifier(attrName + 'Closure'),
-                  [t.memberExpression(t.thisExpression(), t.identifier(`_${attrName}`))]
+                  t.identifier(renderPropsAttrName + 'Closure'),
+                  [t.memberExpression(t.thisExpression(), t.identifier(`_${renderPropsAttrName}`))]
                 );
                 const returnProperties = [];
                 // Collect identifier in return Element
@@ -127,17 +147,18 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                 // Generate render closure function
                 const renderClosureFunction = t.variableDeclaration('const', [
                   t.variableDeclarator(
-                    t.identifier(attrName + 'Closure'),
+                    t.identifier(renderPropsAttrName + 'Closure'),
                     expression
                   )
                 ]);
-                renderPropsListener.push(injectRenderPropsListener(attrName, renderClosureFunction));
+                renderPropsListener.push(injectRenderPropsListener(renderPropsAttrName, renderClosureFunction));
+                renderPropsMap.set(`${componentName}_${attrName}`, renderPropsAttrName);
                 path.get('value.expression').replaceWith(callRenderClsoureFunction);
               }
               // Collect renderXXX();
               renderPropsFunctions.push({
                 name: tempDataName,
-                originName: attrName,
+                originName: renderPropsAttrName,
                 node: path.get('value.expression').node
               });
 
@@ -150,7 +171,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                 data: t.stringLiteral(createBinding(`...${tempDataName}, __tagId: __tagId`))
               });
               const slotJSX = createJSX('view', {
-                slot: t.stringLiteral(renderPropsAttrName)
+                slot: t.stringLiteral(renderPropsSlotName)
               }, [templateJSX]);
               JSXElementPath.node.children = [slotJSX, ...JSXElementPath.node.children];
               path.remove();
