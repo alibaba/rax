@@ -25,6 +25,8 @@ import apiCore from './adapter/getNativeAPI';
 import setComponentRef from './adapter/setComponentRef';
 import Event from './events';
 
+const event = new Event();
+
 export default class Component {
   constructor(props, _internal, isFunctionComponent) {
     this.state = {};
@@ -270,7 +272,7 @@ export default class Component {
   }
 
   _emitRenderPropsUpdate(name, args) {
-    Event.emit(name, args);
+    event.emit(name, args);
   }
 
   _onRenderPropsUpdate(name, handler) {
@@ -282,9 +284,9 @@ export default class Component {
       }
     }
     this._registerLifeCycle(COMPONENT_WILL_UNMOUNT, () => {
-      Event.off(updateCallback);
+      event.off(updateCallback);
     });
-    Event.on(name, updateCallback);
+    event.on(name, updateCallback);
   }
 
   /**
