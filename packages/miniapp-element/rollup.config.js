@@ -2,6 +2,7 @@ import babel from 'rollup-plugin-babel';
 import replace from 'rollup-plugin-replace';
 import clear from 'rollup-plugin-clear';
 import filesize from 'rollup-plugin-filesize';
+import { terser } from 'rollup-plugin-terser';
 import { name } from './package.json';
 import handleComponentFile from './scripts/handleComponentFile';
 
@@ -29,10 +30,16 @@ function getRollupConfig(platform) {
     input: 'src/index.js',
     output: [
       {
-        dir: `dist/${platform}`,
+        file: `dist/${platform}/index.js`,
         format: 'cjs',
         name
-      }
+      },
+      {
+        file: `dist/${platform}/index.min.js`,
+        format: 'cjs',
+        name,
+        plugins: [terser()]
+      },
     ],
     plugins: [
       clear({
