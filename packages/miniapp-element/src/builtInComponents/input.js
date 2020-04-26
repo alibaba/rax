@@ -172,5 +172,11 @@ export default {
       }
       callEvent('change', evt, null, this.pageId, this.nodeId);
     },
+    onCheckboxItemChange(evt) {
+      const domNode = this.domNode;
+      const value = evt.detail.value || false;
+      domNode.setAttribute('checked', value);
+      callEvent('change', evt, null, this.pageId, this.nodeId);
+    },
   },
 };
