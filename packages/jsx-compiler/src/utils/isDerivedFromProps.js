@@ -6,21 +6,21 @@ const t = require('@babel/types');
  * @param bindingName
  */
 module.exports = function isDerivedFromProps(scope, bindingName) {
-  const binding = scope.getBinding(bindingName)
+  const binding = scope.getBinding(bindingName);
   if (binding && binding.path.isVariableDeclarator()) {
-    const init = binding.path.get('init')
+    const init = binding.path.get('init');
     if (init.isMemberExpression()) {
-      const { object, property } = init.node
+      const { object, property } = init.node;
       if (t.isThisExpression(object) && t.isIdentifier(property, { name: 'props' })) {
-        return true
+        return true;
       }
     }
     if (init.isIdentifier()) {
       if (init.node.name === 'props') {
         return true;
       }
-      return isDerivedFromProps(scope, init.node.name)
+      return isDerivedFromProps(scope, init.node.name);
     }
   }
-  return false
+  return false;
 };

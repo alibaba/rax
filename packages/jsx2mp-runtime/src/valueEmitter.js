@@ -1,4 +1,5 @@
 import Event from './events';
+
 let count = 0;
 
 export default class ValueEmitter extends Event {

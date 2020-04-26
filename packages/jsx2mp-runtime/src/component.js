@@ -282,7 +282,7 @@ export default class Component {
         this.__shouldUpdate = true;
         this._updateComponent();
       }
-    }
+    };
     this._registerLifeCycle(COMPONENT_WILL_UNMOUNT, () => {
       event.off(updateCallback);
     });

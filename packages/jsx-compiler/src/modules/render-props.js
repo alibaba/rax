@@ -26,8 +26,8 @@ function injectRenderPropsListener(listenerName, renderClosureFunction) {
               t.identifier(`_${listenerName}`)
             ),
             t.identifier('e')
-            )
           )
+        )
       ]))]
     )
   );
@@ -39,7 +39,7 @@ function injectRenderPropsEmitter(emitterName, dependencyDataArguments) {
     t.thisExpression(),
     t.identifier('_emitRenderPropsUpdate')
   );
-  const callEmitRenderPropsUpdate = t.expressionStatement(t.callExpression(emitRenderPropsUpdate, [t.stringLiteral(emitterName), ...dependencyDataArguments]))
+  const callEmitRenderPropsUpdate = t.expressionStatement(t.callExpression(emitRenderPropsUpdate, [t.stringLiteral(emitterName), ...dependencyDataArguments]));
   return callEmitRenderPropsUpdate;
 }
 
@@ -53,7 +53,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
     CallExpression: {
       enter(path) {
         const { node } = path;
-        const { callee, arguments } = node;
+        const { callee } = node;
         // Handle render props
         if (t.isIdentifier(callee) && callee.name.startsWith('render') && isDerivedFromProps(renderFunctionPath.scope, callee.name)) {
           if (!path.parentPath.isJSXExpressionContainer()) {
@@ -63,7 +63,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
           path.parentPath.replaceWith(createJSX('slot', {
             name: t.stringLiteral(renderPropsFuncName)
           }));
-          renderPropsEmitter = injectRenderPropsEmitter(callee.name, arguments);
+          renderPropsEmitter = injectRenderPropsEmitter(callee.name, node.arguments);
         }
       }
     },
@@ -78,7 +78,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
           if (isRenderPropsAttr(attrName)) {
             const renderPropsAttrName = /^render(\w+)/.exec(attrName)[1].toLowerCase();
             if (!t.isJSXExpressionContainer(value)) {
-              throw new CodeError(code, node, node.loc, `props that start with 'render' can only pass a JSX expression which contains a JSX element`);
+              throw new CodeError(code, node, node.loc, 'props that start with \'render\' can only pass a JSX expression which contains a JSX element');
             }
             const expression = value.expression;
             if (t.isArrowFunctionExpression(expression)) {
@@ -101,7 +101,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                 const callRenderClsoureFunction = t.callExpression(
                   t.identifier(attrName + 'Closure'),
                   [t.memberExpression(t.thisExpression(), t.identifier(`_${attrName}`))]
-                )
+                );
                 const returnProperties = [];
                 // Collect identifier in return Element
                 returnStatementPath.traverse({
@@ -141,7 +141,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                 node: path.get('value.expression').node
               });
 
-              if(!JSXElementPath.node.closingElement) {
+              if (!JSXElementPath.node.closingElement) {
                 JSXElementPath.node.openingElement.selfClosing = false;
                 JSXElementPath.get('closingElement').replaceWith(t.jsxClosingElement(t.jsxIdentifier(componentName)));
               }
