@@ -46,8 +46,8 @@ function injectRenderPropsEmitter(emitterName, dependencyDataArguments) {
 function transformRenderPropsFunction(ast, renderFunctionPath, code) {
   const renderPropsList = [];
   const renderPropsFunctions = [];
-  let renderPropsEmitter = null;
-  let renderPropsListener = null;
+  let renderPropsEmitter = [];
+  let renderPropsListener = [];
   let tempId = 0;
   traverse(ast, {
     CallExpression: {
@@ -63,7 +63,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
           path.parentPath.replaceWith(createJSX('slot', {
             name: t.stringLiteral(renderPropsFuncName)
           }));
-          renderPropsEmitter = injectRenderPropsEmitter(callee.name, node.arguments);
+          renderPropsEmitter.push(injectRenderPropsEmitter(callee.name, node.arguments));
         }
       }
     },
@@ -131,7 +131,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                     expression
                   )
                 ]);
-                renderPropsListener = injectRenderPropsListener(attrName, renderClosureFunction);
+                renderPropsListener.push(injectRenderPropsListener(attrName, renderClosureFunction));
                 path.get('value.expression').replaceWith(callRenderClsoureFunction);
               }
               // Collect renderXXX();
