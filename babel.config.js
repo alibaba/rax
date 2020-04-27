@@ -17,6 +17,7 @@ module.exports = function(api) {
       ['@babel/plugin-proposal-class-properties', { 'loose': false }],
       'babel-plugin-transform-jsx-stylesheet',
       ['@babel/plugin-proposal-decorators', { 'legacy': true }],
+      '@babel/plugin-syntax-dynamic-import',
     ],
     'ignore': [
       'src/generator/templates',

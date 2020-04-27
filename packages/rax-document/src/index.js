@@ -43,14 +43,15 @@ function Data(props, context) {
 function Style(props, context) {
   const { __styles = [] } = context;
 
-  return __styles.map((src, index) => <link rel="stylesheet" href={src} key={`style_${index}`} />);
+  return __styles.map((src, index) => <link {...props} rel="stylesheet" href={src} key={`style_${index}`} />);
 }
 
 function Script(props, context) {
   const { __scripts = [] } = context;
 
+  // props such as crossorigin can be passed to script tag
   return __scripts.map(
-    (src, index) => <script src={src} key={`script_${index}`}>
+    (src, index) => <script {...props} src={src} key={`script_${index}`}>
       {/* self-closing script element will not work in HTML */}
     </script>
   );
