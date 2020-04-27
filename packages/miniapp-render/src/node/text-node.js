@@ -52,7 +52,7 @@ class TextNode extends Node {
   get $$domInfo() {
     return {
       nodeId: this.$_nodeId,
-      pageId: this.$_pageId,
+      pageId: this.__pageId,
       type: this.$_type,
       content: this.$_content,
     };
