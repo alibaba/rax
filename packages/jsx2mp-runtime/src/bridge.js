@@ -123,6 +123,11 @@ function createProxyMethods(events) {
         // `this` point to page/component instance.
         let event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
 
+        // there's no instance when event triggered inside universal ux component
+        if (isQuickApp && !this.instance && this._parent.instance) {
+          this.instance = this._parent.instance;
+        }
+
         // Context default to Rax component instance.
         const contextInfo = {
           context: this.instance
@@ -165,6 +170,7 @@ function createProxyMethods(events) {
           }
 
           const dataset = event && event.currentTarget ? event.currentTarget.dataset : {};
+          const datasetArgs = [];
 
           // Universal event args
           const datasetKeys = Object.keys(dataset);
