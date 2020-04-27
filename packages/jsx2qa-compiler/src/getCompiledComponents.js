@@ -1,5 +1,3 @@
-module.exports = function() {
-  return {
-    'rax-view': 'div',
-  };
+module.exports = {
+  'rax-view': 'div',
 };

@@ -5,7 +5,7 @@ const createBinding = require('../utils/createBinding');
 const createJSXBinding = require('../utils/createJSXBinding');
 const CodeError = require('../utils/CodeError');
 const DynamicBinding = require('../utils/DynamicBinding');
-const getCompiledComponents = require('../getCompiledComponents');
+const compiledComponents = require('../getCompiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
@@ -495,7 +495,7 @@ function transformTemplate(
         const componentTagNode = node.name;
         if (t.isJSXIdentifier(componentTagNode)) {
           const name = componentTagNode.name;
-          const replaceName = getCompiledComponents()[name];
+          const replaceName = compiledComponents[name];
           // Handle native components needTransformAttr
           if (typeof node.isCustomEl !== 'undefined'
             && !node.isCustomEl) {

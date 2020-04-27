@@ -2,7 +2,7 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
-const getCompiledComponents = require('../getCompiledComponents');
+const compiledComponents = require('../getCompiledComponents');
 const DynamicBinding = require('../utils/DynamicBinding');
 const generateId = require('../utils/generateId');
 const quickappConst = require('../const');
@@ -63,11 +63,11 @@ function transformAttribute(ast, code) {
   };
 }
 
-function isNativeComponent(path, platform) {
+function isNativeComponent(path) {
   const {
     node: { name: tagName }
   } = path.parentPath.get('name');
-  return !!getCompiledComponents(platform)[tagName];
+  return !!compiledComponents[tagName];
 }
 
 module.exports = {

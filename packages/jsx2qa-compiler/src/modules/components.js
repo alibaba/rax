@@ -9,7 +9,7 @@ const { moduleResolve, multipleModuleResolve } = require('../utils/moduleResolve
 const createJSX = require('../utils/createJSX');
 const createBinding = require('../utils/createBinding');
 const Expression = require('../utils/Expression');
-const getCompiledComponents = require('../getCompiledComponents');
+const compiledComponents = require('../getCompiledComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 
@@ -44,7 +44,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   node.isCustomEl = alias.isCustomEl;
   node.name.isCustom = true;
 
-  if (!getCompiledComponents()[componentTag]) {
+  if (!compiledComponents[componentTag]) {
     // <tag __tagId="tagId" />
 
     let tagId;
@@ -312,7 +312,7 @@ function transformDataset(parsed, options) {
         const openTagName = openEle.name;
         if (t.isJSXIdentifier(openTagName)
         && (typeof openEle.isCustomEl !== 'undefined' && !openEle.isCustomEl)
-        && !getCompiledComponents()[openTagName.name]
+        && !compiledComponents[openTagName.name]
         && !node.__transformDataset
         && openEle.attributes.some(x => x.name.name.indexOf('data-') > -1)) {
           node.__transformDataset = true;
