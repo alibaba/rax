@@ -101,17 +101,55 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
               throw new CodeError(code, node, node.loc, 'props that start with \'render\' can only pass a JSX expression which contains a JSX element');
             }
             const expression = value.expression;
+            let renderItemFunctionPath;
+            // renderXXX={() => ({<View></View>})}
             if (t.isArrowFunctionExpression(expression)) {
+              renderItemFunctionPath = path.get('value.expression');
+            } else if (t.isMemberExpression(expression) && t.isThisExpression(expression.object) && t.isIdentifier(expression.property)) {
+              // In class component, renderXXX={this.renderXXX}
+              const renderFnParentPath = renderFunctionPath.parentPath;
+              if (!renderFnParentPath.isClassBody()) {
+                throw new CodeError(code, node, node.loc, `'this.${expression.property.name}' can only be used in class component`);
+              }
+              const methodName = expression.property.name;
+              if (!methodName.startsWith('render')) {
+                throw new CodeError(code, node, node.loc, `'this.${expression.property.name}' function name should start with 'render'`);
+              }
+              throw new CodeError(code, node, node.loc, `'this.${expression.property.name}' is not supported temporarily with render props in class component, please use anonymous arrow function instead`);
+            } else if (t.isIdentifier(expression)) {
+              // In function component, renderXXX={renderXXX}
+              if (renderFunctionPath.parentPath.isClassBody()) {
+                throw new CodeError(code, node, node.loc, `'${expression.name}' can only be used in function component`);
+              }
+              if (!expression.name.startsWith('render')) {
+                throw new CodeError(code, node, node.loc, `'${expression.name}' function name should start with 'render'`);
+              }
+              const methodName = expression.name;
+              const functionComponentBody = renderFunctionPath.get('body.body');
+              const declaratedRenderFunctionPath = functionComponentBody.find(path => path.isFunctionDeclaration() && path.node.id.name === methodName);
+              if (declaratedRenderFunctionPath) {
+                throw new CodeError(code, declaratedRenderFunctionPath.node, declaratedRenderFunctionPath.node.loc, 'render funtions that used in render props can not be declared temporarily, please use variable declaration instead');
+              }
+              const variableDeclarationPath = functionComponentBody.find(path => {
+                return path.isVariableDeclaration() && path.get('declarations').find(innerPath => innerPath.isVariableDeclarator() && innerPath.node.id.name === methodName);
+              });
+              const variableDeclarator = variableDeclarationPath.get('declarations').find(path => path.isVariableDeclarator() && path.node.id.name === methodName);
+              renderItemFunctionPath = variableDeclarator.get('init');
+            }
+            if (renderItemFunctionPath) {
+              const renderItemFunctionNode = renderItemFunctionPath.node;
               const tempDataName = `${attrName}State__temp${tempId++}`;
               const templateName = t.stringLiteral(renderPropsAttrName);
-              const returnStatementPath = getReturnElementPath(expression) || path.get('value.expression.body');
+              const returnStatementPath = getReturnElementPath(renderItemFunctionNode) || path.get('value.expression.body');
               if (!returnStatementPath) return;
+
               let returnArgumentPath;
               if (returnStatementPath.isReturnStatement()) {
                 returnArgumentPath = returnStatementPath.get('argument');
               } else {
                 returnArgumentPath = returnStatementPath;
               }
+
               if (!renderPropsFunctions.some(fn => fn.originName === attrName)) {
                 if (!returnArgumentPath.isJSXElement()) {
                   path.skip();
@@ -127,6 +165,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                 returnStatementPath.traverse({
                   Identifier(innerPath) {
                     const { node: identifierNode } = innerPath;
+
                     if (innerPath.scope.hasBinding(identifierNode.name)) {
                       // Avoid repeat push
                       if (!returnProperties.some(
@@ -145,12 +184,22 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                 // Return used variables
                 returnArgumentPath.replaceWith(t.objectExpression(returnProperties));
                 // Generate render closure function
-                const renderClosureFunction = t.variableDeclaration('const', [
-                  t.variableDeclarator(
-                    t.identifier(renderPropsAttrName + 'Closure'),
-                    expression
-                  )
-                ]);
+                let renderClosureFunction;
+                if (renderItemFunctionPath.isClassMethod()) {
+                  renderClosureFunction = t.variableDeclaration('const', [
+                    t.variableDeclarator(
+                      t.identifier(renderPropsAttrName + 'Closure'),
+                      t.arrowFunctionExpression(renderItemFunctionNode.params, renderItemFunctionNode.body, false)
+                    )
+                  ]);
+                } else {
+                  renderClosureFunction = t.variableDeclaration('const', [
+                    t.variableDeclarator(
+                      t.identifier(renderPropsAttrName + 'Closure'),
+                      renderItemFunctionNode
+                    )
+                  ]);
+                }
                 renderPropsListener.push(injectRenderPropsListener(renderPropsAttrName, renderClosureFunction));
                 renderPropsMap.set(`${componentName}_${attrName}`, renderPropsAttrName);
                 path.get('value.expression').replaceWith(callRenderClsoureFunction);

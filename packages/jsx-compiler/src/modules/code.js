@@ -470,7 +470,7 @@ function addRenderPropsEmitter(renderPropsEmitter = [], renderFunctionPath) {
   if (renderPropsEmitter.length > 0) {
     renderPropsEmitter.forEach(emitter => {
       renderFunctionPath.node.body.body.push(emitter);
-    })
+    });
   }
 }
 
@@ -481,7 +481,7 @@ function addRenderPropsListener(renderPropsListener = [], renderFunctionPath) {
       const [renderClosureFunction, callOnRenderPropsUpdate] = listener;
       fnBody.unshift(renderClosureFunction);
       fnBody.push(callOnRenderPropsUpdate);
-    })
+    });
   }
 }
 
