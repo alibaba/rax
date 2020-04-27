@@ -46,7 +46,9 @@ const parserAdapters = {
     needTransformEvent: false,
     slotScope: true,
     // Need transform key
-    needTransformKey: false
+    needTransformKey: false,
+    // Handle rax-slider
+    processSlider: false
   },
   'wechat': {
     platform: 'wechat',
@@ -60,6 +62,32 @@ const parserAdapters = {
 
     view: {
       ...componentCommonProps.wechat,
+      className: '__rax-view'
+    },
+    compatibleText: false,
+    text: {
+      ...componentCommonProps.ali,
+      className: '__rax-text'
+    },
+    styleKeyword: true,
+    needTransformEvent: true,
+    slotScope: false,
+    needTransformKey: true,
+    triggerRef: true,
+    processSlider: true
+  },
+  'bytedance': {
+    platform: 'bytedance',
+    if: 'tt:if',
+    else: 'tt:else',
+    elseif: 'tt:elif',
+    for: 'tt:for',
+    forItem: 'tt:for-item',
+    forIndex: 'tt:for-index',
+    key: 'tt:key',
+
+    view: {
+      ...componentCommonProps.bytedance,
       className: '__rax-view'
     },
     compatibleText: false,

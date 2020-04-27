@@ -65,7 +65,7 @@ module.exports = function(
     }
     const originalExpression = isAttr ? node.value.expression : valueNode;
 
-    let name;
+    let name, propertyIndex;
     const addedNodeIndex = findIndex(properties, ({ value }) => genExpression(value) === genExpression(originalExpression));
     if (addedNodeIndex < 0 || properties[addedNodeIndex].key.__isFromMapFn) {
       properties.splice(addedNodeIndex, addedNodeIndex > -1);
@@ -73,8 +73,10 @@ module.exports = function(
         expression: originalExpression
       });
       properties.push(t.objectProperty(t.identifier(name), propertyValue));
+      propertyIndex = properties.length - 1;
     } else {
       name = properties[addedNodeIndex].key.name;
+      propertyIndex = addedNodeIndex;
     }
     // {{xxx}}
     const replaceVariable = genExpression(t.memberExpression(forItem, t.identifier(name)));

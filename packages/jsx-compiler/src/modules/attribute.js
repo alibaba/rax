@@ -2,7 +2,6 @@ const t = require('@babel/types');
 const traverse = require('../utils/traverseNodePath');
 const genExpression = require('../codegen/genExpression');
 const CodeError = require('../utils/CodeError');
-const getCompiledComponents = require('../getCompiledComponents');
 const DynamicBinding = require('../utils/DynamicBinding');
 const handleRefAttr = require('../utils/handleRefAttr');
 const isNativeComponent = require('../utils/isNativeComponent');

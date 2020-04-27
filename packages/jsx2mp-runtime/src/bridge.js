@@ -16,7 +16,9 @@ import { __updateRouterMap } from './router';
 import getId from './getId';
 import { setPageInstance } from './pageInstanceMap';
 import { registerEventsInConfig } from './nativeEventListener';
-import { isPlainObject, isEmptyObj } from './types';
+import { isPlainObject } from './types';
+import { enqueueRender } from './enqueueRender';
+import shallowEqual from './shallowEqual';
 
 const { TYPE, TARGET, TIMESTAMP } = getEventProps();
 
@@ -54,14 +56,13 @@ function getPageCycles(Klass) {
       this.instance.__pageOptions = options;
       setPageInstance(this.instance);
       this.instance._internal = this;
-      Object.assign(this.instance.state, this.data);
       // Add route information for page.
       history.location.__updatePageOption(options);
       history.location.__updatePageId(this.instance.instanceId);
-      this.data = this.instance.state;
 
       if (this.instance.__ready) return;
       this.instance.__ready = true;
+      this.data = this.instance.state;
       this.instance._mountComponent();
     },
     unmount() {
@@ -95,19 +96,28 @@ function getComponentCycles(Klass) {
           location: history.location
         });
       }
-      this.instance = new Klass(props, this);
+      this.instance = new Klass(props);
+      this.instance._internal = this;
       this.instance.__injectHistory = Klass.__injectHistory;
       this.instance.instanceId = instanceId;
       this.instance.type = Klass;
-      Object.assign(this.instance.state, this.data);
       setComponentInstance(this.instance);
 
       if (GET_DERIVED_STATE_FROM_PROPS in Klass) {
         this.instance['__' + GET_DERIVED_STATE_FROM_PROPS] = Klass[GET_DERIVED_STATE_FROM_PROPS];
       }
-
       this.data = this.instance.state;
       this.instance._mountComponent();
+    },
+    didUpdate(prevProps, nextProps) {
+      // Ensure this component is used in native project & has been rendered & prevProps and this.props are different
+      if (
+        /^t_\d+$/.test(this.instance.instanceId)
+        && this.data.$ready
+        && !shallowEqual(prevProps, nextProps)) {
+        this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
+        enqueueRender(this.instance);
+      }
     },
     unmount: function() {
       this.instance._unmountComponent();
@@ -208,11 +218,13 @@ function createProxyMethods(events) {
   return methods;
 }
 
-function createAnonymousClass(render) {
+function createReactiveClass(pureRender) {
   const Klass = class extends Component {
-    constructor(props, _internal) {
-      super(props, _internal, true);
-      this.__compares = render.__compares;
+    constructor(props) {
+      super(props);
+      this._render = pureRender;
+      this.__compares = pureRender.__compares;
+
       // Handle functional component shouldUpdateComponent
       if (!this.shouldComponentUpdate && this.__compares) {
         const compares = this.__compares;
@@ -227,16 +239,22 @@ function createAnonymousClass(render) {
             }
           }
 
-          return !arePropsEqual;
+          return !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
         };
       }
     }
     render(props) {
-      return render.call(this, props);
+      // First render need set this._forwardRef
+      if (!this.__mounted && this._render._forwardRef) {
+        this.__prevForwardRef = this._forwardRef = this.props.bindComRef;
+      }
+      return this._render.call(this, props, this._forwardRef ? this._forwardRef : this.context);
     }
   };
   // Transfer __injectHistory
-  Klass.__injectHistory = render.__injectHistory;
+  Klass.__injectHistory = pureRender.__injectHistory;
+  // Set as function component
+  Klass.prototype.isFunctionComponent = true;
   return Klass;
 }
 
@@ -249,7 +267,7 @@ function createAnonymousClass(render) {
 function createConfig(component, options) {
   const Klass = isClassComponent(component)
     ? component
-    : createAnonymousClass(component);
+    : createReactiveClass(component);
 
   const { events, isPage } = options;
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);

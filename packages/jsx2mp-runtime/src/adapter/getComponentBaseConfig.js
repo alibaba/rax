@@ -15,7 +15,9 @@ export default function() {
     return {
       properties: {
         __tagId: null,
-        ref: null
+        ref: null,
+        // For native project
+        outerProps: null
       },
       options: {
         addGlobalClass: true,
