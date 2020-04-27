@@ -1,8 +1,5 @@
-module.exports = function(platform) {
-  switch (platform) {
-    case 'quickapp':
-      return {
-        'rax-view': 'div',
-      };
-  }
+module.exports = function() {
+  return {
+    'rax-view': 'div',
+  };
 };

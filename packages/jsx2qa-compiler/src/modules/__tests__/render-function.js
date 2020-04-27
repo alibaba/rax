@@ -3,7 +3,6 @@ const traverse = require('../../utils/traverseNodePath');
 const { _transformRenderFunction } = require('../render-function');
 const { parseCode } = require('../../parser/index');
 const getDefaultExportedPath = require('../../utils/getDefaultExportedPath');
-const adapter = require('../../adapter').quickapp;
 const createJSX = require('../../utils/createJSX');
 const createBinding = require('../../utils/createBinding');
 const genExpression = require('../../codegen/genExpression');

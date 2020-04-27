@@ -7,7 +7,6 @@ const {
 } = require('../jsx-plus');
 const { parseExpression } = require('../../parser');
 const genExpression = require('../../codegen/genExpression');
-const adapter = require('../../adapter').quickapp;
 
 let count = 0;
 let id = 0;
@@ -23,7 +22,7 @@ describe('Directives', () => {
       const ast = parseExpression(code);
       _transformList({
         templateAST: ast
-      }, code, adapter);
+      }, code);
       const index = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
@@ -49,7 +48,7 @@ describe('Directives', () => {
       const ast = parseExpression(code);
       _transformList({
         templateAST: ast
-      }, code, adapter);
+      }, code);
       const index1 = 'index' + count++;
       const index2 = 'index' + count++;
       expect(genExpression(ast))
@@ -89,7 +88,7 @@ describe('Directives', () => {
       const ast = parseExpression(code);
       _transformList({
         templateAST: ast
-      }, code, adapter);
+      }, code);
       const index1 = 'index' + count++;
       const index2 = 'index' + count++;
       expect(genExpression(ast))
@@ -124,7 +123,7 @@ describe('Directives', () => {
       const ast = parseExpression(code);
       _transformList({
         templateAST: ast
-      }, code, adapter);
+      }, code);
       const index = 'index' + count++;
       expect(genExpression(ast))
         .toEqual(`<View>
@@ -146,7 +145,7 @@ describe('Directives', () => {
       const ast = parseExpression(`
         <View x-if={value}></View>
       `);
-      _transformCondition(ast, adapter);
+      _transformCondition(ast);
       expect(genExpression(ast)).toEqual('<View if={value}></View>');
     });
   });
@@ -166,7 +165,7 @@ describe('Directives', () => {
       const ast = parseExpression(`
         <View x-class={classNames}></View>
       `);
-      _transformClass(ast, adapter);
+      _transformClass(ast);
       expect(genExpression(ast)).toEqual('<View className={__classnames__(classNames)}></View>');
     });
 
@@ -174,7 +173,7 @@ describe('Directives', () => {
       const ast = parseExpression(`
         <View className="home" x-class={classNames}></View>
       `);
-      _transformClass(ast, adapter);
+      _transformClass(ast);
       expect(genExpression(ast)).toEqual('<View className={`home${" "}${__classnames__(classNames)}`}></View>');
     });
   });
@@ -183,7 +182,7 @@ describe('Directives', () => {
     it('should transform ali slot', () => {
       const code = '<View x-slot:item="props">{props.text}</View>';
       const ast = parseExpression(code);
-      _transformSlotDirective(ast, code, adapter);
+      _transformSlotDirective(ast, code);
       expect(genExpression(ast)).toEqual('<View slot="item">{props.text}</View>');
     });
   });
@@ -196,10 +195,10 @@ describe('Directives', () => {
       const ast = parseExpression(code);
       _transformList({
         templateAST: ast
-      }, code, adapter);
+      }, code);
       const index = 'index' + count++;
       expect(genExpression(ast)).toEqual(`<View>
-        <View ref="{{item.d0}}" id="id_${id}{{${index}}}" componentId="id_0{{${index}}}" for={data.map((item, ${index}) => {
+        <View ref="{{item.d0}}" id="id_${id}{{${index}}}" for={data.map((item, ${index}) => {
     this._registerRefs([{
       "name": "${id}" + ${index},
       "method": refs[${index}],
@@ -226,7 +225,7 @@ describe('Directives', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     id++;
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
@@ -252,7 +251,7 @@ describe('Directives', () => {
       ${index1}: ${index1}
     };
   })}>
-            <View ref="{{item.d0}}" id="id_${id}{{${index2}}}" componentId="id_1{{${index2}}}" for={item.list}>test</View>
+            <View ref="{{item.d0}}" id="id_${id}{{${index2}}}" for={item.list}>test</View>
         </View>
       </View>`);
     id++;

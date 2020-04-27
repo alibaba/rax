@@ -9,9 +9,9 @@ const getCompiledComponents = require('../getCompiledComponents');
 const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
-const isSlotScopeNode = require('../utils/isSlotScopeNode');
 const { isDirectiveAttr, isEventHandlerAttr, BINDING_REG } = require('../utils/checkAttr');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
+const quickappConst = require('../const');
 
 const ATTR = Symbol('attribute');
 const ELE = Symbol('element');
@@ -23,7 +23,6 @@ const renderFuncReg = /StateTemp[0-9]+/;
  * 3. Normalize function bounds.
  * @param parsed
  * @param scope
- * @param adapter
  * @param sourceCode
  */
 function transformTemplate(
@@ -32,7 +31,6 @@ function transformTemplate(
     componentDependentProps = {},
     dynamicValue
   },
-  adapter,
   sourceCode
 ) {
   const dynamicEvents = new DynamicBinding('e');
@@ -244,8 +242,7 @@ function transformTemplate(
                         genExpression(transformedArg, {
                           concise: true,
                           comments: false,
-                        }),
-                        adapter
+                        })
                       ),
                     ),
                   ),
@@ -334,8 +331,7 @@ function transformTemplate(
                       genExpression(arg, {
                         concise: true,
                         comments: false,
-                      }),
-                      adapter
+                      })
                     );
                   attributes.push(
                     t.jsxAttribute(
@@ -353,8 +349,7 @@ function transformTemplate(
                           genExpression(transformedArg, {
                             concise: true,
                             comments: false,
-                          }),
-                          adapter
+                          })
                         ),
                       ),
                     ),
@@ -454,8 +449,7 @@ function transformTemplate(
                   genExpression(expression, {
                     concise: true,
                     comments: false,
-                  }),
-                  adapter
+                  })
                 ),
               ),
             );
@@ -501,7 +495,7 @@ function transformTemplate(
         const componentTagNode = node.name;
         if (t.isJSXIdentifier(componentTagNode)) {
           const name = componentTagNode.name;
-          const replaceName = getCompiledComponents(adapter.platform)[name];
+          const replaceName = getCompiledComponents()[name];
           // Handle native components needTransformAttr
           if (typeof node.isCustomEl !== 'undefined'
             && !node.isCustomEl) {
@@ -529,7 +523,7 @@ function transformTemplate(
           // Handle rax-view
           if (replaceName) {
             replaceComponentTagName(path, t.jsxIdentifier(replaceName));
-            const propsMap = adapter[replaceName];
+            const propsMap = quickappConst[replaceName];
             let hasClassName = false;
             node.attributes.forEach(attr => {
               if (t.isJSXIdentifier(attr.name)) {
@@ -561,44 +555,6 @@ function transformTemplate(
     dynamicEvents: dynamicEvents.getStore(),
   };
 }
-
-function isNativeComponent(path, platform) {
-  const {
-    node: { name: tagName }
-  } = path.parentPath.get('name');
-  console.log('tagName', tagName);
-  return !!getCompiledComponents(platform)[tagName];
-}
-
-// function transformPreComponentAttr(ast) {
-//   traverse(ast, {
-//     JSXAttribute(path) {
-//       const { node, parentPath } = path;
-//       const attrName = node.name.name;
-//       if (typeof parentPath.node.isCustomEl !== 'undefined' && !parentPath.node.isCustomEl) {
-//         console.log(isNativeComponent(path))
-//         // origin components
-//         // onChange => bindChange
-//         if (attrName.slice(0, 2) === 'on') {
-//           node.name.name = attrName.replace('on', 'bind');
-//         }
-//         // bindChange => bind-change
-//         const newAttrName = node.name.name;
-//         if (/[A-Z]+/g.test(newAttrName) && newAttrName !== 'className') {
-//           node.name.name = newAttrName.replace(/[A-Z]+/g, (v, i) => {
-//             if (i !== 0) {
-//               return `-${v.toLowerCase()}`;
-//             }
-//             return v;
-//           });
-//         }
-//       }
-//       if (parentPath.node.name.name === 'div') {
-//         node.name.name = node.name.name.toLowerCase();
-//       }
-//     }
-//   });
-// }
 
 function getExpressionName(expression) {
   if (t.isIdentifier(expression.object)) {
@@ -862,7 +818,6 @@ function collectComponentDependentProps(path, attrValue, attrPath, componentDepe
   const isDirective = isDirectiveAttr(attrName);
   if (
     !isDirective
-    && !isSlotScopeNode(attrValue)
     && attrValue.type
     && jsxEl.__tagId
   ) {
@@ -894,11 +849,9 @@ module.exports = {
   parse(parsed, code, options) {
     if (parsed.renderFunctionPath) {
       // Set global dynamic value
-      const { adapter } = options;
       parsed.dynamicValue = new DynamicBinding('d');
       const { dynamicEvents } = transformTemplate(
         parsed,
-        options.adapter,
         code
       );
 

@@ -5,8 +5,9 @@ const CodeError = require('../utils/CodeError');
 const getCompiledComponents = require('../getCompiledComponents');
 const DynamicBinding = require('../utils/DynamicBinding');
 const generateId = require('../utils/generateId');
+const quickappConst = require('../const');
 
-function transformAttribute(ast, code, adapter) {
+function transformAttribute(ast, code) {
   const refs = [];
   const dynamicRef = new DynamicBinding('r');
   traverse(ast, {
@@ -15,13 +16,13 @@ function transformAttribute(ast, code, adapter) {
       const attrName = node.name.name;
       switch (attrName) {
         case 'key':
-          node.name.name = adapter.key;
+          node.name.name = quickappConst.key;
           break;
         case 'className':
           node.name.name = 'class';
           break;
         case 'style':
-          if (!isNativeComponent(path, adapter.platform)) {
+          if (!isNativeComponent(path)) {
             node.name.name = 'styleSheet';
           }
           break;
@@ -71,7 +72,7 @@ function isNativeComponent(path, platform) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const { refs, dynamicRef } = transformAttribute(parsed.templateAST, code, options.adapter);
+    const { refs, dynamicRef } = transformAttribute(parsed.templateAST, code);
     parsed.refs = refs;
     // Set global dynamic ref value
     parsed.dynamicRef = dynamicRef;

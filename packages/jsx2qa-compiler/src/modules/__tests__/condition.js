@@ -1,7 +1,6 @@
 const t = require('@babel/types');
 const { _transformTemplate, _transformRenderFunction } = require('../condition');
 const { parseExpression } = require('../../parser');
-const adapter = require('../../adapter').quickapp;
 const genCode = require('../../codegen/genCode');
 const genExpression = require('../../codegen/genExpression');
 
@@ -10,7 +9,7 @@ describe('Transform condition', () => {
     const ast = parseExpression(`
       <View>{foo ? <View /> : <Text />}</View>
     `);
-    _transformTemplate(ast, {}, adapter, {});
+    _transformTemplate(ast, {}, {});
     expect(genCode(ast).code).toEqual('<View><block if={foo}><View /></block><block else><Text /></block></View>');
   });
 
@@ -18,7 +17,7 @@ describe('Transform condition', () => {
     const ast = parseExpression(`
       <View>{foo ? bar ? <Bar /> : <View /> : <Text />}</View>
     `);
-    const dynamicValue = _transformTemplate(ast, {}, adapter, {});
+    const dynamicValue = _transformTemplate(ast, {}, {});
 
     expect(genCode(ast).code).toEqual('<View><block if={foo}><block if={bar}><Bar /></block><block else><View /></block></block><block else><Text /></block></View>');
   });
@@ -27,7 +26,7 @@ describe('Transform condition', () => {
     const ast = parseExpression(`
       <View>{empty ? <Empty /> : loading ? null : 'xxx' }</View>
     `);
-    const dynamicValue = _transformTemplate(ast, {}, adapter, {});
+    const dynamicValue = _transformTemplate(ast, {}, {});
 
     expect(genCode(ast).code).toEqual('<View><View if={empty}><Empty /></View><View else><View if={loading}></View><View else>xxx</View></View></View>');
   });
@@ -42,7 +41,7 @@ describe('Transform condition', () => {
           })}
         </view>
     `);
-    _transformTemplate(ast, {}, adapter, {});
+    _transformTemplate(ast, {}, {});
     expect(genCode(ast).code).toEqual(
       `<view className=\"content\">
           {list.map(item => {
@@ -59,7 +58,7 @@ describe('Transform condition', () => {
         }) : 123 }
       </View>
     `);
-    _transformTemplate(ast, {}, adapter, {});
+    _transformTemplate(ast, {}, {});
     expect(genCode(ast).code).toEqual(`<View>
         <View if={tabList}>{tabList.map(tab => {
       return <View>{tab}</View>;
@@ -73,7 +72,7 @@ describe('Transform condition', () => {
         { a && <View>1</View>}
       </View>
     `);
-    _transformTemplate(ast, {}, adapter, {});
+    _transformTemplate(ast, {}, {});
     expect(genCode(ast).code).toEqual(`<View>
         <block if={a}><View>1</View></block><block else>{a}</block>
       </View>`);
@@ -85,7 +84,7 @@ describe('Transform condition', () => {
         { a || b && <View>1</View>}
       </View>
     `);
-    _transformTemplate(ast, {}, adapter, {});
+    _transformTemplate(ast, {}, {});
     expect(genCode(ast).code).toEqual(`<View>
         <block if={!a}><block if={b}><View>1</View></block><block else>{b}</block></block><block else>{a}</block>
       </View>`);
@@ -98,7 +97,7 @@ describe('Transform condition', () => {
         { <View>1</View> || <View>2</View> }
       </View>
     `);
-    _transformTemplate(ast, {}, adapter, {});
+    _transformTemplate(ast, {}, {});
     expect(genCode(ast).code).toEqual(`<View>
         <View>2</View>
         <View>1</View>
@@ -123,7 +122,7 @@ describe('Transiform condition render function', () => {
       })
     `);
 
-    const tmpVars = _transformRenderFunction(ast, adapter);
+    const tmpVars = _transformRenderFunction(ast);
     expect(genExpression(tmpVars.vdom)).toEqual('<block><block if={a > 0}><view>case 1</view></block><block else><view>case 1.1</view></block><block if={a > 1}><view>case 2</view></block></block>');
     expect(genExpression(ast)).toEqual(`function render(props) {
   let {
@@ -155,7 +154,7 @@ describe('Transiform condition render function', () => {
       })
     `);
 
-    const tmpVars = _transformRenderFunction(ast, adapter);
+    const tmpVars = _transformRenderFunction(ast);
     expect(genExpression(tmpVars.vdom)).toEqual('<block><block if={a > 0}><view>case 1</view></block><block else><view>case 1.1</view></block><block if={a > 1}><view>case 2</view></block></block>');
     expect(genExpression(ast)).toEqual(`function render(props) {
   let {
@@ -187,7 +186,7 @@ describe('Transiform condition render function', () => {
       })
     `);
 
-    const tmpVars = _transformRenderFunction(ast, adapter);
+    const tmpVars = _transformRenderFunction(ast);
     expect(genExpression(tmpVars.vdom)).toEqual('<block><block if={a > 0}>{123}</block><block else><view>case 1.1</view></block></block>');
     expect(genExpression(ast)).toEqual(`function render(props) {
   let {
@@ -221,7 +220,7 @@ describe('Transiform condition render function', () => {
       })
     `);
 
-    const tmpVars = _transformRenderFunction(ast, adapter);
+    const tmpVars = _transformRenderFunction(ast);
     expect(genExpression(tmpVars.vdom)).toEqual('');
     expect(genExpression(ast)).toEqual(`function render(props) {
   const [a, setState] = useState(1);

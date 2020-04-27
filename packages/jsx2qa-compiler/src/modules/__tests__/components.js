@@ -1,7 +1,6 @@
 const { _transformComponents, _transformDataset } = require('../components');
 const { parseExpression, parseCode, getImported } = require('../../parser/index');
 const genCode = require('../../codegen/genCode');
-const adapter = require('../../adapter').quickapp;
 
 describe('Transform components', () => {
   it('should transform Provider', () => {
@@ -12,10 +11,7 @@ describe('Transform components', () => {
     const parsed = {
       templateAST: ast
     };
-    const options = {
-      adapter
-    };
-    const { contextList } = _transformComponents(parsed, options);
+    const { contextList } = _transformComponents(parsed);
     expect(genCode(ast).code).toEqual(`<block>
         <View>Test</View>
       </block>`);
@@ -39,10 +35,7 @@ describe('Transform components', () => {
       componentDependentProps: {},
       componentsAlias: {}
     };
-    const options = {
-      adapter
-    };
-    const { componentsAlias } = _transformComponents(parsed, options);
+    const { componentsAlias } = _transformComponents(parsed);
     expect(genCode(ast).code).toEqual(`<rax-view>
         <c-a94616 tag-id="{{tagId}}-0" />
       </rax-view>`);
@@ -53,10 +46,7 @@ describe('Transform components', () => {
     const parsed = {
       templateAST: ast
     };
-    const options = {
-      adapter
-    };
-    _transformComponents(parsed, options);
+    _transformComponents(parsed);
     expect(genCode(ast).code).toEqual('<View><block>Test</block></View>');
   });
 });

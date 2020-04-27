@@ -12,7 +12,7 @@ const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
 const getParentListPath = require('../utils/getParentListPath');
-
+const quickAppConst = require('../const');
 /**
  * Transfrom map method
  * @param {NodePath} path function or CallExpression path
@@ -20,7 +20,7 @@ const getParentListPath = require('../utils/getParentListPath');
  * @param {string} code - original code
  * @param {object} adapter
  */
-function transformMapMethod(path, parsed, code, adapter) {
+function transformMapMethod(path, parsed, code) {
   const dynamicStyle = new DynamicBinding('s');
   const dynamicValue = new DynamicBinding('d');
   const renderItemFunctions = parsed.renderItemFunctions;
@@ -69,7 +69,7 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         const iterValue = callee.object;
         // handle parentList
-        const parentListPath = getParentListPath(path, adapter);
+        const parentListPath = getParentListPath(path);
 
         const parentList = parentListPath && parentListPath.node.__jsxlist;
 
@@ -161,7 +161,7 @@ function transformMapMethod(path, parsed, code, adapter) {
                 parsed.useCreateStyle = useCreateStyle;
               }
               // Handle props
-              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code, adapter);
+              handleListProps(innerPath, forItem, originalIndex, renamedIndex.name, properties, dynamicValue, code);
             }
           },
           JSXExpressionContainer: {
@@ -174,7 +174,7 @@ function transformMapMethod(path, parsed, code, adapter) {
         });
 
         const listAttr = {
-          [adapter.for]: t.jsxExpressionContainer(forNode)
+          [quickAppConst.for]: t.jsxExpressionContainer(forNode)
         };
 
         // Use renamed index instead of original params[1]
@@ -207,14 +207,14 @@ function transformMapMethod(path, parsed, code, adapter) {
   }
 }
 
-function transformList(parsed, code, adapter) {
+function transformList(parsed, code) {
   const ast = parsed.templateAST;
   traverse(ast, {
     ArrowFunctionExpression(path) {
-      transformMapMethod(path, parsed, code, adapter);
+      transformMapMethod(path, parsed, code);
     },
     FunctionExpression(path) {
-      transformMapMethod(path, parsed, code, adapter);
+      transformMapMethod(path, parsed, code);
     },
     CallExpression: {
       enter(path) {
@@ -225,7 +225,7 @@ function transformList(parsed, code, adapter) {
             path.node.__bindEvent = true;
           }
         }
-        transformMapMethod(path, parsed, code, adapter);
+        transformMapMethod(path, parsed, code);
       }
     }
   });
@@ -233,7 +233,7 @@ function transformList(parsed, code, adapter) {
 
 module.exports = {
   parse(parsed, code, options) {
-    transformList(parsed, code, options.adapter);
+    transformList(parsed, code);
   },
 
   // For test cases.

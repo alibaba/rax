@@ -29,7 +29,6 @@ let iconFontIndex = 0;
  * @param {Object} options
  */
 function transformIdentifierComponentName(path, alias, dynamicValue, parsed, options) {
-  const { adapter } = options;
   const componentConfig = 'quickappConfig';
   const tagIdKey = 'tag-id';
   const tagIdValue = 'tagId';
@@ -45,7 +44,7 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
   node.isCustomEl = alias.isCustomEl;
   node.name.isCustom = true;
 
-  if (!getCompiledComponents(options.adapter.platform)[componentTag]) {
+  if (!getCompiledComponents()[componentTag]) {
     // <tag __tagId="tagId" />
 
     let tagId;
@@ -88,7 +87,6 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
 
     if (componentTag === 'slot') return;
 
-    // handle with icon in adapter.singleFileComponent
     if (componentTag.indexOf('rax-icon') > -1) {
       const fontAttr = {};
       node.attributes.forEach((attr) => {
@@ -184,7 +182,6 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
 
 function transformComponents(parsed, options) {
   const { ast, templateAST, imported } = parsed;
-  const { adapter } = options;
   const dynamicValue = {};
   const contextList = [];
   const componentsAlias = {};
@@ -315,7 +312,7 @@ function transformDataset(parsed, options) {
         const openTagName = openEle.name;
         if (t.isJSXIdentifier(openTagName)
         && (typeof openEle.isCustomEl !== 'undefined' && !openEle.isCustomEl)
-        && !getCompiledComponents(options.adapter.platform)[openTagName.name]
+        && !getCompiledComponents()[openTagName.name]
         && !node.__transformDataset
         && openEle.attributes.some(x => x.name.name.indexOf('data-') > -1)) {
           node.__transformDataset = true;
@@ -344,7 +341,6 @@ function transformDataset(parsed, options) {
  */
 module.exports = {
   parse(parsed, code, options) {
-    const { adapter } = options;
     if (!parsed.componentDependentProps) {
       parsed.componentDependentProps = {};
     }
@@ -408,7 +404,6 @@ function getRealNpmPkgName(filePath, pkgName) {
 }
 
 function getComponentPath(alias, options) {
-  const { adapter } = options;
   if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
     // alias.local
     if (!options.resourcePath) {

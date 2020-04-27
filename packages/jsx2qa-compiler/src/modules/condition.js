@@ -5,11 +5,12 @@ const createJSX = require('../utils/createJSX');
 const CodeError = require('../utils/CodeError');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 const genExpression = require('../codegen/genExpression');
+const quickappConst = require('../const');
 
 const TEMPLATE_AST = 'templateAST';
 const RENDER_FN_PATH = 'renderFunctionPath';
 
-function transformRenderFunction(renderPath, adapter) {
+function transformRenderFunction(renderPath) {
   // Identifier name & jsx map
   const templateMap = {};
   traverse(renderPath, {
@@ -25,8 +26,7 @@ function transformRenderFunction(renderPath, adapter) {
               path,
               statementPath.get('expression'),
               templateMap,
-              renderPath.scope,
-              adapter
+              renderPath.scope
             );
           });
         } else {
@@ -35,11 +35,10 @@ function transformRenderFunction(renderPath, adapter) {
               path,
               consequentPath.get('expression'),
               templateMap,
-              renderPath.scope,
-              adapter
+              renderPath.scope
             );
           } else {
-            handleConsequent(path, consequentPath, templateMap, renderPath.scope, adapter);
+            handleConsequent(path, consequentPath, templateMap, renderPath.scope);
           }
         }
 
@@ -49,8 +48,7 @@ function transformRenderFunction(renderPath, adapter) {
             alternateBodyPath.map((statementPath) => {
               handleAlternate(
                 statementPath.get('expression'),
-                templateMap,
-                adapter
+                templateMap
               );
             });
           } else {
@@ -59,11 +57,10 @@ function transformRenderFunction(renderPath, adapter) {
                 path,
                 alternatePath.get('expression'),
                 templateMap,
-                renderPath.scope,
-                adapter
+                renderPath.scope
               );
             } else {
-              handleConsequent(path, alternatePath, templateMap, renderPath.scope, adapter);
+              handleConsequent(path, alternatePath, templateMap, renderPath.scope);
             }
           }
         }
@@ -73,7 +70,7 @@ function transformRenderFunction(renderPath, adapter) {
   return templateMap;
 }
 
-function transformTemplate(ast, templateMap, adapter, code) {
+function transformTemplate(ast, templateMap, code) {
   traverse(ast, {
     JSXExpressionContainer(path) {
       const { node, parentPath } = path;
@@ -83,7 +80,7 @@ function transformTemplate(ast, templateMap, adapter, code) {
       }
 
       if (node.expression.type === 'ConditionalExpression') {
-        const { replacement } = transformConditionalExpression(path, node.expression, { adapter, code });
+        const { replacement } = transformConditionalExpression(path, node.expression, { code });
         path.replaceWithMultiple(replacement);
       }
 
@@ -124,10 +121,10 @@ function transformTemplate(ast, templateMap, adapter, code) {
             children.push(t.jsxExpressionContainer(right));
           }
           replacement.push(createJSX('block', {
-            [adapter.if]: generateConditionValue(test, { adapter })
+            [quickappConst.if]: generateConditionValue(test)
           }, children));
           replacement.push(createJSX('block', {
-            [adapter.else]: null,
+            [quickappConst.else]: null,
           }, [t.jsxExpressionContainer(left)]));
         }
         path.parentPath.replaceWithMultiple(replacement);
@@ -143,13 +140,12 @@ function transformTemplate(ast, templateMap, adapter, code) {
  *        jsxExpressionContainer
  * @param {Object} expression
  *        Condition Expression
- * @param {{ adapter: Object, code: String }} options
+ * @param {{ code: String }} options
  * @returns {{ replacement: Object }}
  * */
 function transformConditionalExpression(path, expression, options) {
   let { test, consequent, alternate } = expression;
   const { parentPath } = path;
-  const { adapter } = options;
 
   const replacement = [];
   let consequentReplacement = [];
@@ -204,7 +200,7 @@ function transformConditionalExpression(path, expression, options) {
       createJSX(
         openTag,
         {
-          [options.adapter.if]: generateConditionValue(test, options),
+          [quickappConst.if]: generateConditionValue(test),
         },
         consequentReplacement,
       ),
@@ -215,7 +211,7 @@ function transformConditionalExpression(path, expression, options) {
       createJSX(
         openTag,
         {
-          [options.adapter.else]: null,
+          [quickappConst.else]: null,
         },
         alternateReplacement,
       ),
@@ -228,10 +224,9 @@ module.exports = {
   parse(parsed, code, options) {
     if (parsed[RENDER_FN_PATH]) {
       const templateMap = transformRenderFunction(
-        parsed[RENDER_FN_PATH],
-        options.adapter,
+        parsed[RENDER_FN_PATH]
       );
-      transformTemplate(parsed[TEMPLATE_AST], templateMap, options.adapter, code);
+      transformTemplate(parsed[TEMPLATE_AST], templateMap, code);
     }
   },
 
@@ -257,7 +252,7 @@ function isAllJsxElement(expression) {
   return isAllJsxElement(alternate);
 }
 
-function generateConditionValue(test, options) {
+function generateConditionValue(test) {
   let conditionValue;
   if (t.isStringLiteral(test)) {
     conditionValue = test;
@@ -277,9 +272,8 @@ function isJSX(node) {
  * @param expressionPath consequent expression path
  * @param templateMap variable => jsx template
  * @param renderScope render function scope
- * @param adapter
  * */
-function handleConsequent(path, expressionPath, templateMap, renderScope, adapter) {
+function handleConsequent(path, expressionPath, templateMap, renderScope) {
   const testPath = path.get('test');
   let shouldTransfrom = true;
   // This expression can be replaced only if the identifiers in test expression exist in the render scope
@@ -313,7 +307,7 @@ function handleConsequent(path, expressionPath, templateMap, renderScope, adapte
       if (!templateMap[varName]) {
         templateMap[varName] = createJSX('block');
       }
-      let testAttrName = adapter.if;
+      let testAttrName = quickappConst.if;
       const parentPathAlternate = path.parent.alternate;
       /**
        * Condition:
@@ -326,7 +320,7 @@ function handleConsequent(path, expressionPath, templateMap, renderScope, adapte
           parentPathAlternate.start === start &&
           parentPathAlternate.end === end
       ) {
-        testAttrName = adapter.elseif;
+        testAttrName = quickappConst.elseif;
       }
       const rightNode = rightPath.node;
       const containerNode = createJSX(
@@ -349,9 +343,8 @@ function handleConsequent(path, expressionPath, templateMap, renderScope, adapte
 /**
  * @param expressionPath alternate expression path
  * @param templateMap variable => jsx template
- * @param adapter
  * */
-function handleAlternate(expressionPath, templateMap, adapter) {
+function handleAlternate(expressionPath, templateMap) {
   const expression = expressionPath.node;
   if (
     t.isAssignmentExpression(expression) &&
@@ -364,7 +357,7 @@ function handleAlternate(expressionPath, templateMap, adapter) {
     const containerNode = createJSX(
       'block',
       {
-        [adapter.else]: null,
+        [quickappConst.else]: null,
       },
       [hasJSX(rightPath) ? rightNode : t.jsxExpressionContainer(rightNode) ],
     );

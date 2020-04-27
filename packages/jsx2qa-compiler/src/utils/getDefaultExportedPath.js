@@ -1,10 +1,6 @@
 const t = require('@babel/types');
 const traverse = require('./traverseNodePath');
 
-/**
- * Get default exported path.
- * @param ast
- */
 module.exports = function getDefaultExportedPath(ast) {
   let exportedDeclaration = null;
   traverse(ast, {

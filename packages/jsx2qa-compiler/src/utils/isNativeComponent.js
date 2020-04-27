@@ -1,8 +1,8 @@
 const getCompiledComponents = require('../getCompiledComponents');
 
-module.exports = function isNativeComponent(path, platform) {
+module.exports = function isNativeComponent(path) {
   const {
     node: { name: tagName }
   } = path.parentPath.get('name');
-  return !!getCompiledComponents(platform)[tagName];
+  return !!getCompiledComponents()[tagName];
 };

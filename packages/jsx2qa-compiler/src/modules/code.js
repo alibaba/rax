@@ -7,7 +7,7 @@ const isFunctionComponent = require('../utils/isFunctionComponent');
 const traverse = require('../utils/traverseNodePath');
 const { readJSONSync } = require('fs-extra');
 const genExpression = require('../codegen/genExpression');
-const { isNpmModule, isWeexModule } = require('../utils/checkModule');
+const { isNpmModule } = require('../utils/checkModule');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 const { BINDING_REG } = require('../utils/checkAttr');
 
@@ -73,7 +73,7 @@ module.exports = {
     const { ast, programPath, defaultExportedPath, exportComponentPath, renderFunctionPath,
       useCreateStyle, useClassnames, dynamicValue, dynamicRef, dynamicStyle, dynamicEvents, imported,
       contextList, refs, componentDependentProps, renderItemFunctions, eventHandler, eventHandlers = [] } = parsed;
-    const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm, adapter } = options;
+    const { platform, type, cwd, outputPath, sourcePath, resourcePath, disableCopyNpm } = options;
     if (type !== 'app' && (!defaultExportedPath || !defaultExportedPath.node)) {
       // Can not found default export, otherwise app.js is excluded.
       return;
@@ -137,7 +137,7 @@ module.exports = {
 
     if (type !== 'app') {
       removeDefaultImports(ast);
-      addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, adapter);
+      addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath);
     }
 
     /**
@@ -190,7 +190,7 @@ module.exports = {
       addUpdateData(dynamicValue, dynamicRef, dynamicStyle, renderItemFunctions, renderFunctionPath);
       addUpdateEvent(dynamicEvents, eventHandler, renderFunctionPath);
       addProviderIniter(contextList, renderFunctionPath);
-      addRegisterRefs(refs, renderFunctionPath, adapter);
+      addRegisterRefs(refs, renderFunctionPath);
     }
   },
 };
@@ -359,16 +359,14 @@ function renameNpmModules(ast, npmRelativePath, filename, cwd) {
   traverse(ast, {
     ImportDeclaration(path) {
       const { value } = path.node.source;
-      if (isWeexModule(value)) {
-        path.remove();
-      } else if (isNpmModule(value)) {
+      if (isNpmModule(value)) {
         path.node.source = source(value, npmRelativePath, filename, cwd);
       }
     }
   });
 }
 
-function addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath, adapter) {
+function addDefine(programPath, type, userDefineType, eventHandlers, useCreateStyle, useClassnames, exportedVariables, runtimePath) {
   let safeCreateInstanceId;
   let importedIdentifier;
   switch (type) {
@@ -559,7 +557,7 @@ function addProviderIniter(contextList, renderFunctionPath) {
  * @param {Array} refs
  * @param {Object} renderFunctionPath
  * */
-function addRegisterRefs(refs, renderFunctionPath, adapter) {
+function addRegisterRefs(refs, renderFunctionPath) {
   const registerRefsMethods = t.memberExpression(
     t.thisExpression(),
     t.identifier('_registerRefs')

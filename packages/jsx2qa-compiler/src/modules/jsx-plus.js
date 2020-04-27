@@ -9,14 +9,15 @@ const handleListStyle = require('../utils/handleListStyle');
 const handleListProps = require('../utils/handleListProps');
 const handleListJSXExpressionContainer = require('../utils/handleListJSXExpressionContainer');
 const getParentListPath = require('../utils/getParentListPath');
+const quickAppConst = require('../const');
 
 const directiveIf = 'x-if';
 const directiveElseif = 'x-elseif';
 const directiveElse = 'x-else';
 const conditionTypes = {
-  [directiveIf]: 'if',
-  [directiveElseif]: 'elseif',
-  [directiveElse]: 'else',
+  [directiveIf]: quickAppConst.if,
+  [directiveElseif]: quickAppConst.elseif,
+  [directiveElse]: quickAppConst.else,
 };
 
 /**
@@ -46,7 +47,7 @@ function getCondition(jsxElement) {
 }
 
 
-function transformDirectiveCondition(ast, adapter) {
+function transformDirectiveCondition(ast) {
   traverse(ast, {
     JSXElement(path) {
       const { node } = path;
@@ -85,9 +86,9 @@ function transformDirectiveCondition(ast, adapter) {
         conditions.forEach(({ type, value, jsxElement }) => {
           const { attributes } = jsxElement.openingElement;
           const attr = type === conditionTypes[directiveElse]
-            ? t.jsxAttribute(t.jsxIdentifier(adapter[type]))
+            ? t.jsxAttribute(t.jsxIdentifier(type))
             : t.jsxAttribute(
-              t.jsxIdentifier(adapter[type]),
+              t.jsxIdentifier(type),
               t.jsxExpressionContainer(value)
             );
           attributes.push(attr);
@@ -163,7 +164,7 @@ function transformDirectiveClass(ast, parsed) {
   }
 }
 
-function transformDirectiveList(parsed, code, adapter) {
+function transformDirectiveList(parsed, code) {
   const ast = parsed.templateAST;
   traverse(ast, {
     JSXAttribute(path) {
@@ -221,7 +222,7 @@ function transformDirectiveList(parsed, code, adapter) {
             t.arrowFunctionExpression(params, loopFnBody)
           ]);
 
-        const parentListPath = getParentListPath(path, adapter);
+        const parentListPath = getParentListPath(path);
 
         const parentList = parentListPath && parentListPath.node.__jsxlist;
         forNode = handleParentListReturn(mapCallExpression, forNode, parentList, dynamicValue, code);
@@ -235,7 +236,7 @@ function transformDirectiveList(parsed, code, adapter) {
           originalIndex,
           jsxplus: true
         };
-        transformListJSXElement(parsed, parentJSXEl, dynamicStyle, dynamicValue, code, adapter);
+        transformListJSXElement(parsed, parentJSXEl, dynamicStyle, dynamicValue, code);
         parentJSXEl._forParams = {
           forItem: params[0].name,
           forIndex: params[1].name,
@@ -261,7 +262,7 @@ function transformComponentFragment(ast) {
   return null;
 }
 
-function transformSlotDirective(ast, adapter) {
+function transformSlotDirective(ast) {
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
@@ -273,7 +274,7 @@ function transformSlotDirective(ast, adapter) {
   });
 }
 
-function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code, adapter) {
+function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code) {
   const { node } = path;
   const { attributes } = node.openingElement;
 
@@ -307,7 +308,7 @@ function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code,
             parsed.useCreateStyle = useCreateStyle;
           }
           // Handle props
-          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code, adapter);
+          handleListProps(innerPath, args[0], originalIndex, args[1].name, properties, dynamicValue, code);
         }
       },
       JSXExpressionContainer: {
@@ -323,7 +324,7 @@ function transformListJSXElement(parsed, path, dynamicStyle, dynamicValue, code,
     }
     attributes.push(
       t.jsxAttribute(
-        t.jsxIdentifier(adapter.for),
+        t.jsxIdentifier(quickAppConst.for),
         t.jsxExpressionContainer(forNode)
       )
     );
@@ -341,10 +342,10 @@ module.exports = {
     if (parsed.renderFunctionPath) {
       // x-for must be first.
       transformDirectiveClass(parsed.templateAST, parsed);
-      transformDirectiveList(parsed, code, options.adapter);
-      transformDirectiveCondition(parsed.templateAST, options.adapter);
+      transformDirectiveList(parsed, code);
+      transformDirectiveCondition(parsed.templateAST);
       transformComponentFragment(parsed.templateAST);
-      transformSlotDirective(parsed.templateAST, options.adapter);
+      transformSlotDirective(parsed.templateAST);
     }
   },
   _transformList: transformDirectiveList,

@@ -1,6 +1,5 @@
 const { _transformList } = require('../list');
 const { parseExpression } = require('../../parser');
-const adapter = require('../../adapter').quickapp;
 const genCode = require('../../codegen/genCode');
 
 
@@ -14,7 +13,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block for={arr.map((val, ${index}) => {
     return {
@@ -33,7 +32,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block for={arr.map((val, ${index}) => {
     return {
@@ -50,7 +49,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block for={arr.map((item, ${index}) => {
     return {
@@ -73,7 +72,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View><block for={[1, 2, 3].map((val, ${index}) => { return { val: val, ${index}: ${index} }; })}><Text>{{ val.${index} }}</Text></block></View>`);
   });
@@ -103,7 +102,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View className="header" onClick={() => {
@@ -160,7 +159,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View className="header" onClick={() => {
@@ -218,7 +217,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View className="header" onClick={() => {
@@ -278,7 +277,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View className="header" onClick={() => {
@@ -319,7 +318,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast, { concise: true }).code).toEqual(`<View><block for={[1, 2, 3].map((item, ${index}) => { return { item: item, ${index}: ${index} }; })}><Text>test</Text></block></View>`);
   });
@@ -334,7 +333,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block for={[1, 2, 3].map((item, ${index}) => {
     const style = {
@@ -369,7 +368,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index1 = 'index' + count++;
     const index2 = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View>
@@ -400,7 +399,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block for={[1, 2, 3].map((item, ${index}) => {
     return {
@@ -418,7 +417,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block for={[1, 2, 3].map((item, ${index}) => {
     const a = ${index} * 2 + 10;
@@ -441,7 +440,7 @@ describe('Transform list', () => {
     const ast = parseExpression(code);
     _transformList({
       templateAST: ast
-    }, code, adapter);
+    }, code);
     const index = 'index' + count++;
     expect(genCode(ast).code).toEqual(`<View><block for={arr.map((val, ${index}) => {
     return {

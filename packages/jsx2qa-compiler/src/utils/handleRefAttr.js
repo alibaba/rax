@@ -11,36 +11,16 @@ const createBinding = require('./createBinding');
  * @param {Node} loopIndex - list index
  * @return {object} refInfo - ref information
  */
-module.exports = function(attrPath, childExpression, refName, adapter, loopIndex) {
+module.exports = function(attrPath, childExpression, refName, loopIndex) {
   const { node } = attrPath;
   const refInfo = {
     name: refName,
-    method: childExpression
+    method: childExpression,
+    type: t.stringLiteral('native')
   };
   const attributes = attrPath.parent.attributes;
   const componentNameNode = attrPath.parent.name;
-  const isNative = isNativeComponent(attrPath, adapter.platform);
-  if (t.isJSXIdentifier(componentNameNode)) {
-    if (componentNameNode.isCustom && !isNative) {
-      refInfo.type = t.stringLiteral('component');
-      insertBindComRef(
-        attributes,
-        childExpression,
-        node.value,
-        adapter.triggerRef
-      );
-    } else {
-      refInfo.type = t.stringLiteral('native');
-    }
-  } else {
-    refInfo.type = t.stringLiteral('component');
-    insertBindComRef(
-      attributes,
-      childExpression,
-      node.value,
-      adapter.triggerRef
-    );
-  }
+  const isNative = isNativeComponent(attrPath);
   // Get all attributes
   let idAttr = attributes.find(attr =>
     t.isJSXIdentifier(attr.name, { name: 'id' })
@@ -65,25 +45,8 @@ module.exports = function(attrPath, childExpression, refName, adapter, loopIndex
       refInfo.id = idAttr.value;
     }
     attributes.push(idAttr);
-    if (!isNative && adapter.styleKeyword) {
-      // Clone componentId
-      const componentIdAttr = t.jsxAttribute(t.jsxIdentifier('componentId'), idAttr.value);
-      attributes.push(componentIdAttr);
-    }
   }
 
   node.__transformed = true;
   return refInfo;
 };
-
-function insertBindComRef(attributes, childExpression, ref, triggerRef) {
-  // Inset setCompRef
-  // <Child bindComRef={fn} /> in MiniApp
-  // <Child bindComRef="scrollRef" /> in WechatMiniProgram
-  attributes.push(
-    t.jsxAttribute(
-      t.jsxIdentifier('bindComRef'),
-      triggerRef ? ref : t.jsxExpressionContainer(childExpression)
-    )
-  );
-}

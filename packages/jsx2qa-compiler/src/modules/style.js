@@ -4,7 +4,6 @@ const traverse = require('../utils/traverseNodePath');
 const TEMPLATE_AST = 'templateAST';
 const DynamicBinding = require('../utils/DynamicBinding');
 const getListItem = require('../utils/getListItem');
-const isSlotScopeNode = require('../utils/isSlotScopeNode');
 
 /**
  * Transform style object.
@@ -13,7 +12,7 @@ const isSlotScopeNode = require('../utils/isSlotScopeNode');
  *          var _style0 = { width: 100 };
  *          return { _style0 };
  */
-function transformStyle(ast, adapter) {
+function transformStyle(ast) {
   const dynamicStyle = new DynamicBinding('s');
   let useCreateStyle = false;
   traverse(ast, {
@@ -41,14 +40,14 @@ function transformStyle(ast, adapter) {
 function shouldReplace(path) {
   const { node } = path;
   if (t.isJSXExpressionContainer(node.value) && node.name.name === 'style') {
-    return !(getListItem(node.value.expression) || isSlotScopeNode(node.value.expression));
+    return !getListItem(node.value.expression);
   }
   return false;
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    const { useCreateStyle, dynamicStyle } = transformStyle(parsed[TEMPLATE_AST], options.adapter);
+    const { useCreateStyle, dynamicStyle } = transformStyle(parsed[TEMPLATE_AST]);
     if (!parsed.useCreateStyle) {
       parsed.useCreateStyle = useCreateStyle;
     }

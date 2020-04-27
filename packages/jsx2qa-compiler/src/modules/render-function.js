@@ -9,7 +9,6 @@ const createBinding = require('../utils/createBinding');
 function transformRenderFunction(ast, renderFnPath, code, options) {
   const renderItemList = [];
   const renderItemFunctions = [];
-  const importComponents = [];
   const renderItem = {};
   let tempId = 0;
   traverse(ast, {
@@ -80,19 +79,17 @@ function transformRenderFunction(ast, renderFnPath, code, options) {
       }
     }
   });
-  return { renderItemFunctions, renderItemList, importComponents };
+  return { renderItemFunctions, renderItemList };
 }
 
 module.exports = {
   parse(parsed, code, options) {
-    const { renderItemFunctions, renderItemList, importComponents } = transformRenderFunction(parsed.templateAST, parsed.renderFunctionPath, code, options);
+    const { renderItemFunctions, renderItemList } = transformRenderFunction(parsed.templateAST, parsed.renderFunctionPath, code, options);
     parsed.renderItemFunctions = renderItemFunctions;
     parsed.renderItems = renderItemList;
-    parsed.importComponents = importComponents;
   },
   generate(ret, parsed, options) {
     ret.renderItems = parsed.renderItems;
-    ret.importComponents = parsed.importComponents;
   },
   // For test cases.
   _transformRenderFunction: transformRenderFunction,
