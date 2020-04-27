@@ -218,11 +218,13 @@ function createProxyMethods(events) {
   return methods;
 }
 
-function createAnonymousClass(render) {
+function createReactiveClass(pureRender) {
   const Klass = class extends Component {
     constructor(props) {
       super(props);
-      this.__compares = render.__compares;
+      this._render = pureRender;
+      this.__compares = pureRender.__compares;
+
       // Handle functional component shouldUpdateComponent
       if (!this.shouldComponentUpdate && this.__compares) {
         const compares = this.__compares;
@@ -237,16 +239,20 @@ function createAnonymousClass(render) {
             }
           }
 
-          return !arePropsEqual;
+          return !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
         };
       }
     }
     render(props) {
-      return render.call(this, props);
+      // First render need set this._forwardRef
+      if (!this.__mounted && this._render._forwardRef) {
+        this.__prevForwardRef = this._forwardRef = this.props.bindComRef;
+      }
+      return this._render.call(this, props, this._forwardRef ? this._forwardRef : this.context);
     }
   };
   // Transfer __injectHistory
-  Klass.__injectHistory = render.__injectHistory;
+  Klass.__injectHistory = pureRender.__injectHistory;
   // Set as function component
   Klass.prototype.isFunctionComponent = true;
   return Klass;
@@ -261,7 +267,7 @@ function createAnonymousClass(render) {
 function createConfig(component, options) {
   const Klass = isClassComponent(component)
     ? component
-    : createAnonymousClass(component);
+    : createReactiveClass(component);
 
   const { events, isPage } = options;
   const cycles = isPage ? getPageCycles(Klass) : getComponentCycles(Klass);

@@ -22,7 +22,7 @@ import shallowEqual, { is } from './shallowEqual';
 import nextTick from './nextTick';
 import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
 import apiCore from './adapter/getNativeAPI';
-import setComponentRef from './adapter/setComponentRef';
+import attachRef from './adapter/attachRef';
 
 export default class Component {
   constructor(props) {
@@ -41,7 +41,10 @@ export default class Component {
 
     this._pendingStates = [];
     this._pendingCallbacks = [];
-    setComponentRef(this, props.bindComRef || props.ref);
+    nextTick(() => {
+      // For get latest instance
+      attachRef(this, this.props.bindComRef || this.props.ref);
+    });
   }
 
   // Bind to this instance.
@@ -248,17 +251,20 @@ export default class Component {
     // Step8: trigger render
     if (this.__shouldUpdate) {
       this._trigger(COMPONENT_WILL_UPDATE, nextProps, nextState);
+      // Set prev props & state before update
+      this.prevProps = this.props;
+      this.prevState = this.state;
       // Update propsMap
       setComponentProps(this.instanceId);
       this.props = nextProps;
       this.state = nextState;
+      // Set forwardRef & prevForWardRef
+      this.__prevForwardRef = this._forwardRef;
+      this._forwardRef = nextProps.ref;
       this.__forceUpdate = false;
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
     }
-
-    this.prevProps = this.props;
-    this.prevState = this.state;
   }
 
   _unmountComponent() {
