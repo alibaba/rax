@@ -1,11 +1,12 @@
 {
   "name": "jsx2mp-runtime",
-  "version": "0.4.8",
+  "version": "0.4.10",
   "description": "Runtime for jsx2mp.",
   "miniprogram": {
     "ali": "dist/jsx2mp-runtime.ali.esm.js",
     "wechat": "dist/jsx2mp-runtime.wechat.esm.js",
-    "quickapp": "dist/jsx2mp-runtime.quickapp.esm.js"
+    "quickapp": "dist/jsx2mp-runtime.quickapp.esm.js",
+    "bytedance": "dist/jsx2mp-runtime.bytedance.esm.js"
   },
   "files": [
     "dist"

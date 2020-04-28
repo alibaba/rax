@@ -1,14 +1,16 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram, isQuickApp } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isQuickApp, isByteDanceMicroApp } from 'universal-env';
 
-export default function({ mount, unmount }) {
+export default function({ mount, unmount, didUpdate }) {
   // For alibaba miniapp
   if (isMiniApp) {
     return {
       didMount() {
         mount.apply(this, arguments);
       },
-      didUpdate() {}, // noop
+      didUpdate(prevProps) {
+        didUpdate.call(this, prevProps, this.props);
+      }, // noop
       didUnmount() {
         unmount.apply(this, arguments);
       },
@@ -16,7 +18,7 @@ export default function({ mount, unmount }) {
   }
 
   // For wechat miniprogram
-  if (isWeChatMiniProgram) {
+  if (isWeChatMiniProgram || isByteDanceMicroApp) {
     function attached() {
       return mount.apply(this, arguments);
     }
@@ -33,6 +35,13 @@ export default function({ mount, unmount }) {
       // Keep compatibility to wx base library version < 2.2.3
       attached,
       detached,
+      observers: {
+        outerProps(nextProps) {
+          if (this.instance) {
+            didUpdate.call(this, this.instance.props.outerProps, nextProps);
+          }
+        }
+      }
     };
   }
 
