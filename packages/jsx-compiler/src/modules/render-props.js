@@ -263,4 +263,5 @@ module.exports = {
 
   // For test cases.
   _transformRenderPropsFunction: transformRenderPropsFunction,
+  _renderPropsMap: renderPropsMap
 };
