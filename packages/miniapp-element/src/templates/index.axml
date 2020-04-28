@@ -81,8 +81,8 @@
     enable-back-to-top="{{enableBackToTop}}"
     enable-flex="{{enableFlex}}"
     scroll-animation-duration="{{scrollAnimationDuration}}"
-    onScrollToUpper="onScrolltoupper"
-    onScrollToLower="onScrolltolower"
+    onScrollToUpper="onScrollToUpper"
+    onScrollToLower="onScrollToLower"
     onScroll="onScroll"
     onTap="onTap"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></scroll-view>
