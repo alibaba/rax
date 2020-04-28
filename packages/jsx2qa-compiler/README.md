@@ -49,7 +49,7 @@ output:
   - JS Object, quickapp config
 - style
   - String, acss of style.
-- importComponents
+- usingComponents
 
 eg.
 
@@ -75,7 +75,7 @@ eg.
     component: true
   },
   style: "",
-  importComponents: {},
+  usingComponents: {},
   iconfontMap: [],
   template: "<div>hello world</div>"
 }
