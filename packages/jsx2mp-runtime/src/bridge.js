@@ -123,6 +123,11 @@ function createProxyMethods(events) {
         // `this` point to page/component instance.
         let event = args.find(arg => isPlainObject(arg) && arg[TYPE] && arg[TIMESTAMP] && isPlainObject(arg[TARGET]));
 
+        // there's no instance when event triggered inside universal ux component
+        if (isQuickApp && !this.instance && this._parent.instance) {
+          this.instance = this._parent.instance;
+        }
+
         // Context default to Rax component instance.
         const contextInfo = {
           context: this.instance
@@ -135,7 +140,8 @@ function createProxyMethods(events) {
           if (isQuickApp) {
             // shallow copy event & event._target
             event = {...event};
-            event._target = {...event._target};
+            // target differs between real machine & IDE
+            event._target = {...event._currentTarget || event._target};
             // align the currentTarget variable for quickapp
             event.currentTarget = event._target;
             event.currentTarget.dataset = event._target._dataset;
