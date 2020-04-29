@@ -50,7 +50,7 @@ class Document extends EventTarget {
     const nativeCustomComponent = config.nativeCustomComponent || {};
     this.usingComponents = nativeCustomComponent.usingComponents || {};
 
-    this.$_pageId = pageId;
+    this.__pageId = pageId;
 
     // Used to encapsulate special tag and corresponding constructors
     const that = this;
@@ -64,7 +64,7 @@ class Document extends EventTarget {
       }, that.$_tree);
     };
 
-    this.$_pageId = pageId;
+    this.__pageId = pageId;
     this.$_tree = new Tree(pageId, {
       type: 'element',
       tagName: 'body',
@@ -96,10 +96,6 @@ class Document extends EventTarget {
   // Image constructor
   get $$imageConstructor() {
     return this.$_imageConstructor;
-  }
-
-  get $$pageId() {
-    return this.$_pageId;
   }
 
   // Event trigger
@@ -167,7 +163,7 @@ class Document extends EventTarget {
   }
 
   get defaultView() {
-    return cache.getWindow(this.$_pageId) || null;
+    return cache.getWindow() || null;
   }
 
   getElementById(id) {
@@ -242,7 +238,7 @@ class Document extends EventTarget {
   }
 
   createEvent() {
-    const window = cache.getWindow(this.$_pageId);
+    const window = cache.getWindow();
 
     return new window.CustomEvent();
   }

@@ -168,9 +168,9 @@ class Element extends Node {
 
     // Update nodeId - dom map
     if (isRemove) {
-      cache.setNode(this.$_pageId, node.$$nodeId, null);
+      cache.setNode(this.__pageId, node.$$nodeId, null);
     } else {
-      cache.setNode(this.$_pageId, node.$$nodeId, node);
+      cache.setNode(this.__pageId, node.$$nodeId, node);
     }
 
     // Update id - dom map
@@ -279,7 +279,7 @@ class Element extends Node {
   get $$domInfo() {
     return {
       nodeId: this.$$nodeId,
-      pageId: this.$$pageId,
+      pageId: this.__pageId,
       type: this.$_type,
       tagName: this.$_tagName,
       id: this.id,
@@ -309,26 +309,11 @@ class Element extends Node {
     return {};
   }
 
-  $$getBoundingClientRect() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow(this.$_pageId);
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'BODY') {
-        window.$$createSelectorQuery().selectViewport().scrollOffset(res => res ? resolve(res) : reject()).exec();
-      } else {
-        window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).boundingClientRect(res => res ? resolve(res) : reject()).exec();
-      }
-    });
-  }
-
   // Gets the context object of the corresponding widget component
   $$getContext() {
     // Clears out setData
     tool.flushThrottleCache();
-    const window = cache.getWindow(this.$_pageId);
+    const window = cache.getWindow();
     return new Promise((resolve, reject) => {
       if (!window) reject();
 
@@ -346,7 +331,7 @@ class Element extends Node {
   $$getNodesRef() {
     // Clears out setData
     tool.flushThrottleCache();
-    const window = cache.getWindow(this.$_pageId);
+    const window = cache.getWindow();
     return new Promise((resolve, reject) => {
       if (!window) reject();
 

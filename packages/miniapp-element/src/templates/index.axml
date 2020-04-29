@@ -7,6 +7,7 @@
     hidden="{{hidden}}"
     animation="{{animation}}"
     src="{{src}}"
+    onTap="onTap"
     onLoad="onCoverImageLoad"
     onError="onCoverImageError"
 ></cover-image>
@@ -18,7 +19,9 @@
     hidden="{{hidden}}"
     animation="{{animation}}"
     scroll-top="{{scrollTop}}"
-><subtree-cover childNodes="{{innerChildNodes}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree-cover></cover-view>
+    onTap="onTap"
+><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/>
+</cover-view>
 <movable-area
     a:elif="{{builtinComponentName === 'movable-area'}}"
     id="{{id}}"
@@ -27,6 +30,7 @@
     hidden="{{hidden}}"
     animation="{{animation}}"
     scale-area="{{scaleArea}}"
+    onTap="onTap"
 ><block a:for="{{innerChildNodes}}" a:key="nodeId">
     <movable-view
         a:if="{{item.type === 'element' && item.compName === 'movable-view'}}"
@@ -56,7 +60,8 @@
         animation="{{item.extra.animation}}"
         onChange="onMovableViewChange"
         onScale="onMovableViewScale"
-    ><subtree childNodes="{{item.childNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></movable-view>
+        onTap="onTap"
+    ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></movable-view>
 </block></movable-area>
 <scroll-view
     a:elif="{{builtinComponentName === 'scroll-view'}}"
@@ -76,10 +81,11 @@
     enable-back-to-top="{{enableBackToTop}}"
     enable-flex="{{enableFlex}}"
     scroll-animation-duration="{{scrollAnimationDuration}}"
-    onScrollToUpper="onScrolltoupper"
-    onScrollToLower="onScrolltolower"
+    onScrollToUpper="onScrollToUpper"
+    onScrollToLower="onScrollToLower"
     onScroll="onScroll"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></scroll-view>
+    onTap="onTap"
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></scroll-view>
 <swiper
     a:elif="{{builtinComponentName === 'swiper'}}"
     id="{{id}}"
@@ -104,6 +110,7 @@
     onChange="onSwiperChange"
     onTransition="onSwiperTransition"
     onAnimationFinish="onSwiperAnimationfinish"
+    onTap="onTap"
 ><block a:for="{{innerChildNodes}}" a:key="nodeId">
     <!-- swiper-item 无法设置 style，不然会覆盖内置组件自己的滚动样式 -->
     <swiper-item
@@ -119,7 +126,7 @@
         onTap="onTap"
         hidden="{{item.extra.hidden}}"
         item-id="{{item.extra.itemId}}"
-    ><subtree childNodes="{{item.childNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></swiper-item>
+    ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></swiper-item>
 </block></swiper>
 <view
     a:elif="{{builtinComponentName === 'view'}}"
@@ -132,7 +139,8 @@
     hover-stop-propagation="{{hoverStopPropagation}}"
     hover-start-time="{{hoverStayTime}}"
     hover-stay-time="{{hoverStayTime}}"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></view>
+    onTap="onTap"
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></view>
 <!-- Base content -->
 <icon
     a:elif="{{builtinComponentName === 'icon'}}"
@@ -144,6 +152,7 @@
     type="{{type}}"
     size="{{size}}"
     color="{{color}}"
+    onTap="onTap"
 ></icon>
 <progress
     a:elif="{{builtinComponentName === 'progress'}}"
@@ -163,6 +172,7 @@
     active="{{active}}"
     active-mode="{{activeMode}}"
     onActiveEnd="onProgressActiveEnd"
+    onTap="onTap"
 ></progress>
 <text
     a:elif="{{builtinComponentName === 'text'}}"
@@ -174,7 +184,17 @@
     selectable="{{selectable}}"
     space="{{space}}"
     decode="{{decode}}"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></text>
+    onTap="onTap"
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></text>
+<rich-text
+  a:elif="{{builtinComponentName === 'rich-text'}}"
+  id="{{id}}"
+  animation="{{animation}}"
+  class="{{class}}"
+  style="{{style}}"
+  nodes="{{nodes}}"
+  onTap="onTap"
+></rich-text>
 <!-- Form component -->
 <button
     a:elif="{{builtinComponentName === 'button'}}"
@@ -208,7 +228,20 @@
     onError="onButtonError"
     onOpenSetting="onButtonOpenSetting"
     onLaunchApp="onButtonLaunchApp"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></button>
+    onTap="onTap"
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></button>
+<label
+  a:elif="{{builtinComponentName === 'label'}}"
+  id="{{id}}"
+  animation="{{animation}}"
+  class="{{class}}"
+  style="{{style}}"
+  hidden="{{hidden}}"
+  for="{{for}}"
+  onTap="onTap"
+>
+  <template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/>
+</label>
 <form
     a:elif="{{builtinComponentName === 'form'}}"
     id="{{id}}"
@@ -220,19 +253,22 @@
     report-submit-timeout="{{reportSubmitTimeout}}"
     onSubmit="onFormSubmit"
     onReset="onFormReset"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></form>
+    onTap="onTap"
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></form>
 <block a:elif="{{builtinComponentName === 'input'}}">
-    <radio-group a:if="{{type === 'radio'}}" onChange="onRadioChange"><radio
-        id="{{id}}"
-        class="{{class}}"
-        animation="{{animation}}"
-        style="{{style}}"
-        hidden="{{hidden}}"
-        value="{{value}}"
-        disabled="{{disabled}}"
-        checked="{{checked}}"
-        color="{{color}}"
-    ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></radio></radio-group>
+  <radio-group a:if="{{type === 'radio'}}" onChange="onRadioChange">
+    <radio
+      id="{{id}}"
+      class="{{class}}"
+      animation="{{animation}}"
+      style="{{style}}"
+      hidden="{{hidden}}"
+      value="{{value}}"
+      disabled="{{disabled}}"
+      checked="{{checked}}"
+      color="{{color}}"
+      onTap="onTap"
+    ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></radio></radio-group>
     <checkbox-group a:elif="{{type === 'checkbox'}}" onChange="onCheckboxChange"><checkbox
         id="{{id}}"
         class="{{class}}"
@@ -242,7 +278,8 @@
         disabled="{{disabled}}"
         checked="{{checked}}"
         color="{{color}}"
-    ><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></checkbox></checkbox-group>
+        onTap="onTap"
+    ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></checkbox></checkbox-group>
     <input
         a:elif="{{type !== 'hidden'}}"
         id="{{id}}"
@@ -273,6 +310,53 @@
         onKeyboardHeightChange="onInputKeyBoardHeightChange"
     ></input>
 </block>
+<radio-group
+  a:elif="{{builtinComponentName === 'radio-group'}}"
+  id="{{id}}"
+  animation="{{animation}}"
+  class="{{class}}"
+  style="{{style}}"
+  name="{{name}}"
+  onChange="onRadioChange"
+>
+  <template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/>
+</radio-group>
+<radio
+  a:elif="{{builtinComponentName === 'radio'}}"
+  id="{{id}}"
+  class="{{class}}"
+  animation="{{animation}}"
+  style="{{style}}"
+  hidden="{{hidden}}"
+  value="{{value}}"
+  disabled="{{disabled}}"
+  checked="{{checked}}"
+  color="{{color}}"
+  onTap="onTap"
+>
+  <template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/>
+</radio>
+<checkbox-group
+  a:elif="{{builtinComponentName === 'checkbox-group'}}"
+  onChange="onCheckboxChange"
+>
+  <template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/>
+</checkbox-group>
+<checkbox
+  a:elif="{{builtinComponentName === 'checkbox'}}"
+  id="{{id}}"
+  class="{{class}}"
+  style="{{style}}"
+  hidden="{{hidden}}"
+  value="{{value}}"
+  disabled="{{disabled}}"
+  checked="{{checked}}"
+  color="{{color}}"
+  onChange="onCheckboxItemChange"
+  onTap="onTap"
+>
+  <template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/>
+</checkbox>
 <picker
     a:elif="{{builtinComponentName === 'picker'}}"
     id="{{id}}"
@@ -288,7 +372,7 @@
     onCancel="onPickerCancel"
 >
   <view>
-    <subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree>
+    <template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/>
   </view>
 </picker>
 <picker-view
@@ -308,23 +392,23 @@
     onPickEnd="onPickerViewPickend"
 ><block a:for="{{innerChildNodes}}" a:key="nodeId">
     <picker-view-column
-        a:if="{{item.type === 'element' && item.compName === 'picker-view-column'}}"
-        data-private-node-id="{{item.nodeId}}"
-        data-private-page-id="{{item.pageId}}"
-        id="{{item.id}}"
-        animation="{{animation}}"
-        class="{{item.class || ''}}"
-        style="{{item.style || ''}}"
-        onTouchStart="onTouchStart"
-        onTouchMove="onTouchMove"
-        onTouchEnd="onTouchEnd"
-        onTouchCancel="onTouchCancel"
-        onTap="onTap"
-        hidden="{{item.extra.hidden}}"
+      a:if="{{item.type === 'element' && item.compName === 'picker-view-column'}}"
+      data-private-node-id="{{item.nodeId}}"
+      data-private-page-id="{{item.pageId}}"
+      id="{{item.id}}"
+      animation="{{animation}}"
+      class="{{item.class || ''}}"
+      style="{{item.style || ''}}"
+      onTouchStart="onTouchStart"
+      onTouchMove="onTouchMove"
+      onTouchEnd="onTouchEnd"
+      onTouchCancel="onTouchCancel"
+      onTap="onTap"
+      hidden="{{item.extra.hidden}}"
     >
-    <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
-      <element in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}" id="{{pickerViewColumnItem.id}}" class="{{pickerViewColumnItem.class || ''}}" style="{{pickerViewColumnItem.style || ''}}" animation="{{pickerViewColumnItem.animation}}" onTouchStart="onTouchStart" onTouchmove="onTouchMove" onTouchend="onTouchEnd" onTouchcancel="onTouchCancel" onTap="onTap"></element>
-    </view>
+      <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
+        <element in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}" id="{{pickerViewColumnItem.id}}" class="{{pickerViewColumnItem.class || ''}}" style="{{pickerViewColumnItem.style || ''}}" animation="{{pickerViewColumnItem.animation}}" onTouchStart="onTouchStart" onTouchmove="onTouchMove" onTouchend="onTouchEnd" onTouchcancel="onTouchCancel" onTap="onTap"></element>
+      </view>
     </picker-view-column>
 </block></picker-view>
 <slider
@@ -348,6 +432,7 @@
     show-value="{{showValue}}"
     onChange="onSliderChange"
     onChanging="onSliderChanging"
+    onTap="onTap"
 ></slider>
 <switch
     a:elif="{{builtinComponentName === 'switch'}}"
@@ -361,6 +446,7 @@
     type="{{type}}"
     color="{{color}}"
     onChange="onSwitchChange"
+    onTap="onTap"
 ></switch>
 <textarea
     a:elif="{{builtinComponentName === 'textarea'}}"
@@ -415,7 +501,8 @@
     onSuccess="onNavigatorSuccess"
     onFail="onNavigatorFail"
     onComplete="onNavigatorComplete"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></navigator>
+    onTap="onTap"
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></navigator>
 <!-- Media -->
 <image
     a:elif="{{builtinComponentName === 'image'}}"
@@ -431,6 +518,7 @@
     show-menu-by-longpress="{{showMenuByLongpress}}"
     onLoad="onImageLoad"
     onError="onImageError"
+    onTap="onTap"
 ></image>
 <video
     a:elif="{{builtinComponentName === 'video'}}"
@@ -473,7 +561,8 @@
     onWaiting="onVideoWaiting"
     onError="onVideoError"
     onProgress="onVideoProgress"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></video>
+    onTap="onTap"
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></video>
 <!-- Map -->
 <map
     a:elif="{{builtinComponentName === 'map'}}"
@@ -510,7 +599,8 @@
     onCalloutTap="onMapCalloutTap"
     onUpdated="onMapUpdated"
     onRegionChange="onMapRegionChange"
-><subtree-cover childNodes="{{innerChildNodes}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree-cover></map>
+    onTap="onTap"
+><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></map>
 <!-- Canvas -->
 <canvas
     a:elif="{{builtinComponentName === 'canvas'}}"
@@ -528,7 +618,8 @@
     onTouchCancel="onCanvasTouchCancel"
     onLongTap="onCanvasLongTap"
     onError="onCanvasError"
-><subtree-cover childNodes="{{innerChildNodes}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree-cover></canvas>
+    onTap="onTap"
+><template is="subtree-cover" data="{{childNodes: innerChildNodes}}"/></canvas>
 <!-- Open data -->
 <web-view
     a:elif="{{builtinComponentName === 'web-view'}}"
@@ -553,16 +644,6 @@
     name="{{customComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
-><subtree childNodes="{{innerChildNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree></custom-component>
+><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></custom-component>
 <!-- Child Node -->
-<view
-  a:else
-  data-private-node-id="{{dataPrivateNodeId}}"
-  data-private-page-id="{{dataPrivatePageId}}"
-  animation="{{animation}}"
-  id="{{id}}"
-  class="{{class}}"
-  style="{{style}}"
->
-  <subtree  childNodes="{{childNodes}}" inCover="{{inCover}}" onTouchStart="onTouchStart" onTouchMove="onTouchMove" onTouchEnd="onTouchEnd" onTouchCancel="onTouchCancel" onTap="onTap" onLoad="onImgLoad" onError="onImgError"></subtree>
-</view>
+<template a:else is="subtree" data="{{childNodes, inCover}}"/>

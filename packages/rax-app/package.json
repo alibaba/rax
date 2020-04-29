@@ -1,6 +1,6 @@
 {
   "name": "rax-app",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Rax application framework for univesal app.",
   "main": "lib/index.js",
   "module": "es/index.js",

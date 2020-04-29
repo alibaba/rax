@@ -145,7 +145,7 @@ export default {
       callSimpleEvent('keyboardheightchange', evt, this.domNode);
     },
     onRadioChange(evt) {
-      const window = cache.getWindow(this.pageId);
+      const window = cache.getWindow();
       const domNode = this.domNode;
       const value = evt.detail.value;
       const name = domNode.name;
@@ -170,6 +170,12 @@ export default {
       } else {
         domNode.setAttribute('checked', false);
       }
+      callEvent('change', evt, null, this.pageId, this.nodeId);
+    },
+    onCheckboxItemChange(evt) {
+      const domNode = this.domNode;
+      const value = evt.detail.value || false;
+      domNode.setAttribute('checked', value);
       callEvent('change', evt, null, this.pageId, this.nodeId);
     },
   },

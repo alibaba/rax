@@ -56,8 +56,9 @@ global.CONTAINER = global.wx;
 export default {
   html,
   createPage(type = 'home') {
-    const route = `pages/${type}/index`;
-    const page = render.createPage(route, config);
+    const pageId = `1-1-/pages/${type}/index`;
+    const page = render.createPage(pageId, config);
+    page.window.__pageId = pageId;
     page.document.body.innerHTML = html;
 
     return page;
