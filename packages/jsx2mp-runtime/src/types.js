@@ -2,6 +2,10 @@ export function isNull(obj) {
   return obj === null;
 }
 
+export function isUndef(value) {
+  return value === undefined;
+}
+
 export function isFunction(obj) {
   return typeof obj === 'function';
 }
