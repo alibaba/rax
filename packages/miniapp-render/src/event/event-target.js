@@ -143,6 +143,7 @@ class EventTarget {
       event = new Event({
         name: eventName,
         target,
+        detail: miniprogramEvent.detail,
         timeStamp: miniprogramEvent.timeStamp,
         touches: miniprogramEvent.touches,
         changedTouches: miniprogramEvent.changedTouches,
