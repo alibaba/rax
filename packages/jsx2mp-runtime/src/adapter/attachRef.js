@@ -3,19 +3,19 @@ import { isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-e
 
 export default function(instance, bindComRef) {
   if (bindComRef) {
-    if (instance.isFunctionComponent && !instance._render._forwardRef) {
+    if (instance.__isReactiveComponent && !instance._render._forwardRef) {
       console.warn('Warning: Do not attach ref to function component because they don’t have instances.');
-      triggerSetRef(null, bindComRef);
-    } else {
-      triggerSetRef(instance, bindComRef);
     }
+    triggerSetRef(instance, bindComRef);
   }
 }
 
 function triggerSetRef(instance, bindComRef) {
+  const current = instance.__isReactiveComponent ? null : instance;
   if (isMiniApp) {
-    bindComRef(instance);
+    bindComRef(current);
   } else if (isWeChatMiniProgram || isByteDanceMicroApp) {
-    instance._internal.triggerEvent('ComRef', instance);
+    // If is function component, it will use the triggerEvent in useImperativeHandle
+    instance._internal.triggerEvent('ComRef', current);
   }
 }
