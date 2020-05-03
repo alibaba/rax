@@ -6,6 +6,7 @@ import Component from '../component';
 import createElement from '../../createElement';
 import Host from '../host';
 import render from '../../render';
+import {INTERNAL, RENDERED_COMPONENT} from '../../constant';
 import ServerDriver from 'driver-server';
 
 describe('FragmentComponent', function() {
@@ -541,5 +542,46 @@ describe('FragmentComponent', function() {
 
     delete Host.driver.removeChildren; // Reset driver
     expect(el.childNodes.length).toBe(0);
+  });
+
+  it('should not cache native node', function() {
+    let el = createNodeElement('div');
+    let instance = null;
+
+    class Child extends Component {
+      state = {
+        count: 2
+      }
+
+      render() {
+        instance = this;
+        const count = this.state.count;
+        if (count === 2) return <div>{count}</div>;
+        return <span>{count}</span>;
+      }
+    }
+
+    class App extends Component {
+      render() {
+        return (
+          [
+            <div key="1">1</div>,
+            <Child key="2" />
+          ]
+        );
+      }
+    }
+
+    const app = render(<App />, el);
+
+    expect(el.childNodes[0].childNodes[0].data).toBe('1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('2');
+
+    instance.setState({
+      count: 3
+    });
+    jest.runAllTimers();
+    const nodes = app[INTERNAL][RENDERED_COMPONENT].__getNativeNode();
+    expect(el.childNodes[1]).toBe(nodes[1]);
   });
 });

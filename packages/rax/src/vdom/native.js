@@ -386,7 +386,6 @@ export default class NativeComponent extends BaseComponent {
     if (nextChildren != null) {
       // `nextIndex` will increment for each child in `nextChildren`
       let nextIndex = 0;
-      let nextNativeNodes = [];
 
       function insertNodes(nativeNodes, parentNode) {
         // The nativeNodes maybe fragment, so convert to array type
@@ -441,20 +440,9 @@ export default class NativeComponent extends BaseComponent {
         // Get the last child
         lastPlacedNode = nextChild.__getNativeNode();
 
-        // Push to nextNativeNodes
         if (isArray(lastPlacedNode)) {
-          nextNativeNodes = nextNativeNodes.concat(lastPlacedNode);
           lastPlacedNode = lastPlacedNode[lastPlacedNode.length - 1];
-        } else {
-          nextNativeNodes.push(lastPlacedNode);
         }
-      }
-
-      // Sync update native refs
-      if (isArray(this[NATIVE_NODE])) {
-        // Clear all and push the new array
-        this[NATIVE_NODE].length = 0;
-        assign(this[NATIVE_NODE], nextNativeNodes);
       }
     }
 
