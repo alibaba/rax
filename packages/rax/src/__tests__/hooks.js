@@ -1480,10 +1480,7 @@ describe('hooks', () => {
 
       logs = [];
       render(<div />, container);
-      // TODO
-      jest.runAllTimers();
       expect(logs).toEqual(['Did destroy [0]']);
-      // TODO
       expect(container.childNodes[0].tagName).toEqual('DIV');
     });
 
@@ -1520,8 +1517,6 @@ describe('hooks', () => {
 
       logs = [];
       render([], container);
-      // TODO
-      jest.runAllTimers();
       expect(logs).toEqual(['Did destroy [0]']);
       expect(container.childNodes).toEqual([]);
     });
@@ -1560,8 +1555,6 @@ describe('hooks', () => {
 
       logs = [];
       render([], container);
-      // TODO
-      jest.runAllTimers();
       expect(logs).toEqual(['Did destroy']);
       expect(container.childNodes).toEqual([]);
     });
@@ -1672,8 +1665,6 @@ describe('hooks', () => {
 
       logs = [];
       render([], container);
-      // TODO
-      jest.runAllTimers();
       expect(logs).toEqual(['Unmount: 1']);
       expect(container.childNodes).toEqual([]);
     });

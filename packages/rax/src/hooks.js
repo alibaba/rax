@@ -170,7 +170,7 @@ function useEffectImpl(effect, inputs, defered) {
     };
 
     currentInstance.didMount.push(__create);
-    currentInstance.willUnmount.push(__destory);
+    currentInstance.willUnmount.push(() => __destory(true));
     currentInstance.didUpdate.push(() => {
       const { __prevInputs, __inputs, __create } = hooks[hookID];
       if (__inputs == null || !areInputsEqual(__inputs, __prevInputs)) {
