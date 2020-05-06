@@ -154,6 +154,15 @@ class HTMLTextAreaElement extends Element {
     this.$_attrs.set('autofocus', value);
   }
 
+  get focus() {
+    return !!this.$_attrs.get('focus');
+  }
+
+  set focus(value) {
+    value = !!value;
+    this.$_attrs.set('focus', value);
+  }
+
   get selectionStart() {
     const value = +this.$_attrs.get('selection-start');
     return value !== undefined ? value : -1;
@@ -170,14 +179,6 @@ class HTMLTextAreaElement extends Element {
 
   set selectionEnd(value) {
     this.$_attrs.set('selection-end', value);
-  }
-
-  focus() {
-    this.$_attrs.set('focus', true);
-  }
-
-  blur() {
-    this.$_attrs.set('focus', false);
   }
 }
 

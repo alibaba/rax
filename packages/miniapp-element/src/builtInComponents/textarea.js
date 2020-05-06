@@ -55,6 +55,11 @@ export default {
       return !!domNode.getAttribute('focus');
     },
   }, {
+    name: 'controlled',
+    get(domNode) {
+      return !!domNode.getAttribute('controlled');
+    },
+  }, {
     name: 'autoHeight',
     get(domNode) {
       return !!domNode.getAttribute('auto-height');

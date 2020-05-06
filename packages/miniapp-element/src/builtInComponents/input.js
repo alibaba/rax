@@ -74,6 +74,11 @@ export default {
       return !!domNode.getAttribute('focus');
     },
   }, {
+    name: 'controlled',
+    get(domNode) {
+      return !!domNode.getAttribute('controlled');
+    },
+  }, {
     name: 'confirmType',
     get(domNode) {
       return domNode.getAttribute('confirm-type') || 'done';

@@ -163,20 +163,21 @@ class HTMLInputElement extends Element {
     this.$_attrs.set('autofocus', value);
   }
 
+  get focus() {
+    return !!this.$_attrs.get('focus');
+  }
+
+  set focus(value) {
+    value = !!value;
+    this.$_attrs.set('focus', value);
+  }
+
   set checked(value) {
     this.$_attrs.set('checked', value);
   }
 
   get checked() {
     return this.$_attrs.get('checked') || '';
-  }
-
-  focus() {
-    this.$_attrs.set('focus', true);
-  }
-
-  blur() {
-    this.$_attrs.set('focus', false);
   }
 }
 
