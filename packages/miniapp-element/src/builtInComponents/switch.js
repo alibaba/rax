@@ -23,6 +23,11 @@ export default {
       return domNode.getAttribute('color') || '#04BE02';
     },
   }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
+    },
+  }, {
     name: 'animation',
     get(domNode) {
       return domNode.getAttribute('animation');

@@ -283,6 +283,7 @@
     <input
         a:elif="{{type !== 'hidden'}}"
         id="{{id}}"
+        name="{{name}}"
         class="{{class}}"
         style="{{style}}"
         hidden="{{hidden}}"
@@ -324,6 +325,7 @@
 <radio
   a:elif="{{builtinComponentName === 'radio'}}"
   id="{{id}}"
+  name="{{name}}"
   class="{{class}}"
   animation="{{animation}}"
   style="{{style}}"
@@ -345,6 +347,7 @@
 <checkbox
   a:elif="{{builtinComponentName === 'checkbox'}}"
   id="{{id}}"
+  name="{{name}}"
   class="{{class}}"
   style="{{style}}"
   hidden="{{hidden}}"
@@ -360,6 +363,7 @@
 <picker
     a:elif="{{builtinComponentName === 'picker'}}"
     id="{{id}}"
+    name="{{name}}"
     animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
@@ -414,6 +418,7 @@
 <slider
     a:elif="{{builtinComponentName === 'slider'}}"
     id="{{id}}"
+    name="{{name}}"
     animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
@@ -437,6 +442,7 @@
 <switch
     a:elif="{{builtinComponentName === 'switch'}}"
     id="{{id}}"
+    name="{{name}}"
     animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"
@@ -451,6 +457,7 @@
 <textarea
     a:elif="{{builtinComponentName === 'textarea'}}"
     id="{{id}}"
+    name="{{name}}"
     animation="{{animation}}"
     class="{{class}}"
     style="{{style}}"

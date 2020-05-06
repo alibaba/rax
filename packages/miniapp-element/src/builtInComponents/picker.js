@@ -11,6 +11,11 @@ const picker = {
         return !!domNode.getAttribute('disabled');
       },
     }, {
+      name: 'name',
+      get(domNode) {
+        return domNode.getAttribute('name') || '';
+      },
+    }, {
       name: 'range',
       get(domNode) {
         const value = domNode.getAttribute('range');

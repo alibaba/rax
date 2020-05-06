@@ -8,6 +8,11 @@ export default {
       return domNode.getAttribute('value') || '';
     },
   }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
+    },
+  }, {
     name: 'checked',
     get(domNode) {
       return domNode.getAttribute('checked') || false;

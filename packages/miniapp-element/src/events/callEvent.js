@@ -1,3 +1,4 @@
+/* global isMiniApp */
 import render from 'miniapp-render';
 import checkEventAccessDomNode from '../vdom/checkEventAccessDomNode';
 import findParentNode from '../vdom/findParentNode';
@@ -122,6 +123,11 @@ export default function(eventName, evt, extra, pageId, nodeId) {
 
           if (!form) return;
           if (type !== 'submit' && type !== 'reset') return;
+
+          // In Alipay MiniApp, submit button and reset button will trigger the form action when clicked.
+          if (isMiniApp) {
+            return;
+          }
 
           const inputList = form.querySelectorAll('input[name]');
           const textareaList = form.querySelectorAll('textarea[name]');
