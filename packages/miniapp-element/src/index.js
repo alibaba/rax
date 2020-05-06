@@ -185,10 +185,10 @@ const lifeCycles = getLifeCycle({
 
     // init
     init(this, data);
-    if (IN_COVER.indexOf(data.wxCompName) !== -1) this.data.inCover = true;
+    if (IN_COVER.indexOf(data.builtinComponentName) !== -1) this.data.inCover = true;
 
     // init child nodes
-    const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1);
+    const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1, this);
     data.childNodes = dealWithLeafAndSimple(
       childNodes,
       this.onChildNodesUpdate
