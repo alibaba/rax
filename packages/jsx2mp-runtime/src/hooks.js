@@ -3,7 +3,7 @@ import { isQuickApp } from 'universal-env';
 import Host from './host';
 import { scheduleEffect, invokeEffects } from './scheduler';
 import { is } from './shallowEqual';
-import { isFunction, isNull } from './types';
+import { isFunction, isNull, isUndef } from './types';
 import { COMPONENT_DID_MOUNT, COMPONENT_DID_UPDATE, COMPONENT_WILL_UNMOUNT } from './cycles';
 import { enqueueRender } from './enqueueRender';
 import createRef from './createRef';
@@ -33,6 +33,18 @@ function areInputsEqual(inputs, prevInputs) {
     return false;
   }
   return true;
+}
+
+function setWrapperRef(ref, create) {
+  if (isFunction(ref)) {
+    ref(create());
+    return () => ref(null);
+  } else if (!isNull(ref)) {
+    ref.current = create();
+    return () => {
+      ref.current = null;
+    };
+  }
 }
 
 export function useState(initialState) {
@@ -149,17 +161,16 @@ function useEffectImpl(effect, inputs, defered) {
 }
 
 export function useImperativeHandle(ref, create, inputs) {
-  const nextInputs = !isNull(inputs) ? inputs.concat([ref]) : null;
+  const nextInputs = !isNull(inputs) && !isUndef(inputs) ? inputs.concat([ref]) : null;
+  const currentInstance = getCurrentRenderingInstance();
+  const mounted = currentInstance.__mounted;
 
+  if (!currentInstance.mounted) {
+    setWrapperRef(ref, create);
+  }
   useLayoutEffect(() => {
-    if (isFunction(ref)) {
-      ref(create());
-      return () => ref(null);
-    } else if (!isNull(ref)) {
-      ref.current = create();
-      return () => {
-        ref.current = null;
-      };
+    if (mounted) {
+      setWrapperRef(ref, create);
     }
   }, nextInputs);
 }

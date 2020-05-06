@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global my, wx */
-import { isMiniApp, isWeChatMiniProgram, isQuickApp } from 'universal-env';
+/* global my, wx, tt */
+import { isMiniApp, isWeChatMiniProgram, isQuickApp, isByteDanceMicroApp } from 'universal-env';
 
 let apiCore;
 
@@ -8,6 +8,8 @@ if (isMiniApp) {
   apiCore = my;
 } else if (isWeChatMiniProgram) {
   apiCore = wx;
+} else if (isByteDanceMicroApp) {
+  apiCore = tt;
 } else if (isQuickApp) {
   apiCore = require('@system.router');
 }
