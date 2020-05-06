@@ -1,8 +1,0 @@
-{
-  "component": true,
-  "usingComponents": {
-    "element": "../../index",
-    "subtree": "../subtree/index",
-    "subtree-cover": "./index"
-  }
-}

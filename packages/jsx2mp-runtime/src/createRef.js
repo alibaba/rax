@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
+import { isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
 
 export default function(initialValue) {
   let created = false;
@@ -11,7 +11,7 @@ export default function(initialValue) {
     if (!created || canOverride) {
       if (isMiniApp) {
         ref.current = instance;
-      } else if (isWeChatMiniProgram) {
+      } else if (isWeChatMiniProgram || isByteDanceMicroApp) {
         // If instance has detail, instance is event object
         ref.current = instance.detail ? instance.detail : instance;
       }

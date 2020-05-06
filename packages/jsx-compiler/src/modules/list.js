@@ -192,7 +192,11 @@ function transformMapMethod(path, parsed, code, adapter) {
 
         // Use renamed index instead of original params[1]
         params[1] = renamedIndex;
-        const listBlock = createJSX('block', listAttr, [returnElPath.node]);
+        const returnEl = returnElPath.node;
+        const listBlock = createJSX('block', listAttr,
+          [/^JSX.*/g.test(returnEl.type) ? returnEl : t.jsxExpressionContainer(returnEl)]
+        );
+
 
         // Mark forItem __listItem
         forItem.__listItem = {

@@ -20,13 +20,13 @@ test('tool: getId', () => {
 
 test('tool: getPageRoute/getPageName', () => {
   const res1 = mock.createPage('home');
-  expect(tool.getPageRoute(res1.document.$$pageId)).toBe('/pages/home/index');
+  expect(tool.getPageRoute(res1.document.__pageId)).toBe('/pages/home/index');
   expect(tool.getPageName('pages/home/index')).toBe('home');
   const res2 = mock.createPage('list');
-  expect(tool.getPageRoute(res2.document.$$pageId)).toBe('/pages/list/index');
+  expect(tool.getPageRoute(res2.document.__pageId)).toBe('/pages/list/index');
   expect(tool.getPageName('pages/list/index')).toBe('list');
   const res3 = mock.createPage('detail');
-  expect(tool.getPageRoute(res3.document.$$pageId)).toBe('/pages/detail/index');
+  expect(tool.getPageRoute(res3.document.__pageId)).toBe('/pages/detail/index');
   expect(tool.getPageName('pages/detail/index')).toBe('detail');
 });
 
