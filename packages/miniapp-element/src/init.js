@@ -24,6 +24,6 @@ export default function(instance, data) {
   } else {
     // Could be replaced html tag
     const builtinComponentName = componentNameMap[tagName.toLowerCase()];
-    if (builtinComponentName) checkComponentAttr(instance, builtinComponentName, data);
+    if (builtinComponentName) data.builtinComponentName = builtinComponentName;
   }
 }

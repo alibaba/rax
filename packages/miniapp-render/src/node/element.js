@@ -283,7 +283,7 @@ class Element extends Node {
       type: this.$_type,
       tagName: this.$_tagName,
       id: this.id,
-      class: this.className,
+      className: this.className,
       style: this.$__style ? this.style.cssText : '',
       animation: this.$__attrs ? this.$__attrs.get('animation') : {}
     };
@@ -724,6 +724,7 @@ class Element extends Node {
 
     // Trigger the webview update
     if (hasUpdate) this.$_triggerMeUpdate();
+
 
     return node;
   }
