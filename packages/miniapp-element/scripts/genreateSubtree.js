@@ -14,7 +14,7 @@ function getSubtreeSimple(i, platform) {
   const subContent = [
     `<block ${adapter[platform].if}="{{${itemName}.type === 'text'}}">{{${itemName}.content}}</block>`,
     `<image ${adapter[platform].elseif}="{{${itemName}.isImage}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" src="{{${itemName}.src}}" animation="{{${itemName}.animation}}"  rendering-mode="{{${itemName}.mode ? 'backgroundImage' : 'img'}}" mode="{{${itemName}.mode}}" lazy-load="{{${itemName}.lazyLoad}}" show-menu-by-longpress="{{${itemName}.showMenuByLongpress}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].load}="onImgLoad" ${adapter[platform].error}="onImgError"></image>`,
-    `<template ${adapter[platform].elseif}="{{${itemName}.useTemplate}}" is="{{${itemName}.extra.wxCompName}}" data="{{...${itemName}.extra}}"/>`,
+    `<template ${adapter[platform].elseif}="{{${itemName}.useTemplate}}" is="{{${itemName}.extra.builtinComponentName}}" data="{{...${itemName}.extra}}"/>`,
     `<view ${adapter[platform].elseif}="{{${itemName}.isLeaf${isLast ? '' : ' || ' + itemName + '.isSimple'}}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap">{{${itemName}.content}}${isLast ? '</view>' : ''}`
   ];
 
@@ -50,7 +50,7 @@ function getSubtreeCoverSimple(i, platform) {
   const isFirst = i === 1;
   const subContent = [
     `<cover-image ${adapter[platform].if}="{{${itemName}.isImage}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" src="{{${itemName}.src}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].load}="onImgLoad" ${adapter[platform].error}="onImgError"></cover-image>`,
-    `<template ${adapter[platform].elseif}="{{${itemName}.useTemplate}}" is="{{${itemName}.extra.wxCompName}}" data="{{...${itemName}.extra}}"/>`,
+    `<template ${adapter[platform].elseif}="{{${itemName}.useTemplate}}" is="{{${itemName}.extra.builtinComponentName}}" data="{{...${itemName}.extra}}"/>`,
     `<cover-view ${adapter[platform].elseif}="{{${itemName}.type === 'text' || ${itemName}.isLeaf || ${itemName}.isSimple}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap">{{${itemName}.content}}${isLast ? '</cover-view>' : ''}`
   ];
 
@@ -82,12 +82,14 @@ function getSubtreeCoverSimple(i, platform) {
  */
 function createSubtreeTemplate(platform) {
   const content = [
-    `<import src="./inner-component.${adapter[platform].xml}"/>`,
     '<template name="subtree">',
     ...getSubtreeSimple(1, platform),
     '</template>',
     '\n'
   ];
+  if (platform !== 'ali') {
+    content.unshift(`<import src="./inner-component.${adapter[platform].xml}"/>`);
+  }
   return content.join('');
 }
 
@@ -96,12 +98,14 @@ function createSubtreeTemplate(platform) {
  */
 function createSubtreeCoverTemplate(platform) {
   const content = [
-    `<import src="./inner-component.${adapter[platform].xml}"/>`,
     '<template name="subtree-cover">',
     ...getSubtreeCoverSimple(1, platform),
     '</template>',
     '\n'
   ];
+  if (platform !== 'ali') {
+    content.unshift(`<import src="./inner-component.${adapter[platform].xml}"/>`);
+  }
   return content.join('');
 }
 
@@ -114,17 +118,19 @@ export default function(distPath, templatesDir, platform) {
     case 'ali':
       const subtreeAXMLTemplate = createSubtreeTemplate(platform);
       const subtreeCoverAXMLTemplate = createSubtreeCoverTemplate(platform);
-      const innerComponentTemplate = createInnerComponentTemplate(templatesDir, platform);
+      const innerComponentAXMLTemplate = createInnerComponentTemplate(templatesDir, platform);
       const XMLPath = path.join(distPath, 'index.axml');
-      fs.writeFileSync(path.join(distPath, `inner-component.${adapter[platform].xml}`), innerComponentTemplate, 'utf8');
+      fs.appendFileSync(XMLPath, innerComponentAXMLTemplate);
       fs.appendFileSync(XMLPath, subtreeAXMLTemplate);
       fs.appendFileSync(XMLPath, subtreeCoverAXMLTemplate);
       break;
     case 'wechat':
       const subtreeWXMLTemplate = createSubtreeTemplate(platform);
       const subtreeCoverWXMLTemplate = createSubtreeCoverTemplate(platform);
+      const innerComponentWXMLTemplate = createInnerComponentTemplate(templatesDir, platform);
       const templatePath = path.join(distPath, 'template');
       fs.ensureDirSync(templatePath);
+      fs.writeFileSync(path.join(templatePath, `inner-component.${adapter[platform].xml}`), innerComponentWXMLTemplate, 'utf8');
       fs.writeFileSync(path.join(templatePath, `subtree.${adapter[platform].xml}`), subtreeWXMLTemplate, 'utf8');
       fs.writeFileSync(path.join(templatePath, `subtree-cover.${adapter[platform].xml}`), subtreeCoverWXMLTemplate, 'utf8');
       break;

@@ -81,11 +81,9 @@
     space="{{space}}"
     decode="{{decode}}"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></text>
-<!-- 其他 -->
 <block
     a:elif="{{builtinComponentName === 'not-support'}}"
 >{{content}}</block>
-<!-- 自定义组件 -->
 <custom-component
     a:elif="{{!!builtinComponentName}}"
     name="{{builtinComponentName}}"
