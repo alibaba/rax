@@ -102,7 +102,6 @@ describe('Get render props', () => {
         <slot name="cat"></slot>
         </View></block>`);
   });
-
 });
 
 function transformReturnPath(path) {

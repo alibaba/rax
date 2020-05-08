@@ -138,6 +138,9 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
             }
             if (renderItemFunctionPath) {
               const renderItemFunctionNode = renderItemFunctionPath.node;
+              if (renderItemFunctionNode.params.length > 1) {
+                throw new CodeError(code, renderItemFunctionNode, renderItemFunctionNode.loc, 'render funtions that used in render props can only accept one param at most temporarily');
+              }
               const tempDataName = `${attrName}State__temp${tempId++}`;
               const templateName = t.stringLiteral(renderPropsAttrName);
               const returnStatementPath = getReturnElementPath(renderItemFunctionNode) || path.get('value.expression.body');
@@ -174,7 +177,7 @@ function transformRenderPropsFunction(ast, renderFunctionPath, code) {
                       }
                       // Tag as template variable
                       identifierNode.__templateVar = true;
-                      identifierNode.__renderClosureFunction = callRenderClsoureFunction;
+                      identifierNode.__renderClosureFunction = t.memberExpression(callRenderClsoureFunction, t.identifier(identifierNode.name));
                     }
                   }
                 });
