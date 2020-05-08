@@ -277,8 +277,8 @@ function transformComponents(parsed, options) {
     });
   } else {
     // add export muilt component
-    for (let tagName of exported) {
-      const alias = getComponentAlias(tagName, imported);
+    for (let exportName of exported) {
+      const alias = getComponentAlias(exportName, imported);
       if (alias && alias.name) componentsAlias[alias.name] = alias;
     }
   }
@@ -321,11 +321,11 @@ module.exports = {
   _transformComponents: transformComponents
 };
 
-function getComponentAlias(tagName, imported) {
+function getComponentAlias(quoteName, imported) {
   if (imported) {
     for (let [key, value] of Object.entries(imported)) {
       for (let i = 0, l = value.length; i < l; i++) {
-        if (value[i].local === tagName)
+        if (value[i].local === quoteName)
           return Object.assign({ from: key }, value[i]);
       }
     }
