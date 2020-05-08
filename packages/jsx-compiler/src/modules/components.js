@@ -276,9 +276,9 @@ function transformComponents(parsed, options) {
       }
     });
   } else {
-    // add export {} muilt component
+    // add export muilt component
     for (let tagName of exported) {
-      const alias = getComponentAlias2(tagName, imported);
+      const alias = getComponentAlias(tagName, imported);
       if (alias && alias.name) componentsAlias[alias.name] = alias;
     }
   }
@@ -327,19 +327,6 @@ function getComponentAlias(tagName, imported) {
       for (let i = 0, l = value.length; i < l; i++) {
         if (value[i].local === tagName)
           return Object.assign({ from: key }, value[i]);
-      }
-    }
-  }
-}
-
-  // imported && exported
-function getComponentAlias2(exportName, imported) {
-  if (imported) {
-    for (let [key, value] of Object.entries(imported)) {
-      for (let i = 0, l = value.length; i < l; i++) {
-        if (value[i].local === exportName) {
-          return Object.assign({ from: key }, value[i]);
-        }
       }
     }
   }
