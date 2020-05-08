@@ -143,6 +143,7 @@ class EventTarget {
       event = new Event({
         name: eventName,
         target,
+        detail: miniprogramEvent.detail,
         timeStamp: miniprogramEvent.timeStamp,
         touches: miniprogramEvent.touches,
         changedTouches: miniprogramEvent.changedTouches,
@@ -214,18 +215,21 @@ class EventTarget {
   }
 
   // Get handlers
-  $_getHandlers(eventName, isCapture, isInit) {
+  __getHandles(eventName, isCapture, isInit) {
     const handlerMap = this.$_eventHandlerMap;
-
+    const pageId = this.__pageId || 'app';
+    if (!handlerMap[pageId]) {
+      handlerMap[pageId] = {};
+    }
     if (isInit) {
-      const handlerObj = handlerMap[eventName] = handlerMap[eventName] || {};
+      const handlerObj = handlerMap[pageId][eventName] = handlerMap[pageId][eventName] || {};
 
       handlerObj.capture = handlerObj.capture || [];
       handlerObj.bubble = handlerObj.bubble || [];
 
       return isCapture ? handlerObj.capture : handlerObj.bubble;
     } else {
-      const handlerObj = handlerMap[eventName];
+      const handlerObj = handlerMap[pageId][eventName];
 
       if (!handlerObj) return null;
 
@@ -236,7 +240,7 @@ class EventTarget {
   // Trigger node event
   $$trigger(eventName, { event, args = [], isCapture, isTarget } = {}) {
     eventName = eventName.toLowerCase();
-    const handlers = this.$_getHandlers(eventName, isCapture);
+    const handlers = this.__getHandles(eventName, isCapture);
     const onEventName = `on${eventName}`;
 
     if ((!isCapture || !isTarget) && typeof this[onEventName] === 'function') {
@@ -262,9 +266,7 @@ class EventTarget {
     }
   }
 
-  /**
-     * 检查该事件是否可以触发
-     */
+  // Check if the event can be triggered
   $$checkEvent(miniprogramEvent) {
     const last = this.$_miniappEvent;
     const now = miniprogramEvent;
@@ -286,7 +288,7 @@ class EventTarget {
     if (typeof eventName !== 'string') return;
 
     eventName = eventName.toLowerCase();
-    const handlers = this.$_getHandlers(eventName, isCapture);
+    const handlers = this.__getHandles(eventName, isCapture);
 
     if (handlers && handlers.length) handlers.length = 0;
   }
@@ -300,7 +302,7 @@ class EventTarget {
     else if (typeof options === 'object') isCapture = options.capture;
 
     eventName = eventName.toLowerCase();
-    const handlers = this.$_getHandlers(eventName, isCapture, true);
+    const handlers = this.__getHandles(eventName, isCapture, true);
 
     handlers.push(handler);
   }
@@ -309,7 +311,7 @@ class EventTarget {
     if (typeof eventName !== 'string' || typeof handler !== 'function') return;
 
     eventName = eventName.toLowerCase();
-    const handlers = this.$_getHandlers(eventName, isCapture);
+    const handlers = this.__getHandles(eventName, isCapture);
 
     if (handlers && handlers.length) handlers.splice(handlers.indexOf(handler), 1);
   }

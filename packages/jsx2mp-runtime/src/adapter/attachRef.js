@@ -1,10 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
-import nextTick from '../nextTick';
+import { isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
 
-export default function(instance, bindComRef, isFunctionComponent) {
+export default function(instance, bindComRef) {
   if (bindComRef) {
-    if (isFunctionComponent) {
+    if (instance.isFunctionComponent && !instance._render._forwardRef) {
       console.warn('Warning: Do not attach ref to function component because they don’t have instances.');
       triggerSetRef(null, bindComRef);
     } else {
@@ -16,10 +15,7 @@ export default function(instance, bindComRef, isFunctionComponent) {
 function triggerSetRef(instance, bindComRef) {
   if (isMiniApp) {
     bindComRef(instance);
-  } else if (isWeChatMiniProgram) {
-    // Wait register ref in parent componnent
-    nextTick(() => {
-      instance._internal.triggerEvent('ComRef', instance);
-    });
+  } else if (isWeChatMiniProgram || isByteDanceMicroApp) {
+    instance._internal.triggerEvent('ComRef', instance);
   }
 }

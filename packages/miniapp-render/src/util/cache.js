@@ -1,10 +1,10 @@
 const pageMap = {};
 let configCache = {};
+let window;
 
 // Init
 function init(pageId, options) {
   pageMap[pageId] = {
-    window: options.window,
     document: options.document,
     nodeIdMap: options.nodeIdMap,
   };
@@ -22,11 +22,16 @@ function getDocument(pageId) {
   return pageMap[pageId] && pageMap[pageId].document;
 }
 
+// Set window
+function setWindow(value) {
+  window = value;
+}
+
 /**
  * Get window
  */
-function getWindow(pageId) {
-  return pageMap[pageId] && pageMap[pageId].window;
+function getWindow() {
+  return window;
 }
 
 /**
@@ -67,6 +72,7 @@ export default {
   init,
   destroy,
   getDocument,
+  setWindow,
   getWindow,
   setNode,
   getNode,

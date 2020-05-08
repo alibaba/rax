@@ -8,10 +8,16 @@ import view from './builtInComponents/view';
 import icon from './builtInComponents/icon';
 import progress from './builtInComponents/progress';
 import text from './builtInComponents/text';
+import richText from './builtInComponents/rich-text';
 import button from './builtInComponents/button';
 import editor from './builtInComponents/editor';
 import form from './builtInComponents/form';
+import label from './builtInComponents/label';
 import input from './builtInComponents/input';
+import radioGroup from './builtInComponents/radio-group';
+import radio from './builtInComponents/radio';
+import checkboxGroup from './builtInComponents/checkbox-group';
+import checkbox from './builtInComponents/checkbox';
 import picker from './builtInComponents/picker';
 import pickerView from './builtInComponents/picker-view';
 import slider from './builtInComponents/slider';
@@ -37,7 +43,7 @@ import pickerViewColumn from './builtInComponents/picker-view-column';
 
 const components = [
   coverImage, coverView, movableArea, scrollView, swiper, view, icon, progress,
-  text, button, editor, form, input, picker, pickerView, slider, switchCom, textarea,
+  text, richText, button, editor, form, label, input, radioGroup, radio, checkboxGroup, checkbox, picker, pickerView, slider, switchCom, textarea,
   navigator, camera, image, livePlayer, livePusher, video, map, canvas, ad, officialAccount,
   openData, webView
 ];
