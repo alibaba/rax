@@ -121,7 +121,7 @@ export default {
   handles: {
     onInputInput(evt) {
       if (!this.domNode) return;
-      this._inputOldValue = this.domNode.value;
+      this.domNode.value = evt.detail.value;
       callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onInputFocus(evt) {
