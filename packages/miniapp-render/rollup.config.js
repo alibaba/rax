@@ -3,6 +3,7 @@ import replace from 'rollup-plugin-replace';
 import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import { terser } from 'rollup-plugin-terser';
 import { name } from './package.json';
 
 function getBabelConfig(platform) {
@@ -40,10 +41,17 @@ function getRollupConfig(platform) {
     input: 'src/index.js',
     output: [
       {
-        dir: `dist/${platform}`,
+        file: `dist/${platform}/index.js`,
         format: 'umd',
         name
-      }
+      },
+      {
+        file: `dist/${platform}/index.min.js`,
+        format: 'umd',
+        name,
+        plugins: [terser()]
+      },
+
     ],
     plugins: [
       commonjs(),

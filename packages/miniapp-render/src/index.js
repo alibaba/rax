@@ -2,28 +2,26 @@ import tool from './util/tool';
 import cache from './util/cache';
 import perf from './util/perf';
 import constants from './util/constants';
-import Window from './window';
+import { createWindow } from './window';
 import Document from './document';
 import EventTarget from './event/event-target';
 import Event from './event/event';
 
 export default {
-  createPage(route, config) {
+  createPage(pageId, config) {
     if (config) cache.setConfig(config);
 
-    const pageId = `p-${tool.getId()}-/${route}`;
-    const window = new Window(pageId);
     const nodeIdMap = {};
+    const window = createWindow();
     const document = new Document(pageId, nodeIdMap);
 
+    cache.setWindow(window);
     cache.init(pageId, {
-      window,
       document,
       nodeIdMap
     });
 
     return {
-      pageId,
       window,
       document
     };
@@ -34,7 +32,9 @@ export default {
   },
 
   createApp() {
-    return new Window('app');
+    const window = createWindow();
+    cache.setWindow(window);
+    return window;
   },
 
   // For miniprogram-element

@@ -1,6 +1,6 @@
 {
   "name": "miniapp-element",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Custom element for MiniApp",
   "files": [
     "dist"
@@ -50,6 +50,7 @@
     "rollup-plugin-clear": "^2.0.7",
     "rollup-plugin-filesize": "^6.1.0",
     "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^5.3.0",
     "universal-env": "^3.0.0"
   },
   "dependencies": {

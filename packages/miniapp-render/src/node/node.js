@@ -13,7 +13,7 @@ class Node extends EventTarget {
     this.$_type = options.type;
     this.$_parentNode = null;
     this.$_tree = tree;
-    this.$_pageId = tree.pageId;
+    this.__pageId = tree.pageId;
   }
 
   /**
@@ -26,7 +26,7 @@ class Node extends EventTarget {
     this.$_type = null;
     this.$_parentNode = null;
     this.$_tree = null;
-    this.$_pageId = null;
+    this.__pageId = null;
   }
 
   /**
@@ -34,13 +34,6 @@ class Node extends EventTarget {
    */
   get $$nodeId() {
     return this.$_nodeId;
-  }
-
-  /**
-   * private pageId
-   */
-  get $$pageId() {
-    return this.$_pageId;
   }
 
   /**
@@ -117,7 +110,7 @@ class Node extends EventTarget {
   }
 
   get ownerDocument() {
-    return cache.getDocument(this.$_pageId) || null;
+    return cache.getDocument(this.__pageId) || null;
   }
 
   hasChildNodes() {

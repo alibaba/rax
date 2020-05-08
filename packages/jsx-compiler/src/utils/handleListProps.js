@@ -24,8 +24,10 @@ module.exports = function(...args) {
     } else if (t.isStringLiteral(node.value)) {
       // override prev level list value
       if (BINDING_REG.test(node.value.value) && node.value.__originalExpression) {
-        const propertyIndex = findIndex(node.value.__properties, (property) => property === node.value.__originalExpression);
-        node.value.__properties.splice(propertyIndex, 1);
+        const propertyIndex = findIndex(node.value.__properties, ({ value }) => value === node.value.__originalExpression);
+        if (propertyIndex > -1) {
+          node.value.__properties.splice(propertyIndex, 1);
+        }
         node.value = t.jsxExpressionContainer(node.value.__originalExpression);
         handleList(null, node.value.expression, ...args);
       }

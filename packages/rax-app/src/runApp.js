@@ -115,6 +115,7 @@ export default function runApp(appConfig, pageProps = {}) {
   // In MiniApp, it needn't return App Component
   if (isMiniApp || isWeChatMiniProgram) {
     window.history = createMiniAppHistory(routes);
+    window.location = window.history.location;
     window.__pageProps = pageProps;
     return;
   }

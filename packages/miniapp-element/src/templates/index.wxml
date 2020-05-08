@@ -180,6 +180,15 @@
     space="{{space}}"
     decode="{{decode}}"
 ><template is="subtree" data="{{childNodes: innerChildNodes, inCover}}"/></text>
+<rich-text
+  wx:elif="{{builtinComponentName === 'rich-text'}}"
+  id="{{id}}"
+  animation="{{animation}}"
+  class="{{class}}"
+  style="{{style}}"
+  nodes="{{nodes}}"
+  space="{{space}}"
+></rich-text>
 <!-- Form component -->
 <button
     wx:elif="{{builtinComponentName === 'button'}}"

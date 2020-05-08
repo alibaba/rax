@@ -78,66 +78,45 @@ function getSubtreeCoverSimple(i, platform) {
 /**
  * Generate template/subtree (for wechat)
  */
-function createSubtreeTemplate(templatePath, platform) {
+function createSubtreeTemplate(platform) {
   const content = [
     '<template name="subtree">',
     ...getSubtreeSimple(1, platform),
-    '</template>'
+    '</template>',
+    '\n'
   ];
-
-  // Write file
-  fs.writeFileSync(path.join(templatePath, `subtree.${adapter[platform].xml}`), content.join(''), 'utf8');
+  return content.join('');
 }
 
 /**
  * Generate src/template/subtree-cover (for wechat)
  */
-function createSubtreeCoverTemplate(templatePath, platform) {
+function createSubtreeCoverTemplate(platform) {
   const content = [
     '<template name="subtree-cover">',
     ...getSubtreeCoverSimple(1, platform),
-    '</template>'
+    '</template>',
+    '\n'
   ];
-
-  // Write file
-  fs.writeFileSync(path.join(templatePath, `subtree-cover.${adapter[platform].xml}`), content.join(''), 'utf8');
-}
-
-/**
- * Generate subtree or subtree-cover custom component (for alipay)
- */
-function createSubtreeCustomComponent(type = 'subtree', customComponentPath, platform) {
-  const content = type === 'subtree' ? getSubtreeSimple(1, platform) : getSubtreeCoverSimple(1, platform);
-
-  // Write file
-  const sourecJSPath = path.resolve('src', 'templates', type, 'index.js');
-  const sourceJSONPath = path.resolve('src', 'templates', type, 'index.json');
-  const distJSPath = path.join(customComponentPath, 'index.js');
-  const distJSONPath = path.join(customComponentPath, 'index.json');
-  const distXMLPath = path.join(customComponentPath, `index.${adapter[platform].xml}`);
-
-  fs.writeFileSync(distXMLPath, content.join(''), 'utf8');
-  fs.copySync(sourecJSPath, distJSPath);
-  fs.copySync(sourceJSONPath, distJSONPath);
+  return content.join('');
 }
 
 export default function(distPath, platform) {
-  const templatePath = path.join(distPath, 'template');
-  fs.ensureDirSync(templatePath);
-
   switch (platform) {
     case 'ali':
-      const subtreePath = path.join(templatePath, 'subtree');
-      const subtreeCoverPath = path.join(templatePath, 'subtree-cover');
-      fs.ensureDirSync(subtreePath);
-      fs.ensureDirSync(subtreeCoverPath);
-
-      createSubtreeCustomComponent('subtree', subtreePath, platform);
-      createSubtreeCustomComponent('subtree-cover', subtreeCoverPath, platform);
+      const subtreeAXMLTemplate = createSubtreeTemplate(platform);
+      const subtreeCoverAXMLTemplate = createSubtreeCoverTemplate(platform);
+      const XMLPath = path.join(distPath, 'index.axml');
+      fs.appendFileSync(XMLPath, subtreeAXMLTemplate);
+      fs.appendFileSync(XMLPath, subtreeCoverAXMLTemplate);
       break;
     case 'wechat':
-      createSubtreeTemplate(templatePath, platform);
-      createSubtreeCoverTemplate(templatePath, platform);
+      const subtreeWXMLTemplate = createSubtreeTemplate(platform);
+      const subtreeCoverWXMLTemplate = createSubtreeCoverTemplate(platform);
+      const templatePath = path.join(distPath, 'template');
+      fs.ensureDirSync(templatePath);
+      fs.writeFileSync(path.join(templatePath, `subtree.${adapter[platform].xml}`), subtreeWXMLTemplate, 'utf8');
+      fs.writeFileSync(path.join(templatePath, `subtree-cover.${adapter[platform].xml}`), subtreeCoverWXMLTemplate, 'utf8');
       break;
     default:
   }
