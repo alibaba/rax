@@ -164,7 +164,7 @@ function transformComponents(parsed, options) {
   const contextList = [];
   const componentsAlias = {};
 
-  if(templateAST) {
+  if (templateAST) {
     traverse(templateAST, {
       JSXOpeningElement(path) {
         const { node } = path;
