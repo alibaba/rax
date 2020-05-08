@@ -69,7 +69,11 @@
         onTouchCancel="onTouchCancel"
         onTap="onTap"
         hidden="{{item.extra.hidden}}"
-    ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></picker-view-column>
+    >
+    <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
+      <element a:if="{{hasChildren}}" class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}"></element>
+    </view>
+    </picker-view-column>
 </block></picker-view>
 <text
     a:elif="{{builtinComponentName === 'text'}}"

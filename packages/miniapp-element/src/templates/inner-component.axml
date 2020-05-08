@@ -398,7 +398,7 @@
         value="{{value}}"
         onChange="onPickerChange"
         onCancel="onPickerCancel"
-    ><element a:if="{{hasChildren}}" class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{nodeId}}" data-private-page-id="{{pageId}}" generic:custom-component="custom-component"></element></picker>
+    ><view><element a:if="{{hasChildren}}" class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{nodeId}}" data-private-page-id="{{pageId}}" generic:custom-component="custom-component"></element></view></picker>
 </template>
 <template name="slider">
     <slider
