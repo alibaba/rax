@@ -90,7 +90,7 @@ class HTMLInputElement extends Element {
 
   set name(value) {
     value = '' + value;
-    return this.$_attrs.set('name', value);
+    this.$_attrs.set('name', value);
   }
 
   get type() {

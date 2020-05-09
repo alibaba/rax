@@ -295,7 +295,6 @@
         color="{{color}}"
     ></checkbox></checkbox-group>
     <input
-        a:elif="{{type !== 'hidden'}}"
         id="{{id}}"
         class="{{className}}"
         style="{{style}}"

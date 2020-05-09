@@ -93,7 +93,7 @@ export default function filterNodes(domNode, level, component) {
       domInfo.useTemplate =
         !domInfo.isImage && USE_TEMPLATE.indexOf(templateName) !== -1;
       if (domInfo.useTemplate) {
-        const compName = componentNameMap[templateName];
+        const compName = componentNameMap[templateName.toLowerCase()];
         const extra = {};
         if (compName)
           checkComponentAttr(
