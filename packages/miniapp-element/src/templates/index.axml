@@ -95,4 +95,14 @@
     data-private-page-id="{{pageId}}"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></custom-component>
 <template a:elif="{{inCover === true}}" is="subtree-cover" data="{{childNodes, inCover}}"></template>
-<template a:else is="subtree" data="{{childNodes, inCover}}"></template>
+<view
+  data-private-node-id="{{nodeId}}"
+  data-private-page-id="{{pageId}}"
+  animation="{{animation}}"
+  id="{{id}}"
+  class="{{className}}"
+  style="{{style}}"
+  a:else
+  >
+  <template is="subtree" data="{{childNodes, inCover}}"></template>
+</view>
