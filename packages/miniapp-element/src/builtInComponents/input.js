@@ -12,6 +12,11 @@ export default {
       return domNode.value || '';
     },
   }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
+    },
+  }, {
     name: 'type',
     get(domNode) {
       const value = domNode.type || 'text';
@@ -117,6 +122,11 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }, {
+    name: 'controlled',
+    get(domNode) {
+      return !!domNode.getAttribute('controlled');
+    },
   }],
   handles: {
     onInputInput(evt) {

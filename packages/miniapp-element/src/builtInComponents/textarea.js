@@ -9,6 +9,11 @@ export default {
       return domNode.value || '';
     },
   }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
+    },
+  }, {
     name: 'placeholder',
     get(domNode) {
       return domNode.placeholder;
@@ -99,6 +104,11 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }, {
+    name: 'controlled',
+    get(domNode) {
+      return !!domNode.getAttribute('controlled');
+    },
   }],
   handles: {
     onTextareaFocus(evt) {
@@ -111,7 +121,7 @@ export default {
       this.domNode.setAttribute('focus', false);
       if (this._textareaOldValue !== undefined && this.domNode.value !== this._textareaOldValue) {
         this._textareaOldValue = undefined;
-        this.callEvent('change', evt);
+        callEvent('change', evt);
       }
       callSimpleEvent('blur', evt, this.domNode);
     },

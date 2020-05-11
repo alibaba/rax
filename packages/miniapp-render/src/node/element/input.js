@@ -171,8 +171,13 @@ class HTMLInputElement extends Element {
     return this.$_attrs.get('checked') || '';
   }
 
-  focus() {
-    this.$_attrs.set('focus', true);
+  get focus() {
+    return !!this.$_attrs.get('focus');
+  }
+
+  set focus(value) {
+    value = !!value;
+    this.$_attrs.set('focus', value);
   }
 
   blur() {

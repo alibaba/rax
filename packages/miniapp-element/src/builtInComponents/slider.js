@@ -30,6 +30,11 @@ export default {
       return +domNode.getAttribute('value') || 0;
     },
   }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
+    },
+  }, {
     name: 'color',
     get(domNode) {
       return domNode.getAttribute('color') || '#e9e9e9';

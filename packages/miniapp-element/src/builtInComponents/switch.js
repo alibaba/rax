@@ -13,6 +13,11 @@ export default {
       return !!domNode.getAttribute('disabled');
     },
   }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
+    },
+  }, {
     name: 'type',
     get(domNode) {
       return domNode.getAttribute('type') || 'switch';
