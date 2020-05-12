@@ -268,57 +268,7 @@
     ><element wx:if="{{hasChildren}}" class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{nodeId}}" data-private-page-id="{{pageId}}" generic:custom-component="custom-component"></element></form>
 </template>
 <template name="input">
-    <radio-group
-        wx:if="{{type === 'radio'}}"
-        id="{{id}}"
-        class="{{className}}"
-        style="{{style}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        bindchange="onRadioChange"
-    ><radio
-        id="{{id}}"
-        class="{{className}}"
-        style="{{style}}"
-        hidden="{{hidden}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        bindtouchstart="onTouchStart"
-        bindtouchmove="onTouchMove"
-        bindtouchend="onTouchEnd"
-        bindtouchcancel="onTouchCancel"
-        bindtap="onTap"
-
-        value="{{value}}"
-        disabled="{{disabled}}"
-        checked="{{checked}}"
-        color="{{color}}"
-    ></radio></radio-group>
-    <checkbox-group
-        wx:elif="{{type === 'checkbox'}}"
-        id="{{id}}"
-        class="{{className}}"
-        style="{{style}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        bindchange="onCheckboxChange"
-    ><checkbox
-        hidden="{{hidden}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        bindtouchstart="onTouchStart"
-        bindtouchmove="onTouchMove"
-        bindtouchend="onTouchEnd"
-        bindtouchcancel="onTouchCancel"
-        bindtap="onTap"
-
-        value="{{value}}"
-        disabled="{{disabled}}"
-        checked="{{checked}}"
-        color="{{color}}"
-    ></checkbox></checkbox-group>
     <input
-        wx:elif="{{type !== 'hidden'}}"
         id="{{id}}"
         class="{{className}}"
         style="{{style}}"

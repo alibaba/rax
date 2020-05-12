@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'swiper',
@@ -84,18 +84,19 @@ export default {
   }],
   handles: {
     onSwiperChange(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('current', evt.detail.current);
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.current = evt.detail.current;
-      callSimpleEvent('change', evt, this.domNode);
+      domNode.$$setAttributeWithoutUpdate('current', evt.detail.current);
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.current = evt.detail.current;
+      callSingleEvent('change', evt, this);
     },
     onSwiperTransition(evt) {
-      callSimpleEvent('transition', evt, this.domNode);
+      callSingleEvent('transition', evt, this);
     },
     onSwiperAnimationfinish(evt) {
-      callSimpleEvent('animationfinish', evt, this.domNode);
+      callSingleEvent('animationfinish', evt, this);
     },
   },
 };

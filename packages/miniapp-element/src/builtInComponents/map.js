@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'map',
@@ -134,34 +134,35 @@ export default {
   }],
   handles: {
     onMapTap(evt) {
-      callSimpleEvent('tap', evt, this.domNode);
+      callSingleEvent('tap', evt, this);
     },
     onMapMarkerTap(evt) {
-      callSimpleEvent('markertap', evt, this.domNode);
+      callSingleEvent('markertap', evt, this);
     },
     onMapControlTap(evt) {
-      callSimpleEvent('controltap', evt, this.domNode);
+      callSingleEvent('controltap', evt, this);
     },
     onMapCalloutTap(evt) {
-      callSimpleEvent('callouttap', evt, this.domNode);
+      callSingleEvent('callouttap', evt, this);
     },
     onMapUpdated(evt) {
-      callSimpleEvent('updated', evt, this.domNode);
+      callSingleEvent('updated', evt, this);
     },
     onMapRegionChange(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('regionchange', evt);
+      if (!domNode) return;
 
       if (!evt.detail.causedBy) evt.detail.causedBy = evt.causedBy;
       if (evt.type === 'end' || evt.detail.type === 'end') {
-        this.domNode.__oldValues = this.domNode.__oldValues || {};
-        this.domNode.__oldValues.rotate = evt.detail.rotate;
-        this.domNode.__oldValues.skew = evt.detail.skew;
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.rotate = evt.detail.rotate;
+        domNode.__oldValues.skew = evt.detail.skew;
       }
 
-      callSimpleEvent('regionchange', evt, this.domNode);
+      callSingleEvent('regionchange', evt, this);
     },
     onMapPoiTap(evt) {
-      callSimpleEvent('poitap', evt, this.domNode);
+      callSingleEvent('poitap', evt, this);
     },
   },
 };

@@ -102,27 +102,27 @@ const config = {
     // Dom event
     onTouchStart(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchstart', evt, null, this.pageId, this.nodeId);
+        callEvent('touchstart', evt, null, this.pageId);
       }
     },
     onTouchMove(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchmove', evt, null, this.pageId, this.nodeId);
+        callEvent('touchmove', evt, null, this.pageId);
       }
     },
     onTouchEnd(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchend', evt, null, this.pageId, this.nodeId);
+        callEvent('touchend', evt, null, this.pageId);
       }
     },
     onTouchCancel(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchcancel', evt, null, this.pageId, this.nodeId);
+        callEvent('touchcancel', evt, null, this.pageId);
       }
     },
     onTap(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('click', evt, { button: 0 }, this.pageId, this.nodeId); // 默认左键
+        callEvent('click', evt, { button: 0 }, this.pageId); // 默认左键
       }
     },
     onImgLoad(evt) {
@@ -144,6 +144,22 @@ const config = {
       if (!originNode) return;
 
       callSimpleEvent('error', evt, originNode);
+    },
+    getDomNodeFromEvt(eventName, evt) {
+      if (!evt) return;
+      const pageId = this.pageId;
+      let originNodeId = this.nodeId;
+      if (evt.currentTarget && evt.currentTarget.dataset.privateNodeId) {
+        originNodeId = evt.currentTarget.dataset.privateNodeId;
+      } else if (
+        eventName &&
+        eventName.indexOf('canvas') === 0 &&
+        evt.target &&
+        evt.target.dataset.privateNodeId
+      ) {
+        originNodeId = evt.target.dataset.privateNodeId;
+      }
+      return cache.getNode(pageId, originNodeId);
     },
     ...handlesMap
   }

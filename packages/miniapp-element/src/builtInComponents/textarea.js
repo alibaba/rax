@@ -1,5 +1,6 @@
 import callSimpleEvent from '../events/callSimpleEvent';
 import callEvent from '../events/callEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'textarea',
@@ -113,47 +114,51 @@ export default {
   }],
   handles: {
     onTextareaFocus(evt) {
-      const domNode = this.domNode;
+      const domNode = this.getDomNodeFromEvt('focus', evt);
       if (!domNode) return;
       domNode.__textareaOldValue = domNode.value;
       domNode.$$setAttributeWithoutUpdate('focus', true);
 
       domNode.__oldValues = domNode.__oldValues || {};
       domNode.__oldValues.focus = true;
-      callSimpleEvent('focus', evt, this.domNode);
+      callSimpleEvent('focus', evt, domNode);
     },
     onTextareaBlur(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('blur', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('focus', false);
+      domNode.$$setAttributeWithoutUpdate('focus', false);
 
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.focus = false;
-      if (this.__textareaOldValue !== undefined && this.domNode.value !== this.__textareaOldValue) {
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.focus = false;
+      if (this.__textareaOldValue !== undefined && domNode.value !== this.__textareaOldValue) {
         this.__textareaOldValue = undefined;
         callEvent('change', evt);
       }
-      callSimpleEvent('blur', evt, this.domNode);
+      callSimpleEvent('blur', evt, domNode);
     },
     onTextareaLineChange(evt) {
-      callSimpleEvent('linechange', evt, this.domNode);
+      const domNode = this.getDomNodeFromEvt('linechange', evt);
+      callSimpleEvent('linechange', evt, domNode);
     },
     onTextareaInput(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('blur', evt);
+      if (!domNode) return;
 
       const value = '' + evt.detail.value;
-      this.domNode.$$setAttributeWithoutUpdate('value', value);
+      domNode.$$setAttributeWithoutUpdate('value', value);
 
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.value = value;
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.value = value;
 
-      callEvent('input', evt, null, this.pageId, this.nodeId);
+      callEvent('input', evt, null, this.pageId);
     },
     onTextareaConfirm(evt) {
-      callSimpleEvent('confirm', evt, this.domNode);
+      const domNode = this.getDomNodeFromEvt('confirm', evt);
+      callSimpleEvent('confirm', evt, domNode);
     },
     onTextareaKeyBoardHeightChange(evt) {
-      callSimpleEvent('keyboardheightchange', this.domNode);
+      callSingleEvent('keyboardheightchange', evt, this);
     },
   },
 };

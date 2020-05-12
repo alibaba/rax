@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isWeChatMiniProgram } from 'universal-env';
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 const picker = {
   name: 'picker',
@@ -53,15 +53,16 @@ const picker = {
   ],
   handles: {
     onPickerChange(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.value = evt.detail.value;
-      callSimpleEvent('change', evt, this.domNode);
+      domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.value = evt.detail.value;
+      callSingleEvent('change', evt, this);
     },
     onPickerCancel(evt) {
-      callSimpleEvent('cancel', evt, this.domNode);
+      callSingleEvent('cancel', evt, this);
     },
   }
 };
@@ -96,7 +97,7 @@ if (isWeChatMiniProgram) {
     }
   ]);
   picker.handles.onPickerColumnChange = function(evt) {
-    callSimpleEvent('columnchange', evt, this.domNode);
+    callSingleEvent('columnchange', evt, this);
   };
 }
 

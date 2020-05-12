@@ -1,6 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isWeChatMiniProgram } from 'universal-env';
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 const ScrollView = {
   name: 'scroll-view',
@@ -74,13 +74,13 @@ const ScrollView = {
   }],
   handles: {
     onScrollViewScrolltoupper(evt) {
-      callSimpleEvent('scrolltoupper', evt, this.domNode);
+      callSingleEvent('scrolltoupper', evt, this);
     },
     onScrollViewScrolltolower(evt) {
-      callSimpleEvent('scrolltolower', evt, this.domNode);
+      callSingleEvent('scrolltolower', evt, this);
     },
     onScrollViewScroll(evt) {
-      const domNode = this.domNode;
+      const domNode = this.getDomNodeFromEvt('scroll', evt);
       if (!domNode) return;
       domNode.$$setAttributeWithoutUpdate('scroll-into-view', '');
       domNode.$$setAttributeWithoutUpdate('scroll-top', evt.detail.scrollTop);
@@ -90,7 +90,7 @@ const ScrollView = {
       domNode.__oldValues.scrollIntoView = '';
       domNode.__oldValues.scrollTop = evt.detail.scrollTop;
       domNode.__oldValues.scrollLeft = evt.detail.scrollLeft;
-      callSimpleEvent('scroll', evt, this.domNode);
+      callSingleEvent('scroll', evt, this);
     },
   },
 };
@@ -98,19 +98,19 @@ const ScrollView = {
 if (isWeChatMiniProgram) {
   Object.assign(ScrollView.handles, {
     onScrollViewRefresherPulling(evt) {
-      callSimpleEvent('refresherpulling', evt, this.domNode);
+      callSingleEvent('refresherpulling', evt, this);
     },
 
     onScrollViewRefresherRefresh(evt) {
-      callSimpleEvent('refresherrefresh', evt, this.domNode);
+      callSingleEvent('refresherrefresh', evt, this);
     },
 
     onScrollViewRefresherRestore(evt) {
-      callSimpleEvent('refresherrestore', evt, this.domNode);
+      callSingleEvent('refresherrestore', evt, this);
     },
 
     onScrollViewRefresherAbort(evt) {
-      callSimpleEvent('refresherabort', evt, this.domNode);
+      callSingleEvent('refresherabort', evt, this);
     },
   });
 }

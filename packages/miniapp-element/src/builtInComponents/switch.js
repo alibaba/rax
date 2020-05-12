@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'switch',
@@ -36,14 +36,15 @@ export default {
   }],
   handles: {
     onSwitchChange(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('checked', evt.detail.value);
+      domNode.$$setAttributeWithoutUpdate('checked', evt.detail.value);
 
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.checked = evt.detail.value;
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.checked = evt.detail.value;
 
-      callSimpleEvent('change', evt, this.domNode);
+      callSingleEvent('change', evt, this);
     },
   },
 };

@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'radio',
@@ -30,7 +30,7 @@ export default {
   }],
   handles: {
     onRadioChange(evt) {
-      callSimpleEvent('change', evt, this.domNode);
+      callSingleEvent('change', evt, this);
     },
   },
 };

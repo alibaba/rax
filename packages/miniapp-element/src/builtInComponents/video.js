@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'video',
@@ -150,34 +150,36 @@ export default {
   }],
   handles: {
     onVideoPlay(evt) {
-      callSimpleEvent('play', evt, this.domNode);
+      callSingleEvent('play', evt, this);
     },
     onVideoPause(evt) {
-      callSimpleEvent('pause', evt, this.domNode);
+      callSingleEvent('pause', evt, this);
     },
     onVideoEnded(evt) {
-      callSimpleEvent('ended', evt, this.domNode);
+      callSingleEvent('ended', evt, this);
     },
     onVideoTimeUpdate(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('timeupdate', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
-      callSimpleEvent('timeupdate', evt, this.domNode);
+      domNode.$$setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
+      callSingleEvent('timeupdate', evt, this);
     },
     onVideoFullScreenChange(evt) {
-      callSimpleEvent('fullscreenchange', evt, this.domNode);
+      callSingleEvent('fullscreenchange', evt, this);
     },
     onVideoWaiting(evt) {
-      callSimpleEvent('waiting', evt, this.domNode);
+      callSingleEvent('waiting', evt, this);
     },
     onVideoError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
     onVideoProgress(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('progress', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('buffered', evt.detail.buffered);
-      callSimpleEvent('progress', evt, this.domNode);
+      domNode.$$setAttributeWithoutUpdate('buffered', evt.detail.buffered);
+      callSingleEvent('progress', evt, this);
     },
   },
 };

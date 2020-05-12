@@ -1,6 +1,7 @@
 import render from 'miniapp-render';
 import callEvent from '../events/callEvent';
 import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 const { cache } = render.$$adapter;
 
@@ -133,48 +134,53 @@ export default {
   }],
   handles: {
     onInputInput(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('input', evt);
+      if (!domNode) return;
       const value = '' + evt.detail.value;
-      this.domNode.$$setAttributeWithoutUpdate('value', value);
+      domNode.$$setAttributeWithoutUpdate('value', value);
 
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.value = value;
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.value = value;
 
-      callEvent('input', evt, null, this.pageId, this.nodeId);
+      callEvent('input', evt, null, this.pageId);
     },
     onInputFocus(evt) {
-      this.domNode.__inputOldValue = this.domNode.value;
-      this.domNode.$$setAttributeWithoutUpdate('focus', true);
+      const domNode = this.getDomNodeFromEvt('focus', evt);
+      if (!domNode) return;
+      domNode.__inputOldValue = domNode.value;
+      domNode.$$setAttributeWithoutUpdate('focus', true);
 
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.focus = true;
-      callSimpleEvent('focus', evt, this.domNode);
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.focus = true;
+      callSimpleEvent('focus', evt, domNode);
     },
     onInputBlur(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('blur', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('focus', false);
+      domNode.$$setAttributeWithoutUpdate('focus', false);
 
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.focus = false;
-      if (this.__inputOldValue !== undefined && this.domNode.value !== this.__inputOldValue) {
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.focus = false;
+      if (this.__inputOldValue !== undefined && domNode.value !== this.__inputOldValue) {
         this.__inputOldValue = undefined;
-        callEvent('change', evt, null, this.pageId, this.nodeId);
+        callEvent('change', evt, null, this.pageId);
       }
-      callSimpleEvent('blur', evt, this.domNode);
+      callSimpleEvent('blur', evt, domNode);
     },
     onInputConfirm(evt) {
-      callSimpleEvent('confirm', evt, this.domNode);
+      const domNode = this.getDomNodeFromEvt('confirm', evt);
+      callSimpleEvent('confirm', evt, domNode);
     },
     onInputKeyBoardHeightChange(evt) {
-      callSimpleEvent('keyboardheightchange', evt, this.domNode);
+      callSingleEvent('keyboardheightchange', evt, this);
     },
     onRadioChange(evt) {
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
       const window = cache.getWindow();
-      const domNode = this.domNode;
       const value = evt.detail.value;
       const name = domNode.name;
-      const otherDomNodes = window.document.querySelectorAll(`input[name=${name}]`) || [];
 
       if (value === domNode.value) {
         domNode.$$setAttributeWithoutUpdate('checked', true);
@@ -192,11 +198,12 @@ export default {
           }
         }
       }
-      callEvent('input', evt, null, this.pageId, this.nodeId);
-      callEvent('change', evt, null, this.pageId, this.nodeId);
+      callEvent('input', evt, null, this.pageId);
+      callEvent('change', evt, null, this.pageId);
     },
     onCheckboxChange(evt) {
-      const domNode = this.domNode;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
       const value = evt.detail.value || [];
       if (value.indexOf(domNode.value) >= 0) {
         domNode.$$setAttributeWithoutUpdate('checked', true);
@@ -209,13 +216,14 @@ export default {
         domNode.__oldValues = domNode.__oldValues || {};
         domNode.__oldValues.checked = false;
       }
-      callEvent('change', evt, null, this.pageId, this.nodeId);
+      callEvent('change', evt, null, this.pageId);
     },
     onCheckboxItemChange(evt) {
-      const domNode = this.domNode;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
       const value = evt.detail.value || false;
       domNode.setAttribute('checked', value);
-      callEvent('change', evt, null, this.pageId, this.nodeId);
+      callEvent('change', evt, null, this.pageId);
     },
   },
 };

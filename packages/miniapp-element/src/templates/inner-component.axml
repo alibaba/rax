@@ -245,55 +245,6 @@
     ><element a:if="{{hasChildren}}" class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{nodeId}}" data-private-page-id="{{pageId}}" generic:custom-component="custom-component"></element></form>
 </template>
 <template name="input">
-    <radio-group
-        a:if="{{type === 'radio'}}"
-        id="{{id}}"
-        class="{{className}}"
-        style="{{style}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        onChange="onRadioChange"
-    ><radio
-        id="{{id}}"
-        class="{{className}}"
-        style="{{style}}"
-        hidden="{{hidden}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        onTouchStart="onTouchStart"
-        onTouchMove="onTouchMove"
-        onTouchEnd="onTouchEnd"
-        onTouchCancel="onTouchCancel"
-        onTap="onTap"
-
-        value="{{value}}"
-        disabled="{{disabled}}"
-        checked="{{checked}}"
-        color="{{color}}"
-    ></radio></radio-group>
-    <checkbox-group
-        a:elif="{{type === 'checkbox'}}"
-        id="{{id}}"
-        class="{{className}}"
-        style="{{style}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        onChange="onCheckboxChange"
-    ><checkbox
-        hidden="{{hidden}}"
-        data-private-node-id="{{nodeId}}"
-        data-private-page-id="{{pageId}}"
-        onTouchStart="onTouchStart"
-        onTouchMove="onTouchMove"
-        onTouchEnd="onTouchEnd"
-        onTouchCancel="onTouchCancel"
-        onTap="onTap"
-
-        value="{{value}}"
-        disabled="{{disabled}}"
-        checked="{{checked}}"
-        color="{{color}}"
-    ></checkbox></checkbox-group>
     <input
         id="{{id}}"
         class="{{className}}"

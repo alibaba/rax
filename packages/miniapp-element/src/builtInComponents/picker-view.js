@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'picker-view',
@@ -39,19 +39,20 @@ export default {
   }],
   handles: {
     onPickerViewChange(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+      domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
 
-      this.domNode.__oldValues = this.domNode.__oldValues || {};
-      this.domNode.__oldValues.value = evt.detail.value;
-      callSimpleEvent('change', evt, this.domNode);
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.value = evt.detail.value;
+      callSingleEvent('change', evt, this);
     },
     onPickerViewPickstart(evt) {
-      callSimpleEvent('pickstart', evt, this.domNode);
+      callSingleEvent('pickstart', evt, this);
     },
     onPickerViewPickend(evt) {
-      callSimpleEvent('pickend', evt, this.domNode);
+      callSingleEvent('pickend', evt, this);
     },
   },
 };
