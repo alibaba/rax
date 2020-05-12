@@ -26,6 +26,7 @@ export default {
     },
   }, {
     name: 'value',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('value') || 0;
     },
@@ -81,6 +82,8 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.value = evt.detail.value;
       callSimpleEvent('change', evt, this.domNode);
     },
     onSliderChanging(evt) {

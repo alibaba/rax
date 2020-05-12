@@ -15,7 +15,7 @@ const picker = {
       get(domNode) {
         return domNode.getAttribute('name') || '';
       },
-     }, {
+    }, {
       name: 'range',
       get(domNode) {
         const value = domNode.getAttribute('range');
@@ -28,6 +28,7 @@ const picker = {
       },
     }, {
       name: 'value',
+      canBeUserChanged: true,
       get(domNode) {
         const mode = domNode.getAttribute('mode') || 'selector';
         const value = domNode.getAttribute('value');
@@ -55,6 +56,8 @@ const picker = {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.value = evt.detail.value;
       callSimpleEvent('change', evt, this.domNode);
     },
     onPickerCancel(evt) {

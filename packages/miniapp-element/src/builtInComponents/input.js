@@ -8,6 +8,7 @@ export default {
   name: 'input',
   props: [{
     name: 'value',
+    canBeUserChanged: true,
     get(domNode) {
       return domNode.value || '';
     },
@@ -70,6 +71,7 @@ export default {
     },
   }, {
     name: 'focus',
+    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('focus');
     },
@@ -109,6 +111,7 @@ export default {
     },
   }, {
     name: 'checked',
+    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('checked');
     },
@@ -131,19 +134,31 @@ export default {
   handles: {
     onInputInput(evt) {
       if (!this.domNode) return;
-      this.domNode.value = evt.detail.value;
+      const value = '' + evt.detail.value;
+      this.domNode.$$setAttributeWithoutUpdate('value', value);
+
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.value = value;
+
       callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onInputFocus(evt) {
-      this._inputOldValue = this.domNode.value || '';
+      this.domNode.__inputOldValue = this.domNode.value;
+      this.domNode.$$setAttributeWithoutUpdate('focus', true);
+
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.focus = true;
       callSimpleEvent('focus', evt, this.domNode);
     },
     onInputBlur(evt) {
       if (!this.domNode) return;
 
-      this.domNode.setAttribute('focus', false);
-      if (this._inputOldValue !== undefined && this.domNode.value !== this._inputOldValue) {
-        this._inputOldValue = undefined;
+      this.domNode.$$setAttributeWithoutUpdate('focus', false);
+
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.focus = false;
+      if (this.__inputOldValue !== undefined && this.domNode.value !== this.__inputOldValue) {
+        this.__inputOldValue = undefined;
         callEvent('change', evt, null, this.pageId, this.nodeId);
       }
       callSimpleEvent('blur', evt, this.domNode);
@@ -162,10 +177,18 @@ export default {
       const otherDomNodes = window.document.querySelectorAll(`input[name=${name}]`) || [];
 
       if (value === domNode.value) {
-        domNode.setAttribute('checked', true);
+        domNode.$$setAttributeWithoutUpdate('checked', true);
+
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.checked = true;
+
+        const otherDomNodes = window.document.querySelectorAll(`input[name=${name}]`) || [];
         for (const otherDomNode of otherDomNodes) {
           if (otherDomNode.type === 'radio' && otherDomNode !== domNode) {
-            otherDomNode.setAttribute('checked', false);
+            otherDomNode.$$setAttributeWithoutUpdate('checked', false);
+
+            otherDomNode.__oldValues = otherDomNode.__oldValues || {};
+            otherDomNode.__oldValues.checked = false;
           }
         }
       }
@@ -176,9 +199,15 @@ export default {
       const domNode = this.domNode;
       const value = evt.detail.value || [];
       if (value.indexOf(domNode.value) >= 0) {
-        domNode.setAttribute('checked', true);
+        domNode.$$setAttributeWithoutUpdate('checked', true);
+
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.checked = true;
       } else {
-        domNode.setAttribute('checked', false);
+        domNode.$$setAttributeWithoutUpdate('checked', false);
+
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.checked = false;
       }
       callEvent('change', evt, null, this.pageId, this.nodeId);
     },

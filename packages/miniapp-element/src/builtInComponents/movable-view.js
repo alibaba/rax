@@ -22,11 +22,13 @@ export default {
     },
   }, {
     name: 'x',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('x') || 0;
     },
   }, {
     name: 'y',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('y') || 0;
     },
@@ -49,6 +51,7 @@ export default {
     },
   }, {
     name: 'scale',
+    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('scale');
     },
@@ -91,6 +94,10 @@ export default {
 
       domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
       domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
+
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.x = evt.detail.x;
+      domNode.__oldValues.y = evt.detail.y;
       callSimpleEvent('change', evt, domNode);
     },
     onMovableViewScale(evt) {

@@ -4,6 +4,7 @@ export default {
   name: 'switch',
   props: [{
     name: 'checked',
+    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('checked');
     },
@@ -37,7 +38,11 @@ export default {
     onSwitchChange(evt) {
       if (!this.domNode) return;
 
-      this.domNode.setAttribute('checked', evt.detail.value);
+      this.domNode.$$setAttributeWithoutUpdate('checked', evt.detail.value);
+
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.checked = evt.detail.value;
+
       callSimpleEvent('change', evt, this.domNode);
     },
   },

@@ -74,11 +74,13 @@ export default {
     },
   }, {
     name: 'rotate',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('rotate') || 0;
     },
   }, {
     name: 'skew',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('skew') || 0;
     },
@@ -147,6 +149,15 @@ export default {
       callSimpleEvent('updated', evt, this.domNode);
     },
     onMapRegionChange(evt) {
+      if (!this.domNode) return;
+
+      if (!evt.detail.causedBy) evt.detail.causedBy = evt.causedBy;
+      if (evt.type === 'end' || evt.detail.type === 'end') {
+        this.domNode.__oldValues = this.domNode.__oldValues || {};
+        this.domNode.__oldValues.rotate = evt.detail.rotate;
+        this.domNode.__oldValues.skew = evt.detail.skew;
+      }
+
       callSimpleEvent('regionchange', evt, this.domNode);
     },
     onMapPoiTap(evt) {

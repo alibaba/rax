@@ -346,8 +346,10 @@ class Element extends Node {
 
   // Sets properties, but does not trigger updates
   $$setAttributeWithoutUpdate(name, value) {
+    if (typeof name !== 'string') return;
+
     this.$_notTriggerUpdate = true;
-    this.setAttribute(name, value);
+    this.$_attrs.set(name, value);
     this.$_notTriggerUpdate = false;
   }
 

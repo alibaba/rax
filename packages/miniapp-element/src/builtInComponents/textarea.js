@@ -5,6 +5,7 @@ export default {
   name: 'textarea',
   props: [{
     name: 'value',
+    canBeUserChanged: true,
     get(domNode) {
       return domNode.value || '';
     },
@@ -112,15 +113,24 @@ export default {
   }],
   handles: {
     onTextareaFocus(evt) {
-      this._textareaOldValue = this.domNode.value;
+      const domNode = this.domNode;
+      if (!domNode) return;
+      domNode.__textareaOldValue = domNode.value;
+      domNode.$$setAttributeWithoutUpdate('focus', true);
+
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.focus = true;
       callSimpleEvent('focus', evt, this.domNode);
     },
     onTextareaBlur(evt) {
       if (!this.domNode) return;
 
-      this.domNode.setAttribute('focus', false);
-      if (this._textareaOldValue !== undefined && this.domNode.value !== this._textareaOldValue) {
-        this._textareaOldValue = undefined;
+      this.domNode.$$setAttributeWithoutUpdate('focus', false);
+
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.focus = false;
+      if (this.__textareaOldValue !== undefined && this.domNode.value !== this.__textareaOldValue) {
+        this.__textareaOldValue = undefined;
         callEvent('change', evt);
       }
       callSimpleEvent('blur', evt, this.domNode);
@@ -132,7 +142,11 @@ export default {
       if (!this.domNode) return;
 
       const value = '' + evt.detail.value;
-      this.domNode.setAttribute('value', value);
+      this.domNode.$$setAttributeWithoutUpdate('value', value);
+
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.value = value;
+
       callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onTextareaConfirm(evt) {

@@ -24,6 +24,7 @@ export default {
     },
   }, {
     name: 'current',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('current') || 0;
     },
@@ -86,6 +87,8 @@ export default {
       if (!this.domNode) return;
 
       this.domNode.$$setAttributeWithoutUpdate('current', evt.detail.current);
+      this.domNode.__oldValues = this.domNode.__oldValues || {};
+      this.domNode.__oldValues.current = evt.detail.current;
       callSimpleEvent('change', evt, this.domNode);
     },
     onSwiperTransition(evt) {

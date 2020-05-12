@@ -1,6 +1,8 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isWeChatMiniProgram } from 'universal-env';
 import callSimpleEvent from '../events/callSimpleEvent';
 
-export default {
+const ScrollView = {
   name: 'scroll-view',
   props: [{
     name: 'scrollX',
@@ -26,18 +28,21 @@ export default {
     },
   }, {
     name: 'scrollTop',
+    canBeUserChanged: true,
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-top'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
     name: 'scrollLeft',
+    canBeUserChanged: true,
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-left'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
     name: 'scrollIntoView',
+    canBeUserChanged: true,
     get(domNode) {
       return domNode.getAttribute('scroll-into-view') || '';
     },
@@ -68,14 +73,46 @@ export default {
     }
   }],
   handles: {
-    onScrollToUpper(evt) {
+    onScrollViewScrolltoupper(evt) {
       callSimpleEvent('scrolltoupper', evt, this.domNode);
     },
-    onScrollToLower(evt) {
+    onScrollViewScrolltolower(evt) {
       callSimpleEvent('scrolltolower', evt, this.domNode);
     },
-    onScroll(evt) {
+    onScrollViewScroll(evt) {
+      const domNode = this.domNode;
+      if (!domNode) return;
+      domNode.$$setAttributeWithoutUpdate('scroll-into-view', '');
+      domNode.$$setAttributeWithoutUpdate('scroll-top', evt.detail.scrollTop);
+      domNode.$$setAttributeWithoutUpdate('scroll-left', evt.detail.scrollLeft);
+
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.scrollIntoView = '';
+      domNode.__oldValues.scrollTop = evt.detail.scrollTop;
+      domNode.__oldValues.scrollLeft = evt.detail.scrollLeft;
       callSimpleEvent('scroll', evt, this.domNode);
     },
   },
 };
+
+if (isWeChatMiniProgram) {
+  Object.assign(ScrollView.handles, {
+    onScrollViewRefresherPulling(evt) {
+      callSimpleEvent('refresherpulling', evt, this.domNode);
+    },
+
+    onScrollViewRefresherRefresh(evt) {
+      callSimpleEvent('refresherrefresh', evt, this.domNode);
+    },
+
+    onScrollViewRefresherRestore(evt) {
+      callSimpleEvent('refresherrestore', evt, this.domNode);
+    },
+
+    onScrollViewRefresherAbort(evt) {
+      callSimpleEvent('refresherabort', evt, this.domNode);
+    },
+  });
+}
+
+export default ScrollView;

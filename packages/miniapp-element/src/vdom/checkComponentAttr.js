@@ -18,7 +18,7 @@ export default function checkComponentAttr(
     for (const { name, get, canBeUserChanged = false } of attrs) {
       const newValue = get(domNode);
       if (canBeUserChanged) {
-        const oldValues = domNode._oldValues;
+        const oldValues = domNode.__oldValues;
         if (
           !oldData ||
           !isEqual(newValue, oldData[name]) ||
