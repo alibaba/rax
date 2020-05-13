@@ -93,8 +93,8 @@
     wx:elif="{{builtinComponentName === 'not-support'}}"
 >{{content}}</block>
 <custom-component
-    wx:elif="{{!!wxCustomCompName}}"
-    name="{{wxCustomCompName}}"
+    wx:elif="{{!!customComponentName}}"
+    name="{{customComponentName}}"
     data-private-node-id="{{nodeId}}"
     data-private-page-id="{{pageId}}"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></custom-component>

@@ -28,7 +28,6 @@ export default function checkComponentAttr(
           newData.forceUpdate = true;
         }
       } else if (!oldData || !isEqual(newValue, oldData[name])) {
-        // 对比 data
         newData[name] = newValue;
       }
     }
