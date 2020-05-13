@@ -235,6 +235,7 @@
         bindtouchcancel="onTouchCancel"
         bindtap="onTap"
 
+        name="{{name}}"
         read-only="{{readOnly}}"
         placeholder="{{placeholder}}"
         show-img-size="{{showImgSize}}"
@@ -281,6 +282,7 @@
         bindtouchcancel="onTouchCancel"
         bindtap="onTap"
 
+        name="{{name}}"
         value="{{value}}"
         type="{{type}}"
         password="{{password}}"
@@ -319,6 +321,7 @@
         bindtouchcancel="onTouchCancel"
         bindtap="onTap"
 
+        name="{{name}}"
         mode="{{mode}}"
         disabled="{{disabled}}"
         range="{{range}}"
@@ -347,6 +350,7 @@
         bindtouchcancel="onTouchCancel"
         bindtap="onTap"
 
+        name="{{name}}"
         min="{{min}}"
         max="{{max}}"
         step="{{step}}"
@@ -377,6 +381,7 @@
         bindtouchcancel="onTouchCancel"
         bindtap="onTap"
 
+        name="{{name}}"
         checked="{{checked}}"
         disabled="{{disabled}}"
         type="{{type}}"
@@ -398,6 +403,7 @@
         bindtouchcancel="onTouchCancel"
         bindtap="onTap"
 
+        name="{{name}}"
         value="{{value}}"
         placeholder="{{placeholder}}"
         placeholder-style="{{placeholderStyle}}"

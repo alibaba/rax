@@ -88,6 +88,16 @@ class HTMLTextAreaElement extends Element {
   }
 
   // Attribute
+  get name() {
+    return this.$_attrs.get('name');
+  }
+
+  set name(value) {
+    value = '' + value;
+    this.$_attrs.set('name', value);
+  }
+
+  // Attribute
   get type() {
     return this.$_attrs.get('type') || 'textarea';
   }

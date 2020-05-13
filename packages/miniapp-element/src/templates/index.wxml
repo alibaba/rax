@@ -1,7 +1,7 @@
 <import src="./template/subtree.wxml"/>
 <import src="./template/subtree-cover.wxml"/>
 <cover-view
-    wx:if="{{wxCompName === 'cover-view'}}"
+    wx:if="{{builtinComponentName === 'cover-view'}}"
     id="{{id}}"
     class="{{className}}"
     style="{{style}}"
@@ -9,7 +9,7 @@
     scroll-top="{{scrollTop}}"
 ><template is="subtree-cover" data="{{childNodes: childNodes}}"/></cover-view>
 <scroll-view
-    wx:elif="{{wxCompName === 'scroll-view'}}"
+    wx:elif="{{builtinComponentName === 'scroll-view'}}"
     id="{{id}}"
     class="{{className}}"
     style="{{style}}"
@@ -39,7 +39,7 @@
     bindrefresherabort="onScrollViewRefresherAbort"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></scroll-view>
 <view
-    wx:elif="{{wxCompName === 'view'}}"
+    wx:elif="{{builtinComponentName === 'view'}}"
     id="{{id}}"
     class="{{className}}"
     style="{{style}}"
@@ -50,7 +50,7 @@
     hover-stay-time="{{hoverStayTime}}"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></view>
 <picker-view
-    wx:elif="{{wxCompName === 'picker-view'}}"
+    wx:elif="{{builtinComponentName === 'picker-view'}}"
     id="{{id}}"
     class="{{className}}"
     style="{{style}}"
@@ -80,7 +80,7 @@
     ><template is="subtree" data="{{childNodes: item.childNodes, inCover}}"/></picker-view-column>
 </block></picker-view>
 <text
-    wx:elif="{{wxCompName === 'text'}}"
+    wx:elif="{{builtinComponentName === 'text'}}"
     id="{{id}}"
     class="{{className}}"
     style="{{style}}"
@@ -90,7 +90,7 @@
     decode="{{decode}}"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></text>
 <block
-    wx:elif="{{wxCompName === 'not-support'}}"
+    wx:elif="{{builtinComponentName === 'not-support'}}"
 >{{content}}</block>
 <custom-component
     wx:elif="{{!!wxCustomCompName}}"

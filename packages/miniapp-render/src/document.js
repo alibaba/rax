@@ -7,6 +7,8 @@ import Comment from './node/comment';
 import tool from './util/tool';
 import cache from './util/cache';
 import Image from './node/element/image';
+import Input from './node/element/input';
+import Textarea from './node/element/textarea';
 import Video from './node/element/video';
 import Canvas from './node/element/canvas';
 import BuiltInComponent from './node/element/builtin-component';
@@ -14,6 +16,8 @@ import CustomComponent from './node/element/custom-component';
 
 const CONSTRUCTOR_MAP = {
   IMG: Image,
+  INPUT: Input,
+  TEXTAREA: Textarea,
   VIDEO: Video,
   CANVAS: Canvas,
   'BUILTIN-COMPONENT': BuiltInComponent,
