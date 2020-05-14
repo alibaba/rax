@@ -61,7 +61,7 @@ class FragmentComponent extends NativeComponent {
 
   __getNativeNode() {
     const renderedChildren = this.__renderedChildren || {};
-    return Array.prototype.concat.apply([], Object.values(renderedChildren).map(child => child.__getNativeNode()));
+    return Array.prototype.concat.apply([], Object.keys(renderedChildren).map(key => renderedChildren[key].__getNativeNode()));
   }
 }
 
