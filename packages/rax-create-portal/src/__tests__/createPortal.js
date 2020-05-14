@@ -1,7 +1,7 @@
 /* @jsx createElement */
 
 import PropTypes from 'rax-proptypes';
-import { Component, createElement, render, shared } from 'rax';
+import { Component, createElement, render, shared, createContext, useContext, useState } from 'rax';
 import ServerDriver from 'driver-server';
 import unmountComponentAtNode from 'rax-unmount-component-at-node';
 import createPortal from '../';
@@ -205,5 +205,36 @@ describe('createPortal', () => {
     expect(container.childNodes[0].nodeType).toBe(8);
     expect(portalContainer.childNodes[0].childNodes[0].data).toBe('initial');
     expect(updatedCount).toBe(4);
+  });
+
+  it('should render correct when new context change', () => {
+    const container = createNodeElement('div');
+    const portalTarget = createNodeElement('div');
+    const Context = createContext(0);
+
+    let changeValue = null;
+    function Portal() {
+      const value = useContext(Context);
+      return <div>{value}</div>;
+    }
+
+    function App() {
+      const [value, setValue] = useState(1);
+      changeValue = setValue;
+      return (
+        <Context.Provider value={value}>
+          <div>0</div>
+          {createPortal(<Portal />, portalTarget)}
+        </Context.Provider>
+      );
+    }
+    render(<App />, container);
+    jest.runAllTimers();
+    expect(container.childNodes[0].childNodes[0].data).toBe('0');
+    expect(portalTarget.childNodes[0].childNodes[0].data).toBe('1');
+
+    changeValue(2);
+    jest.runAllTimers();
+    expect(portalTarget.childNodes[0].childNodes[0].data).toBe('2');
   });
 });
