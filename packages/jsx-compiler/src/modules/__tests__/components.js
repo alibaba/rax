@@ -78,4 +78,30 @@ describe('Transform components', () => {
     _transformComponents(parsed, options);
     expect(genCode(ast).code).toEqual('<View><block>Test</block></View>');
   });
+  it('should transform Muilt Component', () => {
+    const parsed = {
+      templateAST: undefined, // nuilt export -> templateAST undefined
+      imported: {
+        './button': [
+          {
+            local: 'Button',
+            default: true,
+            namespace: false,
+            name: 'c-7bac49',
+            isCustomEl: true,
+          },
+        ],
+      },
+      exported: ['Button'],
+    };
+    const options = {
+      adapter,
+    };
+    let res = _transformComponents(parsed, options);
+
+    // transformComponents return componentsAlias like this:
+    // {"c-7bac49":{"from":"./button","local":"Button","default":true,"namespace":false,"name":"c-7bac49","isCustomEl":true}}
+    expect(Object.keys(res.componentsAlias)[0]).toEqual('c-7bac49');
+    // then parse function => exported component has usingComponent
+  });
 });
