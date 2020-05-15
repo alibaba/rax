@@ -116,6 +116,12 @@ class Node extends EventTarget {
   hasChildNodes() {
     return false;
   }
+
+  remove() {
+    if (!this.parentNode || !this.parentNode.removeChild) return this;
+
+    return this.parentNode.removeChild(this);
+  }
 }
 
 // static props

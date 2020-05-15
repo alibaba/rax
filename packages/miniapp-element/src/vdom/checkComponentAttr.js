@@ -1,7 +1,13 @@
 import { propsMap } from '../component';
+import isEqual from './isEqual';
 
 // Check component attribute
-export default function checkComponentAttr(instance, name, newData) {
+export default function checkComponentAttr(
+  instance,
+  name,
+  newData,
+  extraClass = ''
+) {
   const oldData = instance.data;
   const { domNode } = instance;
   const attrs = propsMap[name];
@@ -9,21 +15,36 @@ export default function checkComponentAttr(instance, name, newData) {
   newData.builtinComponentName = name;
 
   if (attrs && attrs.length) {
-    for (const {name, get} of attrs) {
+    for (const { name, get, canBeUserChanged = false } of attrs) {
       const newValue = get(domNode);
-      if (!oldData || oldData[name] !== newValue) newData[name] = newValue;
+      if (canBeUserChanged) {
+        const oldValues = domNode.__oldValues;
+        if (
+          !oldData ||
+          !isEqual(newValue, oldData[name]) ||
+          oldValues && !isEqual(newValue, oldValues[name])
+        ) {
+          newData[name] = newValue;
+          newData.forceUpdate = true;
+        }
+      } else if (!oldData || !isEqual(newValue, oldData[name])) {
+        newData[name] = newValue;
+      }
     }
   }
 
   // Add id/class/style/hidden/animation
   const newId = domNode.id;
   if (!oldData || oldData.id !== newId) newData.id = newId;
-  const newClass = `builtin-component-${name} node-${domNode.$$nodeId} ${domNode.className || ''}`;
-  if (!oldData || oldData.class !== newClass) newData.class = newClass;
+  const newClass = `${extraClass} builtin-component-${name} node-${
+    domNode.$$nodeId
+  } ${domNode.className || ''}`;
+  if (!oldData || oldData.className !== newClass) newData.className = newClass;
   const newStyle = domNode.style.cssText;
   if (!oldData || oldData.style !== newStyle) newData.style = newStyle;
   const newHidden = domNode.getAttribute('hidden') || false;
   if (!oldData || oldData.hidden !== newHidden) newData.hidden = newHidden;
   const newAnimation = domNode.getAttribute('animation');
-  if (!oldData || oldData.animation !== newAnimation) newData.animation = newAnimation;
+  if (!oldData || oldData.animation !== newAnimation)
+    newData.animation = newAnimation;
 }

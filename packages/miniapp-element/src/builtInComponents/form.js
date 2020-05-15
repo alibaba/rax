@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'form',
@@ -20,10 +20,10 @@ export default {
   }],
   handles: {
     onFormSubmit(evt) {
-      callSimpleEvent('submit', evt, this.domNode);
+      callSingleEvent('submit', evt, this);
     },
     onFormReset(evt) {
-      callSimpleEvent('reset', evt, this.domNode);
+      callSingleEvent('reset', evt, this);
     },
   },
 };

@@ -1,7 +1,4 @@
-import render from 'miniapp-render';
-import callSimpleEvent from '../events/callSimpleEvent';
-
-const { cache } = render.$$adapter;
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'movable-view',
@@ -22,11 +19,13 @@ export default {
     },
   }, {
     name: 'x',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('x') || 0;
     },
   }, {
     name: 'y',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('y') || 0;
     },
@@ -49,6 +48,7 @@ export default {
     },
   }, {
     name: 'scale',
+    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('scale');
     },
@@ -84,41 +84,33 @@ export default {
   }],
   handles: {
     onMovableViewChange(evt) {
-      const nodeId = evt.currentTarget.dataset.privateNodeId;
-      const domNode = cache.getNode(this.pageId, nodeId);
+      const domNode = this.getDomNodeFromEvt('change', evt);
 
       if (!domNode) return;
 
       domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
       domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
-      callSimpleEvent('change', evt, domNode);
+
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.x = evt.detail.x;
+      domNode.__oldValues.y = evt.detail.y;
+      callSingleEvent('change', evt, this);
     },
     onMovableViewScale(evt) {
-      const nodeId = evt.currentTarget.dataset.privateNodeId;
-      const domNode = cache.getNode(this.pageId, nodeId);
+      const domNode = this.getDomNodeFromEvt('scale', evt);
 
       if (!domNode) return;
 
       domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
       domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
       domNode.$$setAttributeWithoutUpdate('scale-value', evt.detail.scale);
-      callSimpleEvent('scale', evt, domNode);
+      callSingleEvent('scale', evt, this);
     },
     onMovableViewHtouchmove(evt) {
-      const nodeId = evt.currentTarget.dataset.privateNodeId;
-      const domNode = cache.getNode(this.pageId, nodeId);
-
-      if (!domNode) return;
-
-      callSimpleEvent('htouchmove', evt, domNode);
+      callSingleEvent('htouchmove', evt, this);
     },
     onMovableViewVtouchmove(evt) {
-      const nodeId = evt.currentTarget.dataset.privateNodeId;
-      const domNode = cache.getNode(this.pageId, nodeId);
-
-      if (!domNode) return;
-
-      callSimpleEvent('vtouchmove', evt, domNode);
+      callSingleEvent('vtouchmove', evt, this);
     },
   },
 };

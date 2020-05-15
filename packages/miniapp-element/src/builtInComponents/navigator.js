@@ -1,5 +1,5 @@
 /* global isWeChatMiniProgram */
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 let props = [{
   name: 'openType',
@@ -79,13 +79,13 @@ export default {
   props,
   handles: {
     onNavigatorSuccess(evt) {
-      callSimpleEvent('success', evt, this.domNode);
+      callSingleEvent('success', evt, this);
     },
     onNavigatorFail(evt) {
-      callSimpleEvent('fail', evt, this.domNode);
+      callSingleEvent('fail', evt, this);
     },
     onNavigatorComplete(evt) {
-      callSimpleEvent('complete', evt, this.domNode);
+      callSingleEvent('complete', evt, this);
     },
   },
 };

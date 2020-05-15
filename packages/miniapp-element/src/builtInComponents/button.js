@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'button',
@@ -107,23 +107,22 @@ export default {
   }],
   handles: {
     onButtonGetUserInfo(evt) {
-      callSimpleEvent('getuserinfo', evt, this.domNode);
+      callSingleEvent('getuserinfo', evt, this);
     },
     onButtonContact(evt) {
-      callSimpleEvent('contact', evt, this.domNode);
+      callSingleEvent('contact', evt, this);
     },
     onButtonGetPhoneNumber(evt) {
-      callSimpleEvent('getphonenumber', evt, this.domNode);
+      callSingleEvent('getphonenumber', evt, this);
     },
     onButtonError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
     onButtonOpenSetting(evt) {
-      callSimpleEvent('opensetting', evt, this.domNode);
+      callSingleEvent('opensetting', evt, this);
     },
     onButtonLaunchApp(evt) {
-      callSimpleEvent('launchapp', evt, this.domNode);
+      callSingleEvent('launchapp', evt, this);
     },
-
   },
 };

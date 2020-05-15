@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'checkbox-group',
@@ -10,7 +10,7 @@ export default {
   }],
   handles: {
     onCheckboxChange(evt) {
-      callSimpleEvent('change', evt, this.domNode);
+      callSingleEvent('change', evt, this);
     },
   },
 };

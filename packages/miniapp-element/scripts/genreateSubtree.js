@@ -13,17 +13,18 @@ function getSubtreeSimple(i, platform) {
   const isFirst = i === 1;
   const subContent = [
     `<block ${adapter[platform].if}="{{${itemName}.type === 'text'}}">{{${itemName}.content}}</block>`,
-    `<image ${adapter[platform].elseif}="{{${itemName}.isImage}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.class || ''}}" style="{{${itemName}.style || ''}}" src="{{${itemName}.src}}" animation="{{${itemName}.animation}}"  rendering-mode="{{${itemName}.mode ? 'backgroundImage' : 'img'}}" mode="{{${itemName}.mode}}" lazy-load="{{${itemName}.lazyLoad}}" show-menu-by-longpress="{{${itemName}.showMenuByLongpress}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].load}="onImgLoad" ${adapter[platform].error}="onImgError"></image>`,
-    `<view ${adapter[platform].elseif}="{{${itemName}.isLeaf${isLast ? '' : ' || ' + itemName + '.isSimple'}}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.class || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap">{{${itemName}.content}}${isLast ? '</view>' : ''}`
+    `<image ${adapter[platform].elseif}="{{${itemName}.isImage}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" src="{{${itemName}.src}}" animation="{{${itemName}.animation}}"  rendering-mode="{{${itemName}.mode ? 'backgroundImage' : 'img'}}" mode="{{${itemName}.mode}}" lazy-load="{{${itemName}.lazyLoad}}" show-menu-by-longpress="{{${itemName}.showMenuByLongpress}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].load}="onImgLoad" ${adapter[platform].error}="onImgError"></image>`,
+    `<template ${adapter[platform].elseif}="{{${itemName}.useTemplate}}" is="{{${itemName}.extra.builtinComponentName}}" data="{{...${itemName}.extra}}"/>`,
+    `<view ${adapter[platform].elseif}="{{${itemName}.isLeaf${isLast ? '' : ' || ' + itemName + '.isSimple'}}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap">{{${itemName}.content}}${isLast ? '</view>' : ''}`
   ];
 
   // Recursion next
   if (!isLast) {
-    subContent.splice(3, 0, ...getSubtreeSimple(i + 1, platform));
+    subContent.splice(4, 0, ...getSubtreeSimple(i + 1, platform));
   }
 
   // Add custom element
-  subContent.push(`<element ${adapter[platform].elseif}="{{${itemName}.type === 'element'}}" in-cover="{{inCover}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.class || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].supportComponentGenerics ? 'generic:custom-component="custom-component"' : ''}></element>`);
+  subContent.push(`<element ${adapter[platform].elseif}="{{${itemName}.type === 'element'}}" in-cover="{{inCover}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].supportComponentGenerics ? 'generic:custom-component="custom-component"' : ''}></element>`);
 
   // Add head content & foot content
   const outputContent = [
@@ -48,17 +49,18 @@ function getSubtreeCoverSimple(i, platform) {
   const isLast = i === DOM_SUBTREE_LEVEL;
   const isFirst = i === 1;
   const subContent = [
-    `<cover-image ${adapter[platform].if}="{{${itemName}.isImage}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.class || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" src="{{${itemName}.src}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].load}="onImgLoad" ${adapter[platform].error}="onImgError"></cover-image>`,
-    `<cover-view ${adapter[platform].elseif}="{{${itemName}.type === 'text' || ${itemName}.isLeaf || ${itemName}.isSimple}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.class || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap">{{${itemName}.content}}${isLast ? '</cover-view>' : ''}`
+    `<cover-image ${adapter[platform].if}="{{${itemName}.isImage}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" src="{{${itemName}.src}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].load}="onImgLoad" ${adapter[platform].error}="onImgError"></cover-image>`,
+    `<template ${adapter[platform].elseif}="{{${itemName}.useTemplate}}" is="{{${itemName}.extra.builtinComponentName}}" data="{{...${itemName}.extra}}"/>`,
+    `<cover-view ${adapter[platform].elseif}="{{${itemName}.type === 'text' || ${itemName}.isLeaf || ${itemName}.isSimple}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap">{{${itemName}.content}}${isLast ? '</cover-view>' : ''}`
   ];
 
   // Recursion next
   if (!isLast) {
-    subContent.splice(2, 0, ...getSubtreeCoverSimple(i + 1, platform));
+    subContent.splice(3, 0, ...getSubtreeCoverSimple(i + 1, platform));
   }
 
   // Add custom element
-  subContent.push(`<element ${adapter[platform].elseif}="{{${itemName}.type === 'element'}}" in-cover="{{true}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.class || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].supportComponentGenerics ? 'generic:custom-component="custom-component"' : ''}></element>`);
+  subContent.push(`<element ${adapter[platform].elseif}="{{${itemName}.type === 'element'}}" in-cover="{{true}}" data-private-node-id="{{${itemName}.nodeId}}" data-private-page-id="{{${itemName}.pageId}}" id="{{${itemName}.id}}" class="{{${itemName}.className || ''}}" style="{{${itemName}.style || ''}}" animation="{{${itemName}.animation}}" ${adapter[platform].touchStart}="onTouchStart" ${adapter[platform].touchMove}="onTouchMove" ${adapter[platform].touchEnd}="onTouchEnd" ${adapter[platform].touchCancel}="onTouchCancel" ${adapter[platform].tap}="onTap" ${adapter[platform].supportComponentGenerics ? 'generic:custom-component="custom-component"' : ''}></element>`);
 
   // Add head and foot
   const outputContent = [
@@ -85,6 +87,9 @@ function createSubtreeTemplate(platform) {
     '</template>',
     '\n'
   ];
+  if (platform !== 'ali') {
+    content.unshift(`<import src="./inner-component.${adapter[platform].xml}"/>`);
+  }
   return content.join('');
 }
 
@@ -98,23 +103,34 @@ function createSubtreeCoverTemplate(platform) {
     '</template>',
     '\n'
   ];
+  if (platform !== 'ali') {
+    content.unshift(`<import src="./inner-component.${adapter[platform].xml}"/>`);
+  }
   return content.join('');
 }
 
-export default function(distPath, platform) {
+function createInnerComponentTemplate(templatesDir, platform) {
+  return fs.readFileSync(path.join(templatesDir, `inner-component.${adapter[platform].xml}`), 'utf8');
+}
+
+export default function(distPath, templatesDir, platform) {
   switch (platform) {
     case 'ali':
       const subtreeAXMLTemplate = createSubtreeTemplate(platform);
       const subtreeCoverAXMLTemplate = createSubtreeCoverTemplate(platform);
+      const innerComponentAXMLTemplate = createInnerComponentTemplate(templatesDir, platform);
       const XMLPath = path.join(distPath, 'index.axml');
+      fs.appendFileSync(XMLPath, innerComponentAXMLTemplate);
       fs.appendFileSync(XMLPath, subtreeAXMLTemplate);
       fs.appendFileSync(XMLPath, subtreeCoverAXMLTemplate);
       break;
     case 'wechat':
       const subtreeWXMLTemplate = createSubtreeTemplate(platform);
       const subtreeCoverWXMLTemplate = createSubtreeCoverTemplate(platform);
+      const innerComponentWXMLTemplate = createInnerComponentTemplate(templatesDir, platform);
       const templatePath = path.join(distPath, 'template');
       fs.ensureDirSync(templatePath);
+      fs.writeFileSync(path.join(templatePath, `inner-component.${adapter[platform].xml}`), innerComponentWXMLTemplate, 'utf8');
       fs.writeFileSync(path.join(templatePath, `subtree.${adapter[platform].xml}`), subtreeWXMLTemplate, 'utf8');
       fs.writeFileSync(path.join(templatePath, `subtree-cover.${adapter[platform].xml}`), subtreeCoverWXMLTemplate, 'utf8');
       break;

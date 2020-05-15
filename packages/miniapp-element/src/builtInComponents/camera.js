@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'camera',
@@ -30,16 +30,16 @@ export default {
   }],
   handles: {
     onCameraStop(evt) {
-      callSimpleEvent('stop', evt, this.domNode);
+      callSingleEvent('stop', evt, this);
     },
     onCameraError(evt) {
-      callSimpleEvent('error', evt);
+      callSingleEvent('error', evt, this);
     },
     onCameraInitDone(evt) {
-      callSimpleEvent('initdone', evt, this.domNode);
+      callSingleEvent('initdone', evt, this);
     },
     onCameraScanCode(evt) {
-      callSimpleEvent('scancode', evt, this.domNode);
+      callSingleEvent('scancode', evt, this);
     },
   },
 };
