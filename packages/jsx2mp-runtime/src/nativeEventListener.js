@@ -8,7 +8,7 @@ export function registerEventsInConfig(Klass, events = []) {
     Klass.prototype.__nativeEventMap = {};
   }
   events.forEach(eventName => {
-    const shouldReturnConfig = EVENTS_LIST.indexOf(eventName) < 0;
+    const shouldReturnConfig = EVENTS_LIST.indexOf(eventName) < 0; // shouldReturnConfig controls the events injected into Page obj or Page.events obj
     const eventBindTarget = getNativeEventBindTarget(Klass, shouldReturnConfig);
     eventBindTarget[eventName] = function(...args) {
       // onShareAppMessage need receive callback execute return
