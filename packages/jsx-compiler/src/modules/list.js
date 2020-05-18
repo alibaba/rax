@@ -24,6 +24,7 @@ function transformMapMethod(path, parsed, code, adapter) {
   const dynamicStyle = new DynamicBinding('_s');
   const dynamicValue = new DynamicBinding('_d');
   const renderItemFunctions = parsed.renderItemFunctions;
+  const renderPropsFunctions = parsed.renderPropsFunctions;
 
   // Avoid transfrom x-for result
   if (path.findParent(p => p.isJSXAttribute())) return;
@@ -147,12 +148,19 @@ function transformMapMethod(path, parsed, code, adapter) {
               if (node.name.name === 'data'
                   && t.isStringLiteral(node.value)
               ) {
-                const fnIdx = findIndex(renderItemFunctions || [], (fn) => node.value.value === `{{...${fn.name}}}`);
-                if (fnIdx > -1) {
-                  const renderItem = renderItemFunctions[fnIdx];
+                const renderItemFnIdx = findIndex(renderItemFunctions || [], (fn) => node.value.value === `{{...${fn.name}}}`);
+                if (renderItemFnIdx > -1) {
+                  const renderItem = renderItemFunctions[renderItemFnIdx];
                   node.value = t.stringLiteral(`${node.value.value.replace('...', `...${forItem.name}.`)}`);
                   properties.push(t.objectProperty(t.identifier(renderItem.name), renderItem.node));
-                  renderItemFunctions.splice(fnIdx, 1);
+                  renderItemFunctions.splice(renderItemFnIdx, 1);
+                }
+                const renderPropsFnIdx = findIndex(renderPropsFunctions || [], (fn) => node.value.value === `{{...${fn.name}}}`);
+                if (renderPropsFnIdx > -1) {
+                  const renderProps = renderPropsFunctions[renderPropsFnIdx];
+                  node.value = t.stringLiteral(`${node.value.value.replace('...', `...${forItem.name}.`)}`);
+                  properties.push(t.objectProperty(t.identifier(renderProps.name), renderProps.node));
+                  renderPropsFunctions.splice(renderPropsFnIdx, 1);
                 }
               }
               // Handle style
