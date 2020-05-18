@@ -152,19 +152,20 @@ class Element extends Node {
   }
 
   // Update parent tree
+  // TODO:
   $_triggerParentUpdate() {
     if (this.parentNode && !this.$_notTriggerUpdate) this.parentNode.$$trigger('$$childNodesUpdate', {args: [123,456]});
     if (!this.$_notTriggerUpdate) this.$$trigger('$$domNodeUpdate');
   }
 
   // Update child nodes
-  $_triggerMeUpdate(...args) {
-    console.log('$_triggerMeUpdate args', args);
-    if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate', { args });
+  $_triggerMeUpdate(payload) {
+    this.enqueueRender(payload);
+    if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
   }
 
   // Changes to the mapping table caused by changes to update child nodes
-  $_updateChildrenExtra(node, isRemove) {
+  _updateNodeMap(node, isRemove) {
     const id = node.id;
 
     // Update nodeId - dom map
@@ -185,7 +186,7 @@ class Element extends Node {
 
     if (node.childNodes && node.childNodes.length) {
       for (const child of node.childNodes) {
-        this.$_updateChildrenExtra(child, isRemove);
+        this._updateNodeMap(child, isRemove);
       }
     }
   }
@@ -453,7 +454,7 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update the mapping table
-      this.$_updateChildrenExtra(node, true);
+      this._updateNodeMap(node, true);
     });
     this.$_children.length = 0;
 
@@ -509,7 +510,7 @@ class Element extends Node {
         node.$$updateParent(null);
 
         // Update the mapping table
-        this.$_updateChildrenExtra(node, true);
+        this._updateNodeMap(node, true);
       });
       this.$_children.length = 0;
 
@@ -558,7 +559,7 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update mapping table
-      this.$_updateChildrenExtra(node, true);
+      this._updateNodeMap(node, true);
     });
     this.$_children.length = 0;
 
@@ -652,14 +653,14 @@ class Element extends Node {
       node.$$updateParent(this);
 
       // Update map
-      this.$_updateChildrenExtra(node);
+      this._updateNodeMap(node);
 
       hasUpdate = true;
     }
 
     // Trigger webview update
     if (hasUpdate) {
-      const payload = [`${this.$_path}.cn`, this.$_children.length - 1, 0, node];
+      const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
       this.$_triggerMeUpdate(payload);
     }
 
@@ -678,10 +679,10 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update map
-      this.$_updateChildrenExtra(node, true);
+      this._updateNodeMap(node, true);
 
       // Trigger webview update
-      const payload = [`${this.$_path}.cn`, index, 1];
+      const payload = [`${this._path}.cn`, index, 1];
       this.$_triggerMeUpdate(payload);
     }
 
@@ -723,11 +724,11 @@ class Element extends Node {
       node.$$updateParent(this);
 
       // Update the mapping table
-      this.$_updateChildrenExtra(node);
+      this._updateNodeMap(node);
 
       hasUpdate = true;
       const payload = [
-        `${this.$_path}.cn`,
+        `${this._path}.cn`,
         insertIndex === -1 ? this.$_children.length - 1 : insertIndex,
         0,
         node
@@ -771,8 +772,8 @@ class Element extends Node {
       // Set parentNode
       node.$$updateParent(this);
       // Update the mapping table
-      this.$_updateChildrenExtra(node);
-      this.$_updateChildrenExtra(old, true);
+      this._updateNodeMap(node);
+      this._updateNodeMap(old, true);
 
       hasUpdate = true;
     }
@@ -780,7 +781,7 @@ class Element extends Node {
     // Trigger the webview side update
     if (hasUpdate) {
       const payload = [
-        `${this.$_path}.cn`,
+        `${this._path}.cn`,
         replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
         replaceIndex === -1 ? 0 : 1,
         node
@@ -868,6 +869,13 @@ class Element extends Node {
     }
 
     return false;
+  }
+
+  enqueueRender(payload) {
+    if (this._root === null) {
+      return;
+    }
+    this._root.enqueueRender(payload);
   }
 
   getBoundingClientRect() {
