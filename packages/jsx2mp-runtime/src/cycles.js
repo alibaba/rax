@@ -26,4 +26,4 @@ export const EVENTS_LIST = [
   'onTabItemTap',
   'beforeTabItemTap',
   'onResize'
-];
+]; // These events above are only valid in events object in appx 2.0
