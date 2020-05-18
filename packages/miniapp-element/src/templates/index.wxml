@@ -48,6 +48,12 @@
     hover-stop-propagation="{{hoverStopPropagation}}"
     hover-start-time="{{hoverStayTime}}"
     hover-stay-time="{{hoverStayTime}}"
+    bindtap="onTap"
+    onLongTap="onLongTap"
+    bindtouchstart="onTouchStart"
+    bindtouchend="onTouchEnd"
+    bindtouchmove="onTouchEnd"
+    bindtouchcancel="onTouchCancel"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></view>
 <picker-view
     wx:elif="{{builtinComponentName === 'picker-view'}}"
@@ -88,6 +94,11 @@
     selectable="{{selectable}}"
     space="{{space}}"
     decode="{{decode}}"
+    bindtap="onTap"
+    bindtouchstart="onTouchStart"
+    bindtouchend="onTouchEnd"
+    bindtouchmove="onTouchEnd"
+    bindtouchcancel="onTouchCancel"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></text>
 <block
     wx:elif="{{builtinComponentName === 'not-support'}}"

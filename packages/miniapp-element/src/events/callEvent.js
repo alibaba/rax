@@ -7,8 +7,8 @@ import callSimpleEvent from './callSimpleEvent';
 
 const { cache, EventTarget } = render.$$adapter;
 
-export default function(eventName, evt, extra, pageId) {
-  const originNodeId = evt.currentTarget.dataset.privateNodeId;
+export default function(eventName, evt, extra, pageId, nodeId) {
+  const originNodeId = evt.currentTarget.dataset.privateNodeId || nodeId;
   const originNode = cache.getNode(pageId, originNodeId);
 
   if (!originNode) return;

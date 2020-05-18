@@ -16,6 +16,8 @@ export default {
     touchCancel: 'onTouchCancel',
     load: 'onLoad',
     error: 'onError',
+    appear: 'onAppear',
+    disAppear: 'onDisappear',
     supportComponentGenerics: false
   },
   wechat: {

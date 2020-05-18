@@ -98,31 +98,48 @@ const config = {
 
       this.setData(newData);
     },
+    onAppear(evt) {
+      const pageId = this.pageId;
+      const originNodeId =
+        evt.currentTarget.dataset.privateNodeId || this.nodeId;
+      const originNode = cache.getNode(pageId, originNodeId);
 
+      if (!originNode) return;
+      callSimpleEvent('appear', evt, originNode);
+    },
+    onDisappear(evt) {
+      const pageId = this.pageId;
+      const originNodeId =
+        evt.currentTarget.dataset.privateNodeId || this.nodeId;
+      const originNode = cache.getNode(pageId, originNodeId);
+
+      if (!originNode) return;
+      callSimpleEvent('disappear', evt, originNode);
+    },
     // Dom event
     onTouchStart(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchstart', evt, null, this.pageId);
+        callEvent('touchstart', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchMove(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchmove', evt, null, this.pageId);
+        callEvent('touchmove', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchEnd(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchend', evt, null, this.pageId);
+        callEvent('touchend', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchCancel(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchcancel', evt, null, this.pageId);
+        callEvent('touchcancel', evt, null, this.pageId, this.nodeId);
       }
     },
     onTap(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('click', evt, { button: 0 }, this.pageId); // 默认左键
+        callEvent('click', evt, { button: 0 }, this.pageId, this.nodeId); // 默认左键
       }
     },
     onImgLoad(evt) {
