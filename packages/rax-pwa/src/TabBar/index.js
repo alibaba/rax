@@ -4,7 +4,41 @@ import Text from 'rax-text';
 import View from 'rax-view';
 import getSafeAreaInsetBottom from '../getSafeAreaInsetBottom';
 
-import styles from './index.css';
+// There something wrong with style loader in "inlineStyle:false" project.
+// Use Css in JS run anywhere.
+const styles = {
+  tabBar: {
+    position: 'fixed',
+    left: '0',
+    right: '0',
+    bottom: '0',
+    height: '98rpx',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '1rpx solid #eee',
+    backgroundColor: '#fff',
+  },
+
+  tabBarItem: {
+    flex: '1',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  tabBarItemTxt: {
+    fontSize: '24rpx',
+  },
+
+  tabBarItemImg: {
+    marginBottom: '8rpx',
+    width: '30rpx',
+    height: '30rpx',
+  }
+};
 
 const TAB_BAR_HEIGHT = 98;
 
