@@ -72,7 +72,8 @@ eg.
     'import { createComponent as __create_component__, Component as __component__ } from "jsx2mp-runtime";\n\nconst __def__ = class extends __component__ {\n  render() {\n    return {};\n  }\n\n};\n\nComponent(__create_component__(__def__, {\n  events: []\n}));',
   map: null,
   config: {
-    component: true
+    component: true,
+    usingComponents: {}
   },
   style: "",
   usingComponents: {},
