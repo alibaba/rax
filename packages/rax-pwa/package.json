@@ -1,6 +1,6 @@
 {
   "name": "rax-pwa",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Rax pwa templates",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
