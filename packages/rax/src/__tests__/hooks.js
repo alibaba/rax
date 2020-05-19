@@ -719,6 +719,44 @@ describe('hooks', () => {
     expect(container.childNodes[0].data).toEqual('2');
   });
 
+  it('destory function of a passive effect should call synchronously', () => {
+    const container = createNodeElement('div');
+    const event = {
+      listeners: [],
+      emit: () => event.listeners.forEach(f => f()),
+      off: (f) => event.listeners = event.listeners.filter(_f => _f !== f),
+      on: (f) => event.listeners.push(f)
+    };
+
+    function useForceUpdate() {
+      const [, setCount] = useState(0);
+      return () => setCount(count => count + 1);
+    }
+
+    function Child() {
+      const forceUpdate = useForceUpdate();
+      useEffect(() => {
+        event.on(forceUpdate);
+        return () => {
+          event.off(forceUpdate);
+        };
+      });
+      return <div>child</div>;
+    }
+
+    function App(props) {
+      useLayoutEffect(() => {
+        event.emit();
+      }, [props.type]);
+      return props.type === 1 ? <Child /> : null;
+    }
+
+    render(<App type={1} />, container);
+    expect(container.childNodes[0].childNodes[0].data).toEqual('child');
+    render(<App type={2} />, container);
+    expect(container.childNodes[0].nodeType).toBe(8);
+  });
+
   describe('updates during the render phase', () => {
     it('restarts the render function and applies the new updates on top', () => {
       const container = createNodeElement('div');
