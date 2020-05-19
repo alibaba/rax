@@ -10,7 +10,7 @@ const baseComponents = require('../baseComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { parseExpression } = require('../parser/index');
 const isSlotScopeNode = require('../utils/isSlotScopeNode');
-const { isDirectiveAttr, isEventHandlerAttr, BINDING_REG } = require('../utils/checkAttr');
+const { isDirectiveAttr, isEventHandlerAttr, isRenderPropsAttr, BINDING_REG } = require('../utils/checkAttr');
 const handleValidIdentifier = require('../utils/handleValidIdentifier');
 
 const ATTR = Symbol('attribute');
@@ -53,6 +53,7 @@ function transformTemplate(
     }
 
     const isEventHandler = isEventHandlerAttr(attributeName);
+    const isRenderProps = isRenderPropsAttr(attributeName);
 
     switch (expression.type) {
       // <div foo={'string'} /> -> <div foo="string" />
@@ -204,55 +205,58 @@ function transformTemplate(
             'Unsupported Function in JSXElement:',
           );
 
-        if (!isEventHandler)
+        if (!isEventHandler && !isRenderProps) {
           throw new CodeError(
             sourceCode,
             node,
             node.loc,
-            `Only EventHandlers are supported in Mini Program, eg: onClick/onChange, instead of "${attributeName}".`,
+            `Only EventHandlers (like onClick/onChange) and render props (which starts with 'render') are supported in Mini Program, instead of "${attributeName}".`,
           );
-        const params = (expression.params || []).map(param => {
-          // Compatibility (event = {}) => handleClick(event)
-          if (t.isAssignmentPattern(param)) {
-            return param.left;
-          }
-          return param;
-        });
-        const callExp = expression.body;
-        const args = callExp.arguments;
-        const { attributes } = parentPath.parentPath.node;
-        const fnExpression = t.isCallExpression(callExp) ? callExp.callee : expression;
-        const name = dynamicEvents.add({
-          expression: fnExpression,
-          isDirective,
-        });
-        const formatName = formatEventName(name);
-        if (Array.isArray(args)) {
-          const fnFirstParam = expression.params[0];
-          if (!(args.length === 1 && t.isIdentifier(args[0], {
-            name: fnFirstParam && fnFirstParam.name
-          }))) {
-            args.forEach((arg, index) => {
-              const transformedArg = transformCallExpressionArg(arg, params, dynamicValue, isDirective);
-              if (transformedArg.__dataset) {
-                attributes.push(
-                  t.jsxAttribute(
-                    t.jsxIdentifier(`data-${formatName}-arg-` + index),
-                    t.stringLiteral(
-                      createBinding(
-                        genExpression(transformedArg, {
-                          concise: true,
-                          comments: false,
-                        }),
+        }
+        if (isEventHandler) {
+          const params = (expression.params || []).map(param => {
+            // Compatibility (event = {}) => handleClick(event)
+            if (t.isAssignmentPattern(param)) {
+              return param.left;
+            }
+            return param;
+          });
+          const callExp = expression.body;
+          const args = callExp.arguments;
+          const { attributes } = parentPath.parentPath.node;
+          const fnExpression = t.isCallExpression(callExp) ? callExp.callee : expression;
+          const name = dynamicEvents.add({
+            expression: fnExpression,
+            isDirective,
+          });
+          const formatName = formatEventName(name);
+          if (Array.isArray(args)) {
+            const fnFirstParam = expression.params[0];
+            if (!(args.length === 1 && t.isIdentifier(args[0], {
+              name: fnFirstParam && fnFirstParam.name
+            }))) {
+              args.forEach((arg, index) => {
+                const transformedArg = transformCallExpressionArg(arg, params, dynamicValue, isDirective);
+                if (transformedArg.__dataset) {
+                  attributes.push(
+                    t.jsxAttribute(
+                      t.jsxIdentifier(`data-${formatName}-arg-` + index),
+                      t.stringLiteral(
+                        createBinding(
+                          genExpression(transformedArg, {
+                            concise: true,
+                            comments: false,
+                          }),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }
-            });
+                  );
+                }
+              });
+            }
           }
+          path.replaceWith(t.stringLiteral(name));
         }
-        path.replaceWith(t.stringLiteral(name));
         break;
 
       // <tag key={this.props.name} key2={a.b} /> => <tag key="{{_d0.name}}" key2="{{_d1.b}}" />
@@ -764,17 +768,23 @@ function collectComponentDependentProps(path, attrValue, attrPath, componentDepe
     && attrValue.type
     && jsxEl.__tagId
   ) {
-    // Replace list render replaced node
-    traverse(attrPath, {
-      StringLiteral(innerPath) {
-        if (BINDING_REG.test(innerPath.node.value)) {
-          attrValue = innerPath.node.__originalExpression;
+    // renderClosureFunction should replace the node itself
+    if (attrValue.__renderClosureFunction) {
+      attrValue = attrValue.__renderClosureFunction;
+    } else {
+      // Replace list render replaced node
+      traverse(attrPath, {
+        StringLiteral(innerPath) {
+          if (BINDING_REG.test(innerPath.node.value)) {
+            attrValue = innerPath.node.__originalExpression;
+          }
         }
+      });
+      if (attrPath) {
+        attrValue = parseExpression('(' + attrPath.toString() + ')'); // deep clone
       }
-    });
-    if (attrPath) {
-      attrValue = parseExpression('(' + attrPath.toString() + ')'); // deep clone
     }
+
     componentDependentProps[jsxEl.__tagId].props =
       componentDependentProps[jsxEl.__tagId].props || {};
     componentDependentProps[jsxEl.__tagId].props[
