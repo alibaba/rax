@@ -1,6 +1,8 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isWeChatMiniProgram } from 'universal-env';
+import callSingleEvent from '../events/callSingleEvent';
 
-export default {
+const ScrollView = {
   name: 'scroll-view',
   props: [{
     name: 'scrollX',
@@ -26,18 +28,21 @@ export default {
     },
   }, {
     name: 'scrollTop',
+    canBeUserChanged: true,
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-top'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
     name: 'scrollLeft',
+    canBeUserChanged: true,
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-left'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
     name: 'scrollIntoView',
+    canBeUserChanged: true,
     get(domNode) {
       return domNode.getAttribute('scroll-into-view') || '';
     },
@@ -68,14 +73,46 @@ export default {
     }
   }],
   handles: {
-    onScrollToUpper(evt) {
-      callSimpleEvent('scrolltoupper', evt, this.domNode);
+    onScrollViewScrolltoupper(evt) {
+      callSingleEvent('scrolltoupper', evt, this);
     },
-    onScrollToLower(evt) {
-      callSimpleEvent('scrolltolower', evt, this.domNode);
+    onScrollViewScrolltolower(evt) {
+      callSingleEvent('scrolltolower', evt, this);
     },
-    onScroll(evt) {
-      callSimpleEvent('scroll', evt, this.domNode);
+    onScrollViewScroll(evt) {
+      const domNode = this.getDomNodeFromEvt('scroll', evt);
+      if (!domNode) return;
+      domNode.$$setAttributeWithoutUpdate('scroll-into-view', '');
+      domNode.$$setAttributeWithoutUpdate('scroll-top', evt.detail.scrollTop);
+      domNode.$$setAttributeWithoutUpdate('scroll-left', evt.detail.scrollLeft);
+
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.scrollIntoView = '';
+      domNode.__oldValues.scrollTop = evt.detail.scrollTop;
+      domNode.__oldValues.scrollLeft = evt.detail.scrollLeft;
+      callSingleEvent('scroll', evt, this);
     },
   },
 };
+
+if (isWeChatMiniProgram) {
+  Object.assign(ScrollView.handles, {
+    onScrollViewRefresherPulling(evt) {
+      callSingleEvent('refresherpulling', evt, this);
+    },
+
+    onScrollViewRefresherRefresh(evt) {
+      callSingleEvent('refresherrefresh', evt, this);
+    },
+
+    onScrollViewRefresherRestore(evt) {
+      callSingleEvent('refresherrestore', evt, this);
+    },
+
+    onScrollViewRefresherAbort(evt) {
+      callSingleEvent('refresherabort', evt, this);
+    },
+  });
+}
+
+export default ScrollView;

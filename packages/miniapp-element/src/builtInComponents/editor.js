@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'editor',
@@ -35,19 +35,19 @@ export default {
   }],
   handles: {
     onEditorReady(evt) {
-      callSimpleEvent('ready', evt, this.domNode);
+      callSingleEvent('ready', evt, this);
     },
     onEditorFocus(evt) {
-      callSimpleEvent('focus', evt, this.domNode);
+      callSingleEvent('focus', evt, this);
     },
     onEditorBlur(evt) {
-      callSimpleEvent('blur', evt, this.domNode);
+      callSingleEvent('blur', evt, this);
     },
     onEditorInput(evt) {
-      callSimpleEvent('input', evt, this.domNode);
+      callSingleEvent('input', evt, this);
     },
     onEditorStatusChange(evt) {
-      callSimpleEvent('statuschange', evt, this.domNode);
+      callSingleEvent('statuschange', evt, this);
     },
   },
 };

@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'ad',
@@ -20,13 +20,13 @@ export default {
   }],
   handles: {
     onAdLoad(evt) {
-      callSimpleEvent('load', evt, this.domNode);
+      callSingleEvent('load', evt, this);
     },
     onAdError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
     onAdClose(evt) {
-      callSimpleEvent('close', evt, this.domNode);
+      callSingleEvent('close', evt, this);
     },
   },
 };

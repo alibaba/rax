@@ -43,6 +43,31 @@ class BuiltInComponent extends Element {
 
     this.$_attrs.set('behavior', value);
   }
+
+
+  get scrollTop() {
+    return this.$_attrs.get('scroll-top') || 0;
+  }
+
+  set scrollTop(value) {
+    value = parseInt(value, 10);
+
+    if (!isNaN(value)) {
+      this.$_attrs.set('scroll-top', value);
+    }
+  }
+
+  get scrollLeft() {
+    return this.$_attrs.get('scroll-left') || 0;
+  }
+
+  set scrollLeft(value) {
+    value = parseInt(value, 10);
+
+    if (!isNaN(value)) {
+      this.$_attrs.set('scroll-left', value);
+    }
+  }
 }
 
 export default BuiltInComponent;

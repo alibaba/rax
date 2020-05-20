@@ -1,10 +1,12 @@
 import { componentNameMap } from './component';
-import { NOT_SUPPORT } from './constants';
+import { NOT_SUPPORT, USE_TEMPLATE } from './constants';
 import checkComponentAttr from './vdom/checkComponentAttr';
 
 export default function(instance, data) {
   const domNode = instance.domNode;
   const tagName = domNode.tagName;
+
+  if (USE_TEMPLATE.indexOf(tagName) !== -1 || USE_TEMPLATE.indexOf(domNode.behavior) !== -1) return;
 
   if (tagName === 'BUILTIN-COMPONENT') {
     // BuildIn component
@@ -24,6 +26,6 @@ export default function(instance, data) {
   } else {
     // Could be replaced html tag
     const builtinComponentName = componentNameMap[tagName.toLowerCase()];
-    if (builtinComponentName) checkComponentAttr(instance, builtinComponentName, data);
+    if (builtinComponentName) data.builtinComponentName = builtinComponentName;
   }
 }

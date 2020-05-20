@@ -6,7 +6,7 @@ import checkComponentAttr from './vdom/checkComponentAttr';
 import dealWithLeafAndSimple from './vdom/dealWithLeafAndSimple';
 import init from './init';
 import { componentNameMap, handlesMap } from './component';
-import { NOT_SUPPORT } from './constants';
+import { NOT_SUPPORT, IN_COVER } from './constants';
 import getInitialProps from './adapter/getInitialProps';
 import getId from './adapter/getId';
 import getLifeCycle from './adapter/getLifeCycle';
@@ -23,7 +23,6 @@ const config = {
   data: {
     builtinComponentName: '', // the builtIn component name
     customComponentName: '', // current render custom component name
-    innerChildNodes: [], // BuiltIn component children
     childNodes: []
   },
   ...getInitialProps(),
@@ -37,45 +36,22 @@ const config = {
       if (!this.pageId || !this.nodeId) return;
 
       // child nodes update
-      const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1);
-      const oldChildNodes =
-        this.data.builtinComponentName || this.data.customComponentName
-          ? this.data.innerChildNodes
-          : this.data.childNodes;
-      if (checkDiffChildNodes(childNodes, oldChildNodes)) {
-        const dataChildNodes = dealWithLeafAndSimple(
-          childNodes,
-          this.onChildNodesUpdate
-        );
-        const newData = {};
-        if (this.data.builtinComponentName || this.data.customComponentName) {
-          // builtIn component/custom component
-          newData.innerChildNodes = dataChildNodes;
-          newData.childNodes = [];
-        } else {
-          // normal tag
-          newData.innerChildNodes = [];
-          newData.childNodes = dataChildNodes;
-        }
-        this.setData(newData);
+      const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1, this);
+      if (checkDiffChildNodes(childNodes, this.data.childNodes)) {
+        this.setData({
+          childNodes: dealWithLeafAndSimple(childNodes, this.onChildNodesUpdate),
+        });
       }
 
       // dispatch child update
       const childNodeStack = [].concat(childNodes);
       let childNode = childNodeStack.pop();
       while (childNode) {
-        if (
-          childNode.type === 'element' &&
-          !childNode.isLeaf &&
-          !childNode.isSimple
-        ) {
+        if (childNode.type === 'element' && !childNode.isImage && !childNode.isLeaf && !childNode.isSimple && !childNode.useTemplate) {
           childNode.domNode.$$trigger('$$childNodesUpdate');
         }
 
-        if (childNode.childNodes && childNode.childNodes.length)
-          childNode.childNodes.forEach(subChildNode =>
-            childNodeStack.push(subChildNode)
-          );
+        if (childNode.childNodes && childNode.childNodes.length) childNode.childNodes.forEach(subChildNode => childNodeStack.push(subChildNode));
         childNode = childNodeStack.pop();
       }
     },
@@ -117,12 +93,29 @@ const config = {
         // Replaced html tag
         const builtinComponentName = componentNameMap[tagName.toLowerCase()];
         if (builtinComponentName)
-          checkComponentAttr(this, builtinComponentName, newAttrData);
+          newData.builtinComponentName = builtinComponentName;
       }
 
       this.setData(newData);
     },
+    onAppear(evt) {
+      const pageId = this.pageId;
+      const originNodeId =
+        evt.currentTarget.dataset.privateNodeId || this.nodeId;
+      const originNode = cache.getNode(pageId, originNodeId);
 
+      if (!originNode) return;
+      callSimpleEvent('appear', evt, originNode);
+    },
+    onDisappear(evt) {
+      const pageId = this.pageId;
+      const originNodeId =
+        evt.currentTarget.dataset.privateNodeId || this.nodeId;
+      const originNode = cache.getNode(pageId, originNodeId);
+
+      if (!originNode) return;
+      callSimpleEvent('disappear', evt, originNode);
+    },
     // Dom event
     onTouchStart(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
@@ -169,6 +162,22 @@ const config = {
 
       callSimpleEvent('error', evt, originNode);
     },
+    getDomNodeFromEvt(eventName, evt) {
+      if (!evt) return;
+      const pageId = this.pageId;
+      let originNodeId = this.nodeId;
+      if (evt.currentTarget && evt.currentTarget.dataset.privateNodeId) {
+        originNodeId = evt.currentTarget.dataset.privateNodeId;
+      } else if (
+        eventName &&
+        eventName.indexOf('canvas') === 0 &&
+        evt.target &&
+        evt.target.dataset.privateNodeId
+      ) {
+        originNodeId = evt.target.dataset.privateNodeId;
+      }
+      return cache.getNode(pageId, originNodeId);
+    },
     ...handlesMap
   }
 };
@@ -193,11 +202,6 @@ const lifeCycles = getLifeCycle({
     this.domNode = cache.getNode(pageId, nodeId);
     if (!this.domNode) return;
 
-    // TODO, for the sake of compatibility with a bug in the underlying library, is implemented as follows
-    if (this.domNode.tagName === 'CANVAS') {
-      this.domNode._builtInComponent = this;
-    }
-
     // Store document
     this.document = cache.getDocument(pageId);
 
@@ -214,23 +218,16 @@ const lifeCycles = getLifeCycle({
 
     // init
     init(this, data);
+    if (IN_COVER.indexOf(data.builtinComponentName) !== -1) this.data.inCover = true;
 
     // init child nodes
-    const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1);
-    const dataChildNodes = dealWithLeafAndSimple(
+    const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1, this);
+    data.childNodes = dealWithLeafAndSimple(
       childNodes,
       this.onChildNodesUpdate
     );
-    if (data.builtinComponentName || data.customComponentName) {
-      // builtIn component/custom component
-      data.innerChildNodes = dataChildNodes;
-      data.childNodes = [];
-    } else {
-      // normal tag
-      data.innerChildNodes = [];
-      data.childNodes = dataChildNodes;
-    }
-    this.setData(data);
+
+    if (Object.keys(data).length) this.setData(data);
     if (isMiniApp) {
       if (this.domNode.tagName === 'CANVAS') {
         this.domNode.$$trigger('canvasReady');
