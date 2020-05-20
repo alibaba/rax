@@ -365,7 +365,7 @@ export default class Component {
             if (isPlainObject(data[key])) {
               normalData[key] = Object.assign({}, currentData[key], data[key]);
             } else {
-              normalData[key] = data[key];
+              normalData[key] = data[key] === undefined ? null : data[key]; // Make undefined value compatible with Alibaba MiniApp
             }
           }
         }
