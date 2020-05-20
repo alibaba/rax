@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'checkbox',
@@ -6,6 +6,11 @@ export default {
     name: 'value',
     get(domNode) {
       return domNode.getAttribute('value') || '';
+    },
+  }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
     },
   }, {
     name: 'checked',
@@ -25,7 +30,7 @@ export default {
   }],
   handles: {
     onCheckboxItemChange(evt) {
-      callSimpleEvent('change', evt, this.domNode);
+      callSingleEvent('change', evt, this);
     },
   },
 };

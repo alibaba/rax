@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'live-pusher',
@@ -104,22 +104,22 @@ export default {
   }],
   handles: {
     onLivePusherStateChange(evt) {
-      callSimpleEvent('statechange', evt, this.domNode);
+      callSingleEvent('statechange', evt, this);
     },
     onLivePusherNetStatus(evt) {
-      callSimpleEvent('netstatus', evt, this.domNode);
+      callSingleEvent('netstatus', evt, this);
     },
     onLivePusherError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
     onLivePusherBgmStart(evt) {
-      callSimpleEvent('bgmstart', evt, this.domNode);
+      callSingleEvent('bgmstart', evt, this);
     },
     onLivePusherBgmProgress(evt) {
-      callSimpleEvent('bgmprogress', evt, this.domNode);
+      callSingleEvent('bgmprogress', evt, this);
     },
     onLivePusherBgmComplete(evt) {
-      callSimpleEvent('bgmcomplete', evt, this.domNode);
+      callSingleEvent('bgmcomplete', evt, this);
     },
   },
 };

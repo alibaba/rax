@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'cover-image',
@@ -15,10 +15,10 @@ export default {
   }],
   handles: {
     onCoverImageLoad(evt) {
-      callSimpleEvent('load', evt, this.domNode);
+      callSingleEvent('load', evt, this);
     },
     onCoverImageError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
   },
 };

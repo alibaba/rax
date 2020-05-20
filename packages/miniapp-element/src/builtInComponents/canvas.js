@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'canvas',
@@ -25,25 +25,25 @@ export default {
   }],
   handles: {
     onCanvasTouchStart(evt) {
-      this.callSimpleEvent('canvastouchstart', evt);
+      callSingleEvent('canvastouchstart', evt, this);
     },
 
     onCanvasTouchMove(evt) {
-      this.callSimpleEvent('canvastouchmove', evt);
+      callSingleEvent('canvastouchmove', evt, this);
     },
 
     onCanvasTouchEnd(evt) {
-      this.callSimpleEvent('canvastouchend', evt);
+      callSingleEvent('canvastouchend', evt, this);
     },
 
     onCanvasTouchCancel(evt) {
-      this.callSimpleEvent('canvastouchcancel', evt);
+      callSingleEvent('canvastouchcancel', evt, this);
     },
     onCanvasLongTap(evt) {
-      callSimpleEvent('longtap', evt, this.domNode);
+      callSingleEvent('longtap', evt, this);
     },
     onCanvasError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
   },
 };

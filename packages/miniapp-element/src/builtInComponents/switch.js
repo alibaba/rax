@@ -1,9 +1,10 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'switch',
   props: [{
     name: 'checked',
+    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('checked');
     },
@@ -11,6 +12,11 @@ export default {
     name: 'disabled',
     get(domNode) {
       return !!domNode.getAttribute('disabled');
+    },
+  }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
     },
   }, {
     name: 'type',
@@ -30,10 +36,15 @@ export default {
   }],
   handles: {
     onSwitchChange(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
 
-      this.domNode.setAttribute('checked', evt.detail.value);
-      callSimpleEvent('change', evt, this.domNode);
+      domNode.$$setAttributeWithoutUpdate('checked', evt.detail.value);
+
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.checked = evt.detail.value;
+
+      callSingleEvent('change', evt, this);
     },
   },
 };

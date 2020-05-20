@@ -4,7 +4,7 @@ export default function dealWithLeafAndSimple(childNodes, onChildNodesUpdate) {
     childNodes = childNodes.map(originChildNode => {
       const childNode = Object.assign({}, originChildNode);
 
-      if (childNode.isLeaf || childNode.isSimple) {
+      if (childNode.isImage || childNode.isLeaf || childNode.isSimple || childNode.useTemplate) {
         childNode.domNode.$$clearEvent('$$childNodesUpdate');
         childNode.domNode.addEventListener('$$childNodesUpdate', onChildNodesUpdate);
       }

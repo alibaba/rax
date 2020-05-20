@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'image',
@@ -35,10 +35,10 @@ export default {
   }],
   handles: {
     onImageLoad(evt) {
-      callSimpleEvent('load', evt, this.domNode);
+      callSingleEvent('load', evt, this);
     },
     onImageError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
   },
 };
