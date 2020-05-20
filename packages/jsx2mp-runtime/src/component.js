@@ -406,7 +406,10 @@ export default class Component {
       if (!isEmptyObj(normalData)) {
         setDataTask.push(callback => {
           $ready = normalData.$ready;
-          this._internal.setData(normalData, callback);
+          this._internal.setData(normalData, () => {
+            Object.assign(this._internal.data, normalData); // In Wechat MiniProgram, `this._internal.data` refers to its old val here, so it needs to be merged manually
+            callback();
+          });
         });
       }
     }
