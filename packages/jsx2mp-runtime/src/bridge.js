@@ -246,7 +246,7 @@ function createReactiveClass(pureRender) {
             }
           }
 
-          return !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
+          return this.__shouldUpdate || !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
         };
       }
     }
