@@ -40,6 +40,7 @@ const REMOVE_ATTRIBUTE = 'removeAttribute';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const TEXT_NODE = 3;
 const COMMENT_NODE = 8;
+const TEXT_SPLIT_COMMENT = '$';
 const EMPTY = '';
 const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
@@ -194,6 +195,13 @@ export function updateText(node, text) {
 function findHydrationChild(parent) {
   if (parent[HYDRATION_INDEX] == null) {
     parent[HYDRATION_INDEX] = 0;
+  }
+
+  const child = parent.childNodes[parent[HYDRATION_INDEX]];
+
+  // If child is an comment node for spliting text node, use the next node. eg.
+  if (child && child.nodeType && child.nodeType === COMMENT_NODE && child.data === TEXT_SPLIT_COMMENT) {
+    parent[HYDRATION_INDEX]++;
   }
 
   return parent.childNodes[parent[HYDRATION_INDEX]++];

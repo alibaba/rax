@@ -21,6 +21,8 @@ const VOID_ELEMENTS = {
   'wbr': true
 };
 
+const TEXT_SPLIT_COMMENT = '<!--$-->';
+
 const ESCAPE_LOOKUP = {
   '&': '&amp;',
   '>': '&gt;',
@@ -298,116 +300,150 @@ function createInstance(element, context) {
   return instance;
 }
 
-function renderElementToString(element, context, options) {
-  if (typeof element === 'string') {
-    return escapeText(element);
-  } else if (element == null || element === false || element === true) {
-    return '<!-- _ -->';
-  } else if (typeof element === 'number') {
-    return String(element);
-  } else if (Array.isArray(element)) {
-    let html = '';
-    for (var index = 0, length = element.length; index < length; index++) {
-      var child = element[index];
-      html = html + renderElementToString(child, context, options);
+class ServerRenderer {
+  constructor(options) {
+    this.options = options;
+    this.previousWasTextNode = false;
+  }
+
+  renderElementToString(element, context) {
+    if (typeof element === 'string') {
+      debugger;
+      if (this.previousWasTextNode) {
+        return TEXT_SPLIT_COMMENT + escapeText(element);
+      }
+      this.previousWasTextNode = true;
+      return escapeText(element);
     }
-    return html;
-  }
 
-  // pre compiled html
-  if (element.__html != null) { // __html may be empty string
-    return element.__html;
-  }
+    if (element == null || element === false || element === true) {
+      this.previousWasTextNode = false;
+      return '<!-- _ -->';
+    }
 
-  // pre compiled attrs
-  if (element.__attrs) {
-    return propsToString(element.__attrs, options);
-  }
+    if (typeof element === 'number') {
+      if (this.previousWasTextNode) {
+        return TEXT_SPLIT_COMMENT + String(element);
+      }
+      this.previousWasTextNode = true;
+      return String(element);
+    }
 
-  const type = element.type;
+    if (Array.isArray(element)) {
+      let html = '';
+      for (var index = 0, length = element.length; index < length; index++) {
+        var child = element[index];
+        html = html + this.renderElementToString(child, context);
+      }
+      return html;
+    }
 
-  if (type) {
-    // class component || function component
-    if (type.prototype && type.prototype.render || typeof type === 'function') {
-      const instance = createInstance(element, context);
+    // pre compiled html
+    if (element.__html != null) { // __html may be empty string
+      let html = element.__html;
 
-      const currentComponent = {
-        // For hooks to get current instance
-        _instance: instance
-      };
-
-      if (process.env.NODE_ENV !== 'production') {
-        const componetName = type.displayName || type.name || element;
-        // Give the component name in render error info (only for development)
-        currentComponent.__getName = () => componetName;
+      if (element.__isStartWithTextNode && this.previousWasTextNode) {
+        html = TEXT_SPLIT_COMMENT + html;
       }
 
-      // Rax will use owner during rendering, eg: hooks, render error info.
-      shared.Host.owner = currentComponent;
+      this.previousWasTextNode = element.__isEndWithTextNode ? true : false;
+      return html;
+    }
 
-      if (process.env.NODE_ENV !== 'production') {
-        checkContext(type);
-      }
+    // pre compiled attrs
+    if (element.__attrs) {
+      return propsToString(element.__attrs, this.options);
+    }
 
-      let currentContext = instance.context;
-      let childContext;
+    const type = element.type;
 
-      if (instance.getChildContext) {
-        childContext = instance.getChildContext();
-      } else if (instance._getChildContext) {
-        // Only defined in Provider
-        childContext = instance._getChildContext();
-      }
+    if (type) {
+      // class component || function component
+      if (type.prototype && type.prototype.render || typeof type === 'function') {
+        const instance = createInstance(element, context);
 
-      if (childContext) {
-        // Why not use Object.assign? for better performance
-        currentContext = merge({}, context, childContext);
-      }
+        const currentComponent = {
+          // For hooks to get current instance
+          _instance: instance
+        };
 
-      const renderedElement = instance.render();
-
-      // Reset owner after render, or it will casue memory leak.
-      shared.Host.owner = null;
-
-      return renderElementToString(renderedElement, currentContext, options);
-    } else if (typeof type === 'string') {
-      const props = element.props || EMPTY_OBJECT;
-      const isVoidElement = VOID_ELEMENTS[type];
-      let html = `<${type}${propsToString(props, options)}`;
-      let innerHTML;
-
-      if (props.dangerouslySetInnerHTML) {
-        innerHTML = props.dangerouslySetInnerHTML.__html;
-      }
-
-      if (isVoidElement) {
-        html = html + '>';
-      } else {
-        html = html + '>';
-        // When child is null or undefined, it should be render as <!-- _ -->
-        if (props.hasOwnProperty('children')) {
-          const children = props.children;
-          if (Array.isArray(children)) {
-            for (var i = 0, l = children.length; i < l; i++) {
-              var child = children[i];
-              html = html + renderElementToString(child, context, options);
-            }
-          } else {
-            html = html + renderElementToString(children, context, options);
-          }
-        } else if (innerHTML != null) { // When dangerouslySetInnerHTML is 0, it should be render as 0
-          html = html + innerHTML;
+        if (process.env.NODE_ENV !== 'production') {
+          const componetName = type.displayName || type.name || element;
+          // Give the component name in render error info (only for development)
+          currentComponent.__getName = () => componetName;
         }
 
-        html = html + `</${type}>`;
-      }
+        // Rax will use owner during rendering, eg: hooks, render error info.
+        shared.Host.owner = currentComponent;
 
-      return html;
+        if (process.env.NODE_ENV !== 'production') {
+          checkContext(type);
+        }
+
+        let currentContext = instance.context;
+        let childContext;
+
+        if (instance.getChildContext) {
+          childContext = instance.getChildContext();
+        } else if (instance._getChildContext) {
+          // Only defined in Provider
+          childContext = instance._getChildContext();
+        }
+
+        if (childContext) {
+          // Why not use Object.assign? for better performance
+          currentContext = merge({}, context, childContext);
+        }
+
+        const renderedElement = instance.render();
+
+        // Reset owner after render, or it will casue memory leak.
+        shared.Host.owner = null;
+
+        return this.renderElementToString(renderedElement, currentContext);
+      } else if (typeof type === 'string') {
+        // shoud set the identifier to false before render child
+        this.previousWasTextNode = false;
+
+        const props = element.props || EMPTY_OBJECT;
+        const isVoidElement = VOID_ELEMENTS[type];
+        let html = `<${type}${propsToString(props, this.options)}`;
+        let innerHTML;
+
+        if (props.dangerouslySetInnerHTML) {
+          innerHTML = props.dangerouslySetInnerHTML.__html;
+        }
+
+        if (isVoidElement) {
+          html = html + '>';
+        } else {
+          html = html + '>';
+          // When child is null or undefined, it should be render as <!-- _ -->
+          if (props.hasOwnProperty('children')) {
+            const children = props.children;
+            if (Array.isArray(children)) {
+              for (var i = 0, l = children.length; i < l; i++) {
+                var child = children[i];
+                html = html + this.renderElementToString(child, context);
+              }
+            } else {
+              html = html + this.renderElementToString(children, context);
+            }
+          } else if (innerHTML != null) { // When dangerouslySetInnerHTML is 0, it should be render as 0
+            html = html + innerHTML;
+          }
+
+          html = html + `</${type}>`;
+        }
+
+        this.previousWasTextNode = false;
+        return html;
+      } else {
+        throwInValidElementError(element);
+      }
     } else {
       throwInValidElementError(element);
     }
-  } else {
-    throwInValidElementError(element);
   }
 }
 
@@ -423,7 +459,8 @@ function isPlainObject(obj) {
 }
 
 export function renderToString(element, options) {
-  return renderElementToString(element, EMPTY_OBJECT, Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
+  const serverRenderer = new ServerRenderer(Object.assign({}, DEFAULT_STYLE_OPTIONS, options));
+  return serverRenderer.renderElementToString(element, {});
 }
 
 export default {

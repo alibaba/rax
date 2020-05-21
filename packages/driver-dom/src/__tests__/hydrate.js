@@ -14,6 +14,25 @@ describe('Hydrate', () => {
     (document.body || document.documentElement).appendChild(container);
   });
 
+  it('should keep comment node when rendering multi adjacent text nodes', () => {
+    container = document.createElement('div');
+    container.innerHTML = '<div>About:<!--$-->Rax</div>';
+    (document.body || document.documentElement).appendChild(container);
+
+    const Component = (props) => {
+      return (
+        <div>About:{props.name}</div>
+      );
+    };
+
+    render(<Component name="Rax" />, container, { driver: DriverDOM, hydrate: true });
+    jest.runAllTimers();
+
+    expect(container.childNodes[0].childNodes[0].data).toBe('About:');
+    expect(container.childNodes[0].childNodes[1].nodeType).toBe(8); // comment
+    expect(container.childNodes[0].childNodes[2].data).toBe('Rax');
+  });
+
   it('should warn for replaced hydratable element', () => {
     const Component = () => {
       return (
