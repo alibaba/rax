@@ -308,7 +308,6 @@ class ServerRenderer {
 
   renderElementToString(element, context) {
     if (typeof element === 'string') {
-      debugger;
       if (this.previousWasTextNode) {
         return TEXT_SPLIT_COMMENT + escapeText(element);
       }
