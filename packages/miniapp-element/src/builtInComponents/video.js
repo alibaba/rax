@@ -147,6 +147,11 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }, {
+    name: 'enableNative',
+    get(domNode) {
+      return !!domNode.getAttribute('enableNative');
+    }
   }],
   handles: {
     onVideoPlay(evt) {

@@ -535,6 +535,7 @@
         auto-pause-if-open-native="{{autoPauseIfOpenNative}}"
         vslide-gesture="{{vslideGesture}}"
         vslide-gesture-in-fullscreen="{{vslideGestureInFullscreen}}"
+        enableNative="{{enableNative}}"
         onPlay="onVideoPlay"
         onPause="onVideoPause"
         onEnded="onVideoEnded"
