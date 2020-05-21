@@ -123,7 +123,24 @@ const config = {
 
       this.setData(newData);
     },
+    onAppear(evt) {
+      const pageId = this.pageId;
+      const originNodeId =
+        evt.currentTarget.dataset.privateNodeId || this.nodeId;
+      const originNode = cache.getNode(pageId, originNodeId);
 
+      if (!originNode) return;
+      callSimpleEvent('appear', evt, originNode);
+    },
+    onDisappear(evt) {
+      const pageId = this.pageId;
+      const originNodeId =
+        evt.currentTarget.dataset.privateNodeId || this.nodeId;
+      const originNode = cache.getNode(pageId, originNodeId);
+
+      if (!originNode) return;
+      callSimpleEvent('disappear', evt, originNode);
+    },
     // Dom event
     onTouchStart(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {

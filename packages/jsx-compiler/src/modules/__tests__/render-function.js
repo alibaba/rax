@@ -44,6 +44,87 @@ describe('Render item function', () => {
   });
 });
 
+describe('Render closure function component', () => {
+  it('should transform basic closure function component', () => {
+    const ast = parseCode(`
+    export default function Component() {
+      const renderItem = () => {
+        return <View>item</View>;
+      }
+      return (
+        <View>
+          <View>{renderItem()}</View>
+        </View>
+      );
+    }
+    `);
+    const renderFnPath = getDefaultComponentFunctionPath(ast);
+    const returnPath = getReturnElementPath(ast);
+    const targetAST = transformReturnPath(returnPath);
+    const renderItemFunctions = _transformRenderFunction(targetAST, renderFnPath);
+    expect(renderItemFunctions.map(fn => ({
+      name: fn.name,
+      originName: fn.originName
+    }))).toEqual([{'name': 'renderItemState__temp0', 'originName': 'renderItem'}]);
+
+    expect(genExpression(targetAST)).toEqual(`<block a:if="{{$ready}}"><template name="renderItem"><View>item</View></template><View>
+          <View><template is="renderItem" data="{{...renderItemState__temp0}}"></template></View>
+        </View></block>`);
+  });
+  it('should transform closure function component used function declaration', () => {
+    const ast = parseCode(`
+    export default function Component() {
+      function renderItem() {
+        return <View>item</View>;
+      }
+      return (
+        <View>
+          <View>{renderItem()}</View>
+        </View>
+      );
+    }
+    `);
+    const renderFnPath = getDefaultComponentFunctionPath(ast);
+    const returnPath = getReturnElementPath(ast);
+    const targetAST = transformReturnPath(returnPath);
+    const renderItemFunctions = _transformRenderFunction(targetAST, renderFnPath);
+    expect(renderItemFunctions.map(fn => ({
+      name: fn.name,
+      originName: fn.originName
+    }))).toEqual([{'name': 'renderItemState__temp0', 'originName': 'renderItem'}]);
+
+    expect(genExpression(targetAST)).toEqual(`<block a:if="{{$ready}}"><template name="renderItem"><View>item</View></template><View>
+          <View><template is="renderItem" data="{{...renderItemState__temp0}}"></template></View>
+        </View></block>`);
+  });
+  it('should transform closure function component with params', () => {
+    const ast = parseCode(`
+    export default function Component() {
+      const renderItem = (name) => {
+        return <View>{name}</View>;
+      }
+      return (
+        <View>
+          <View>{renderItem('rax')}</View>
+        </View>
+      );
+    }
+    `);
+    const renderFnPath = getDefaultComponentFunctionPath(ast);
+    const returnPath = getReturnElementPath(ast);
+    const targetAST = transformReturnPath(returnPath);
+    const renderItemFunctions = _transformRenderFunction(targetAST, renderFnPath);
+    expect(renderItemFunctions.map(fn => ({
+      name: fn.name,
+      originName: fn.originName
+    }))).toEqual([{'name': 'renderItemState__temp0', 'originName': 'renderItem'}]);
+
+    expect(genExpression(targetAST)).toEqual(`<block a:if="{{$ready}}"><template name="renderItem"><View>{name}</View></template><View>
+          <View><template is="renderItem" data="{{...renderItemState__temp0}}"></template></View>
+        </View></block>`);
+  });
+});
+
 function transformReturnPath(path) {
   let returnArgument = path.get('argument').node;
   if (!['JSXText', 'JSXExpressionContainer', 'JSXSpreadChild', 'JSXElement', 'JSXFragment'].includes(returnArgument.type)) {
@@ -73,4 +154,18 @@ function getRenderMethodPath(path) {
   });
 
   return renderMethodPath;
+}
+
+function getDefaultComponentFunctionPath(path) {
+  let defaultComponentFunctionPath = null;
+  traverse(path, {
+    ExportDefaultDeclaration(exportDefaultPath) {
+      const declarationPath = exportDefaultPath.get('declaration');
+      if (declarationPath.isFunctionDeclaration()) {
+        defaultComponentFunctionPath = declarationPath;
+      }
+    }
+  });
+
+  return defaultComponentFunctionPath;
 }

@@ -1,4 +1,4 @@
-import Emitter from './eventEmitter';
+import Emitter from './valueEmitter';
 
 let uniqueId = 0;
 

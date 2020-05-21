@@ -1,5 +1,5 @@
 import { propsMap } from '../component';
-import isEqual from './isEqual';
+import shallowEqual from './shallowEqual';
 
 // Check component attribute
 export default function checkComponentAttr(
@@ -21,13 +21,13 @@ export default function checkComponentAttr(
         const oldValues = domNode.__oldValues;
         if (
           !oldData ||
-          !isEqual(newValue, oldData[name]) ||
-          oldValues && !isEqual(newValue, oldValues[name])
+          !shallowEqual(newValue, oldData[name]) ||
+          oldValues && !shallowEqual(newValue, oldValues[name])
         ) {
           newData[name] = newValue;
           newData.forceUpdate = true;
         }
-      } else if (!oldData || !isEqual(newValue, oldData[name])) {
+      } else if (!oldData || !shallowEqual(newValue, oldData[name])) {
         newData[name] = newValue;
       }
     }

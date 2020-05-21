@@ -76,7 +76,7 @@ export default {
     // Init root component with empty children
     let renderedComponent = instantiateComponent(createElement(Root));
     let defaultContext = parentContext || {};
-    let rootInstance = renderedComponent.__mountComponent(container, null, defaultContext);
+    let rootInstance = renderedComponent.__mountComponent(container, parent, defaultContext);
     this.set(container, rootInstance);
     // Mount new element through update queue avoid when there is in rendering phase
     rootInstance.__update(element);

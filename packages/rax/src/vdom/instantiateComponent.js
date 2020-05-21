@@ -25,7 +25,7 @@ export default function instantiateComponent(element) {
       }
     }
 
-    instance = new Host.__Empty();
+    instance = new Host.__Empty(element);
   }
 
   return instance;

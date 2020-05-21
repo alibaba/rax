@@ -77,7 +77,7 @@ function performUpdate() {
     // always -- see shouldComponentUpdate()) will reconcile children, reconcile
     // them before their children by sorting the array.
     if (dirties.length > 1) {
-      dirties = dirties.sort(mountOrderComparator);
+      dirties = dirties.filter(c => !!c[INTERNAL]).sort(mountOrderComparator);
     }
 
     while (component = dirties.pop()) {

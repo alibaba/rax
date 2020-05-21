@@ -133,7 +133,7 @@ export default {
       domNode.__oldValues.focus = false;
       if (this.__textareaOldValue !== undefined && domNode.value !== this.__textareaOldValue) {
         this.__textareaOldValue = undefined;
-        callEvent('change', evt);
+        callEvent('change', evt, this.pageId, this.nodeId);
       }
       callSimpleEvent('blur', evt, domNode);
     },
@@ -151,7 +151,7 @@ export default {
       domNode.__oldValues = domNode.__oldValues || {};
       domNode.__oldValues.value = value;
 
-      callEvent('input', evt, null, this.pageId);
+      callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onTextareaConfirm(evt) {
       const domNode = this.getDomNodeFromEvt('confirm', evt);

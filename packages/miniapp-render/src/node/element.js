@@ -735,6 +735,9 @@ class Element extends Node {
       ];
       this.$_triggerMeUpdate(payload);
     }
+
+    // Trigger the webview update
+    if (hasUpdate) this.$_triggerMeUpdate();
     return node;
   }
 

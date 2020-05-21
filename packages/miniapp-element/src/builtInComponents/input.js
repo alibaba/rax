@@ -142,7 +142,7 @@ export default {
       domNode.__oldValues = domNode.__oldValues || {};
       domNode.__oldValues.value = value;
 
-      callEvent('input', evt, null, this.pageId);
+      callEvent('input', evt, null, this.pageId, this.nodeId);
     },
     onInputFocus(evt) {
       const domNode = this.getDomNodeFromEvt('focus', evt);
@@ -164,7 +164,7 @@ export default {
       domNode.__oldValues.focus = false;
       if (this.__inputOldValue !== undefined && domNode.value !== this.__inputOldValue) {
         this.__inputOldValue = undefined;
-        callEvent('change', evt, null, this.pageId);
+        callEvent('change', evt, null, this.pageId, this.nodeId);
       }
       callSimpleEvent('blur', evt, domNode);
     },

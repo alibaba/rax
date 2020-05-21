@@ -1099,4 +1099,42 @@ describe('CompositeComponent', function() {
     expect(childNodes[3].data).toBe('2');
     expect(childNodes[4].data).toBe('3');
   });
+
+  it('unmount dirty component', function() {
+    let el = createNodeElement('div');
+    let childInstance1 = null;
+    let childInstance2 = null;
+
+    class Child1 extends Component {
+      render() {
+        childInstance1 = this;
+        return <div>child1</div>;
+      }
+    }
+
+    class Child2 extends Component {
+      render() {
+        childInstance2 = this;
+        return <div>child2</div>;
+      }
+    }
+
+    class App extends Component {
+      componentWillReceiveProps() {
+        childInstance1.forceUpdate();
+        childInstance2.forceUpdate();
+      }
+
+      render() {
+        if (this.props.empty) return null;
+        return [<Child1 key="1" />, <Child2 key="2" />];
+      }
+    }
+    render(<App />, el);
+    expect(el.childNodes[0].childNodes[0].data).toBe('child1');
+    expect(el.childNodes[1].childNodes[0].data).toBe('child2');
+    render(<App empty />, el);
+    jest.runAllTimers();
+    expect(el.childNodes[0].nodeType).toEqual(8);
+  });
 });

@@ -8,6 +8,12 @@
 $ npm install --save rax
 ```
 
+### With TypeScript
+
+```sh
+$ npm install --save-dev @types/rax
+```
+
 ## Usage
 
 ```jsx

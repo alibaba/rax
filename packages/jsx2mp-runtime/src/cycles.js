@@ -15,4 +15,15 @@ export const ON_ERROR = 'onError';
 export const ON_SHOW = 'onShow';
 export const ON_HIDE = 'onHide';
 export const ON_SHARE_APP_MESSAGE = 'onShareAppMessage';
-
+export const EVENTS_LIST = [
+  'onBack',
+  'onKeyboardHeight',
+  'onOptionMenuClick',
+  'onPopMenuClick',
+  'onPullDownRefresh',
+  'onPullIntercept',
+  'onTitleClick',
+  'onTabItemTap',
+  'beforeTabItemTap',
+  'onResize'
+]; // These events above are only valid in events object in appx 2.0

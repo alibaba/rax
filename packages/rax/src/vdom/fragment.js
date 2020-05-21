@@ -1,6 +1,5 @@
 import Host from './host';
 import NativeComponent from './native';
-import Instance from './instance';
 import toArray from '../toArray';
 import { INSTANCE, INTERNAL, NATIVE_NODE } from '../constant';
 
@@ -14,11 +13,13 @@ class FragmentComponent extends NativeComponent {
     let instance = this[INSTANCE] = {};
     instance[INTERNAL] = this;
 
-    // Mount children
-    this.__mountChildren(this.__currentElement, context);
-
-    let fragment = this.__getNativeNode();
-
+    const fragment = [];
+    this.__mountChildrenImpl(this._parent, this.__currentElement, context, (nativeNode) => {
+      nativeNode = toArray(nativeNode);
+      for (let i = 0; i < nativeNode.length; i++) {
+        fragment.push(nativeNode[i]);
+      }
+    });
     if (nativeNodeMounter) {
       nativeNodeMounter(fragment, parent);
     } else {
@@ -26,7 +27,6 @@ class FragmentComponent extends NativeComponent {
         Host.driver.appendChild(fragment[i], parent);
       }
     }
-
     if (process.env.NODE_ENV !== 'production') {
       this.__currentElement.type = FragmentComponent;
       Host.reconciler.mountComponent(this);
@@ -35,33 +35,16 @@ class FragmentComponent extends NativeComponent {
     return instance;
   }
 
-  __mountChildren(children, context) {
-    let fragment = this.__getNativeNode();
-
-    return this.__mountChildrenImpl(this._parent, children, context, (nativeNode) => {
-      nativeNode = toArray(nativeNode);
-      for (let i = 0; i < nativeNode.length; i++) {
-        fragment.push(nativeNode[i]);
-      }
-    });
-  }
-
   unmountComponent(shouldNotRemoveChild) {
-    let nativeNode = this[NATIVE_NODE];
-
-    if (nativeNode) {
-      Instance.remove(nativeNode);
-
-      if (!shouldNotRemoveChild) {
-        for (let i = 0, l = nativeNode.length; i < l; i++) {
-          Host.driver.removeChild(nativeNode[i]);
-        }
+    if (!shouldNotRemoveChild) {
+      const nativeNode = this.__getNativeNode();
+      for (let i = 0, l = nativeNode.length; i < l; i++) {
+        Host.driver.removeChild(nativeNode[i]);
       }
     }
 
     // Do not need remove child when their parent is removed
     this.__unmountChildren(true);
-
     this.__destoryComponent();
   }
 
@@ -76,8 +59,9 @@ class FragmentComponent extends NativeComponent {
     }
   }
 
-  __createNativeNode() {
-    return [];
+  __getNativeNode() {
+    const renderedChildren = this.__renderedChildren || {};
+    return [].concat.apply([], Object.keys(renderedChildren).map(key => renderedChildren[key].__getNativeNode()));
   }
 }
 
