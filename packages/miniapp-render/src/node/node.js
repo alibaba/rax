@@ -1,5 +1,5 @@
 import EventTarget from '../event/event-target';
-import cache from '../util/cache';
+import cache from '../utils/cache';
 
 class Node extends EventTarget {
   /**
