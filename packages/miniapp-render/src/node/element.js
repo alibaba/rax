@@ -3,9 +3,9 @@ import Node from './node';
 import ClassList from './class-list';
 import Style from './style';
 import Attribute from './attribute';
-import Pool from '../util/pool';
-import cache from '../util/cache';
-import tool from '../util/tool';
+import Pool from '../utils/pool';
+import cache from '../utils/cache';
+import tool from '../utils/tool';
 import parser from '../tree/parser';
 
 const pool = new Pool();

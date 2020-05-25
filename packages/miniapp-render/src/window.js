@@ -1,7 +1,7 @@
 import EventTarget from './event/event-target';
 import OriginalCustomEvent from './event/custom-event';
-import tool from './util/tool';
-import cache from './util/cache';
+import tool from './utils/tool';
+import cache from './utils/cache';
 import Node from './node/node';
 import Element from './node/element';
 
