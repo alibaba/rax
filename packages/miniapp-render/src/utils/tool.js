@@ -28,14 +28,6 @@ function getPageRoute(pageId) {
 }
 
 /**
- * Gets the applet page name from pageRoute
- */
-function getPageName(pageRoute) {
-  const splitPageRoute = pageRoute.split('/');
-  return splitPageRoute[1] === 'pages' ? splitPageRoute[2] : splitPageRoute[1];
-}
-
-/**
  * Throttling, which is called only once in a synchronous flow
  */
 const waitFuncSet = new Set();
@@ -92,7 +84,6 @@ export default {
   toCamel,
   getId,
   getPageRoute,
-  getPageName,
   throttle,
   flushThrottleCache,
   decodeContent,

@@ -1,4 +1,4 @@
-import render from './src';
+import { createPage } from './src/createConfig/page';
 
 const config = {
   optimization: {
@@ -56,8 +56,8 @@ global.CONTAINER = global.wx;
 export default {
   html,
   createPage(type = 'home') {
-    const pageId = `1-1-/pages/${type}/index`;
-    const page = render.createPage(pageId, config);
+    const pageId = 'p-1-1';
+    const page = createPage(pageId, config);
     page.window.__pageId = pageId;
     page.document.body.innerHTML = html;
 

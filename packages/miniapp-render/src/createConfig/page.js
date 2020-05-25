@@ -4,7 +4,8 @@ import defineLifeCycle from '../utils/defineLifeCycle';
 import { createWindow } from '../window';
 import Document from '../document';
 
-function createPage(pageId, config) {
+// Export for test
+export function createPage(pageId, config) {
   if (config) cache.setConfig(config);
 
   const nodeIdMap = {};
