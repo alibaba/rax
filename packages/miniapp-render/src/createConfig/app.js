@@ -1,8 +1,10 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp } from 'universal-env';
 import { createWindow } from '../window';
 import cache from '../utils/cache';
 
 export default function(init) {
-  return {
+  const appConfig = {
     onLaunch(options) {
       const window = createWindow();
       cache.setWindow(window);
@@ -63,4 +65,16 @@ export default function(init) {
       }
     }
   };
+  if (isMiniApp) {
+    appConfig.onShareAppMessage = function(options) {
+      if (this.window) {
+        const shareInfo = {};
+        this.window.$$trigger('appshare', {
+          event: { options, shareInfo }
+        });
+        return shareInfo.content;
+      }
+    };
+  }
+  return appConfig;
 }
