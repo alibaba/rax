@@ -23,7 +23,7 @@ const CodeError = require('./CodeError');
  * */
 module.exports = function(
   containerPath, valueNode, parentPath, forItem,
-  originalIndex, renamedIndex, properties, dynamicBinding, code, adapter) {
+  originalIndex, renamedIndex, properties, dynamicBinding, code) {
   const isAttr = parentPath.isJSXAttribute();
   const { node } = parentPath;
   // Check attribute name wheather is ref
@@ -57,7 +57,7 @@ module.exports = function(
         t.stringLiteral(createIncrement()), renamedIndexNode);
       if (targetPath.isJSXExpressionContainer()) {
         handleRef(loopFnBody,
-          handleRefAttr(targetPath.parentPath, targetPath.node.expression, propertyValue, adapter, renamedIndexNode)
+          handleRefAttr(targetPath.parentPath, targetPath.node.expression, propertyValue, renamedIndexNode)
         );
       } else {
         throw new CodeError(code, node, targetPath.loc, "Ref's type must be JSXExpressionContainer, like <View ref = { scrollRef }/>");
