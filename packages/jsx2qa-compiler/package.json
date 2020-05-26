@@ -1,6 +1,6 @@
 {
-  "name": "@ali/jsx2qa-compiler",
-  "version": "0.1.0",
+  "name": "jsx2qa-compiler",
+  "version": "0.1.0-0",
   "license": "BSD-3-Clause",
   "description": "Parser for Rax JSX Statements.",
   "files": [
