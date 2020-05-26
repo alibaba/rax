@@ -269,7 +269,7 @@ export default class Component {
       this.state = nextState;
       // Set forwardRef & prevForWardRef
       this.__prevForwardRef = this._forwardRef;
-      // Ref is a string, bindComRef is rhe real ref callback function
+      // Ref is a string, bindComRef is the real ref callback function
       this._forwardRef = nextProps.bindComRef;
       this.__forceUpdate = false;
       this._trigger(RENDER);
