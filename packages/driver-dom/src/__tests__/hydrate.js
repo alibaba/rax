@@ -16,7 +16,7 @@ describe('Hydrate', () => {
 
   it('should keep comment node when rendering multi adjacent text nodes', () => {
     container = document.createElement('div');
-    container.innerHTML = '<div>About:<!--$-->Rax</div>';
+    container.innerHTML = '<div>About:<!--|-->Rax</div>';
     (document.body || document.documentElement).appendChild(container);
 
     const Component = (props) => {

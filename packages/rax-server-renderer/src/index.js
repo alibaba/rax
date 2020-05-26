@@ -21,7 +21,7 @@ const VOID_ELEMENTS = {
   'wbr': true
 };
 
-const TEXT_SPLIT_COMMENT = '<!--$-->';
+const TEXT_SPLIT_COMMENT = '<!----->';
 
 const ESCAPE_LOOKUP = {
   '&': '&amp;',
