@@ -33,25 +33,6 @@ const config = {
     addGlobalClass: true // global style
   },
   methods: {
-    enqueueRender(payload) {
-      renderStacks.push(payload);
-      if (this.pendingRender) return;
-      this.executeRender();
-    },
-    executeRender() {
-      this.pendingRender = true;
-      setTimeout(() => {
-        perf.start(SET_DATA);
-        this.pendingRender = false;
-        if (typeof this.$spliceData === 'function') {
-
-          this.pendingRender = false;
-          renderStacks = [];
-          return;
-        }
-        renderStacks = [];
-      }, 0);
-    },
     // Watch child nodes update
     onChildNodesUpdate(...args) {
       console.log("onChildNodesUpdate -> args", args)
@@ -144,27 +125,27 @@ const config = {
     // Dom event
     onTouchStart(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchstart', evt, null, this.pageId);
+        callEvent('touchstart', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchMove(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchmove', evt, null, this.pageId);
+        callEvent('touchmove', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchEnd(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchend', evt, null, this.pageId);
+        callEvent('touchend', evt, null, this.pageId, this.nodeId);
       }
     },
     onTouchCancel(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('touchcancel', evt, null, this.pageId);
+        callEvent('touchcancel', evt, null, this.pageId, this.nodeId);
       }
     },
     onTap(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('click', evt, { button: 0 }, this.pageId); // 默认左键
+        callEvent('click', evt, { button: 0 }, this.pageId, this.nodeId); // Default Left button
       }
     },
     onImgLoad(evt) {
