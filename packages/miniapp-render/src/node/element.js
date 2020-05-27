@@ -97,7 +97,7 @@ class Element extends Node {
   }
 
   get $_classList() {
-    if (!this.$__classList) this.$__classList = ClassList.$$create(this.$_onClassOrStyleUpdate.bind(this));
+    if (!this.$__classList) this.$__classList = ClassList.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
     return this.$__classList;
   }
 
@@ -107,7 +107,7 @@ class Element extends Node {
   }
 
   get $_style() {
-    if (!this.$__style) this.$__style = Style.$$create(this.$_onClassOrStyleUpdate.bind(this));
+    if (!this.$__style) this.$__style = Style.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
     return this.$__style;
   }
 
@@ -146,22 +146,27 @@ class Element extends Node {
   }
 
   // Listen for class or style attribute values to change
-  $_onClassOrStyleUpdate() {
+  $_onClassOrStyleUpdate(payload) {
     if (this.$__attrs) this.$_attrs.triggerUpdate();
-    this.$_triggerParentUpdate();
+    this.$_triggerParentUpdate(payload);
   }
 
   // Update parent tree
   // TODO:
-  $_triggerParentUpdate() {
-    if (this.parentNode && !this.$_notTriggerUpdate) this.parentNode.$$trigger('$$childNodesUpdate', {args: [123,456]});
-    if (!this.$_notTriggerUpdate) this.$$trigger('$$domNodeUpdate');
+  $_triggerParentUpdate(payload) {
+    if (this.parentNode && !this.$_notTriggerUpdate) {
+      // this.parentNode.$$trigger('$$childNodesUpdate');
+    }
+    if (!this.$_notTriggerUpdate) {
+      this.enqueueRender(payload);
+      // this.$$trigger('$$domNodeUpdate');
+    }
   }
 
   // Update child nodes
   $_triggerMeUpdate(payload) {
     this.enqueueRender(payload);
-    if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
+    // if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
   }
 
   // Changes to the mapping table caused by changes to update child nodes
@@ -634,35 +639,19 @@ class Element extends Node {
   appendChild(node) {
     if (!(node instanceof Node)) return;
 
-    let nodes;
-    let hasUpdate = false;
+    if (node === this) return;
+    if (node.parentNode) node.parentNode.removeChild(node);
 
-    if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      // documentFragment
-      nodes = [].concat(node.childNodes);
-    } else {
-      nodes = [node];
-    }
+    this.$_children.push(node);
+    // Set parentNode
+    node.$$updateParent(this);
 
-    for (const node of nodes) {
-      if (node === this) continue;
-      if (node.parentNode) node.parentNode.removeChild(node);
+    // Update map
+    this._updateNodeMap(node);
 
-      this.$_children.push(node);
-      // Set parentNode
-      node.$$updateParent(this);
-
-      // Update map
-      this._updateNodeMap(node);
-
-      hasUpdate = true;
-    }
-
-    // Trigger webview update
-    if (hasUpdate) {
-      const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
-      this.$_triggerMeUpdate(payload);
-    }
+    // Trigger update
+    const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
+    this.$_triggerMeUpdate(payload);
 
     return this;
   }
@@ -681,7 +670,7 @@ class Element extends Node {
       // Update map
       this._updateNodeMap(node, true);
 
-      // Trigger webview update
+      // Trigger update
       const payload = [`${this._path}.cn`, index, 1];
       this.$_triggerMeUpdate(payload);
     }
@@ -693,104 +682,61 @@ class Element extends Node {
     if (!(node instanceof Node)) return;
     if (ref && !(ref instanceof Node)) return;
 
-    let nodes;
-    let hasUpdate = false;
+    if (node === this) return;
+    if (node.parentNode) node.parentNode.removeChild(node);
 
-    if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      // documentFragment
-      nodes = [];
-      for (let i = 0; i < node.childNodes.length; i++) {
-        // Need to invert them
-        nodes.push(node.childNodes[i]);
-      }
+    const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
+    let payload;
+    if (insertIndex === -1) {
+      // Insert to the end
+      this.$_children.push(node);
+      payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
     } else {
-      nodes = [node];
+      // Inserted before ref
+      this.$_children.splice(insertIndex, 0, node);
+      payload = [`${this._path}.cn`, insertIndex, 0, node];
     }
+    // Set parentNode
+    node.$$updateParent(this);
 
-    for (const node of nodes) {
-      if (node === this) continue;
-      if (node.parentNode) node.parentNode.removeChild(node);
+    // Update the mapping table
+    this._updateNodeMap(node);
+    // Trigger update
+    this.$_triggerMeUpdate(payload);
 
-      const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
-
-      if (insertIndex === -1) {
-        // Insert to the end
-        this.$_children.push(node);
-      } else {
-        // Inserted before ref
-        this.$_children.splice(insertIndex, 0, node);
-      }
-      // Set parentNode
-      node.$$updateParent(this);
-
-      // Update the mapping table
-      this._updateNodeMap(node);
-
-      hasUpdate = true;
-      const payload = [
-        `${this._path}.cn`,
-        insertIndex === -1 ? this.$_children.length - 1 : insertIndex,
-        0,
-        node
-      ];
-      this.$_triggerMeUpdate(payload);
-    }
-
-    // Trigger the webview update
-    if (hasUpdate) this.$_triggerMeUpdate();
     return node;
   }
 
   replaceChild(node, old) {
     if (!(node instanceof Node) || !(old instanceof Node)) return;
 
-    let nodes;
-    let hasUpdate = false;
-
-    if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      // documentFragment
-      nodes = [];
-      for (let i = node.childNodes.length - 1; i >= 0; i--) {
-        // Inserted one by one, it need to reverse the order
-        nodes.push(node.childNodes[i]);
-      }
-    } else {
-      nodes = [node];
-    }
-
     const replaceIndex = this.$_children.indexOf(old);
     if (replaceIndex !== -1) this.$_children.splice(replaceIndex, 1);
 
-    for (const node of nodes) {
-      if (node === this) continue;
-      if (node.parentNode) node.parentNode.removeChild(node);
+    if (node === this) return;
+    if (node.parentNode) node.parentNode.removeChild(node);
 
-      if (replaceIndex === -1) {
-        // Insert to the end
-        this.$_children.push(node);
-      } else {
-        // Replace to old
-        this.$_children.splice(replaceIndex, 0, node);
-      }
-      // Set parentNode
-      node.$$updateParent(this);
-      // Update the mapping table
-      this._updateNodeMap(node);
-      this._updateNodeMap(old, true);
-
-      hasUpdate = true;
+    if (replaceIndex === -1) {
+      // Insert to the end
+      this.$_children.push(node);
+    } else {
+      // Replace to old
+      this.$_children.splice(replaceIndex, 0, node);
     }
+    // Set parentNode
+    node.$$updateParent(this);
+    // Update the mapping table
+    this._updateNodeMap(node);
+    this._updateNodeMap(old, true);
 
-    // Trigger the webview side update
-    if (hasUpdate) {
-      const payload = [
-        `${this._path}.cn`,
-        replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
-        replaceIndex === -1 ? 0 : 1,
-        node
-      ];
-      this.$_triggerMeUpdate(payload);
-    }
+    // Trigger update
+    const payload = [
+      `${this._path}.cn`,
+      replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
+      replaceIndex === -1 ? 0 : 1,
+      node
+    ];
+    this.$_triggerMeUpdate(payload);
 
     return old;
   }

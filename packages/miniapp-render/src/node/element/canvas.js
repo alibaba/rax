@@ -75,9 +75,9 @@ class HTMLCanvasElement extends Element {
   /**
    * Update parent node
    */
-  $_triggerParentUpdate() {
+  $_triggerParentUpdate(payload) {
     this.$_initRect();
-    super.$_triggerParentUpdate();
+    super.$_triggerParentUpdate(payload);
   }
 
   /**

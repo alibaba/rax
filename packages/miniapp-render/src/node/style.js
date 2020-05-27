@@ -31,12 +31,12 @@ function parse(styleText) {
 }
 
 class Style {
-  constructor(onUpdate) {
+  constructor(element, onUpdate) {
     this.__settedStyle = {};
-    this.$$init(onUpdate);
+    this.$$init(element, onUpdate);
   }
 
-  static $$create(onUpdate) {
+  static $$create(element, onUpdate) {
     const config = cache.getConfig();
 
     if (config.optimization.domExtendMultiplexing) {
@@ -44,22 +44,24 @@ class Style {
       const instance = pool.get();
 
       if (instance) {
-        instance.$$init(onUpdate);
+        instance.$$init(element, onUpdate);
         return instance;
       }
     }
 
-    return new Style(onUpdate);
+    return new Style(element, onUpdate);
   }
 
   // Init instance
-  $$init(onUpdate) {
+  $$init(element, onUpdate) {
+    this.$_element = element;
     this.$_doUpdate = onUpdate || (() => {});
     // Whether checking for updates is disabled
     this.$_disableCheckUpdate = false;
   }
 
   $$destroy() {
+    this.$_element = null;
     this.$_doUpdate = null;
     this.$_disableCheckUpdate = false;
 
@@ -81,7 +83,11 @@ class Style {
 
   $_checkUpdate() {
     if (!this.$_disableCheckUpdate) {
-      this.$_doUpdate();
+      const payload = {
+        path: `${this.$_element._path}.class`,
+        value: this.cssText
+      }
+      this.$_doUpdate(payload);
     }
   }
 
@@ -108,7 +114,7 @@ class Style {
       this[name] = rules[name];
     }
     this.$_disableCheckUpdate = false;
-    this.$_checkUpdate();
+    // this.$_checkUpdate();
   }
 
   getPropertyValue(name) {
@@ -133,7 +139,9 @@ styleList.forEach(name => {
       value = value !== undefined ? '' + value : undefined;
 
       this.__settedStyle[name] = value;
-      if (oldValue !== value) this.$_checkUpdate();
+      if (oldValue !== value) {
+        this.$_checkUpdate();
+      }
     },
   };
 });

@@ -61,9 +61,9 @@ class Image extends Element {
   }
 
   // Update parent
-  $_triggerParentUpdate() {
+  $_triggerParentUpdate(payload) {
     this.$_initRect();
-    super.$_triggerParentUpdate();
+    super.$_triggerParentUpdate(payload);
   }
 
   // Init length

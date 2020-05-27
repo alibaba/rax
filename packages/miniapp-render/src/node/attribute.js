@@ -77,7 +77,11 @@ class Attribute {
 
       map[name] = value;
 
-      this.$_doUpdate();
+      const payload = {
+        path: `${this.$_element._path}.${name}`,
+        value: value
+      };
+      this.$_doUpdate(payload);
     }
 
     this.triggerUpdate();
@@ -135,7 +139,11 @@ class Attribute {
     } else {
       // The Settings for the other fields need to trigger the parent component to update
       delete map[name];
-      this.$_doUpdate();
+      const payload = {
+        path: `${this.$_element._path}.${name}`,
+        value: ''
+      }
+      this.$_doUpdate(payload);
     }
 
     this.triggerUpdate();

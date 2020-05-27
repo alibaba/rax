@@ -34,7 +34,7 @@ class RootElement extends Element {
       this.pendingRender = false;
       console.log('this.renderStacks', this.renderStacks);
       // TODO: Process data from array to obj
-      // this.$$trigger('$$childNodesUpdate', { args: this.renderStacks })
+      this.$$trigger('$$childNodesUpdate', { args: this.renderStacks });
       this.renderStacks = [];
     }, 0);
   }

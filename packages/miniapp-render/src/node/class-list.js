@@ -3,31 +3,33 @@ import cache from '../util/cache';
 
 const pool = new Pool();
 
-function ClassList(onUpdate) {
-  this.$$init(onUpdate);
+function ClassList(element, onUpdate) {
+  this.$$init(element, onUpdate);
 }
 
-ClassList.$$create = function(onUpdate) {
+ClassList.$$create = function(element, onUpdate) {
   const config = cache.getConfig();
 
   if (config.optimization.domExtendMultiplexing) {
     const instance = pool.get();
 
     if (instance) {
-      instance.$$init(onUpdate);
+      instance.$$init(element, onUpdate);
       return instance;
     }
   }
 
-  return new ClassList(onUpdate);
+  return new ClassList(element, onUpdate);
 };
 
 ClassList.prototype = Object.assign([], {
-  $$init(onUpdate) {
+  $$init(element, onUpdate) {
+    this.$_element = element;
     this.$_doUpdate = onUpdate;
   },
 
   $$destroy() {
+    this.$_element = null;
     this.$_doUpdate = null;
     this.length = 0;
   },
@@ -52,7 +54,12 @@ ClassList.prototype = Object.assign([], {
       this.push(item);
     }
 
-    this.$_doUpdate();
+    const payload = {
+      path: `${this.$_element._path}.class`,
+      value: this
+    }
+
+    this.$_doUpdate(payload);
   },
 
   item(index) {
@@ -79,7 +86,13 @@ ClassList.prototype = Object.assign([], {
       }
     }
 
-    if (isUpdate) this.$_doUpdate();
+    if (isUpdate) {
+      const payload = {
+        path: `${this.$_element._path}.class`,
+        value: this
+      };
+      this.$_doUpdate(payload);
+    }
   },
 
   remove(...args) {
@@ -99,7 +112,13 @@ ClassList.prototype = Object.assign([], {
       }
     }
 
-    if (isUpdate) this.$_doUpdate();
+    if (isUpdate) {
+      const payload = {
+        path: `${this.$_element._path}.class`,
+        value: this
+      };
+      this.$_doUpdate(payload);
+    }
   },
 
   toggle(className, force) {
