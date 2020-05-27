@@ -40,11 +40,9 @@ function setWrapperRef(instance, ref, create) {
     if (ref) {
       instance._internal.triggerEvent('ComRef', create());
     }
+    return () => instance._internal.triggerEvent('ComRef', null);
   } else {
-    if (isFunction(ref)) {
-      ref(create());
-      return () => ref(null);
-    } else if (!isNull(ref)) {
+    if (!isNull(ref)) {
       ref.current = create();
       return () => {
         ref.current = null;
@@ -170,14 +168,16 @@ export function useImperativeHandle(ref, create, inputs) {
   const nextInputs = !isNull(inputs) && !isUndef(inputs) ? inputs.concat([ref]) : null;
   const currentInstance = getCurrentRenderingInstance();
   const mounted = currentInstance.__mounted;
+  let willUnmountFn;
 
   if (!currentInstance.mounted) {
-    setWrapperRef(currentInstance, ref, create);
+    willUnmountFn = setWrapperRef(currentInstance, ref, create);
   }
   useLayoutEffect(() => {
     if (mounted) {
-      setWrapperRef(currentInstance, ref, create);
+      willUnmountFn = setWrapperRef(currentInstance, ref, create);
     }
+    return willUnmountFn;
   }, nextInputs);
 }
 
