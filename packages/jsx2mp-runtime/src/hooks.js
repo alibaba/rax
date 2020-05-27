@@ -41,13 +41,11 @@ function setWrapperRef(instance, ref, create) {
       instance._internal.triggerEvent('ComRef', create());
     }
     return () => instance._internal.triggerEvent('ComRef', null);
-  } else {
-    if (!isNull(ref)) {
-      ref.current = create();
-      return () => {
-        ref.current = null;
-      };
-    }
+  } else if (!isNull(ref)) {
+    ref.current = create();
+    return () => {
+      ref.current = null;
+    };
   }
 }
 
