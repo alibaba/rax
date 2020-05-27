@@ -462,6 +462,7 @@ function diffArray(prev, next) {
   if (!isArray(prev)) return false;
   // Only concern about list append case
   if (next.length === 0) return false;
+  if (prev.length > next.length) return false;
   if (prev.length === 0) return true;
   // When item's type is object, they have differrent reference, so should use shallowEqual
   return next.slice(0, prev.length).every((val, index) => shallowEqual(prev[index], val));
