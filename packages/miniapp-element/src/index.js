@@ -20,8 +20,6 @@ const { PAGE_INIT, SET_DATA } = constants;
 const MAX_DOM_SUB_TREE_LEVEL = 10;
 let DOM_SUB_TREE_LEVEL = 10;
 
-const renderStacks = [];
-
 const config = {
   data: {
     builtinComponentName: '', // the builtIn component name

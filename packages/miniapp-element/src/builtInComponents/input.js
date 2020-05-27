@@ -198,8 +198,8 @@ export default {
           }
         }
       }
-      callEvent('input', evt, null, this.pageId);
-      callEvent('change', evt, null, this.pageId);
+      callEvent('input', evt, null, this.pageId, this.nodeId);
+      callEvent('change', evt, null, this.pageId, this.nodeId);
     },
     onCheckboxChange(evt) {
       const domNode = this.getDomNodeFromEvt('change', evt);
@@ -216,14 +216,14 @@ export default {
         domNode.__oldValues = domNode.__oldValues || {};
         domNode.__oldValues.checked = false;
       }
-      callEvent('change', evt, null, this.pageId);
+      callEvent('change', evt, null, this.pageId, this.nodeId);
     },
     onCheckboxItemChange(evt) {
       const domNode = this.getDomNodeFromEvt('change', evt);
       if (!domNode) return;
       const value = evt.detail.value || false;
       domNode.setAttribute('checked', value);
-      callEvent('change', evt, null, this.pageId);
+      callEvent('change', evt, null, this.pageId, this.nodeId);
     },
   },
 };
