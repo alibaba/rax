@@ -78,6 +78,8 @@ export function useState(initialState) {
         // Current instance is in render update phase.
         // After this one render finish, will continue run.
         hook[2] = newState;
+        // Mark need update
+        currentInstance.__shouldUpdate = true;
         enqueueRender(currentInstance);
       }
     };

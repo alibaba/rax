@@ -246,8 +246,8 @@ function createReactiveClass(pureRender) {
               break;
             }
           }
-
-          return !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
+          // Currently this component is function component, then when state which defined by useState updated, it need check __shouldUpdate.
+          return this.__shouldUpdate || !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
         };
       }
     }
