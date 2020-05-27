@@ -5,7 +5,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isQuickApp } from 'universal-env';
 import Host from './host';
-import { updateChildProps, removeComponentProps, setComponentProps } from './updater';
+import {
+  updateChildProps,
+  removeComponentProps,
+  setComponentProps,
+} from './updater';
 import { enqueueRender } from './enqueueRender';
 import {
   RENDER,
@@ -15,12 +19,19 @@ import {
   COMPONENT_DID_UPDATE,
   COMPONENT_WILL_MOUNT,
   COMPONENT_WILL_UNMOUNT,
-  COMPONENT_WILL_RECEIVE_PROPS, COMPONENT_WILL_UPDATE,
+  COMPONENT_WILL_RECEIVE_PROPS,
+  COMPONENT_WILL_UPDATE,
 } from './cycles';
 import { cycles as pageCycles } from './page';
 import shallowEqual, { is } from './shallowEqual';
 import nextTick from './nextTick';
-import { isNull, isFunction, isEmptyObj, isArray, isPlainObject } from './types';
+import {
+  isNull,
+  isFunction,
+  isEmptyObj,
+  isArray,
+  isPlainObject,
+} from './types';
 import apiCore from './adapter/getNativeAPI';
 import attachRef from './adapter/attachRef';
 import Event from './events';
@@ -110,40 +121,35 @@ export default class Component {
   }
 
   _registerRefs(refs) {
-    refs.forEach(({name, method, type, id}) => {
+    refs.forEach(({ name, method, type, id }) => {
       if (isQuickApp) {
         nextTick(() => {
           Object.assign(method, {
-            current: this._internal.$element(name)
+            current: this._internal.$element(name),
           });
         });
       } else {
         if (type === 'component') {
           this._internal[name] = method;
           if (this._internal.selectComponent) {
-            new Promise((resolve, reject) => {
-              const instance = this._internal.selectComponent(`#${id}`, (res) => {
-                resolve(res);
-              });
-              if (instance) {
-                return resolve(instance);
-              }
-            })
-              .then(instance => {
-                this.refs[name] = {
-                  current: instance
-                };
-                method(instance, true);
-              });
+            const instance = this._internal.selectComponent(`#${id}`);
+            this.refs[name] = {
+              current: instance,
+            };
+            if (isFunction(method)) {
+              method(instance, false);
+            }
           } else {
             this.refs[name] = method;
           }
         } else {
           const instance = apiCore.createSelectorQuery().select(`#${id}`);
           this.refs[name] = {
-            current: instance
+            current: instance,
           };
-          method(instance);
+          if (isFunction(method)) {
+            method(instance, false);
+          }
         }
       }
     });
@@ -152,7 +158,8 @@ export default class Component {
   _collectState() {
     const state = Object.assign({}, this.state);
     let parialState;
-    while (parialState = this._pendingStates.shift()) { // eslint-disable-line
+    while (parialState = this._pendingStates.shift()) {
+      // eslint-disable-line
       if (isNull(parialState)) continue; // eslint-disable-line
       if (isFunction(parialState)) {
         Object.assign(state, parialState.call(this, state, this.props));
@@ -248,8 +255,10 @@ export default class Component {
     if (stateFromProps !== undefined) nextState = stateFromProps;
 
     // Step5: judge shouldComponentUpdate
-    this.__shouldUpdate = this.__forceUpdate
-      || this.shouldComponentUpdate ? this.shouldComponentUpdate(nextProps, nextState) : true;
+    this.__shouldUpdate =
+      this.__forceUpdate || this.shouldComponentUpdate
+        ? this.shouldComponentUpdate(nextProps, nextState)
+        : true;
 
     // Step8: trigger render
     if (this.__shouldUpdate) {
@@ -263,7 +272,8 @@ export default class Component {
       this.state = nextState;
       // Set forwardRef & prevForWardRef
       this.__prevForwardRef = this._forwardRef;
-      this._forwardRef = nextProps.ref;
+      // Ref is a string, bindComRef is the real ref callback function
+      this._forwardRef = nextProps.bindComRef;
       this.__forceUpdate = false;
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
@@ -273,7 +283,7 @@ export default class Component {
   _unmountComponent() {
     this._trigger(COMPONENT_WILL_UNMOUNT);
     // Clean up hooks
-    this.hooks.forEach(hook => {
+    this.hooks.forEach((hook) => {
       if (isFunction(hook.destory)) hook.destory();
     });
     // Clean up page cycle callbacks
@@ -322,15 +332,16 @@ export default class Component {
       case ON_HIDE:
         if (isFunction(this[cycle])) this[cycle](...args);
         if (this._cycles.hasOwnProperty(cycle)) {
-          this._cycles[cycle].forEach(fn => fn(...args));
+          this._cycles[cycle].forEach((fn) => fn(...args));
         }
         if (pageCycles[pageId] && pageCycles[pageId][cycle]) {
-          pageCycles[pageId][cycle].forEach(fn => fn(...args));
+          pageCycles[pageId][cycle].forEach((fn) => fn(...args));
         }
         break;
 
       case RENDER:
-        if (!isFunction(this.render)) throw new Error('It seems component have no render method.');
+        if (!isFunction(this.render))
+          throw new Error('It seems component have no render method.');
         Host.current = this;
         this._hookID = 0;
         const nextProps = args[0] || this.props;
@@ -358,8 +369,13 @@ export default class Component {
       // Use setData update
       const normalData = {};
       for (let key in data) {
-        if (Array.isArray(data[key]) && diffArray(currentData[key], data[key])) {
-          arrayData[key] = [currentData[key].length, 0].concat(data[key].slice(currentData[key].length));
+        if (
+          Array.isArray(data[key]) &&
+          diffArray(currentData[key], data[key])
+        ) {
+          arrayData[key] = [currentData[key].length, 0].concat(
+            data[key].slice(currentData[key].length)
+          );
         } else {
           if (diffData(currentData[key], data[key])) {
             if (isPlainObject(data[key])) {
@@ -372,17 +388,17 @@ export default class Component {
       }
       if (!isEmptyObj(normalData)) {
         $ready = normalData.$ready;
-        setDataTask.push(callback => {
+        setDataTask.push((callback) => {
           this._internal.setData(normalData, callback);
         });
       }
       if (!isEmptyObj(arrayData)) {
-        setDataTask.push(callback => {
+        setDataTask.push((callback) => {
           this._internal.$spliceData(arrayData, callback);
         });
       }
     } else if (isQuickApp) {
-      setDataTask.push(callback => {
+      setDataTask.push((callback) => {
         for (let key in data) {
           if (key === '$ready') {
             // Only this._interanal.$ready !== data.ready, it will trigger componentDidMount
@@ -404,7 +420,7 @@ export default class Component {
         }
       }
       if (!isEmptyObj(normalData)) {
-        setDataTask.push(callback => {
+        setDataTask.push((callback) => {
           $ready = normalData.$ready;
           this._internal.setData(normalData, callback);
         });
@@ -412,11 +428,12 @@ export default class Component {
     }
 
     if (setDataTask.length > 0) {
-      const $batchedUpdates = this._internal.$batchedUpdates || (callback => callback());
+      const $batchedUpdates =
+        this._internal.$batchedUpdates || ((callback) => callback());
 
       $batchedUpdates(() => {
-        const setDataPromiseTask = setDataTask.map(invokeTask => {
-          return new Promise(resolve => {
+        const setDataPromiseTask = setDataTask.map((invokeTask) => {
+          return new Promise((resolve) => {
             invokeTask(resolve);
           });
         });
@@ -446,7 +463,8 @@ function diffArray(prev, next) {
   // Only concern about list append case
   if (next.length === 0) return false;
   if (prev.length === 0) return true;
-  return next.slice(0, prev.length).every((val, index) => prev[index] === val);
+  // When item's type is object, they have differrent reference, so should use shallowEqual
+  return next.slice(0, prev.length).every((val, index) => shallowEqual(prev[index], val));
 }
 
 function diffData(prevData, nextData) {
