@@ -11,6 +11,7 @@ export default function(instance, bindComRef) {
 }
 
 function triggerSetRef(instance, bindComRef) {
+  // In function component, it shouldn't return component instance, so return null
   const current = instance.__isReactiveComponent ? null : instance;
   if (isMiniApp) {
     bindComRef(current);
