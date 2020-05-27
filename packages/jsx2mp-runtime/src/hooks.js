@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isQuickApp } from 'universal-env';
+import { isQuickApp, isByteDanceMicroApp, isWeChatMiniProgram } from 'universal-env';
 import Host from './host';
 import { scheduleEffect, invokeEffects } from './scheduler';
 import { is } from './shallowEqual';
@@ -35,10 +35,12 @@ function areInputsEqual(inputs, prevInputs) {
   return true;
 }
 
-function setWrapperRef(ref, create) {
-  if (isFunction(ref)) {
-    ref(create());
-    return () => ref(null);
+function setWrapperRef(instance, ref, create) {
+  if (isWeChatMiniProgram || isByteDanceMicroApp) {
+    if (ref) {
+      instance._internal.triggerEvent('ComRef', create());
+    }
+    return () => instance._internal.triggerEvent('ComRef', null);
   } else if (!isNull(ref)) {
     ref.current = create();
     return () => {
@@ -164,14 +166,16 @@ export function useImperativeHandle(ref, create, inputs) {
   const nextInputs = !isNull(inputs) && !isUndef(inputs) ? inputs.concat([ref]) : null;
   const currentInstance = getCurrentRenderingInstance();
   const mounted = currentInstance.__mounted;
+  let willUnmountFn;
 
   if (!currentInstance.mounted) {
-    setWrapperRef(ref, create);
+    willUnmountFn = setWrapperRef(currentInstance, ref, create);
   }
   useLayoutEffect(() => {
     if (mounted) {
-      setWrapperRef(ref, create);
+      willUnmountFn = setWrapperRef(currentInstance, ref, create);
     }
+    return willUnmountFn;
   }, nextInputs);
 }
 

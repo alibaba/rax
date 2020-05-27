@@ -230,6 +230,7 @@ function createReactiveClass(pureRender) {
     constructor(props) {
       super(props);
       this._render = pureRender;
+      this.__isReactiveComponent = true;
       this.__compares = pureRender.__compares;
 
       // Handle functional component shouldUpdateComponent
@@ -260,8 +261,6 @@ function createReactiveClass(pureRender) {
   };
   // Transfer __injectHistory
   Klass.__injectHistory = pureRender.__injectHistory;
-  // Set as function component
-  Klass.prototype.isFunctionComponent = true;
   return Klass;
 }
 
