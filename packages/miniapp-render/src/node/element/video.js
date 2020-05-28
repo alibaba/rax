@@ -42,9 +42,9 @@ class HTMLVideoElement extends Element {
     }
   }
 
-  $_triggerParentUpdate() {
+  $_triggerParentUpdate(payload) {
     this.$_initRect();
-    super.$_triggerParentUpdate();
+    super.$_triggerParentUpdate(payload);
   }
 
   $_initRect() {

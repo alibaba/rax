@@ -32,7 +32,7 @@ function getPageRoute(pageId) {
  */
 const waitFuncSet = new Set();
 function throttle(func) {
-  return () => {
+  return (...args) => {
     if (waitFuncSet.has(func)) return;
 
     waitFuncSet.add(func);
@@ -40,7 +40,7 @@ function throttle(func) {
     Promise.resolve().then(() => {
       if (waitFuncSet.has(func)) {
         waitFuncSet.delete(func);
-        func();
+        func(...args);
       }
     }).catch(() => {
       // ignore

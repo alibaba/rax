@@ -13,7 +13,8 @@ import getLifeCycle from './adapter/getLifeCycle';
 import callEvent from './events/callEvent';
 import callSimpleEvent from './events/callSimpleEvent';
 
-const { cache, tool } = render.$$adapter;
+const { cache, tool, perf, constants } = render.$$adapter;
+const { PAGE_INIT, SET_DATA } = constants;
 
 // The number of levels of dom subtrees rendered as custom components
 const MAX_DOM_SUB_TREE_LEVEL = 10;
@@ -31,15 +32,18 @@ const config = {
   },
   methods: {
     // Watch child nodes update
-    onChildNodesUpdate() {
+    onChildNodesUpdate(...args) {
+      console.log('onChildNodesUpdate -> args', args);
       // Node unomunted
       if (!this.pageId || !this.nodeId) return;
 
       // child nodes update
       const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1, this);
       if (checkDiffChildNodes(childNodes, this.data.childNodes)) {
+        const childNodes = dealWithLeafAndSimple(childNodes, this.onChildNodesUpdate);
+        console.log('onChildNodesUpdate -> childNodes', childNodes);
         this.setData({
-          childNodes: dealWithLeafAndSimple(childNodes, this.onChildNodesUpdate),
+          childNodes
         });
       }
 
@@ -139,7 +143,7 @@ const config = {
     },
     onTap(evt) {
       if (this.document && this.document.$$checkEvent(evt)) {
-        callEvent('click', evt, { button: 0 }, this.pageId, this.nodeId); // 默认左键
+        callEvent('click', evt, { button: 0 }, this.pageId, this.nodeId); // Default Left button
       }
     },
     onImgLoad(evt) {
@@ -227,7 +231,11 @@ const lifeCycles = getLifeCycle({
       this.onChildNodesUpdate
     );
 
-    if (Object.keys(data).length) this.setData(data);
+    if (Object.keys(data).length) {
+      this.setData(data, () => {
+        perf.stop(PAGE_INIT);
+      });
+    }
     if (isMiniApp) {
       if (this.domNode.tagName === 'CANVAS') {
         this.domNode.$$trigger('canvasReady');

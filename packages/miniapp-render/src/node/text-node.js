@@ -45,8 +45,9 @@ class TextNode extends Node {
     }
   }
 
-  $_triggerParentUpdate() {
-    if (this.parentNode) this.parentNode.$$trigger('$$childNodesUpdate');
+  $_triggerParentUpdate(payload) {
+    this._root.enqueueRender(payload);
+    // if (this.parentNode) this.parentNode.$$trigger('$$childNodesUpdate');
   }
 
   get $$domInfo() {
@@ -82,7 +83,11 @@ class TextNode extends Node {
     value += '';
 
     this.$_content = value;
-    this.$_triggerParentUpdate();
+    const payload = {
+      path: `${this._path}.text`,
+      value
+    };
+    this.$_triggerParentUpdate(payload);
   }
 
   get data() {
