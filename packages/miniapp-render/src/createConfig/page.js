@@ -41,8 +41,8 @@ export function getBaseLifeCycles(init, config) {
       this.window.__RAX_INITIALISED__ = false;
 
       // Handle update of body
-      this.document.documentElement.addEventListener('$$childNodesUpdate', () => {
-
+      this.document.body.addEventListener('render', (...args) => {
+        console.log('args', args);
       });
 
       init(this.window, this.document);

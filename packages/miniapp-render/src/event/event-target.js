@@ -258,7 +258,8 @@ class EventTarget {
       handlers.forEach(handler => {
         if (event && event.$$immediateStop) return;
         try {
-          handler.call(this || null, event, ...args);
+          const processedArgs = event ? [event, ...args] : [...args];
+          handler.call(this || null, ...processedArgs);
         } catch (err) {
           console.error(err);
         }
