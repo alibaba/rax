@@ -24,14 +24,10 @@ export function createPage(pageId, config) {
   };
 }
 
-export default function(init, config, lifeCycles = []) {
-  const pageConfig = {
-    data: {
-      pageId: '',
-      bodyClass: 'miniprogram-root'
-    },
+export function getBaseLifeCycles(init, config) {
+  return {
     onLoad(query) {
-      this.pageId = `p-${tool.getId()}`;
+      this.pageId = this.data.pageId;
       const { window, document } = createPage(this.pageId, config);
       this.window = window;
       this.document = document;
@@ -46,20 +42,10 @@ export default function(init, config, lifeCycles = []) {
 
       // Handle update of body
       this.document.documentElement.addEventListener('$$childNodesUpdate', () => {
-        const domNode = this.document.body;
-        const data = {
-          bodyClass: `${domNode.className || ''} miniprogram-root`
-        };
 
-        if (data.bodyClass !== this.data.bodyClass) {
-          this.setData(data);
-        }
       });
 
       init(this.window, this.document);
-      this.setData({
-        pageId: this.pageId
-      });
       this.app = this.window.createApp();
       this.window.$$trigger('load');
       this.window.$$trigger('pageload', { event: query });
@@ -83,7 +69,6 @@ export default function(init, config, lifeCycles = []) {
     onUnload() {
       this.window.$$trigger('beforeunload');
       this.window.$$trigger('pageunload');
-      if (this.app && this.app.$destroy) this.app.$destroy();
       this.document.body.$$recycle(); // Recycle DOM node
 
       cache.destroy(this.pageId);
@@ -91,11 +76,19 @@ export default function(init, config, lifeCycles = []) {
       this.pageId = null;
       this.window = null;
       this.document = null;
-      this.app = null;
       this.query = null;
     }
   };
-  // Define page lifecycles
+}
+
+export default function(init, config, lifeCycles = []) {
+  const pageConfig = {
+    data: {
+      pageId: `p-${tool.getId()}`
+    },
+    ...getBaseLifeCycles(init, config)
+  };
+  // Define page lifecycles, like onReachBottom
   defineLifeCycle(lifeCycles, pageConfig);
   return pageConfig;
 };

@@ -76,3 +76,5 @@ export const NEET_RENDER_TO_CUSTOM_ELEMENT = [
 ];
 
 export const IN_COVER = ['cover-view'];
+
+export const PAGE_INIT = 'Page initialization';

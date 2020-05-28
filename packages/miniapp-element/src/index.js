@@ -6,15 +6,14 @@ import checkComponentAttr from './vdom/checkComponentAttr';
 import dealWithLeafAndSimple from './vdom/dealWithLeafAndSimple';
 import init from './init';
 import { componentNameMap, handlesMap } from './component';
-import { NOT_SUPPORT, IN_COVER } from './constants';
+import { NOT_SUPPORT, IN_COVER, PAGE_INIT } from './constants';
 import getInitialProps from './adapter/getInitialProps';
 import getId from './adapter/getId';
 import getLifeCycle from './adapter/getLifeCycle';
 import callEvent from './events/callEvent';
 import callSimpleEvent from './events/callSimpleEvent';
 
-const { cache, tool, perf, constants } = render.$$adapter;
-const { PAGE_INIT, SET_DATA } = constants;
+const { cache, tool, perf } = render.$$adapter;
 
 // The number of levels of dom subtrees rendered as custom components
 const MAX_DOM_SUB_TREE_LEVEL = 10;

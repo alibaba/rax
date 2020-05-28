@@ -1,7 +1,6 @@
-import tool from './util/tool';
-import cache from './util/cache';
-import perf from './util/perf';
-import constants from './util/constants';
+import tool from './utils/tool';
+import cache from './utils/cache';
+import perf from './utils/perf';
 import EventTarget from './event/event-target';
 import Event from './event/event';
 import createAppConfig from './createConfig/app';
@@ -18,7 +17,6 @@ export default {
     EventTarget,
     Event,
     tool,
-    perf,
-    constants
+    perf
   }
 };

@@ -1,6 +1,6 @@
 import EventTarget from '../event/event-target';
-import cache from '../util/cache';
-import Shortcuts from '../util/shortcuts';
+import cache from '../utils/cache';
+import Shortcuts from '../utils/shortcuts';
 
 class Node extends EventTarget {
   /**
