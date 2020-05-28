@@ -277,6 +277,8 @@ export default class Component {
       this.__forceUpdate = false;
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
+      // Reset __shouldUpdate
+      this.__shouldUpdate = false;
     }
   }
 
