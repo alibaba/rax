@@ -371,7 +371,7 @@ export default class Component {
       // Use setData update
       const normalData = {};
       for (let key in data) {
-        if (Array.isArray(data[key]) && isArray(currentData[key]) && isAppendArray(currentData[key], data[key])) {
+        if (isArray(data[key]) && isArray(currentData[key]) && isAppendArray(currentData[key], data[key])) {
           arrayData[key] = [currentData[key].length, 0].concat(
             data[key].slice(currentData[key].length)
           );
@@ -468,7 +468,7 @@ function isDifferentData(prevData, nextData) {
   const nextType = typeof nextData;
   if (prevType !== nextType) return true;
   if (prevType === 'object' && !isNull(prevData) && !isNull(nextData)) {
-    if (Array.isArray(prevData) && Array.isArray(nextData) && prevData.length === nextData.length) {
+    if (isArray(prevData) && isArray(nextData) && prevData.length === nextData.length) {
       return nextData.every((val, index) => !shallowEqual(prevData[index], val));
     }
     return !shallowEqual(prevData, nextData);
