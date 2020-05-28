@@ -1,6 +1,6 @@
 import Element from '../element';
-import cache from '../../util/cache';
-import Pool from '../../util/pool';
+import cache from '../../utils/cache';
+import Pool from '../../utils/pool';
 
 const pool = new Pool();
 

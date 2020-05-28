@@ -1,5 +1,5 @@
-import Pool from '../util/pool';
-import cache from '../util/cache';
+import Pool from '../utils/pool';
+import cache from '../utils/cache';
 
 const pool = new Pool();
 

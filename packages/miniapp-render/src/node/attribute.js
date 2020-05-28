@@ -1,6 +1,6 @@
-import Pool from '../util/pool';
-import cache from '../util/cache';
-import tool from '../util/tool';
+import Pool from '../utils/pool';
+import cache from '../utils/cache';
+import tool from '../utils/tool';
 
 const pool = new Pool();
 

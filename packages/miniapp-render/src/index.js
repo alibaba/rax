@@ -2,40 +2,15 @@ import tool from './util/tool';
 import cache from './util/cache';
 import perf from './util/perf';
 import constants from './util/constants';
-import { createWindow } from './window';
-import Document from './document';
 import EventTarget from './event/event-target';
 import Event from './event/event';
+import createAppConfig from './createConfig/app';
+import createPageConfig from './createConfig/page';
 
 export default {
-  createPage(pageId, config) {
-    if (config) cache.setConfig(config);
+  createAppConfig,
 
-    const nodeIdMap = {};
-    const window = createWindow();
-    const document = new Document(pageId, nodeIdMap);
-
-    cache.setWindow(window);
-    cache.init(pageId, {
-      document,
-      nodeIdMap
-    });
-
-    return {
-      window,
-      document
-    };
-  },
-
-  destroyPage(pageId) {
-    cache.destroy(pageId);
-  },
-
-  createApp() {
-    const window = createWindow();
-    cache.setWindow(window);
-    return window;
-  },
+  createPageConfig,
 
   // For miniprogram-element
   $$adapter: {

@@ -1,6 +1,5 @@
 import mock from '../../renderMock';
-import tool from '../../src/util/tool';
-import cache from '../../src/util/cache';
+import tool from '../../src/utils/tool';
 
 test('tool: toDash', () => {
   expect(tool.toDash('abcD12kKD;saS')).toBe('abc-d12k-k-d;sa-s');
@@ -16,18 +15,6 @@ test('tool: getId', () => {
   expect(tool.getId().toString()).toEqual(expect.stringMatching(/^\d{13}$/));
   expect(tool.getId().toString()).toEqual(expect.stringMatching(/^\d{13}$/));
   expect(tool.getId().toString()).toEqual(expect.stringMatching(/^\d{13}$/));
-});
-
-test('tool: getPageRoute/getPageName', () => {
-  const res1 = mock.createPage('home');
-  expect(tool.getPageRoute(res1.document.__pageId)).toBe('/pages/home/index');
-  expect(tool.getPageName('pages/home/index')).toBe('home');
-  const res2 = mock.createPage('list');
-  expect(tool.getPageRoute(res2.document.__pageId)).toBe('/pages/list/index');
-  expect(tool.getPageName('pages/list/index')).toBe('list');
-  const res3 = mock.createPage('detail');
-  expect(tool.getPageRoute(res3.document.__pageId)).toBe('/pages/detail/index');
-  expect(tool.getPageName('pages/detail/index')).toBe('detail');
 });
 
 test('tool: throttle/flushThrottleCache', async() => {
