@@ -375,7 +375,7 @@ export default class Component {
           arrayData[key] = [currentData[key].length, 0].concat(
             data[key].slice(currentData[key].length)
           );
-        } else if (diffData(currentData[key], data[key])) {
+        } else if (isDifferentData(currentData[key], data[key])) {
           if (isPlainObject(data[key])) {
             normalData[key] = Object.assign({}, currentData[key], data[key]);
           } else {
@@ -403,7 +403,7 @@ export default class Component {
           }
           if (!(key in this._internal)) {
             this._internal.$set(key, data[key]);
-          } else if (diffData(this._internal, data)) {
+          } else if (isDifferentData(this._internal, data)) {
             this._internal[key] = data[key];
           }
         }
@@ -412,7 +412,7 @@ export default class Component {
     } else {
       const normalData = {};
       for (let key in data) {
-        if (diffData(this._internal.data[key], data[key])) {
+        if (isDifferentData(this._internal.data[key], data[key])) {
           normalData[key] = data[key];
         }
       }
@@ -463,7 +463,7 @@ function isAppendArray(prev, next) {
   return next.length > prev.length && next.slice(0, prev.length).every((val, index) => shallowEqual(prev[index], val));
 }
 
-function diffData(prevData, nextData) {
+function isDifferentData(prevData, nextData) {
   const prevType = typeof prevData;
   const nextType = typeof nextData;
   if (prevType !== nextType) return true;
