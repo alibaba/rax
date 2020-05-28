@@ -371,20 +371,15 @@ export default class Component {
       // Use setData update
       const normalData = {};
       for (let key in data) {
-        if (
-          Array.isArray(data[key]) &&
-          diffArray(currentData[key], data[key])
-        ) {
+        if (Array.isArray(data[key]) && isArray(currentData[key]) && isAppendArray(currentData[key], data[key])) {
           arrayData[key] = [currentData[key].length, 0].concat(
             data[key].slice(currentData[key].length)
           );
-        } else {
-          if (diffData(currentData[key], data[key])) {
-            if (isPlainObject(data[key])) {
-              normalData[key] = Object.assign({}, currentData[key], data[key]);
-            } else {
-              normalData[key] = data[key];
-            }
+        } else if (diffData(currentData[key], data[key])) {
+          if (isPlainObject(data[key])) {
+            normalData[key] = Object.assign({}, currentData[key], data[key]);
+          } else {
+            normalData[key] = data[key];
           }
         }
       }
@@ -460,14 +455,12 @@ function triggerCallbacks(callbacks) {
   }
 }
 
-function diffArray(prev, next) {
-  if (!isArray(prev)) return false;
+function isAppendArray(prev, next) {
   // Only concern about list append case
   if (next.length === 0) return false;
-  if (prev.length > next.length) return false;
   if (prev.length === 0) return true;
   // When item's type is object, they have differrent reference, so should use shallowEqual
-  return next.slice(0, prev.length).every((val, index) => shallowEqual(prev[index], val));
+  return next.length > prev.length && next.slice(0, prev.length).every((val, index) => !shallowEqual(prev[index], val));
 }
 
 function diffData(prevData, nextData) {
@@ -475,6 +468,9 @@ function diffData(prevData, nextData) {
   const nextType = typeof nextData;
   if (prevType !== nextType) return true;
   if (prevType === 'object' && !isNull(prevData) && !isNull(nextData)) {
+    if (Array.isArray(prevData) && Array.isArray(nextData) && prevData.length === nextData.length) {
+      return nextData.every((val, index) => !shallowEqual(prevData[index], val));
+    }
     return !shallowEqual(prevData, nextData);
   } else {
     return prevData !== nextData;
