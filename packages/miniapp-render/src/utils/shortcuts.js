@@ -8,4 +8,4 @@ export default {
   Style: 'st',
   Class: 'cl',
   Src: 'src'
-}
+};

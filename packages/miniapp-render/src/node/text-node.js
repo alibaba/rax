@@ -86,7 +86,7 @@ class TextNode extends Node {
     const payload = {
       path: `${this._path}.text`,
       value
-    }
+    };
     this.$_triggerParentUpdate(payload);
   }
 

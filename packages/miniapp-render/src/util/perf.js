@@ -5,7 +5,7 @@ class Performance {
     this.recorder = new Map();
   }
 
-  start (id) {
+  start(id) {
     const { debug } = cache.getConfig();
     if (!debug) {
       return;
@@ -13,7 +13,7 @@ class Performance {
     this.recorder.set(id, Date.now());
   }
 
-  stop (id) {
+  stop(id) {
     const { debug } = cache.getConfig();
     if (!debug) {
       return;

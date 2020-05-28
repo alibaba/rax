@@ -1,7 +1,6 @@
 import Element from './element';
 
 class RootElement extends Element {
-
   $$init(options, tree) {
     super.$$init(options, tree);
     this.pendingRender = false;

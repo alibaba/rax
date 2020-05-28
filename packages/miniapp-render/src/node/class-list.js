@@ -57,7 +57,7 @@ ClassList.prototype = Object.assign([], {
     const payload = {
       path: `${this.$_element._path}.class`,
       value: this
-    }
+    };
 
     this.$_doUpdate(payload);
   },

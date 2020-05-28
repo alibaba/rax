@@ -142,7 +142,7 @@ class Attribute {
       const payload = {
         path: `${this.$_element._path}.${name}`,
         value: ''
-      }
+      };
       this.$_doUpdate(payload);
     }
 

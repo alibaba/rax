@@ -33,7 +33,7 @@ const config = {
   methods: {
     // Watch child nodes update
     onChildNodesUpdate(...args) {
-      console.log("onChildNodesUpdate -> args", args)
+      console.log('onChildNodesUpdate -> args', args);
       // Node unomunted
       if (!this.pageId || !this.nodeId) return;
 
@@ -41,7 +41,7 @@ const config = {
       const childNodes = filterNodes(this.domNode, DOM_SUB_TREE_LEVEL - 1, this);
       if (checkDiffChildNodes(childNodes, this.data.childNodes)) {
         const childNodes = dealWithLeafAndSimple(childNodes, this.onChildNodesUpdate);
-        console.log("onChildNodesUpdate -> childNodes", childNodes)
+        console.log('onChildNodesUpdate -> childNodes', childNodes);
         this.setData({
           childNodes
         });

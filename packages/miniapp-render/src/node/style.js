@@ -86,7 +86,7 @@ class Style {
       const payload = {
         path: `${this.$_element._path}.class`,
         value: this.cssText
-      }
+      };
       this.$_doUpdate(payload);
     }
   }
