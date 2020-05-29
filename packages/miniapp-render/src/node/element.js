@@ -652,13 +652,17 @@ class Element extends Node {
     // Trigger update
     const simpleNode = {
       id: node.id,
-      style: node.style,
+      style: {
+        ...node.style,
+        $_element: null
+      },
       src: node.src,
       tagName: node.tagName,
       textContent: node.textContent,
       dataset: node.dataset,
       attributes: node.attributes,
-      $_nodeId: node._nodeId
+      $_nodeId: node._nodeId,
+      children: node.children
     };
     const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, simpleNode];
     this.$_triggerMeUpdate(payload);
@@ -702,13 +706,17 @@ class Element extends Node {
       this.$_children.push(node);
       const simpleNode = {
         id: node.id,
-        style: node.style,
+        style: {
+          ...node.style,
+          $_element: null
+        },
         src: node.src,
         tagName: node.tagName,
         textContent: node.textContent,
         dataset: node.dataset,
         attributes: node.attributes,
-        $_nodeId: node._nodeId
+        $_nodeId: node._nodeId,
+        children: node.children
       };
       payload = [`${this._path}.cn`, this.$_children.length - 1, 0, simpleNode];
     } else {
@@ -716,13 +724,17 @@ class Element extends Node {
       this.$_children.splice(insertIndex, 0, node);
       const simpleNode = {
         id: node.id,
-        style: node.style,
+        style: {
+          ...node.style,
+          $_element: null
+        },
         src: node.src,
         tagName: node.tagName,
         textContent: node.textContent,
         dataset: node.dataset,
         attributes: node.attributes,
-        $_nodeId: node._nodeId
+        $_nodeId: node._nodeId,
+        children: node.children
       };
       payload = [`${this._path}.cn`, insertIndex, 0, simpleNode];
     }
@@ -762,13 +774,17 @@ class Element extends Node {
     // Trigger update
     const simpleNode = {
       id: node.id,
-      style: node.style,
+      style: {
+        ...node.style,
+        $_element: null
+      },
       src: node.src,
       tagName: node.tagName,
       textContent: node.textContent,
       dataset: node.dataset,
       attributes: node.attributes,
-      $_nodeId: node._nodeId
+      $_nodeId: node._nodeId,
+      children: node.children
     };
 
     const payload = [
