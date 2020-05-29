@@ -650,7 +650,17 @@ class Element extends Node {
     this._updateNodeMap(node);
 
     // Trigger update
-    const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
+    const simpleNode = {
+      id: node.id,
+      style: node.style,
+      src: node.src,
+      tagName: node.tagName,
+      textContent: node.textContent,
+      dataset: node.dataset,
+      attributes: node.attributes,
+      $_nodeId: node._nodeId
+    };
+    const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, simpleNode];
     this.$_triggerMeUpdate(payload);
 
     return this;
@@ -690,11 +700,31 @@ class Element extends Node {
     if (insertIndex === -1) {
       // Insert to the end
       this.$_children.push(node);
-      payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
+      const simpleNode = {
+        id: node.id,
+        style: node.style,
+        src: node.src,
+        tagName: node.tagName,
+        textContent: node.textContent,
+        dataset: node.dataset,
+        attributes: node.attributes,
+        $_nodeId: node._nodeId
+      };
+      payload = [`${this._path}.cn`, this.$_children.length - 1, 0, simpleNode];
     } else {
       // Inserted before ref
       this.$_children.splice(insertIndex, 0, node);
-      payload = [`${this._path}.cn`, insertIndex, 0, node];
+      const simpleNode = {
+        id: node.id,
+        style: node.style,
+        src: node.src,
+        tagName: node.tagName,
+        textContent: node.textContent,
+        dataset: node.dataset,
+        attributes: node.attributes,
+        $_nodeId: node._nodeId
+      };
+      payload = [`${this._path}.cn`, insertIndex, 0, simpleNode];
     }
     // Set parentNode
     node.$$updateParent(this);
@@ -730,11 +760,22 @@ class Element extends Node {
     this._updateNodeMap(old, true);
 
     // Trigger update
+    const simpleNode = {
+      id: node.id,
+      style: node.style,
+      src: node.src,
+      tagName: node.tagName,
+      textContent: node.textContent,
+      dataset: node.dataset,
+      attributes: node.attributes,
+      $_nodeId: node._nodeId
+    };
+
     const payload = [
       `${this._path}.cn`,
       replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
       replaceIndex === -1 ? 0 : 1,
-      node
+      simpleNode
     ];
     this.$_triggerMeUpdate(payload);
 
