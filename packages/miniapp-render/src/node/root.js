@@ -1,32 +1,34 @@
 import Element from './element';
 
-const leftAttrs = ['id', 'style', 'src', 'tagName', 'textContent', 'dataset', 'attributes', 'nodeId', 'children'];
 function simplify(node) {
-  for (let attr in node) {
-    if (attr.indexOf(leftAttrs) === -1) {
-      delete node.attr;
-    }
+  const domInfo = node.$$domInfo;
+  const simpleNode = {};
+  for (let attr in domInfo) {
+    simpleNode[attr] = domInfo[attr];
   }
-  if (node.style) {
-    node.style = {
-      ...node.style,
-      $_element: null
-    }
-  }
+  return simpleNode;
 }
 
 function traverseTree(node, action) {
   if (!node || !node.children) {
     return;
   }
-  const copiedNode = Object.assign({}, node);
-	const _queue = [];
-	_queue.push(copiedNode);
-	while (_queue.length) {
-		let _curNode = _queue.shift();
-		action(_curNode);
-		if (_curNode.children.length) {
-			_queue = _queue.concat(_curNode.children);
+  let copiedNode;
+	let queue = [];
+	queue.push(node);
+	while (queue.length) {
+		let curNode = queue.shift();
+    const result = action(curNode);
+    if (!copiedNode) {
+      copiedNode = result;
+      copiedNode.children = [];
+    } else {
+      curNode.__parent.children = curNode.__parent.children || [];
+      curNode.__parent.children.push(result);
+    }
+		if (curNode.$_children && curNode.$_children.length) {
+      curNode.$_children.forEach(n => n.__parent = result);
+			queue = queue.concat(curNode.$_children);
 		}
   }
   return copiedNode;
@@ -66,9 +68,9 @@ class RootElement extends Element {
       console.log('this.renderStacks', this.renderStacks);
       // TODO: Process data from array to obj
       // this.renderStacks: [_path, number, number, Element]
-      const ElementNode = this.renderStacks[3];
-      const simplifiedNode = traverseTree(ElementNode);
-      this.renderStacks[3] = simplifiedNode;
+      const ElementNode = this.renderStacks[0][3];
+      const simplifiedNode = traverseTree(ElementNode, simplify);
+      this.renderStacks[0][3] = simplifiedNode;
       this.$$trigger('render', { args: this.renderStacks });
       this.renderStacks = [];
     }, 0);
