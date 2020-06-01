@@ -1,6 +1,7 @@
 import callSingleEvent from '../events/callSingleEvent';
+import { isMiniApp } from 'universal-env';
 
-const props = [{
+let props = [{
   name: 'src',
   get(domNode) {
     return domNode.src;
@@ -145,22 +146,26 @@ const props = [{
   get(domNode) {
     return domNode.getAttribute('animation');
   }
-}, {
-  name: 'enableNative',
-  get(domNode) {
-    return !!domNode.getAttribute('enableNative');
-  }
-}, {
-  name: 'playsinline',
-  get(domNode) {
-    return !!domNode.getAttribute('playsinline');
-  }
-}, {
-  name: 'rawControls',
-  get(domNode) {
-    return !!domNode.getAttribute('rawControls');
-  }
 }];
+
+if (isMiniApp) {
+  props = props.concat([{
+    name: 'enableNative',
+    get(domNode) {
+      return !!domNode.getAttribute('enableNative');
+    }
+  }, {
+    name: 'playsinline',
+    get(domNode) {
+      return !!domNode.getAttribute('playsinline');
+    }
+  }, {
+    name: 'rawControls',
+    get(domNode) {
+      return !!domNode.getAttribute('rawControls');
+    }
+  }]);
+}
 
 
 export default {

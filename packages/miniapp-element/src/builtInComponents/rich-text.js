@@ -1,4 +1,5 @@
 /* global isWeChatMiniProgram */
+import { isWeChatMiniProgram } from 'universal-env';
 
 const props = [{
   name: 'nodes',
