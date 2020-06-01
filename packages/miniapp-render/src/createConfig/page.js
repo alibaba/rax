@@ -41,14 +41,26 @@ export function getBaseLifeCycles(init, config) {
       this.window.__RAX_INITIALISED__ = false;
 
       // Handle update of body
-      this.document.body.addEventListener('render', (...args) => {
-        console.log('args', args);
+      this.document.body.addEventListener('render', (data) => {
+        if (this.$spliceData) {
+          if (data[0] === 'root.cn') {
+            this.setData({
+              root: data[3]
+            }, () => {
+              this.window.$$trigger('load');
+              this.window.$$trigger('pageload', { event: query });
+            });
+          } else {
+            this.$spliceData({
+              [data[0]]: data.slice(1)
+            });
+          }
+        }
       });
 
       init(this.window, this.document);
       this.app = this.window.createApp();
-      this.window.$$trigger('load');
-      this.window.$$trigger('pageload', { event: query });
+      this.window.$$trigger('DOMContentLoaded');
     },
     onShow() {
       if (this.window) {
@@ -84,7 +96,8 @@ export function getBaseLifeCycles(init, config) {
 export default function(init, config, lifeCycles = []) {
   const pageConfig = {
     data: {
-      pageId: `p-${tool.getId()}`
+      pageId: `p-${tool.getId()}`,
+      root: {}
     },
     ...getBaseLifeCycles(init, config)
   };

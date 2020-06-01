@@ -650,21 +650,7 @@ class Element extends Node {
     this._updateNodeMap(node);
 
     // Trigger update
-    const simpleNode = {
-      id: node.id,
-      style: {
-        ...node.style,
-        $_element: null
-      },
-      src: node.src,
-      tagName: node.tagName,
-      textContent: node.textContent,
-      dataset: node.dataset,
-      attributes: node.attributes,
-      $_nodeId: node._nodeId,
-      children: node.children
-    };
-    const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, simpleNode];
+    const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
     this.$_triggerMeUpdate(payload);
 
     return this;
@@ -704,39 +690,11 @@ class Element extends Node {
     if (insertIndex === -1) {
       // Insert to the end
       this.$_children.push(node);
-      const simpleNode = {
-        id: node.id,
-        style: {
-          ...node.style,
-          $_element: null
-        },
-        src: node.src,
-        tagName: node.tagName,
-        textContent: node.textContent,
-        dataset: node.dataset,
-        attributes: node.attributes,
-        $_nodeId: node._nodeId,
-        children: node.children
-      };
-      payload = [`${this._path}.cn`, this.$_children.length - 1, 0, simpleNode];
+      payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
     } else {
       // Inserted before ref
       this.$_children.splice(insertIndex, 0, node);
-      const simpleNode = {
-        id: node.id,
-        style: {
-          ...node.style,
-          $_element: null
-        },
-        src: node.src,
-        tagName: node.tagName,
-        textContent: node.textContent,
-        dataset: node.dataset,
-        attributes: node.attributes,
-        $_nodeId: node._nodeId,
-        children: node.children
-      };
-      payload = [`${this._path}.cn`, insertIndex, 0, simpleNode];
+      payload = [`${this._path}.cn`, insertIndex, 0, node];
     }
     // Set parentNode
     node.$$updateParent(this);
@@ -772,26 +730,11 @@ class Element extends Node {
     this._updateNodeMap(old, true);
 
     // Trigger update
-    const simpleNode = {
-      id: node.id,
-      style: {
-        ...node.style,
-        $_element: null
-      },
-      src: node.src,
-      tagName: node.tagName,
-      textContent: node.textContent,
-      dataset: node.dataset,
-      attributes: node.attributes,
-      $_nodeId: node._nodeId,
-      children: node.children
-    };
-
     const payload = [
       `${this._path}.cn`,
       replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
       replaceIndex === -1 ? 0 : 1,
-      simpleNode
+      node
     ];
     this.$_triggerMeUpdate(payload);
 

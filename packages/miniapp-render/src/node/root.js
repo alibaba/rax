@@ -14,10 +14,10 @@ function traverseTree(node, action) {
     return;
   }
   let copiedNode;
-	let queue = [];
-	queue.push(node);
-	while (queue.length) {
-		let curNode = queue.shift();
+  let queue = [];
+  queue.push(node);
+  while (queue.length) {
+    let curNode = queue.shift();
     const result = action(curNode);
     if (!copiedNode) {
       copiedNode = result;
@@ -26,10 +26,10 @@ function traverseTree(node, action) {
       curNode.__parent.children = curNode.__parent.children || [];
       curNode.__parent.children.push(result);
     }
-		if (curNode.$_children && curNode.$_children.length) {
+    if (curNode.$_children && curNode.$_children.length) {
       curNode.$_children.forEach(n => n.__parent = result);
-			queue = queue.concat(curNode.$_children);
-		}
+      queue = queue.concat(curNode.$_children);
+    }
   }
   return copiedNode;
 }
