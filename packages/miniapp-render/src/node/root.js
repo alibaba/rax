@@ -67,10 +67,15 @@ class RootElement extends Element {
       this.pendingRender = false;
       console.log('this.renderStacks', this.renderStacks);
       // TODO: Process data from array to obj
-      // this.renderStacks: [_path, number, number, Element]
-      const ElementNode = this.renderStacks[0][3];
-      const simplifiedNode = traverseTree(ElementNode, simplify);
-      this.renderStacks[0][3] = simplifiedNode;
+      // type 1: [_path, number, number, Element]
+      // type 2: {path: '', value: ''}
+      for (let i = 0, j = this.renderStacks.length; i < j; i++) {
+        const item = this.renderStacks[i];
+        const ElementNode = item[3];
+        const simplifiedNode = traverseTree(ElementNode, simplify);
+        this.renderStacks[i][3] = simplifiedNode;
+      }
+      // // this.renderStacks: [_path, number, number, Element]
       this.$$trigger('render', { args: this.renderStacks });
       this.renderStacks = [];
     }, 0);
