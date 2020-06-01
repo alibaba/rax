@@ -1,6 +1,7 @@
 import cache from '../utils/cache';
 import tool from '../utils/tool';
-import defineLifeCycle from '../utils/defineLifeCycle';
+import injectLifeCycle from '../bridge/injectLifeCycle';
+import createEventProxy from '../bridge/createEventProxy';
 import { createWindow } from '../window';
 import Document from '../document';
 
@@ -99,9 +100,10 @@ export default function(init, config, lifeCycles = []) {
       pageId: `p-${tool.getId()}`,
       root: {}
     },
-    ...getBaseLifeCycles(init, config)
+    ...getBaseLifeCycles(init, config),
+    ...createEventProxy()
   };
   // Define page lifecycles, like onReachBottom
-  defineLifeCycle(lifeCycles, pageConfig);
+  injectLifeCycle(lifeCycles, pageConfig);
   return pageConfig;
 };
