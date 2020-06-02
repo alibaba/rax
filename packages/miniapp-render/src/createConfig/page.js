@@ -42,18 +42,29 @@ export function getBaseLifeCycles(init, config) {
       this.window.__RAX_INITIALISED__ = false;
 
       // Handle update of body
-      this.document.body.addEventListener('render', (data) => {
+      this.document.body.addEventListener('render', (...tasks) => {
         if (this.$spliceData) {
-          if (data[0] === 'root.cn') {
+          if (tasks[0][0] === 'root.children') {
             this.setData({
-              root: data[3]
+              root: tasks[0][3]
             }, () => {
               this.window.$$trigger('load');
               this.window.$$trigger('pageload', { event: query });
             });
           } else {
-            this.$spliceData({
-              [data[0]]: data.slice(1)
+            let callback;
+            this.$batchedUpdates(() => {
+              tasks.forEach((task, index) => {
+                task[0] = task[0].replace('.children.[0]', '');
+                if (index === tasks.length - 1) {
+                  callback = () => {
+                    console.log('time', Date.now() - getApp().startTime);
+                  };
+                }
+                this.$spliceData({
+                  [task[0]]: task.slice(1)
+                }, callback);
+              });
             });
           }
         }

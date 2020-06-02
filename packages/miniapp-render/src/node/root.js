@@ -1,10 +1,16 @@
 import Element from './element';
+import cache from '../utils/cache';
 
 function simplify(node) {
   const domInfo = node.$$domInfo;
   const simpleNode = {};
   for (let attr in domInfo) {
     simpleNode[attr] = domInfo[attr];
+  }
+  simpleNode.behavior = node.behavior;
+  cache.setNode(node.__pageId, node.$$nodeId, node);
+  if (node.id) {
+    node.$_tree.updateIdMap(node.id, node);
   }
   return simpleNode;
 }
@@ -29,6 +35,9 @@ function traverseTree(node, action) {
     if (curNode.$_children && curNode.$_children.length) {
       curNode.$_children.forEach(n => n.__parent = result);
       queue = queue.concat(curNode.$_children);
+    }
+    if (!result.children) {
+      result.children = [];
     }
   }
   return copiedNode;
@@ -65,7 +74,6 @@ class RootElement extends Element {
     setTimeout(() => {
       // perf.start(SET_DATA);
       this.pendingRender = false;
-      console.log('this.renderStacks', this.renderStacks);
       // TODO: Process data from array to obj
       // type 1: [_path, number, number, Element]
       // type 2: {path: '', value: ''}

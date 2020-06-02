@@ -292,8 +292,7 @@ class Element extends Node {
       id: this.id,
       className: this.className,
       style: this.$__style ? this.style.cssText : '',
-      animation: this.$__attrs ? this.$__attrs.get('animation') : {},
-      children: this.children
+      animation: this.$__attrs ? this.$__attrs.get('animation') : {}
     };
   }
 
@@ -567,16 +566,20 @@ class Element extends Node {
       // Update mapping table
       this._updateNodeMap(node, true);
     });
-    this.$_children.length = 0;
 
     // An empty string does not add a textNode node
-    if (!text) return;
+    if (!text) {
+      const payload = [`${this._path}.children`, 0, this.$_children.length];
+      this.$_children.length = 0;
+      this.$_triggerMeUpdate(payload);
+    } else {
+      this.$_children.length = 0;
+      // Generated at run time, using the b- prefix
+      const nodeId = `b-${tool.getId()}`;
+      const child = this.ownerDocument.$$createTextNode({content: text, nodeId});
 
-    // Generated at run time, using the b- prefix
-    const nodeId = `b-${tool.getId()}`;
-    const child = this.ownerDocument.$$createTextNode({content: text, nodeId});
-
-    this.appendChild(child);
+      this.appendChild(child);
+    }
   }
 
   get style() {
@@ -648,10 +651,10 @@ class Element extends Node {
     node.$$updateParent(this);
 
     // Update map
-    this._updateNodeMap(node);
+    // this._updateNodeMap(node);
 
     // Trigger update
-    const payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
+    const payload = [`${this._path}.children`, this.$_children.length - 1, 0, node];
     this.$_triggerMeUpdate(payload);
 
     return this;
@@ -672,7 +675,7 @@ class Element extends Node {
       this._updateNodeMap(node, true);
 
       // Trigger update
-      const payload = [`${this._path}.cn`, index, 1];
+      const payload = [`${this._path}.children`, index, 1];
       this.$_triggerMeUpdate(payload);
     }
 
@@ -691,11 +694,11 @@ class Element extends Node {
     if (insertIndex === -1) {
       // Insert to the end
       this.$_children.push(node);
-      payload = [`${this._path}.cn`, this.$_children.length - 1, 0, node];
+      payload = [`${this._path}.children`, this.$_children.length - 1, 0, node];
     } else {
       // Inserted before ref
       this.$_children.splice(insertIndex, 0, node);
-      payload = [`${this._path}.cn`, insertIndex, 0, node];
+      payload = [`${this._path}.children`, insertIndex, 0, node];
     }
     // Set parentNode
     node.$$updateParent(this);
@@ -732,7 +735,7 @@ class Element extends Node {
 
     // Trigger update
     const payload = [
-      `${this._path}.cn`,
+      `${this._path}.children`,
       replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
       replaceIndex === -1 ? 0 : 1,
       node
