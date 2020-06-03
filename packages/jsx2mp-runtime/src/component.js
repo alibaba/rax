@@ -469,7 +469,7 @@ function isDifferentData(prevData, nextData) {
   if (prevType !== nextType) return true;
   if (prevType === 'object' && !isNull(prevData) && !isNull(nextData)) {
     if (isArray(prevData) && isArray(nextData) && prevData.length === nextData.length) {
-      return nextData.every((val, index) => !shallowEqual(prevData[index], val));
+      return nextData.some((val, index) => !shallowEqual(prevData[index], val));
     }
     return !shallowEqual(prevData, nextData);
   } else {
