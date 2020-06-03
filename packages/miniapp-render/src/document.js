@@ -43,14 +43,15 @@ function checkIsBuiltInComponent(tagName) {
 }
 
 class Document extends EventTarget {
-  constructor(pageId, nodeIdMap) {
+  constructor(internal, nodeIdMap) {
     super();
 
     const config = cache.getConfig();
     const nativeCustomComponent = config.nativeCustomComponent || {};
     this.usingComponents = nativeCustomComponent.usingComponents || {};
-
-    this.__pageId = pageId;
+    const { pageId } = internal;
+    this._internal = internal;
+    this.__pageId = internal.pageId;
 
     // Used to encapsulate special tag and corresponding constructors
     const that = this;

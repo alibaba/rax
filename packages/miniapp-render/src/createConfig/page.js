@@ -6,15 +6,15 @@ import { createWindow } from '../window';
 import Document from '../document';
 
 // Export for test
-export function createPage(pageId, config) {
+export function createPage(internal, config) {
   if (config) cache.setConfig(config);
 
   const nodeIdMap = {};
   const window = createWindow();
-  const document = new Document(pageId, nodeIdMap);
+  const document = new Document(internal, nodeIdMap);
 
   cache.setWindow(window);
-  cache.init(pageId, {
+  cache.init(internal.pageId, {
     document,
     nodeIdMap
   });
@@ -29,7 +29,7 @@ export function getBaseLifeCycles(init, config) {
   return {
     onLoad(query) {
       this.pageId = this.data.pageId;
-      const { window, document } = createPage(this.pageId, config);
+      const { window, document } = createPage(this, config);
       this.window = window;
       this.document = document;
       this.query = query;
@@ -44,9 +44,9 @@ export function getBaseLifeCycles(init, config) {
       // Handle update of body
       this.document.body.addEventListener('render', (...tasks) => {
         if (this.$spliceData) {
-          if (tasks[0][0] === 'root.children') {
+          if (tasks[0].path === 'root.children') {
             this.setData({
-              [tasks[0][0]]: [tasks[0][3]]
+              [tasks[0].path]: [tasks[0].item]
             }, () => {
               this.window.$$trigger('load');
               this.window.$$trigger('pageload', { event: query });
@@ -60,12 +60,21 @@ export function getBaseLifeCycles(init, config) {
                     console.log('time', Date.now() - getApp().startTime);
                   };
                 }
-                this.$spliceData({
-                  [task[0]]: task[3] ? task.slice(1) : task.slice(1, 3)
-                }, callback);
+                if (task.type === 'children') {
+                  const spliceArgs = [task.start, task.deleteCount];
+                  this.$spliceData({
+                    [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
+                  }, callback);
+                } else {
+                  this.setData({
+                    [task.path]: task.value
+                  });
+                }
               });
             });
           }
+        } else {
+          this.setData(tasks[0]);
         }
       });
 

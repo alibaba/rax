@@ -74,17 +74,34 @@ class RootElement extends Element {
     setTimeout(() => {
       // perf.start(SET_DATA);
       this.pendingRender = false;
-      // TODO: Process data from array to obj
-      // type 1: [_path, number, number, Element]
-      // type 2: {path: '', value: ''}
+      // type 1: { path, start, deleteCount, item? } => need to simplify item
+      // type 2: { path, value }
+      const renderObject = {};
+      const internal = cache.getDocument(this.__pageId)._internal;
       for (let i = 0, j = this.renderStacks.length; i < j; i++) {
-        const item = this.renderStacks[i];
-        const ElementNode = item[3];
-        const simplifiedNode = traverseTree(ElementNode, simplify);
-        this.renderStacks[i][3] = simplifiedNode;
+        const renderTask = this.renderStacks[i];
+        if (renderTask.type === 'children') {
+          const ElementNode = renderTask.item;
+          const simplifiedNode = traverseTree(ElementNode, simplify);
+          renderTask.item = simplifiedNode;
+        }
+        if (!internal.$spliceData) {
+          // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
+          const path = renderTask.path;
+          if (renderTask.type === 'children') {
+            renderObject[path] = renderObject[path] || internal.data[path] || [];
+            if (renderTask.item){
+              renderObject[path].splice(renderTask.start, renderTask.deleteCount, renderTask.item);
+            } else {
+              renderObject[path].splice(renderTask.start, renderTask.deleteCount);
+            }
+          } else {
+            renderObject[path] = renderTask.value;
+          }
+        }
       }
-      // // this.renderStacks: [_path, number, number, Element]
-      this.$$trigger('render', { args: this.renderStacks });
+
+      this.$$trigger('render', { args: internal.$spliceData ? this.renderStacks : renderObject });
       this.renderStacks = [];
     }, 0);
   }

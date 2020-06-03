@@ -569,7 +569,12 @@ class Element extends Node {
 
     // An empty string does not add a textNode node
     if (!text) {
-      const payload = [`${this._path}.children`, 0, this.$_children.length];
+      const payload = {
+        type: 'children',
+        path: `${this._path}.children`,
+        start: 0,
+        deleteCount: this.$_children.length
+      }
       this.$_children.length = 0;
       this.$_triggerMeUpdate(payload);
     } else {
@@ -654,7 +659,13 @@ class Element extends Node {
     // this._updateNodeMap(node);
 
     // Trigger update
-    const payload = [`${this._path}.children`, this.$_children.length - 1, 0, node];
+    const payload = {
+      type: 'children',
+      path: `${this._path}.children`,
+      start: this.$_children.length - 1,
+      deleteCount: 0,
+      item: node
+    }
     this.$_triggerMeUpdate(payload);
 
     return this;
@@ -675,7 +686,12 @@ class Element extends Node {
       this._updateNodeMap(node, true);
 
       // Trigger update
-      const payload = [`${this._path}.children`, index, 1];
+      const payload = {
+        type: 'children',
+        path: `${this._path}.children`,
+        start: index,
+        deleteCount: 1
+      };
       this.$_triggerMeUpdate(payload);
     }
 
@@ -690,15 +706,20 @@ class Element extends Node {
     if (node.parentNode) node.parentNode.removeChild(node);
 
     const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
-    let payload;
+    const payload = {
+      type: 'children',
+      path: `${this._path}.children`,
+      deleteCount: 0,
+      item: node
+    };
     if (insertIndex === -1) {
       // Insert to the end
       this.$_children.push(node);
-      payload = [`${this._path}.children`, this.$_children.length - 1, 0, node];
+      payload.start = this.$_children.length - 1;
     } else {
       // Inserted before ref
       this.$_children.splice(insertIndex, 0, node);
-      payload = [`${this._path}.children`, insertIndex, 0, node];
+      payload.start = insertIndex;
     }
     // Set parentNode
     node.$$updateParent(this);
@@ -734,12 +755,13 @@ class Element extends Node {
     this._updateNodeMap(old, true);
 
     // Trigger update
-    const payload = [
-      `${this._path}.children`,
-      replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
-      replaceIndex === -1 ? 0 : 1,
-      node
-    ];
+    const payload = {
+      type: 'children',
+      path: `${this._path}.children`,
+      start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
+      deleteCount: replaceIndex === -1 ? 0 : 1,
+      item: node
+    };
     this.$_triggerMeUpdate(payload);
 
     return old;

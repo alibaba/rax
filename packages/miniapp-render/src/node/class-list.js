@@ -55,8 +55,8 @@ ClassList.prototype = Object.assign([], {
     }
 
     const payload = {
-      path: `${this.$_element._path}.class`,
-      value: this
+      path: `${this.$_element._path}.className`,
+      value: this.slice().join(' ')
     };
 
     this.$_doUpdate(payload);
@@ -88,8 +88,8 @@ ClassList.prototype = Object.assign([], {
 
     if (isUpdate) {
       const payload = {
-        path: `${this.$_element._path}.class`,
-        value: this
+        path: `${this.$_element._path}.className`,
+        value: this.slice().join(' ')
       };
       this.$_doUpdate(payload);
     }
@@ -114,8 +114,8 @@ ClassList.prototype = Object.assign([], {
 
     if (isUpdate) {
       const payload = {
-        path: `${this.$_element._path}.class`,
-        value: this
+        path: `${this.$_element._path}.className`,
+        value: this.slice().join(' ')
       };
       this.$_doUpdate(payload);
     }
