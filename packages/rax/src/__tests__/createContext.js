@@ -608,4 +608,30 @@ describe('createContext', () => {
     render(<App />, container);
     expect(container.childNodes[1].childNodes[0].data).toEqual('light');
   });
+
+  it('should get context with contextType', function() {
+    let container = createNodeElement('div');
+    const MyContext = createContext();
+
+    class MyComponent extends Component {
+      static contextType = MyContext;
+
+      render() {
+        return <div>{this.context.foo}</div>;
+      }
+    }
+
+    class Parent extends Component {
+      render() {
+        return (
+          <MyContext.Provider value={{foo: 'bar'}}>
+            <MyComponent />
+          </MyContext.Provider>
+        );
+      }
+    }
+
+    render(<Parent />, container);
+    expect(container.childNodes[0].childNodes[0].data).toBe('bar');
+  });
 });

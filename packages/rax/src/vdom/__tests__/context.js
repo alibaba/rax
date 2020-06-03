@@ -7,7 +7,6 @@ import Host from '../host';
 import render from '../../render';
 import { flush } from '../scheduler';
 import ServerDriver from 'driver-server';
-import createContext from '../../createContext';
 
 describe('Context', function() {
   function createNodeElement(tagName) {
@@ -29,32 +28,6 @@ describe('Context', function() {
   afterEach(function() {
     Host.driver = null;
     jest.useRealTimers();
-  });
-
-  it('should get context with contextType', function() {
-    let container = createNodeElement('div');
-    const MyContext = createContext();
-
-    class MyComponent extends Component {
-      static contextType = MyContext;
-
-      render() {
-        return <div>{this.context.foo}</div>;
-      }
-    }
-
-    class Parent extends Component {
-      render() {
-        return (
-          <MyContext.Provider value={{foo: 'bar'}}>
-            <MyComponent />
-          </MyContext.Provider>
-        );
-      }
-    }
-
-    render(<Parent />, container);
-    expect(container.childNodes[0].childNodes[0].data).toBe('bar');
   });
 
   it('should pass context when rendering subtree elsewhere', function() {
