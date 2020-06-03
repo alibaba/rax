@@ -46,7 +46,7 @@ export function getBaseLifeCycles(init, config) {
         if (this.$spliceData) {
           if (tasks[0][0] === 'root.children') {
             this.setData({
-              root: tasks[0][3]
+              [tasks[0][0]]: [tasks[0][3]]
             }, () => {
               this.window.$$trigger('load');
               this.window.$$trigger('pageload', { event: query });
@@ -55,7 +55,6 @@ export function getBaseLifeCycles(init, config) {
             let callback;
             this.$batchedUpdates(() => {
               tasks.forEach((task, index) => {
-                task[0] = task[0].replace('.children.[0]', '');
                 if (index === tasks.length - 1) {
                   callback = () => {
                     console.log('time', Date.now() - getApp().startTime);
@@ -109,7 +108,9 @@ export default function(init, config, lifeCycles = []) {
   const pageConfig = {
     data: {
       pageId: `p-${tool.getId()}`,
-      root: {}
+      root: {
+        children: []
+      }
     },
     ...getBaseLifeCycles(init, config),
     ...createEventProxy()

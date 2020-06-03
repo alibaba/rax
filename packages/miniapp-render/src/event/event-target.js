@@ -268,7 +268,7 @@ class EventTarget {
   }
 
   // Check if the event can be triggered
-  $$checkEvent(miniprogramEvent) {
+  __checkEvent(miniprogramEvent) {
     const last = this.$_miniappEvent;
     const now = miniprogramEvent;
 
