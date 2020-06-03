@@ -21,8 +21,7 @@ export default function createContext(defaultValue) {
     __off(handler) {
       this.__handlers = this.__handlers.filter(h => h !== handler);
     }
-    // Like getChildContext but called in SSR
-    _getChildContext() {
+    getChildContext() {
       return {
         [contextID]: this
       };

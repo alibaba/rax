@@ -221,6 +221,15 @@ class CompositeComponent extends BaseComponent {
       }
     }
 
+    if (Component.contextType) {
+      const contextID = Component.contextType._contextID;
+      if (context[contextID]) {
+        return context[contextID].getValue();
+      } else {
+        return context._defaultValue;
+      }
+    }
+
     return maskedContext;
   }
 
