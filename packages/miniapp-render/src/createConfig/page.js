@@ -62,7 +62,7 @@ export function getBaseLifeCycles(init, config) {
                   };
                 }
                 this.$spliceData({
-                  [task[0]]: task.slice(1)
+                  [task[0]]: task[3] ? task.slice(1) : task.slice(1, 3)
                 }, callback);
               });
             });

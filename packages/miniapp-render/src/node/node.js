@@ -1,6 +1,5 @@
 import EventTarget from '../event/event-target';
 import cache from '../utils/cache';
-import Shortcuts from '../utils/shortcuts';
 
 class Node extends EventTarget {
   /**
@@ -47,7 +46,7 @@ class Node extends EventTarget {
     if (this.$_parentNode !== null) {
       const index = '[' + this.$_parentNode.childNodes.indexOf(this) + ']';
 
-      return `${this.parentNode._path}.${Shortcuts.Childnodes}.${index}`;
+      return `${this.parentNode._path}.children.${index}`;
     }
 
     return '';
