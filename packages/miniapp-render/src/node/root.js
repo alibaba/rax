@@ -8,10 +8,6 @@ function simplify(node) {
     simpleNode[attr] = domInfo[attr];
   }
   simpleNode.behavior = node.behavior;
-  cache.setNode(node.__pageId, node.$$nodeId, node);
-  if (node.id) {
-    node.$_tree.updateIdMap(node.id, node);
-  }
   return simpleNode;
 }
 
