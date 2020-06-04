@@ -656,7 +656,7 @@ class Element extends Node {
     node.$$updateParent(this);
 
     // Update map
-    // this._updateNodeMap(node);
+    this._updateNodeMap(node);
 
     // Trigger update
     const payload = {
