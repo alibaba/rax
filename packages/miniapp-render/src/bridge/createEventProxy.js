@@ -1,5 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { isWeChatMiniProgram } from 'universal-env';
 import getDomNodeFromEvt from './events/getDomNodeFromEvt';
 import baseEvents from './events/baseEvents';
 import simpleEvents from './events/simpleEvents';
@@ -8,14 +6,8 @@ import callSimpleEvent from './events/callSimpleEvent';
 import callSingleEvent from './events/callSingleEvent';
 import cache from '../utils/cache';
 
-export default function() {
+export default function(pageId) {
   const config = {};
-  if (isWeChatMiniProgram) {
-    // For style isolation
-    config.options = {
-      styleIsolation: 'shared'
-    };
-  }
   // Add get DOM Node from event method
   config.getDomNodeFromEvt = getDomNodeFromEvt;
   // Add call event method
@@ -27,9 +19,13 @@ export default function() {
   // Add reactive event define which will bubble
   baseEvents.map(({name, extra = null, eventName}) => {
     config[name] = function(evt) {
-      if (this.document && this.document.__checkEvent(evt)) {
+      if (!pageId) {
+        pageId = this.properties && this.properties.r.pageId;
+      }
+      const document = cache.getDocument(pageId);
+      if (document && document.__checkEvent(evt)) {
         const nodeId = evt.currentTarget.dataset.privateNodeId;
-        this.callEvent(eventName, evt, extra, nodeId); // Default Left button
+        this.callEvent(eventName, evt, extra, pageId, nodeId); // Default Left button
       }
     };
   });

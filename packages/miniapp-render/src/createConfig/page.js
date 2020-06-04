@@ -114,15 +114,16 @@ export function getBaseLifeCycles(init, config) {
 }
 
 export default function(init, config, lifeCycles = []) {
+  const pageId = `p-${tool.getId()}`;
   const pageConfig = {
     data: {
-      pageId: `p-${tool.getId()}`,
+      pageId,
       root: {
         children: []
       }
     },
     ...getBaseLifeCycles(init, config),
-    ...createEventProxy()
+    ...createEventProxy(pageId)
   };
   // Define page lifecycles, like onReachBottom
   injectLifeCycle(lifeCycles, pageConfig);

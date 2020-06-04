@@ -5,11 +5,10 @@ import cache from '../../utils/cache';
 import findParentNode from '../../utils/findParentNode';
 import checkEventAccessDomNode from '../../utils/checkEventAccessDomNode';
 
-export default function(eventName, evt, extra, nodeId) {
-  const originNode = cache.getNode(this.pageId, nodeId);
+export default function(eventName, evt, extra, pageId, nodeId) {
+  const originNode = cache.getNode(pageId, nodeId);
 
   if (!originNode) return;
-  console.log('before trigger', Date.now() - getApp().startTime);
   EventTarget.$$process(
     originNode,
     eventName,

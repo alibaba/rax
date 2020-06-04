@@ -1,22 +1,9 @@
-import tool from './utils/tool';
-import cache from './utils/cache';
-import perf from './utils/perf';
-import EventTarget from './event/event-target';
-import Event from './event/event';
 import createAppConfig from './createConfig/app';
 import createPageConfig from './createConfig/page';
+import createElementConfig from './createConfig/element';
 
 export default {
   createAppConfig,
-
   createPageConfig,
-
-  // For miniprogram-element
-  $$adapter: {
-    cache,
-    EventTarget,
-    Event,
-    tool,
-    perf
-  }
+  createElementConfig
 };
