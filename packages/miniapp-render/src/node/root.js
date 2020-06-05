@@ -1,6 +1,7 @@
 import Element from './element';
 import cache from '../utils/cache';
 import safeFindProperty from '../utils/safeFindProperty';
+import { propsMap } from '../builtInComponents';
 
 function simplify(node) {
   const domInfo = node.$$domInfo;
@@ -8,7 +9,17 @@ function simplify(node) {
   for (let attr in domInfo) {
     simpleNode[attr] = domInfo[attr];
   }
-  simpleNode.behavior = node.behavior;
+  let componentType;
+  if (node.behavior) {
+    componentType = simpleNode.behavior = node.behavior;
+  } else {
+    componentType = node.tagName;
+  }
+  // Get specific props
+  const specificProps = propsMap[componentType] || [];
+  for (let prop of specificProps) {
+    simpleNode[prop.name] = prop.get(node);
+  }
   return simpleNode;
 }
 

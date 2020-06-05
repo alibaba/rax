@@ -152,7 +152,6 @@ class Element extends Node {
   }
 
   // Update parent tree
-  // TODO:
   $_triggerParentUpdate(payload) {
     if (this.parentNode && !this.$_notTriggerUpdate) {
       // this.parentNode.$$trigger('$$childNodesUpdate');
@@ -169,6 +168,17 @@ class Element extends Node {
     // if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
   }
 
+  _traverseNodeMap(node, isRemove) {
+    let queue = [];
+    queue.push(node);
+    while(queue.length) {
+      let curNode = queue.shift();
+      this._updateNodeMap(curNode, isRemove);
+      if (curNode.childNodes && curNode.childNodes.length) {
+        queue = queue.concat(curNode.childNodes);
+      }
+    }
+  }
   // Changes to the mapping table caused by changes to update child nodes
   _updateNodeMap(node, isRemove) {
     const id = node.id;
@@ -186,12 +196,6 @@ class Element extends Node {
         this.$_tree.updateIdMap(id, null);
       } else {
         this.$_tree.updateIdMap(id, node);
-      }
-    }
-
-    if (node.childNodes && node.childNodes.length) {
-      for (const child of node.childNodes) {
-        this._updateNodeMap(child, isRemove);
       }
     }
   }
@@ -459,7 +463,7 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update the mapping table
-      this._updateNodeMap(node, true);
+      this._traverseNodeMap(node, true);
     });
     this.$_children.length = 0;
 
@@ -515,7 +519,7 @@ class Element extends Node {
         node.$$updateParent(null);
 
         // Update the mapping table
-        this._updateNodeMap(node, true);
+        this._traverseNodeMap(node, true);
       });
       this.$_children.length = 0;
 
@@ -564,7 +568,7 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update mapping table
-      this._updateNodeMap(node, true);
+      this._traverseNodeMap(node, true);
     });
 
     // An empty string does not add a textNode node
@@ -656,7 +660,7 @@ class Element extends Node {
     node.$$updateParent(this);
 
     // Update map
-    this._updateNodeMap(node);
+    this._traverseNodeMap(node);
 
     // Trigger update
     const payload = {
@@ -683,7 +687,7 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update map
-      this._updateNodeMap(node, true);
+      this._traverseNodeMap(node, true);
 
       // Trigger update
       const payload = {
@@ -725,7 +729,7 @@ class Element extends Node {
     node.$$updateParent(this);
 
     // Update the mapping table
-    this._updateNodeMap(node);
+    this._traverseNodeMap(node);
     // Trigger update
     this.$_triggerMeUpdate(payload);
 
@@ -751,8 +755,8 @@ class Element extends Node {
     // Set parentNode
     node.$$updateParent(this);
     // Update the mapping table
-    this._updateNodeMap(node);
-    this._updateNodeMap(old, true);
+    this._traverseNodeMap(node);
+    this._traverseNodeMap(old, true);
 
     // Trigger update
     const payload = {
