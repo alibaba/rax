@@ -15,5 +15,13 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onFormSubmit',
+    eventName: 'submit'
+  },
+  {
+    name: 'onFormReset',
+    eventName: 'reset'
   }]
 };

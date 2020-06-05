@@ -55,5 +55,9 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onProgressActiveEnd',
+    eventName: 'activeend'
   }]
 };

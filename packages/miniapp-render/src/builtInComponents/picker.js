@@ -50,6 +50,21 @@ const picker = {
       }
     }
   ],
+  singleEvents: [{
+    name: 'onPickerCancel',
+    eventName: 'cancel'
+  }],
+  functionalSingleEvents: [
+    {
+      name: 'onPickerChange',
+      eventName: 'change',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.value = evt.detail.value;
+      }
+    }
+  ]
 };
 
 if (isWeChatMiniProgram) {
@@ -81,9 +96,10 @@ if (isWeChatMiniProgram) {
       }
     }
   ]);
-  picker.handles.onPickerColumnChange = function(evt) {
-    callSingleEvent('columnchange', evt, this);
-  };
+  picker.singleEvents.push({
+    name: 'onPickerColumnChange',
+    eventName: 'columnchange'
+  });
 }
 
 export default picker;

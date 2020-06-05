@@ -10,5 +10,17 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onWebviewMessage',
+    eventName: 'message'
+  },
+  {
+    name: 'onWebviewLoad',
+    eventName: 'load'
+  },
+  {
+    name: 'onWebviewError',
+    eventName: 'error'
   }]
 };

@@ -99,5 +99,29 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onLivePusherStateChange',
+    eventName: 'statechange'
+  },
+  {
+    name: 'onLivePusherNetStatus',
+    eventName: 'netstatus'
+  },
+  {
+    name: 'onLivePusherError',
+    eventName: 'error'
+  },
+  {
+    name: 'onLivePusherBgmStart',
+    eventName: 'bgmstart'
+  },
+  {
+    name: 'onLivePusherBgmProgress',
+    eventName: 'bgmprogress'
+  },
+  {
+    name: 'onLivePusherBgmComplete',
+    eventName: 'bgmcomplete'
   }]
 };

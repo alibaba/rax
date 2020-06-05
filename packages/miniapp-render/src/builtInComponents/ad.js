@@ -15,5 +15,17 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onAdLoad',
+    eventName: 'load'
+  },
+  {
+    name: 'onAdError',
+    eventName: 'error'
+  },
+  {
+    name: 'onAdClose',
+    eventName: 'close'
   }]
 };

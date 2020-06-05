@@ -102,5 +102,29 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onButtonGetUserInfo',
+    eventName: 'getuserinfo'
+  },
+  {
+    name: 'onButtonContact',
+    eventName: 'contact'
+  },
+  {
+    name: 'onButtonGetPhoneNumber',
+    eventName: 'getphonenumber'
+  },
+  {
+    name: 'onButtonError',
+    eventName: 'error'
+  },
+  {
+    name: 'onButtonOpenSetting',
+    eventName: 'opensetting'
+  },
+  {
+    name: 'onButtonLaunchApp',
+    eventName: 'launchapp'
   }]
 };

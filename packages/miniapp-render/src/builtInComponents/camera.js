@@ -25,5 +25,21 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onCameraStop',
+    eventName: 'stop'
+  },
+  {
+    name: 'onCameraError',
+    eventName: 'error'
+  },
+  {
+    name: 'onCameraInitDone',
+    eventName: 'initdone'
+  },
+  {
+    name: 'onCameraScanCode',
+    eventName: 'scancode'
   }]
 };

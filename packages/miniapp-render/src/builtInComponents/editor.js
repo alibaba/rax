@@ -30,5 +30,25 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onEditorReady',
+    eventName: 'ready'
+  },
+  {
+    name: 'onEditorFocus',
+    eventName: 'focus'
+  },
+  {
+    name: 'onEditorBlur',
+    eventName: 'blur'
+  },
+  {
+    name: 'onEditorInput',
+    eventName: 'input'
+  },
+  {
+    name: 'onEditorStatusChange',
+    eventName: 'statuschange'
   }]
 };

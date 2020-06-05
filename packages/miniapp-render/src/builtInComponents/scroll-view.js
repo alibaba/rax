@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isWeChatMiniProgram } from 'universal-env';
+
 const ScrollView = {
   name: 'scroll-view',
   props: [{
@@ -67,7 +70,52 @@ const ScrollView = {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
-  }]
+  }],
+  singleEvents: [{
+    name: 'onScrollViewScrollToUpper',
+    eventName: 'scrolltoupper'
+  },
+  {
+    name: 'onScrollViewScrollToLower',
+    eventName: 'scrolltolower'
+  }],
+  functionalSingleEvents: [
+    {
+      name: 'onScrollViewScroll',
+      eventName: 'scroll',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('scroll-into-view', '');
+        domNode.$$setAttributeWithoutUpdate('scroll-top', evt.detail.scrollTop);
+        domNode.$$setAttributeWithoutUpdate('scroll-left', evt.detail.scrollLeft);
+
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.scrollIntoView = '';
+        domNode.__oldValues.scrollTop = evt.detail.scrollTop;
+        domNode.__oldValues.scrollLeft = evt.detail.scrollLeft;
+      }
+    }
+  ]
 };
+
+if (isWeChatMiniProgram) {
+  ScrollView.singleEvents = ScrollView.singleEvents.concat([
+    {
+      name: 'onScrollViewRefresherPulling',
+      eventName: 'refresherpulling'
+    },
+    {
+      name: 'onScrollViewRefresherRefresh',
+      eventName: 'refresherrefresh'
+    },
+    {
+      name: 'onScrollViewRefresherRestore',
+      eventName: 'refresherrestore'
+    },
+    {
+      name: 'onScrollViewRefresherAbort',
+      eventName: 'refresherabort'
+    }
+  ]);
+}
 
 export default ScrollView;

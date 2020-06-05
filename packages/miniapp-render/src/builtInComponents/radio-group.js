@@ -5,5 +5,9 @@ export default {
     get(domNode) {
       return domNode.getAttribute('name') || '';
     },
+  }],
+  singleEvents: [{
+    name: 'onRadioChange',
+    eventName: 'change'
   }]
 };

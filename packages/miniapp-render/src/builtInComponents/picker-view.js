@@ -34,5 +34,24 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
-  }]
+  }],
+  singleEvents: [{
+    name: 'onPickerViewPickstart',
+    eventName: 'pickstart'
+  },
+  {
+    name: 'onPickerViewPickend',
+    eventName: 'pickend'
+  }],
+  functionalSingleEvents: [
+    {
+      name: 'onPickerViewChange',
+      eventName: 'change',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.value = evt.detail.value;
+      }
+    }
+  ]
 };

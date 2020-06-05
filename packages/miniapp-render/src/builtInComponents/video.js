@@ -145,5 +145,45 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
-  }]
+  }],
+  singleEvents: [{
+    name: 'onVideoPlay',
+    eventName: 'play'
+  },
+  {
+    name: 'onVideoPause',
+    eventName: 'pause'
+  },
+  {
+    name: 'onVideoEnded',
+    eventName: 'ended'
+  },
+  {
+    name: 'onVideoFullScreenChange',
+    eventName: 'fullscreenchange'
+  },
+  {
+    name: 'onVideoWaiting',
+    eventName: 'waiting'
+  },
+  {
+    name: 'onVideoError',
+    eventName: 'error'
+  }],
+  handles: {
+    onVideoTimeUpdate(evt) {
+      const domNode = this.getDomNodeFromEvt('timeupdate', evt);
+      if (!domNode) return;
+
+      domNode.$$setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
+      callSingleEvent('timeupdate', evt, this);
+    },
+    onVideoProgress(evt) {
+      const domNode = this.getDomNodeFromEvt('progress', evt);
+      if (!domNode) return;
+
+      domNode.$$setAttributeWithoutUpdate('buffered', evt.detail.buffered);
+      callSingleEvent('progress', evt, this);
+    },
+  },
 };

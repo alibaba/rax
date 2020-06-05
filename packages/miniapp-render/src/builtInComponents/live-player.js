@@ -69,5 +69,17 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onLivePlayerStateChange',
+    eventName: 'statechange'
+  },
+  {
+    name: 'onLivePlayerFullScreenChange',
+    eventName: 'fullscreenchange'
+  },
+  {
+    name: 'onLivePlayerNetStatus',
+    eventName: 'netstatus'
   }]
 };

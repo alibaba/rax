@@ -2,11 +2,22 @@
 import { isMiniApp } from 'universal-env';
 import getDomNodeFromEvt from './events/getDomNodeFromEvt';
 import baseEvents from './events/baseEvents';
-import simpleEvents from './events/simpleEvents';
+import { handlesMap } from '../builtInComponents';
 import callEvent from './events/callEvent';
 import callSimpleEvent from './events/callSimpleEvent';
 import callSingleEvent from './events/callSingleEvent';
 import cache from '../utils/cache';
+
+function getPageId(pageId) {
+  if (pageId) return pageId;
+  let props;
+  if (!isMiniApp) {
+    props = this.properties;
+  } else {
+    props = this.props;
+  }
+  return props && props.r.pageId;
+}
 
 export default function(pageId) {
   const config = {};
@@ -19,40 +30,52 @@ export default function(pageId) {
   // Add call single event method
   config.callSingleEvent = callSingleEvent;
   // Add reactive event define which will bubble
-  baseEvents.map(({name, extra = null, eventName}) => {
+  baseEvents.forEach(({ name, extra = null, eventName }) => {
     config[name] = function(evt) {
-      if (!pageId) {
-        let props;
-        if (!isMiniApp) {
-          props = this.properties;
-        } else {
-          props = this.props;
-        }
-        pageId = props && props.r.pageId;
-      }
-      const document = cache.getDocument(pageId);
+      const __pageId = getPageId(pageId);
+      const document = cache.getDocument(__pageId);
       if (document && document.__checkEvent(evt)) {
         const nodeId = evt.currentTarget.dataset.privateNodeId;
-        this.callEvent(eventName, evt, extra, pageId, nodeId); // Default Left button
+        this.callEvent(eventName, evt, extra, __pageId, nodeId); // Default Left button
       }
     };
   });
   // Add reactive event define which won't bubble
-  simpleEvents.map(({name, eventName}) => {
+  handlesMap.simpleEvents.forEach(({ name, eventName }) => {
     config[name] = function(evt) {
-      if (!pageId) {
-        let props;
-        if (!isMiniApp) {
-          props = this.properties;
-        } else {
-          props = this.props;
-        }
-        pageId = props && props.r.pageId;
-      }
+      const __pageId = getPageId(pageId);
       const nodeId = evt.currentTarget.dataset.privateNodeId;
-      const targetNode = cache.getNode(pageId, nodeId);
+      const targetNode = cache.getNode(__pageId, nodeId);
       if (!targetNode) return;
       this.callSimpleEvent(eventName, evt, targetNode);
+    };
+  });
+
+  // Add reactive event define which only trigger once
+  handlesMap.singleEvents.forEach(({ name, eventName }) => {
+    config[name] = function(evt) {
+      this.callSingleEvent(eventName, evt);
+    };
+  });
+
+  // Add reactive event define which only trigger once and need middleware
+  handlesMap.functionalSingleEvents.forEach(({ name, eventName, middleware }) => {
+    config[name] = function(evt) {
+      const __pageId = getPageId(pageId);
+      const domNode = this.getDomNodeFromEvt(eventName, evt, __pageId);
+      if (!domNode) return;
+      middleware.call(this, evt, domNode);
+      this.callSingleEvent(eventName, evt);
+    };
+  });
+
+  // Add reactive event define which complex
+  handlesMap.complexEvents.forEach(({ name, eventName, middleware }) => {
+    config[name] = function(evt) {
+      const __pageId = getPageId(pageId);
+      const domNode = this.getDomNodeFromEvt(eventName, evt, __pageId);
+      if (!domNode) return;
+      middleware.call(this, evt, domNode, __pageId, evt.currentTarget.dataset.privateNodeId);
     };
   });
   return config;

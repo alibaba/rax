@@ -42,27 +42,81 @@ import swiperItem from './swiper-item';
 import pickerViewColumn from './picker-view-column';
 
 const components = [
-  coverImage, coverView, movableArea, scrollView, swiper, view, icon, progress,
-  text, richText, button, editor, form, label, input, radioGroup, radio, checkboxGroup, checkbox, picker, pickerView, slider, switchCom, textarea,
-  navigator, camera, image, livePlayer, livePusher, video, map, canvas, ad, officialAccount,
-  openData, webView
+  coverImage,
+  coverView,
+  movableArea,
+  scrollView,
+  swiper,
+  view,
+  icon,
+  progress,
+  text,
+  richText,
+  button,
+  editor,
+  form,
+  label,
+  input,
+  radioGroup,
+  radio,
+  checkboxGroup,
+  checkbox,
+  picker,
+  pickerView,
+  slider,
+  switchCom,
+  textarea,
+  navigator,
+  camera,
+  image,
+  livePlayer,
+  livePusher,
+  video,
+  map,
+  canvas,
+  ad,
+  officialAccount,
+  openData,
+  webView,
+  movableView,
+  swiperItem,
+  pickerViewColumn,
 ];
 
-const subComponents = [movableView, swiperItem, pickerViewColumn];
-
-const componentNameMap = {};
-const subComponentNameMap = {};
 const propsMap = {};
+const handlesMap = {
+  simpleEvents: [],
+  singleEvents: [],
+  functionalSingleEvents: [],
+  complexEvents: []
+};
 
-components.forEach(({ name, props}) => {
-  componentNameMap[name] = name;
-  propsMap[name] = props;
-});
-
-subComponents.forEach(({ name, props, handles}) => {
-  subComponentNameMap[name] = name;
-  propsMap[name] = props;
-});
+components.forEach(
+  ({
+    name,
+    props,
+    simpleEvents,
+    singleEvents,
+    functionalSingleEvents,
+    complexEvents,
+  }) => {
+    propsMap[name] = props;
+    if (simpleEvents) {
+      handlesMap.simpleEvents = handlesMap.simpleEvents.concat(simpleEvents);
+    }
+    if (singleEvents) {
+      handlesMap.singleEvents = handlesMap.singleEvents.concat(singleEvents);
+    }
+    if (functionalSingleEvents) {
+      handlesMap.functionalSingleEvents = handlesMap.functionalSingleEvents.concat(
+        functionalSingleEvents
+      );
+    }
+    if (complexEvents) {
+      handlesMap.complexEvents = handlesMap.complexEvents.concat(complexEvents);
+    }
+  }
+);
 
 // Tags below will be mapped to miniapp builtinComponent, others will be mapped to view
 const WEB_TAG_MAP = {
@@ -70,15 +124,11 @@ const WEB_TAG_MAP = {
   INPUT: 'input',
   TEXTAREA: 'textarea',
   VIDEO: 'video',
-  CANVAS: 'canvas'
+  CANVAS: 'canvas',
 };
 
 Object.entries(WEB_TAG_MAP).forEach(([TAG_NAME, builtinTagName]) => {
   propsMap[TAG_NAME] = propsMap[builtinTagName];
-})
+});
 
-export {
-  componentNameMap,
-  propsMap,
-  subComponentNameMap,
-};
+export { propsMap, handlesMap };

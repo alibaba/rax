@@ -1,4 +1,6 @@
-/* global isWeChatMiniProgram */
+/* eslint-disable import/no-extraneous-dependencies */
+import { isWeChatMiniProgram } from 'universal-env';
+
 let props = [{
   name: 'openType',
   get(domNode) {
@@ -74,5 +76,17 @@ if (isWeChatMiniProgram) {
 
 export default {
   name: 'navigator',
-  props
+  props,
+  singleEvents: [{
+    name: 'onNavigatorSuccess',
+    eventName: 'success'
+  },
+  {
+    name: 'onNavigatorFail',
+    eventName: 'fail'
+  },
+  {
+    name: 'onNavigatorComplete',
+    eventName: 'complete'
+  }]
 };

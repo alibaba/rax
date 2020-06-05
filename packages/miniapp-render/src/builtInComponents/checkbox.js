@@ -25,5 +25,9 @@ export default {
     get(domNode) {
       return domNode.getAttribute('color') || '';
     },
+  }],
+  singleEvents: [{
+    name: 'onCheckboxItemChange',
+    eventName: 'change'
   }]
 };

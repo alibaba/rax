@@ -31,5 +31,16 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
-  }]
+  }],
+  functionalSingleEvents: [
+    {
+      name: 'onSwitchChange',
+      eventName: 'change',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('checked', evt.detail.value);
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.checked = evt.detail.value;
+      }
+    }
+  ]
 };

@@ -30,5 +30,13 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onImageLoad',
+    eventName: 'load'
+  },
+  {
+    name: 'onImageError',
+    eventName: 'error'
   }]
 };

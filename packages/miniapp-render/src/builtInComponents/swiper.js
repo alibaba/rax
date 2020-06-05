@@ -79,5 +79,24 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
-  }]
+  }],
+  singleEvents: [{
+    name: 'onSwiperTransition',
+    eventName: 'transition'
+  },
+  {
+    name: 'onSwiperAnimationfinish',
+    eventName: 'animationfinish'
+  }],
+  functionalSingleEvents: [
+    {
+      name: 'onSwiperChange',
+      eventName: 'change',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('current', evt.detail.current);
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.current = evt.detail.current;
+      }
+    }
+  ]
 };

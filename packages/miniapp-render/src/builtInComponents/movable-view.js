@@ -79,5 +79,36 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
-  }]
+  }],
+  singleEvents: [{
+    name: 'onMovableViewHtouchmove',
+    eventName: 'htouchmove'
+  },
+  {
+    name: 'onMovableViewVtouchmove',
+    eventName: 'vtouchmove'
+  }],
+  functionalSingleEvents: [
+    {
+      name: 'onMovableViewChange',
+      eventName: 'change',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
+        domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
+
+        domNode.__oldValues = domNode.__oldValues || {};
+        domNode.__oldValues.x = evt.detail.x;
+        domNode.__oldValues.y = evt.detail.y;
+      }
+    },
+    {
+      name: 'onMovableViewScale',
+      eventName: 'scale',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
+        domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
+        domNode.$$setAttributeWithoutUpdate('scale-value', evt.detail.scale);
+      }
+    }
+  ]
 };

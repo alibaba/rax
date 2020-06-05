@@ -20,5 +20,29 @@ export default {
     get(domNode) {
       return domNode.getAttribute('animation');
     }
+  }],
+  singleEvents: [{
+    name: 'onCanvasTouchStart',
+    eventName: 'canvastouchstart'
+  },
+  {
+    name: 'onCanvasTouchMove',
+    eventName: 'canvastouchmove'
+  },
+  {
+    name: 'onCanvasTouchEnd',
+    eventName: 'canvastouchend'
+  },
+  {
+    name: 'onCanvasTouchCancel',
+    eventName: 'canvastouchcancel'
+  },
+  {
+    name: 'onCanvasLongTap',
+    eventName: 'longtap'
+  },
+  {
+    name: 'onCanvasError',
+    eventName: 'error'
   }]
 };
