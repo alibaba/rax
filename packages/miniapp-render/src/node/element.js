@@ -574,7 +574,7 @@ class Element extends Node {
         path: `${this._path}.children`,
         start: 0,
         deleteCount: this.$_children.length
-      }
+      };
       this.$_children.length = 0;
       this.$_triggerMeUpdate(payload);
     } else {
@@ -665,7 +665,7 @@ class Element extends Node {
       start: this.$_children.length - 1,
       deleteCount: 0,
       item: node
-    }
+    };
     this.$_triggerMeUpdate(payload);
 
     return this;

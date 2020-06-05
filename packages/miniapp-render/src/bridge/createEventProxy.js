@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp } from 'universal-env';
 import getDomNodeFromEvt from './events/getDomNodeFromEvt';
 import baseEvents from './events/baseEvents';
 import simpleEvents from './events/simpleEvents';
@@ -20,7 +22,13 @@ export default function(pageId) {
   baseEvents.map(({name, extra = null, eventName}) => {
     config[name] = function(evt) {
       if (!pageId) {
-        pageId = this.properties && this.properties.r.pageId;
+        let props;
+        if (!isMiniApp) {
+          props = this.properties;
+        } else {
+          props = this.props;
+        }
+        pageId = props && props.r.pageId;
       }
       const document = cache.getDocument(pageId);
       if (document && document.__checkEvent(evt)) {
@@ -32,8 +40,17 @@ export default function(pageId) {
   // Add reactive event define which won't bubble
   simpleEvents.map(({name, eventName}) => {
     config[name] = function(evt) {
+      if (!pageId) {
+        let props;
+        if (!isMiniApp) {
+          props = this.properties;
+        } else {
+          props = this.props;
+        }
+        pageId = props && props.r.pageId;
+      }
       const nodeId = evt.currentTarget.dataset.privateNodeId;
-      const targetNode = cache.getNode(this.pageId, nodeId);
+      const targetNode = cache.getNode(pageId, nodeId);
       if (!targetNode) return;
       this.callSimpleEvent(eventName, evt, targetNode);
     };

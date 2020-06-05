@@ -1,5 +1,6 @@
 import Element from './element';
 import cache from '../utils/cache';
+import safeFindProperty from '../utils/safeFindProperty';
 
 function simplify(node) {
   const domInfo = node.$$domInfo;
@@ -85,8 +86,8 @@ class RootElement extends Element {
           // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
           const path = renderTask.path;
           if (renderTask.type === 'children') {
-            renderObject[path] = renderObject[path] || internal.data[path] || [];
-            if (renderTask.item){
+            renderObject[path] = renderObject[path] || safeFindProperty(internal.data, path) || [];
+            if (renderTask.item) {
               renderObject[path].splice(renderTask.start, renderTask.deleteCount, renderTask.item);
             } else {
               renderObject[path].splice(renderTask.start, renderTask.deleteCount);
