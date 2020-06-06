@@ -122,7 +122,7 @@ function getComponentCycles(Klass) {
       }
     },
     unmount: function() {
-      this.instance._unmountComponent();
+      this.instance && this.instance._unmountComponent();
     }
   });
 }
