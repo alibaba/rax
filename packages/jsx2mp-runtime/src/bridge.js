@@ -66,7 +66,8 @@ function getPageCycles(Klass) {
       this.instance._mountComponent();
     },
     unmount() {
-      this.instance._unmountComponent();
+      // Ensure that instance exists
+      this.instance && this.instance._unmountComponent();
     },
     show() {
       if (this.instance && this.instance.__mounted) {
@@ -196,7 +197,7 @@ function createProxyMethods(events) {
               proxyedArgs[index] = dataset[key];
 
               if (!contextInfo.changed && idx !== index) {
-              // event does not exist on dataset
+                // event does not exist on dataset
                 proxyedArgs[idx] = event;
               }
             }
@@ -207,7 +208,7 @@ function createProxyMethods(events) {
            * when onClick={handleClick.bind(this, 1)}
            * or onClick={handleClick}
            */
-          if (contextInfo.changed || !proxyedArgs.length) {
+          if (contextInfo.changed || !proxyedArgs.includes(event)) {
             proxyedArgs.push(event);
           }
         } else {
