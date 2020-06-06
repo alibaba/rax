@@ -1,4 +1,4 @@
-/* global isWeChatMiniProgram */
+import { isWeChatMiniProgram } from 'universal-env';
 import callSingleEvent from '../events/callSingleEvent';
 
 let props = [{
