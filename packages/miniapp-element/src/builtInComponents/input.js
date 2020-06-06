@@ -147,7 +147,7 @@ export default {
     onInputFocus(evt) {
       const domNode = this.getDomNodeFromEvt('focus', evt);
       if (!domNode) return;
-      domNode.__inputOldValue = domNode.value;
+      domNode.__inputOldValue = domNode.value || '';
       domNode.$$setAttributeWithoutUpdate('focus', true);
 
       domNode.__oldValues = domNode.__oldValues || {};
@@ -162,8 +162,8 @@ export default {
 
       domNode.__oldValues = domNode.__oldValues || {};
       domNode.__oldValues.focus = false;
-      if (this.__inputOldValue !== undefined && domNode.value !== this.__inputOldValue) {
-        this.__inputOldValue = undefined;
+      if (domNode.__inputOldValue !== undefined && domNode.value !== domNode.__inputOldValue) {
+        domNode.__inputOldValue = undefined;
         callEvent('change', evt, null, this.pageId, this.nodeId);
       }
       callSimpleEvent('blur', evt, domNode);
