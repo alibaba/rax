@@ -167,7 +167,6 @@ if (isMiniApp) {
   }]);
 }
 
-
 export default {
   name: 'video',
   props,
