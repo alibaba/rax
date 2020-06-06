@@ -80,7 +80,7 @@
         hidden="{{item.extra.hidden}}"
     >
     <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
-      <element a:if="{{hasChildren}}" class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}"></element>
+      <element class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}"></element>
     </view>
     </picker-view-column>
 </block></picker-view>
