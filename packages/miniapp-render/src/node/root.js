@@ -93,7 +93,7 @@ class RootElement extends Element {
           const simplifiedNode = traverseTree(ElementNode, simplify);
           renderTask.item = simplifiedNode;
         }
-        if (!internal.$spliceData) {
+        if (!internal.$batchedUpdates) {
           // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
           const path = renderTask.path;
           if (renderTask.type === 'children') {
@@ -109,7 +109,7 @@ class RootElement extends Element {
         }
       }
 
-      this.$$trigger('render', { args: internal.$spliceData ? this.renderStacks : renderObject });
+      this.$$trigger('render', { args: internal.$batchedUpdates ? this.renderStacks : renderObject });
       this.renderStacks = [];
     }, 0);
   }
