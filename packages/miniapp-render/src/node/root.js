@@ -2,12 +2,13 @@ import Element from './element';
 import cache from '../utils/cache';
 import safeFindProperty from '../utils/safeFindProperty';
 import { propsMap } from '../builtInComponents';
+import shortcuts from '../utils/shortcuts';
 
 function simplify(node) {
   const domInfo = node.$$domInfo;
   const simpleNode = {};
   for (let attr in domInfo) {
-    simpleNode[attr] = domInfo[attr];
+    simpleNode[shortcuts[attr] || attr] = domInfo[attr];
   }
   let componentType;
   if (node.behavior) {

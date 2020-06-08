@@ -1,11 +1,7 @@
 export default {
-  Childnodes: 'cn',
-  Text: 'v',
-  NodeType: 'nt',
-  NodeName: 'nn',
-
-  // Attrtibutes
-  Style: 'st',
-  Class: 'cl',
-  Src: 'src'
+  type: 'nt',
+  style: 'st',
+  className: 'cl',
+  tagName: 'tn',
+  behavior: 'br'
 };

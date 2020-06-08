@@ -85,9 +85,6 @@ class HTMLInputElement extends Element {
     if (!value && !this.changed) {
       value = this.$_attrs.get('defaultValue');
     }
-
-    if ((type === 'radio' || type === 'checkbox') && value === undefined)
-      return 'on';
     return value || '';
   }
 
