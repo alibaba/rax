@@ -1,22 +1,7 @@
 import Element from '../element';
-import cache from '../../utils/cache';
-import Pool from '../../utils/pool';
-
-const pool = new Pool();
 
 class HTMLVideoElement extends Element {
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new HTMLVideoElement(options, tree);
   }
 
@@ -34,12 +19,6 @@ class HTMLVideoElement extends Element {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      pool.add(this);
-    }
   }
 
   $_triggerParentUpdate(payload) {

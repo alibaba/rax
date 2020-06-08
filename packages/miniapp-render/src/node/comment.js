@@ -1,23 +1,8 @@
-import Pool from '../utils/pool';
-import cache from '../utils/cache';
 import tool from '../utils/tool';
 import Node from './node';
 
-const pool = new Pool();
-
 class Comment extends Node {
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.commentMultiplexing) {
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new Comment(options, tree);
   }
 
@@ -29,12 +14,6 @@ class Comment extends Node {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.commentMultiplexing) {
-      pool.add(this);
-    }
   }
 
   get $$domInfo() {

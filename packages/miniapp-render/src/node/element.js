@@ -3,27 +3,12 @@ import Node from './node';
 import ClassList from './class-list';
 import Style from './style';
 import Attribute from './attribute';
-import Pool from '../utils/pool';
 import cache from '../utils/cache';
 import tool from '../utils/tool';
 import parser from '../tree/parser';
 
-const pool = new Pool();
-
 class Element extends Node {
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reusing element node
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new Element(options, tree);
   }
 
@@ -73,13 +58,6 @@ class Element extends Node {
   $$recycle() {
     this.$_children.forEach(child => child.$$recycle());
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reusing element node
-      pool.add(this);
-    }
   }
 
   set $_dataset(value) {
@@ -171,7 +149,7 @@ class Element extends Node {
   _traverseNodeMap(node, isRemove) {
     let queue = [];
     queue.push(node);
-    while(queue.length) {
+    while (queue.length) {
       let curNode = queue.shift();
       this._updateNodeMap(curNode, isRemove);
       if (curNode.childNodes && curNode.childNodes.length) {

@@ -1,24 +1,8 @@
-import Pool from '../utils/pool';
-import cache from '../utils/cache';
-
-const pool = new Pool();
-
 function ClassList(element, onUpdate) {
   this.$$init(element, onUpdate);
 }
 
 ClassList.$$create = function(element, onUpdate) {
-  const config = cache.getConfig();
-
-  if (config.optimization.domExtendMultiplexing) {
-    const instance = pool.get();
-
-    if (instance) {
-      instance.$$init(element, onUpdate);
-      return instance;
-    }
-  }
-
   return new ClassList(element, onUpdate);
 };
 
@@ -36,12 +20,6 @@ ClassList.prototype = Object.assign([], {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      pool.add(this);
-    }
   },
 
   $$parse(className = '') {

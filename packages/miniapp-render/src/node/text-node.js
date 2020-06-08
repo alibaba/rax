@@ -1,23 +1,8 @@
-import Pool from '../utils/pool';
-import cache from '../utils/cache';
 import tool from '../utils/tool';
 import Node from '../node/node';
 
-const pool = new Pool();
-
 class TextNode extends Node {
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.textMultiplexing) {
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new TextNode(options, tree);
   }
 
@@ -37,12 +22,6 @@ class TextNode extends Node {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.textMultiplexing) {
-      pool.add(this);
-    }
   }
 
   $_triggerParentUpdate(payload) {

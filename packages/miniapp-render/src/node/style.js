@@ -1,9 +1,5 @@
 import styleList from './style-list';
-import Pool from '../utils/pool';
-import cache from '../utils/cache';
 import tool from '../utils/tool';
-
-const pool = new Pool();
 
 /**
  * Parse style string
@@ -37,18 +33,6 @@ class Style {
   }
 
   static $$create(element, onUpdate) {
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      // reuse dom extension objects
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(element, onUpdate);
-        return instance;
-      }
-    }
-
     return new Style(element, onUpdate);
   }
 
@@ -72,13 +56,6 @@ class Style {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      // reuse dom extension objects
-      pool.add(this);
-    }
   }
 
   $_checkUpdate() {
