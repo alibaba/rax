@@ -43,7 +43,7 @@ export function getBaseLifeCycles(init, config) {
 
       // Handle update of body
       this.document.body.addEventListener('render', (...tasks) => {
-        if (this.$spliceData) {
+        if (this.$batchedUpdates) {
           if (tasks[0].path === 'root.children') {
             this.setData({
               [tasks[0].path]: [tasks[0].item]
