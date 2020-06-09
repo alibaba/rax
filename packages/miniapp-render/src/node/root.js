@@ -24,7 +24,7 @@ function simplify(node) {
 }
 
 function traverseTree(node, action) {
-  if (!node || !node.children) {
+  if (!node) {
     return;
   }
   let copiedNode;
