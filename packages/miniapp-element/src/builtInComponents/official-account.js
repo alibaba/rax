@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'official-account',
@@ -10,10 +10,10 @@ export default {
   }],
   handles: {
     onOfficialAccountLoad(evt) {
-      callSimpleEvent('load', evt, this.domNode);
+      callSingleEvent('load', evt, this);
     },
     onOfficialAccountError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
   },
 };

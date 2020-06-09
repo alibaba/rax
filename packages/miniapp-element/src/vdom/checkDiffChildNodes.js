@@ -1,4 +1,5 @@
 import { ELEMENT_DIFF_KEYS, TEXT_NODE_DIFF_KEYS } from '../constants';
+import shallowEqual from './shallowEqual';
 
 export default function checkDiffChildNodes(newChildNodes, oldChildNodes) {
   if (newChildNodes.length !== oldChildNodes.length) return true;
@@ -14,16 +15,21 @@ export default function checkDiffChildNodes(newChildNodes, oldChildNodes) {
     for (const key of keys) {
       const newValue = newChild[key];
       const oldValue = oldChild[key];
-      if (typeof newValue === 'object') {
-        // Diff object top level
+      if (typeof newValue === 'object' && !Array.isArray(newValue)) {
         if (typeof oldValue !== 'object') return true;
+
+        if (key === 'extra' && newValue.forceUpdate) {
+          newValue.forceUpdate = false;
+          return true;
+        }
 
         const objectKeys = Object.keys(newValue);
         for (const objectKey of objectKeys) {
-          if (newValue[objectKey] !== oldValue[objectKey]) return true;
+          if (!shallowEqual(newValue[objectKey], oldValue[objectKey])) return true;
         }
+      } else if (!shallowEqual(newValue, oldValue)) {
+        return true;
       }
-      if (newValue !== oldValue) return true;
     }
 
     // Diff children

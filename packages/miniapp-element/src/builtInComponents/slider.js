@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'slider',
@@ -26,8 +26,14 @@ export default {
     },
   }, {
     name: 'value',
+    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('value') || 0;
+    },
+  }, {
+    name: 'name',
+    get(domNode) {
+      return domNode.getAttribute('name') || '';
     },
   }, {
     name: 'color',
@@ -73,13 +79,16 @@ export default {
   }],
   handles: {
     onSliderChange(evt) {
-      if (!this.domNode) return;
+      const domNode = this.getDomNodeFromEvt('change', evt);
+      if (!domNode) return;
 
-      this.domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
-      callSimpleEvent('change', evt, this.domNode);
+      domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+      domNode.__oldValues = domNode.__oldValues || {};
+      domNode.__oldValues.value = evt.detail.value;
+      callSingleEvent('change', evt, this);
     },
     onSliderChanging(evt) {
-      callSimpleEvent('changing', evt, this.domNode);
+      callSingleEvent('changing', evt, this);
     },
   },
 };

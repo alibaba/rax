@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'progress',
@@ -60,7 +60,7 @@ export default {
   }],
   handles: {
     onProgressActiveEnd(evt) {
-      callSimpleEvent('activeend', evt, this.domNode);
+      callSingleEvent('activeend', evt, this);
     },
   },
 };

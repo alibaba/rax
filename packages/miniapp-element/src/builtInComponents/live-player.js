@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'live-player',
@@ -74,13 +74,13 @@ export default {
   }],
   handles: {
     onLivePlayerStateChange(evt) {
-      callSimpleEvent('statechange', evt, this.domNode);
+      callSingleEvent('statechange', evt, this);
     },
     onLivePlayerFullScreenChange(evt) {
-      callSimpleEvent('fullscreenchange', evt, this.domNode);
+      callSingleEvent('fullscreenchange', evt, this);
     },
     onLivePlayerNetStatus(evt) {
-      callSimpleEvent('netstatus', evt, this.domNode);
+      callSingleEvent('netstatus', evt, this);
     },
   },
 };

@@ -90,7 +90,7 @@ class HTMLInputElement extends Element {
 
   set name(value) {
     value = '' + value;
-    return this.$_attrs.set('name', value);
+    this.$_attrs.set('name', value);
   }
 
   get type() {
@@ -171,8 +171,13 @@ class HTMLInputElement extends Element {
     return this.$_attrs.get('checked') || '';
   }
 
-  focus() {
-    this.$_attrs.set('focus', true);
+  get focus() {
+    return !!this.$_attrs.get('focus');
+  }
+
+  set focus(value) {
+    value = !!value;
+    this.$_attrs.set('focus', value);
   }
 
   blur() {

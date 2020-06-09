@@ -1,4 +1,4 @@
-import callSimpleEvent from '../events/callSimpleEvent';
+import callSingleEvent from '../events/callSingleEvent';
 
 export default {
   name: 'web-view',
@@ -15,13 +15,13 @@ export default {
   }],
   handles: {
     onWebviewMessage(evt) {
-      callSimpleEvent('message', evt, this.domNode);
+      callSingleEvent('message', evt, this);
     },
     onWebviewLoad(evt) {
-      callSimpleEvent('load', evt, this.domNode);
+      callSingleEvent('load', evt, this);
     },
     onWebviewError(evt) {
-      callSimpleEvent('error', evt, this.domNode);
+      callSingleEvent('error', evt, this);
     },
   },
 };
