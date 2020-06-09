@@ -61,7 +61,7 @@ class Style {
   $_checkUpdate() {
     if (!this.$_disableCheckUpdate) {
       const payload = {
-        path: `${this.$_element._path}.class`,
+        path: `${this.$_element._path}.style`,
         value: this.cssText
       };
       this.$_doUpdate(payload);
