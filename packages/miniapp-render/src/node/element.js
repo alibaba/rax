@@ -95,7 +95,7 @@ class Element extends Node {
   }
 
   get $_attrs() {
-    if (!this.$__attrs) this.$__attrs = Attribute.$$create(this, this.$_triggerParentUpdate.bind(this));
+    if (!this.$__attrs) this.$__attrs = Attribute.$$create(this, this._triggerUpdate.bind(this));
     return this.$__attrs;
   }
 
@@ -126,24 +126,13 @@ class Element extends Node {
   // Listen for class or style attribute values to change
   $_onClassOrStyleUpdate(payload) {
     if (this.$__attrs) this.$_attrs.triggerUpdate();
-    this.$_triggerParentUpdate(payload);
+    this._triggerUpdate(payload);
   }
 
-  // Update parent tree
-  $_triggerParentUpdate(payload) {
-    if (this.parentNode && !this.$_notTriggerUpdate) {
-      // this.parentNode.$$trigger('$$childNodesUpdate');
-    }
+  _triggerUpdate(payload) {
     if (!this.$_notTriggerUpdate) {
       this.enqueueRender(payload);
-      // this.$$trigger('$$domNodeUpdate');
     }
-  }
-
-  // Update child nodes
-  $_triggerMeUpdate(payload) {
-    this.enqueueRender(payload);
-    // if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
   }
 
   _traverseNodeMap(node, isRemove) {
@@ -269,7 +258,7 @@ class Element extends Node {
     return {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
-      type: this.$_type,
+      nodeType: this.$_type,
       tagName: this.$_tagName,
       id: this.id,
       className: this.className,
@@ -360,7 +349,7 @@ class Element extends Node {
     // update tree
     if (this.$_tree.getById(oldId) === this) this.$_tree.updateIdMap(oldId, null);
     if (id) this.$_tree.updateIdMap(id, this);
-    this.$_triggerParentUpdate();
+    this._triggerUpdate();
   }
 
   get tagName() {
@@ -521,7 +510,7 @@ class Element extends Node {
 
       // Trigger update
       this.$_notTriggerUpdate = false;
-      this.$_triggerParentUpdate();
+      this._triggerUpdate();
     }
   }
 
@@ -558,7 +547,7 @@ class Element extends Node {
         deleteCount: this.$_children.length
       };
       this.$_children.length = 0;
-      this.$_triggerMeUpdate(payload);
+      this._triggerUpdate(payload);
     } else {
       this.$_children.length = 0;
       // Generated at run time, using the b- prefix
@@ -648,7 +637,7 @@ class Element extends Node {
       deleteCount: 0,
       item: node
     };
-    this.$_triggerMeUpdate(payload);
+    this._triggerUpdate(payload);
 
     return this;
   }
@@ -674,7 +663,7 @@ class Element extends Node {
         start: index,
         deleteCount: 1
       };
-      this.$_triggerMeUpdate(payload);
+      this._triggerUpdate(payload);
     }
 
     return node;
@@ -709,7 +698,7 @@ class Element extends Node {
     // Update the mapping table
     this._traverseNodeMap(node);
     // Trigger update
-    this.$_triggerMeUpdate(payload);
+    this._triggerUpdate(payload);
 
     return node;
   }
@@ -744,7 +733,7 @@ class Element extends Node {
       deleteCount: replaceIndex === -1 ? 0 : 1,
       item: node
     };
-    this.$_triggerMeUpdate(payload);
+    this._triggerUpdate(payload);
 
     return old;
   }

@@ -20,7 +20,7 @@ class Comment extends Node {
     return {
       nodeId: this.$_nodeId,
       pageId: this.__pageId,
-      type: this.$_type,
+      nodeType: this.$_type,
     };
   }
 
