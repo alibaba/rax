@@ -381,7 +381,7 @@ export default class Component {
             if (isPlainObject(data[key])) {
               normalData[key] = Object.assign({}, currentData[key], data[key]);
             } else {
-              normalData[key] = data[key];
+              normalData[key] = data[key] === undefined ? null : data[key]; // Make undefined value compatible with Alibaba MiniApp incase that data is not sync in render and worker thread
             }
           }
         }
@@ -422,7 +422,10 @@ export default class Component {
       if (!isEmptyObj(normalData)) {
         setDataTask.push((callback) => {
           $ready = normalData.$ready;
-          this._internal.setData(normalData, callback);
+          this._internal.setData(normalData, () => {
+            Object.assign(this._internal.data, normalData); // In Wechat MiniProgram, `this._internal.data` refers to its old val here, so it needs to be merged manually
+            callback();
+          });
         });
       }
     }
