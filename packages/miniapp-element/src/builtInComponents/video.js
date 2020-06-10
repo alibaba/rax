@@ -1,5 +1,6 @@
-import callSingleEvent from '../events/callSingleEvent';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp } from 'universal-env';
+import callSingleEvent from '../events/callSingleEvent';
 
 let props = [{
   name: 'src',
