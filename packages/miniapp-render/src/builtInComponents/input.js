@@ -2,7 +2,6 @@ export default {
   name: 'input',
   props: [{
     name: 'value',
-    canBeUserChanged: true,
     get(domNode) {
       return domNode.value || '';
     },
@@ -65,7 +64,6 @@ export default {
     },
   }, {
     name: 'focus',
-    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('focus');
     },
@@ -104,12 +102,6 @@ export default {
       return value !== undefined ? !!value : true;
     },
   }, {
-    name: 'checked',
-    canBeUserChanged: true,
-    get(domNode) {
-      return !!domNode.getAttribute('checked');
-    },
-  }, {
     name: 'color',
     get(domNode) {
       return domNode.getAttribute('color') || '#09BB07';
@@ -140,9 +132,6 @@ export default {
       const value = '' + evt.detail.value;
       domNode.$$setAttributeWithoutUpdate('value', value);
 
-      domNode.__oldValues = domNode.__oldValues || {};
-      domNode.__oldValues.value = value;
-
       this.callEvent('input', evt, null, pageId, nodeId);
     }
   },
@@ -153,8 +142,6 @@ export default {
       domNode.__inputOldValue = domNode.value || '';
       domNode.$$setAttributeWithoutUpdate('focus', true);
 
-      domNode.__oldValues = domNode.__oldValues || {};
-      domNode.__oldValues.focus = true;
       this.callSimpleEvent('focus', evt, domNode);
     }
   },
@@ -164,8 +151,6 @@ export default {
     middleware(evt, domNode, pageId, nodeId) {
       domNode.$$setAttributeWithoutUpdate('focus', false);
 
-      domNode.__oldValues = domNode.__oldValues || {};
-      domNode.__oldValues.focus = false;
       if (domNode.__inputOldValue !== undefined && domNode.value !== domNode.__inputOldValue) {
         domNode.__inputOldValue = undefined;
         this.callEvent('change', evt, null, pageId, nodeId);

@@ -72,13 +72,11 @@ export default {
     },
   }, {
     name: 'rotate',
-    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('rotate') || 0;
     },
   }, {
     name: 'skew',
-    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('skew') || 0;
     },
@@ -160,11 +158,6 @@ export default {
       eventName: 'regionchange',
       middleware(evt, domNode) {
         if (!evt.detail.causedBy) evt.detail.causedBy = evt.causedBy;
-        if (evt.type === 'end' || evt.detail.type === 'end') {
-          domNode.__oldValues = domNode.__oldValues || {};
-          domNode.__oldValues.rotate = evt.detail.rotate;
-          domNode.__oldValues.skew = evt.detail.skew;
-        }
       }
     }
   ]

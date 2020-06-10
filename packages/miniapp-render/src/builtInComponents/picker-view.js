@@ -2,7 +2,6 @@ export default {
   name: 'picker-view',
   props: [{
     name: 'value',
-    canBeUserChanged: true,
     get(domNode) {
       let value = domNode.getAttribute('value');
       if (typeof value === 'string') value = value.split(',').map(item => parseInt(item, 10));
@@ -49,8 +48,6 @@ export default {
       eventName: 'change',
       middleware(evt, domNode) {
         domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
-        domNode.__oldValues = domNode.__oldValues || {};
-        domNode.__oldValues.value = evt.detail.value;
       }
     }
   ]

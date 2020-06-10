@@ -2,7 +2,6 @@ export default {
   name: 'textarea',
   props: [{
     name: 'value',
-    canBeUserChanged: true,
     get(domNode) {
       return domNode.value || '';
     },
@@ -122,9 +121,6 @@ export default {
     middleware(evt, domNode, pageId, nodeId) {
       domNode.__textareaOldValue = domNode.value || '';
       domNode.$$setAttributeWithoutUpdate('focus', true);
-
-      domNode.__oldValues = domNode.__oldValues || {};
-      domNode.__oldValues.focus = true;
       this.callSimpleEvent('focus', evt, domNode);
     }
   },
@@ -133,9 +129,6 @@ export default {
     eventName: 'blur',
     middleware(evt, domNode, pageId, nodeId) {
       domNode.$$setAttributeWithoutUpdate('focus', false);
-
-      domNode.__oldValues = domNode.__oldValues || {};
-      domNode.__oldValues.focus = false;
       if (domNode.__textareaOldValue !== undefined && domNode.value !== domNode.__textareaOldValue) {
         domNode.__textareaOldValue = undefined;
         this.callEvent('change', evt, pageId, nodeId);
@@ -149,9 +142,6 @@ export default {
     middleware(evt, domNode, pageId, nodeId) {
       const value = '' + evt.detail.value;
       domNode.$$setAttributeWithoutUpdate('value', value);
-
-      domNode.__oldValues = domNode.__oldValues || {};
-      domNode.__oldValues.value = value;
 
       this.callEvent('input', evt, null, pageId, nodeId);
     }

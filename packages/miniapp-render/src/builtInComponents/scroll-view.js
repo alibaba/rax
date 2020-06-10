@@ -27,21 +27,18 @@ const ScrollView = {
     },
   }, {
     name: 'scrollTop',
-    canBeUserChanged: true,
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-top'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
     name: 'scrollLeft',
-    canBeUserChanged: true,
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-left'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
     name: 'scrollIntoView',
-    canBeUserChanged: true,
     get(domNode) {
       return domNode.getAttribute('scroll-into-view') || '';
     },
@@ -87,11 +84,6 @@ const ScrollView = {
         domNode.$$setAttributeWithoutUpdate('scroll-into-view', '');
         domNode.$$setAttributeWithoutUpdate('scroll-top', evt.detail.scrollTop);
         domNode.$$setAttributeWithoutUpdate('scroll-left', evt.detail.scrollLeft);
-
-        domNode.__oldValues = domNode.__oldValues || {};
-        domNode.__oldValues.scrollIntoView = '';
-        domNode.__oldValues.scrollTop = evt.detail.scrollTop;
-        domNode.__oldValues.scrollLeft = evt.detail.scrollLeft;
       }
     }
   ]

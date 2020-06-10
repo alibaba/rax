@@ -2,7 +2,6 @@ export default {
   name: 'switch',
   props: [{
     name: 'checked',
-    canBeUserChanged: true,
     get(domNode) {
       return !!domNode.getAttribute('checked');
     },
@@ -38,8 +37,6 @@ export default {
       eventName: 'change',
       middleware(evt, domNode) {
         domNode.$$setAttributeWithoutUpdate('checked', evt.detail.value);
-        domNode.__oldValues = domNode.__oldValues || {};
-        domNode.__oldValues.checked = evt.detail.value;
       }
     }
   ]

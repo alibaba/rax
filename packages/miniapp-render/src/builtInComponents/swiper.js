@@ -22,7 +22,6 @@ export default {
     },
   }, {
     name: 'current',
-    canBeUserChanged: true,
     get(domNode) {
       return +domNode.getAttribute('current') || 0;
     },
@@ -94,8 +93,6 @@ export default {
       eventName: 'change',
       middleware(evt, domNode) {
         domNode.$$setAttributeWithoutUpdate('current', evt.detail.current);
-        domNode.__oldValues = domNode.__oldValues || {};
-        domNode.__oldValues.current = evt.detail.current;
       }
     }
   ]

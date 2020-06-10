@@ -27,7 +27,6 @@ const picker = {
       },
     }, {
       name: 'value',
-      canBeUserChanged: true,
       get(domNode) {
         const mode = domNode.getAttribute('mode') || 'selector';
         const value = domNode.getAttribute('value');
@@ -60,8 +59,6 @@ const picker = {
       eventName: 'change',
       middleware(evt, domNode) {
         domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
-        domNode.__oldValues = domNode.__oldValues || {};
-        domNode.__oldValues.value = evt.detail.value;
       }
     }
   ]
