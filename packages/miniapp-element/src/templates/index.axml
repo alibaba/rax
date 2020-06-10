@@ -80,7 +80,7 @@
         hidden="{{item.extra.hidden}}"
     >
     <view a:for="{{item.childNodes}}" a:for-item="pickerViewColumnItem">
-      <element a:if="{{hasChildren}}" class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}"></element>
+      <element class="h5-virtual" in-cover="{{inCover}}" data-private-node-id="{{pickerViewColumnItem.nodeId}}" data-private-page-id="{{pickerViewColumnItem.pageId}}"></element>
     </view>
     </picker-view-column>
 </block></picker-view>
@@ -110,6 +110,25 @@
     data-private-page-id="{{pageId}}"
 ><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></custom-component>
 <template a:elif="{{inCover === true}}" is="subtree-cover" data="{{childNodes, inCover}}"></template>
-<view a:else>
+<view
+  a:else
+  id="{{id}}"
+  class="{{className}}"
+  style="{{style}}"
+  hidden="{{hidden}}"
+  animation="{{animation}}"
+  hover-class="{{hoverClass}}"
+  hover-stop-propagation="{{hoverStopPropagation}}"
+  hover-start-time="{{hoverStayTime}}"
+  hover-stay-time="{{hoverStayTime}}"
+  onTap="onTap"
+  onLongTap="onLongTap"
+  onTouchStart="onTouchStart"
+  onTouchEnd="onTouchEnd"
+  onTouchMove="onTouchEnd"
+  onTouchCancel="onTouchCancel"
+  onAppear="onAppear"
+  onDisAppear="onDisappear"
+>
   <template is="subtree" data="{{childNodes, inCover}}"></template>
 </view>
