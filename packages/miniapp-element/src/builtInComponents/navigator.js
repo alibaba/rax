@@ -1,4 +1,5 @@
-/* global isWeChatMiniProgram */
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isWeChatMiniProgram } from 'universal-env';
 import callSingleEvent from '../events/callSingleEvent';
 
 let props = [{

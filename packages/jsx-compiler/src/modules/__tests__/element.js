@@ -4,6 +4,7 @@ const { parseExpression } = require('../../parser');
 const genCode = require('../../codegen/genCode');
 const traverse = require('../../utils/traverseNodePath');
 const adapter = require('../../adapter').ali;
+const wxAdapter = require('../../adapter').wechat;
 const DynamicBinding = require('../../utils/DynamicBinding');
 
 function genInlineCode(ast) {
@@ -207,6 +208,45 @@ describe('Transform JSXElement', () => {
         dynamicValue
       }, adapter, sourceCode);
       expect(genDynamicValue(dynamicValue)).toEqual('{}');
+    });
+
+    it('should transform click event into onTap in rax-view in alibaba miniapp', () => {
+      const ast = parseExpression(`
+        <rax-view
+          onClick={onClick}
+        />
+      `);
+      _transform({
+        templateAST: ast
+      }, adapter);
+
+      expect(genInlineCode(ast).code).toEqual('<view onTap="_e0" class="__rax-view" />');
+    });
+
+    it('should transform click event into bindtap in rax-view in wechat miniprogram', () => {
+      const ast = parseExpression(`
+        <rax-view
+          onClick={onClick}
+        />
+      `);
+      _transform({
+        templateAST: ast
+      }, wxAdapter);
+
+      expect(genInlineCode(ast).code).toEqual('<view bindtap="_e0" class="__rax-view" />');
+    });
+
+    it('should transform click event into bindtap in rax-text in wechat miniprogram', () => {
+      const ast = parseExpression(`
+        <rax-text
+          onClick={onClick}
+        />
+      `);
+      _transform({
+        templateAST: ast
+      }, wxAdapter);
+
+      expect(genInlineCode(ast).code).toEqual('<text bindtap="_e0" class="__rax-text" />');
     });
   });
 

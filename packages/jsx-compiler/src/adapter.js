@@ -42,8 +42,6 @@ const parserAdapters = {
     compatibleText: false,
     // Need transform style & class keyword
     styleKeyword: false,
-    // Need transform onClick -> bindonclick
-    needTransformEvent: false,
     slotScope: true,
     // Need transform key
     needTransformKey: false,
@@ -66,11 +64,10 @@ const parserAdapters = {
     },
     compatibleText: false,
     text: {
-      ...componentCommonProps.ali,
+      ...componentCommonProps.wechat,
       className: '__rax-text'
     },
     styleKeyword: true,
-    needTransformEvent: true,
     slotScope: false,
     needTransformKey: true,
     triggerRef: true,
@@ -92,11 +89,10 @@ const parserAdapters = {
     },
     compatibleText: false,
     text: {
-      ...componentCommonProps.ali,
+      ...componentCommonProps.bytedance,
       className: '__rax-text'
     },
     styleKeyword: true,
-    needTransformEvent: true,
     slotScope: false,
     needTransformKey: true,
     triggerRef: true
