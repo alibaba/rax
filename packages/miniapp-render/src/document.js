@@ -47,8 +47,7 @@ class Document extends EventTarget {
     super();
 
     const config = cache.getConfig();
-    const nativeCustomComponent = config.nativeCustomComponent || {};
-    this.usingComponents = nativeCustomComponent.usingComponents || {};
+    this.usingComponents = config;
     const { pageId } = internal;
     this._internal = internal;
     this.__pageId = internal.pageId;

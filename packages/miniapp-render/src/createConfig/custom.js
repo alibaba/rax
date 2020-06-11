@@ -34,9 +34,8 @@ export default function() {
       const data = { __ready: true };
       const config = cache.getConfig();
       const { props: componentProps, events: componentEvents = [] } =
-      config.nativeCustomComponent &&
-        config.nativeCustomComponent.usingComponents &&
-        config.nativeCustomComponent.usingComponents[props.r.behavior] ||
+      config.usingComponents &&
+        config.usingComponents[props.r.behavior] ||
       {};
       const domNode = cache.getNode(props.r.pageId, props.r.nodeId);
       if (componentProps) {
