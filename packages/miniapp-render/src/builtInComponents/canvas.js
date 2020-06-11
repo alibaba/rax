@@ -1,3 +1,5 @@
+import { isWeChatMiniProgram } from 'universal-env';
+
 export default {
   name: 'canvas',
   props: [{
@@ -8,7 +10,7 @@ export default {
   }, {
     name: 'canvasId',
     get(domNode) {
-      return domNode.getAttribute('canvas-id') || '';
+      return domNode.getAttribute(isWeChatMiniProgram ? 'canvas-id' : 'id') || '';
     },
   }, {
     name: 'disableScroll',
