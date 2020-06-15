@@ -24,9 +24,8 @@ class TextNode extends Node {
     this.$$destroy();
   }
 
-  $_triggerParentUpdate(payload) {
+  _triggerUpdate(payload) {
     this._root.enqueueRender(payload);
-    // if (this.parentNode) this.parentNode.$$trigger('$$childNodesUpdate');
   }
 
   get $$domInfo() {
@@ -66,7 +65,7 @@ class TextNode extends Node {
       path: `${this._path}.content`,
       value
     };
-    this.$_triggerParentUpdate(payload);
+    this._triggerUpdate(payload);
   }
 
   get data() {

@@ -58,14 +58,9 @@ export default {
       return +domNode.getAttribute('cursor-spacing') || 0;
     },
   }, {
-    name: 'autoFocus',
+    name: 'autofocus',
     get(domNode) {
       return !!domNode.getAttribute('autofocus');
-    },
-  }, {
-    name: 'focus',
-    get(domNode) {
-      return !!domNode.getAttribute('focus');
     },
   }, {
     name: 'confirmType',

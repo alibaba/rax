@@ -42,7 +42,7 @@ export default {
       return !isNaN(value) ? value : 140;
     }
   }, {
-    name: 'autoFocus',
+    name: 'autofocus',
     get(domNode) {
       return !!domNode.getAttribute('autofocus');
     },
