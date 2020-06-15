@@ -110,13 +110,7 @@ class Document extends EventTarget {
     tree = tree || this.$_tree;
 
     const constructorClass = CONSTRUCTOR_MAP[tagName];
-    if (this.usingComponents[originTagName]) {
-      // Transform to custom-component
-      options.tagName = 'custom-component';
-      options.attrs = options.attrs || {};
-      options.componentName = originTagName;
-      return CustomComponent.$$create(options, tree);
-    } else if (constructorClass) {
+    if (constructorClass) {
       return constructorClass.$$create(options, tree);
     } else if (componentName) {
       // Transform to builtin-component
@@ -124,6 +118,12 @@ class Document extends EventTarget {
       options.attrs = options.attrs || {};
       options.attrs.behavior = componentName;
       return BuiltInComponent.$$create(options, tree);
+    } else if (this.usingComponents[originTagName]) {
+      // Transform to custom-component
+      options.tagName = 'custom-component';
+      options.attrs = options.attrs || {};
+      options.componentName = originTagName;
+      return CustomComponent.$$create(options, tree);
     } else if (!tool.isTagNameSupport(tagName)) {
       throw new Error(`${tagName} is not supported.`);
     } else {
