@@ -193,20 +193,20 @@ export default {
     name: 'onVideoError',
     eventName: 'error'
   }],
-  handles: {
-    onVideoTimeUpdate(evt) {
-      const domNode = this.getDomNodeFromEvt('timeupdate', evt);
-      if (!domNode) return;
-
-      domNode.$$setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
-      callSingleEvent('timeupdate', evt, this);
+  functionalSingleEvents: [
+    {
+      name: 'onVideoTimeUpdate',
+      eventName: 'timeupdate',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
+      }
     },
-    onVideoProgress(evt) {
-      const domNode = this.getDomNodeFromEvt('progress', evt);
-      if (!domNode) return;
-
-      domNode.$$setAttributeWithoutUpdate('buffered', evt.detail.buffered);
-      callSingleEvent('progress', evt, this);
-    },
-  },
+    {
+      name: 'onVideoProgress',
+      eventName: 'progress',
+      middleware(evt, domNode) {
+        domNode.$$setAttributeWithoutUpdate('buffered', evt.detail.buffered);
+      }
+    }
+  ]
 };
