@@ -54,7 +54,8 @@ export default function(pageId) {
   // Add reactive event define which only trigger once
   handlesMap.singleEvents.forEach(({ name, eventName }) => {
     config[name] = function(evt) {
-      this.callSingleEvent(eventName, evt);
+      const __pageId = getPageId(this, pageId);
+      this.callSingleEvent(eventName, evt, __pageId);
     };
   });
 
@@ -65,7 +66,7 @@ export default function(pageId) {
       const domNode = this.getDomNodeFromEvt(eventName, evt, __pageId);
       if (!domNode) return;
       middleware.call(this, evt, domNode);
-      this.callSingleEvent(eventName, evt);
+      this.callSingleEvent(eventName, evt, __pageId);
     };
   });
 
