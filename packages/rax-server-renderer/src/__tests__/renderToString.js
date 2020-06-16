@@ -87,7 +87,7 @@ describe('renderToString', () => {
     };
 
     let str = renderToString(<MyComponent name="rax" />);
-    expect(str).toBe('<h1> Hello rax</h1>');
+    expect(str).toBe('<h1> Hello <!--|-->rax</h1>');
   });
 
   it('render with effect hook', () => {
@@ -104,7 +104,7 @@ describe('renderToString', () => {
     };
 
     let str = renderToString(<MyComponent name="rax" />);
-    expect(str).toBe('<h1> Hello rax</h1>');
+    expect(str).toBe('<h1> Hello <!--|-->rax</h1>');
   });
 
   it('render with Context.Provider', () => {
@@ -126,7 +126,7 @@ describe('renderToString', () => {
     };
 
     let str = renderToString(<MyContext />);
-    expect(str).toBe('<div>Current theme is dark.</div>');
+    expect(str).toBe('<div>Current theme is <!--|-->dark<!--|-->.</div>');
   });
 
 
@@ -150,7 +150,7 @@ describe('renderToString', () => {
     };
 
     let str = renderToString(<MyContext />);
-    expect(str).toBe('<div>Current theme is dark.</div>');
+    expect(str).toBe('<div>Current theme is <!--|-->dark<!--|-->.</div>');
   });
 
   it('render with context hook', () => {
@@ -165,7 +165,7 @@ describe('renderToString', () => {
     };
 
     let str = renderToString(<MyComponent />);
-    expect(str).toBe('<div>The answer is 5.</div>');
+    expect(str).toBe('<div>The answer is <!--|-->5<!--|-->.</div>');
   });
 
   it('render with reducer hook', () => {
@@ -194,7 +194,7 @@ describe('renderToString', () => {
     }
 
     let str = renderToString(<MyComponent initialCount={0} />);
-    expect(str).toBe('<div>Count: 0</div>');
+    expect(str).toBe('<div>Count: <!--|-->0</div>');
   });
 
   it('render with pre compiled html and attrs', () => {

@@ -1,5 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isWeChatMiniProgram } from 'universal-env';
+<<<<<<< HEAD:packages/miniapp-render/src/builtInComponents/navigator.js
+=======
+import callSingleEvent from '../events/callSingleEvent';
+>>>>>>> master:packages/miniapp-element/src/builtInComponents/navigator.js
 
 let props = [{
   name: 'openType',

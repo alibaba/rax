@@ -46,7 +46,7 @@ describe('lifecycle', () => {
 
     const response = renderToString(<TestComponent />);
 
-    expect(response).toBe('<span>Component name: TestComponent</span>');
+    expect(response).toBe('<span>Component name: <!--|-->TestComponent</span>');
 
     expect(lifecycle).toEqual([
       'getInitialState',
