@@ -123,8 +123,7 @@ const WEB_TAG_MAP = {
   IMG: 'image',
   INPUT: 'input',
   TEXTAREA: 'textarea',
-  VIDEO: 'video',
-  CANVAS: 'canvas',
+  VIDEO: 'video'
 };
 
 Object.entries(WEB_TAG_MAP).forEach(([TAG_NAME, builtinTagName]) => {
