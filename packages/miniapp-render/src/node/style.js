@@ -1,9 +1,5 @@
 import styleList from './style-list';
-import Pool from '../utils/pool';
-import cache from '../utils/cache';
 import tool from '../utils/tool';
-
-const pool = new Pool();
 
 /**
  * Parse style string
@@ -31,35 +27,25 @@ function parse(styleText) {
 }
 
 class Style {
-  constructor(onUpdate) {
+  constructor(element, onUpdate) {
     this.__settedStyle = {};
-    this.$$init(onUpdate);
+    this.$$init(element, onUpdate);
   }
 
-  static $$create(onUpdate) {
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      // reuse dom extension objects
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(onUpdate);
-        return instance;
-      }
-    }
-
-    return new Style(onUpdate);
+  static $$create(element, onUpdate) {
+    return new Style(element, onUpdate);
   }
 
   // Init instance
-  $$init(onUpdate) {
+  $$init(element, onUpdate) {
+    this.$_element = element;
     this.$_doUpdate = onUpdate || (() => {});
     // Whether checking for updates is disabled
     this.$_disableCheckUpdate = false;
   }
 
   $$destroy() {
+    this.$_element = null;
     this.$_doUpdate = null;
     this.$_disableCheckUpdate = false;
 
@@ -70,18 +56,15 @@ class Style {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      // reuse dom extension objects
-      pool.add(this);
-    }
   }
 
   $_checkUpdate() {
     if (!this.$_disableCheckUpdate) {
-      this.$_doUpdate();
+      const payload = {
+        path: `${this.$_element._path}.style`,
+        value: this.cssText
+      };
+      this.$_doUpdate(payload);
     }
   }
 
@@ -108,7 +91,7 @@ class Style {
       this[name] = rules[name];
     }
     this.$_disableCheckUpdate = false;
-    this.$_checkUpdate();
+    // this.$_checkUpdate();
   }
 
   getPropertyValue(name) {
@@ -133,7 +116,9 @@ styleList.forEach(name => {
       value = value !== undefined ? '' + value : undefined;
 
       this.__settedStyle[name] = value;
-      if (oldValue !== value) this.$_checkUpdate();
+      if (oldValue !== value) {
+        this.$_checkUpdate();
+      }
     },
   };
 });

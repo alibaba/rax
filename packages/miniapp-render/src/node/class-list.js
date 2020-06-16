@@ -1,45 +1,25 @@
-import Pool from '../utils/pool';
-import cache from '../utils/cache';
-
-const pool = new Pool();
-
-function ClassList(onUpdate) {
-  this.$$init(onUpdate);
+function ClassList(element, onUpdate) {
+  this.$$init(element, onUpdate);
 }
 
-ClassList.$$create = function(onUpdate) {
-  const config = cache.getConfig();
-
-  if (config.optimization.domExtendMultiplexing) {
-    const instance = pool.get();
-
-    if (instance) {
-      instance.$$init(onUpdate);
-      return instance;
-    }
-  }
-
-  return new ClassList(onUpdate);
+ClassList.$$create = function(element, onUpdate) {
+  return new ClassList(element, onUpdate);
 };
 
 ClassList.prototype = Object.assign([], {
-  $$init(onUpdate) {
+  $$init(element, onUpdate) {
+    this.$_element = element;
     this.$_doUpdate = onUpdate;
   },
 
   $$destroy() {
+    this.$_element = null;
     this.$_doUpdate = null;
     this.length = 0;
   },
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      pool.add(this);
-    }
   },
 
   $$parse(className = '') {
@@ -52,7 +32,12 @@ ClassList.prototype = Object.assign([], {
       this.push(item);
     }
 
-    this.$_doUpdate();
+    const payload = {
+      path: `${this.$_element._path}.className`,
+      value: this.slice().join(' ')
+    };
+
+    this.$_doUpdate(payload);
   },
 
   item(index) {
@@ -79,7 +64,13 @@ ClassList.prototype = Object.assign([], {
       }
     }
 
-    if (isUpdate) this.$_doUpdate();
+    if (isUpdate) {
+      const payload = {
+        path: `${this.$_element._path}.className`,
+        value: this.slice().join(' ')
+      };
+      this.$_doUpdate(payload);
+    }
   },
 
   remove(...args) {
@@ -99,7 +90,13 @@ ClassList.prototype = Object.assign([], {
       }
     }
 
-    if (isUpdate) this.$_doUpdate();
+    if (isUpdate) {
+      const payload = {
+        path: `${this.$_element._path}.className`,
+        value: this.slice().join(' ')
+      };
+      this.$_doUpdate(payload);
+    }
   },
 
   toggle(className, force) {

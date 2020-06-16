@@ -1,8 +1,4 @@
-import Pool from '../utils/pool';
-import cache from '../utils/cache';
 import tool from '../utils/tool';
-
-const pool = new Pool();
 
 class Attribute {
   constructor(element, onUpdate) {
@@ -10,17 +6,6 @@ class Attribute {
   }
 
   static $$create(element, onUpdate) {
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(element, onUpdate);
-        return instance;
-      }
-    }
-
     return new Attribute(element, onUpdate);
   }
 
@@ -42,12 +27,6 @@ class Attribute {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.domExtendMultiplexing) {
-      pool.add(this);
-    }
   }
 
   get list() {
@@ -68,16 +47,13 @@ class Attribute {
       const datasetName = tool.toCamel(name.substr(5));
       element.dataset[datasetName] = value;
     } else {
-      const config = cache.getConfig();
-
-      if (typeof value === 'string' && config.optimization.attrValueReduce && value.length > config.optimization.attrValueReduce) {
-        console.warn(`property "${name}" will be deleted, because it's greater than ${config.optimization.attrValueReduce}`);
-        value = '';
-      }
-
       map[name] = value;
 
-      this.$_doUpdate();
+      const payload = {
+        path: `${this.$_element._path}.${name}`,
+        value: value
+      };
+      this.$_doUpdate(payload);
     }
 
     this.triggerUpdate();
@@ -135,7 +111,11 @@ class Attribute {
     } else {
       // The Settings for the other fields need to trigger the parent component to update
       delete map[name];
-      this.$_doUpdate();
+      const payload = {
+        path: `${this.$_element._path}.${name}`,
+        value: ''
+      };
+      this.$_doUpdate(payload);
     }
 
     this.triggerUpdate();

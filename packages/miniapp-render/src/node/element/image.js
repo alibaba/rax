@@ -1,26 +1,10 @@
 /* global CONTAINER */
 import Element from '../element';
-import cache from '../../utils/cache';
-import Pool from '../../utils/pool';
 import Event from '../../event/event';
-
-const pool = new Pool();
 
 class Image extends Element {
   // Create instance
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reuse element node
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new Image(options, tree);
   }
 
@@ -51,19 +35,12 @@ class Image extends Element {
   // Override the parent class's recovery instance method
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reuse element node
-      pool.add(this);
-    }
   }
 
   // Update parent
-  $_triggerParentUpdate() {
+  $_triggerParentUpdate(payload) {
     this.$_initRect();
-    super.$_triggerParentUpdate();
+    super.$_triggerParentUpdate(payload);
   }
 
   // Init length

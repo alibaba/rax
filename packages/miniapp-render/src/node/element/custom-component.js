@@ -1,23 +1,8 @@
 import Element from '../element';
-import cache from '../../utils/cache';
-import Pool from '../../utils/pool';
-
-const pool = new Pool();
 
 class CustomComponent extends Element {
   // Create instance
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new CustomComponent(options, tree);
   }
 
@@ -35,12 +20,6 @@ class CustomComponent extends Element {
 
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      pool.add(this);
-    }
   }
 
   get behavior() {

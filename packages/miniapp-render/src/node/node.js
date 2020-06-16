@@ -42,6 +42,24 @@ class Node extends EventTarget {
     this.$_parentNode = parentNode;
   }
 
+  get _path() {
+    if (this.$_parentNode !== null) {
+      const index = '[' + this.$_parentNode.childNodes.indexOf(this) + ']';
+
+      return `${this.parentNode._path}.children.${index}`;
+    }
+
+    return '';
+  }
+
+  get _root() {
+    if (this.$_parentNode !== null) {
+      return this.$_parentNode._root;
+    }
+
+    return null;
+  }
+
   get parentNode() {
     return this.$_parentNode;
   }

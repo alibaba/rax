@@ -1,19 +1,20 @@
 import cache from '../utils/cache';
 import tool from '../utils/tool';
-import defineLifeCycle from '../utils/defineLifeCycle';
+import injectLifeCycle from '../bridge/injectLifeCycle';
+import createEventProxy from '../bridge/createEventProxy';
 import { createWindow } from '../window';
 import Document from '../document';
 
 // Export for test
-export function createPage(pageId, config) {
+export function createPage(internal, config) {
   if (config) cache.setConfig(config);
 
   const nodeIdMap = {};
   const window = createWindow();
-  const document = new Document(pageId, nodeIdMap);
+  const document = new Document(internal, nodeIdMap);
 
   cache.setWindow(window);
-  cache.init(pageId, {
+  cache.init(internal.pageId, {
     document,
     nodeIdMap
   });
@@ -24,15 +25,11 @@ export function createPage(pageId, config) {
   };
 }
 
-export default function(init, config, lifeCycles = []) {
-  const pageConfig = {
-    data: {
-      pageId: '',
-      bodyClass: 'miniprogram-root'
-    },
+export function getBaseLifeCycles(init, config) {
+  return {
     onLoad(query) {
-      this.pageId = `p-${tool.getId()}`;
-      const { window, document } = createPage(this.pageId, config);
+      this.pageId = this.data.pageId;
+      const { window, document } = createPage(this, config);
       this.window = window;
       this.document = document;
       this.query = query;
@@ -45,24 +42,45 @@ export default function(init, config, lifeCycles = []) {
       this.window.__RAX_INITIALISED__ = false;
 
       // Handle update of body
-      this.document.documentElement.addEventListener('$$childNodesUpdate', () => {
-        const domNode = this.document.body;
-        const data = {
-          bodyClass: `${domNode.className || ''} miniprogram-root`
-        };
-
-        if (data.bodyClass !== this.data.bodyClass) {
-          this.setData(data);
+      this.document.body.addEventListener('render', (...tasks) => {
+        if (this.$batchedUpdates) {
+          if (tasks[0].path === 'root.children') {
+            this.setData({
+              [tasks[0].path]: [tasks[0].item]
+            }, () => {
+              this.window.$$trigger('load');
+              this.window.$$trigger('pageload', { event: query });
+            });
+          } else {
+            let callback;
+            this.$batchedUpdates(() => {
+              tasks.forEach((task, index) => {
+                if (index === tasks.length - 1) {
+                  callback = () => {
+                    console.log('time', Date.now() - getApp().startTime);
+                  };
+                }
+                if (task.type === 'children') {
+                  const spliceArgs = [task.start, task.deleteCount];
+                  this.$spliceData({
+                    [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
+                  }, callback);
+                } else {
+                  this.setData({
+                    [task.path]: task.value
+                  });
+                }
+              });
+            });
+          }
+        } else {
+          this.setData(tasks[0]);
         }
       });
 
       init(this.window, this.document);
-      this.setData({
-        pageId: this.pageId
-      });
       this.app = this.window.createApp();
-      this.window.$$trigger('load');
-      this.window.$$trigger('pageload', { event: query });
+      this.window.$$trigger('DOMContentLoaded');
     },
     onShow() {
       if (this.window) {
@@ -83,7 +101,6 @@ export default function(init, config, lifeCycles = []) {
     onUnload() {
       this.window.$$trigger('beforeunload');
       this.window.$$trigger('pageunload');
-      if (this.app && this.app.$destroy) this.app.$destroy();
       this.document.body.$$recycle(); // Recycle DOM node
 
       cache.destroy(this.pageId);
@@ -91,11 +108,24 @@ export default function(init, config, lifeCycles = []) {
       this.pageId = null;
       this.window = null;
       this.document = null;
-      this.app = null;
       this.query = null;
     }
   };
-  // Define page lifecycles
-  defineLifeCycle(lifeCycles, pageConfig);
+}
+
+export default function(init, config, lifeCycles = []) {
+  const pageId = `p-${tool.getId()}`;
+  const pageConfig = {
+    data: {
+      pageId,
+      root: {
+        children: []
+      }
+    },
+    ...getBaseLifeCycles(init, config),
+    ...createEventProxy(pageId)
+  };
+  // Define page lifecycles, like onReachBottom
+  injectLifeCycle(lifeCycles, pageConfig);
   return pageConfig;
 };
