@@ -37,7 +37,7 @@ if (isWeChatMiniProgram) {
         return !!domNode.getAttribute('webp');
       }
     },
-  ])
+  ]);
 }
 if (isMiniApp) {
   props.push({
@@ -45,7 +45,7 @@ if (isMiniApp) {
     get(domNode) {
       return !!domNode.getAttribute('default-source');
     },
-  })
+  });
 }
 
 export default {

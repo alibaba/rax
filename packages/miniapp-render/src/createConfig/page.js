@@ -57,6 +57,7 @@ export function getBaseLifeCycles(init, config) {
               tasks.forEach((task, index) => {
                 if (index === tasks.length - 1) {
                   callback = () => {
+                    // eslint-disable-next-line no-undef
                     console.log('time', Date.now() - getApp().startTime);
                   };
                 }
