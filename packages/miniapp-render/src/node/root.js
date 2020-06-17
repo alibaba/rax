@@ -1,6 +1,6 @@
 import Element from './element';
 import cache from '../utils/cache';
-import safeFindProperty from '../utils/safeFindProperty';
+import getProperty from '../utils/getProperty';
 import { propsMap } from '../builtInComponents';
 
 function simplify(node) {
@@ -85,19 +85,28 @@ class RootElement extends Element {
       // type 1: { path, start, deleteCount, item? } => need to simplify item
       // type 2: { path, value }
       const renderObject = {};
+      const renderStacks = [];
+      const pathCache = [];
       const internal = cache.getDocument(this.__pageId)._internal;
       for (let i = 0, j = this.renderStacks.length; i < j; i++) {
         const renderTask = this.renderStacks[i];
+        const path = renderTask.path;
+        const taskInfo = getProperty(internal.data, path, pathCache);
+        if (!taskInfo.parentRendered) break;
         if (renderTask.type === 'children') {
           const ElementNode = renderTask.item;
           const simplifiedNode = traverseTree(ElementNode, simplify);
           renderTask.item = simplifiedNode;
+          pathCache.push({
+            path: renderTask.path,
+            value: renderTask.item
+          });
         }
+
         if (!internal.$batchedUpdates) {
           // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
-          const path = renderTask.path;
           if (renderTask.type === 'children') {
-            renderObject[path] = renderObject[path] || safeFindProperty(internal.data, path) || [];
+            renderObject[path] = renderObject[path] || taskInfo.value || [];
             if (renderTask.item) {
               renderObject[path].splice(renderTask.start, renderTask.deleteCount, renderTask.item);
             } else {
@@ -106,10 +115,12 @@ class RootElement extends Element {
           } else {
             renderObject[path] = renderTask.value;
           }
+        } else {
+          renderStacks.push(renderTask);
         }
       }
 
-      this.$$trigger('render', { args: internal.$batchedUpdates ? this.renderStacks : renderObject });
+      this.$$trigger('render', { args: internal.$batchedUpdates ? renderStacks : renderObject });
       this.renderStacks = [];
     }, 0);
   }
