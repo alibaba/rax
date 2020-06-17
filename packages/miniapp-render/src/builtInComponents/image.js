@@ -12,7 +12,7 @@ let props = [{
     return domNode.getAttribute('mode') || 'scaleToFill';
   },
 }, {
-  name: 'lazyLoad',
+  name: 'lazy-load',
   get(domNode) {
     return !!domNode.getAttribute('lazy-load');
   },
@@ -26,7 +26,7 @@ let props = [{
 if (isWeChatMiniProgram) {
   props = props.concat([
     {
-      name: 'showMenuByLongpress',
+      name: 'show-menu-by-longpress',
       get(domNode) {
         return !!domNode.getAttribute('show-menu-by-longpress');
       }
@@ -41,7 +41,7 @@ if (isWeChatMiniProgram) {
 }
 if (isMiniApp) {
   props.push({
-    name: 'defaultSource',
+    name: 'default-source',
     get(domNode) {
       return !!domNode.getAttribute('default-source');
     },

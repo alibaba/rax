@@ -1,17 +1,17 @@
 export default {
   name: 'swiper',
   props: [{
-    name: 'indicatorDots',
+    name: 'indicator-dots',
     get(domNode) {
       return !!domNode.getAttribute('indicator-dots');
     },
   }, {
-    name: 'indicatorColor',
+    name: 'indicator-color',
     get(domNode) {
       return domNode.getAttribute('indicator-color') || 'rgba(0, 0, 0, .3)';
     },
   }, {
-    name: 'indicatorActiveColor',
+    name: 'indicator-active-color',
     get(domNode) {
       return domNode.getAttribute('indicator-active-color') || '#000000';
     },
@@ -48,28 +48,28 @@ export default {
       return !!domNode.getAttribute('vertical');
     },
   }, {
-    name: 'previousMargin',
+    name: 'previous-margin',
     get(domNode) {
       return domNode.getAttribute('previous-margin') || '0px';
     },
   }, {
-    name: 'nextMargin',
+    name: 'next-margin',
     get(domNode) {
       return domNode.getAttribute('next-margin') || '0px';
     },
   }, {
-    name: 'displayMultipleItems',
+    name: 'display-multiple-items',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('display-multiple-items'), 10);
       return !isNaN(value) ? value : 1;
     },
   }, {
-    name: 'skipHiddenItemLayout',
+    name: 'skip-hidden-item-layout',
     get(domNode) {
       return !!domNode.getAttribute('skip-hidden-item-layout');
     },
   }, {
-    name: 'easingFunction',
+    name: 'easing-function',
     get(domNode) {
       return domNode.getAttribute('easing-function') || 'default';
     },

@@ -9,12 +9,12 @@ export default {
       return domNode.getAttribute('type') || '';
     },
   }, {
-    name: 'canvasId',
+    name: 'canvas-id',
     get(domNode) {
       return domNode.getAttribute(isWeChatMiniProgram ? 'canvas-id' : 'id') || '';
     },
   }, {
-    name: 'disableScroll',
+    name: 'disable-scroll',
     get(domNode) {
       return !!domNode.getAttribute('disable-scroll');
     },

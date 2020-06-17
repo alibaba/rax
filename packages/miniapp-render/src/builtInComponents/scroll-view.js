@@ -4,61 +4,61 @@ import { isWeChatMiniProgram } from 'universal-env';
 const ScrollView = {
   name: 'scroll-view',
   props: [{
-    name: 'scrollX',
+    name: 'scroll-x',
     get(domNode) {
       return !!domNode.getAttribute('scroll-x');
     },
   }, {
-    name: 'scrollY',
+    name: 'scroll-y',
     get(domNode) {
       return !!domNode.getAttribute('scroll-y');
     },
   }, {
-    name: 'upperThreshold',
+    name: 'upper-threshold',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('upper-threshold'), 10);
       return !isNaN(value) ? value : 50;
     },
   }, {
-    name: 'lowerThreshold',
+    name: 'lower-threshold',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('lower-threshold'), 10);
       return !isNaN(value) ? value : 50;
     },
   }, {
-    name: 'scrollTop',
+    name: 'scroll-top',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-top'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
-    name: 'scrollLeft',
+    name: 'scroll-left',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-left'), 10);
       return !isNaN(value) ? value : '';
     },
   }, {
-    name: 'scrollIntoView',
+    name: 'scroll-into-view',
     get(domNode) {
       return domNode.getAttribute('scroll-into-view') || '';
     },
   }, {
-    name: 'scrollWithAnimation',
+    name: 'scroll-with-animation',
     get(domNode) {
       return !!domNode.getAttribute('scroll-with-animation');
     },
   }, {
-    name: 'scrollAnimationDuration',
+    name: 'scroll-animation-duration',
     get(domNode) {
       return domNode.getAttribute('scroll-animation-duration');
     },
   }, {
-    name: 'enableBackToTop',
+    name: 'enable-back-to-top',
     get(domNode) {
       return !!domNode.getAttribute('enable-back-to-top');
     },
   }, {
-    name: 'enableFlex',
+    name: 'enable-flex',
     get(domNode) {
       return !!domNode.getAttribute('enable-flex');
     },

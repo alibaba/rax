@@ -26,14 +26,9 @@ import textarea from './textarea';
 import navigator from './navigator';
 import camera from './camera';
 import image from './image';
-import livePlayer from './live-player';
-import livePusher from './live-pusher';
 import video from './video';
 import map from './map';
 import canvas from './canvas';
-import ad from './ad';
-import officialAccount from './official-account';
-import openData from './open-data';
 import webView from './web-view';
 
 // Sub components
@@ -69,14 +64,9 @@ const components = [
   navigator,
   camera,
   image,
-  livePlayer,
-  livePusher,
   video,
   map,
   canvas,
-  ad,
-  officialAccount,
-  openData,
   webView,
   movableView,
   swiperItem,

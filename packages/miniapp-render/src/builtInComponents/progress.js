@@ -11,17 +11,17 @@ export default {
       return !!domNode.getAttribute('show-info');
     },
   }, {
-    name: 'borderRadius',
+    name: 'border-radius',
     get(domNode) {
       return domNode.getAttribute('border-radius') || '0';
     },
   }, {
-    name: 'fontSize',
+    name: 'font-size',
     get(domNode) {
       return domNode.getAttribute('font-size') || '16';
     },
   }, {
-    name: 'strokeWidth',
+    name: 'stroke-width',
     get(domNode) {
       return domNode.getAttribute('stroke-width') || '6';
     },
@@ -31,12 +31,12 @@ export default {
       return domNode.getAttribute('color') || '#09BB07';
     },
   }, {
-    name: 'activeColor',
+    name: 'active-color',
     get(domNode) {
       return domNode.getAttribute('active-color') || '#09BB07';
     },
   }, {
-    name: 'backgroundColor',
+    name: 'background-color',
     get(domNode) {
       return domNode.getAttribute('background-color') || '#EBEBEB';
     },
@@ -46,7 +46,7 @@ export default {
       return !!domNode.getAttribute('active');
     },
   }, {
-    name: 'activeMode',
+    name: 'active-mode',
     get(domNode) {
       return domNode.getAttribute('active-mode') || 'backwards';
     },

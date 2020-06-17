@@ -32,12 +32,12 @@ export default {
       return domNode.getAttribute('placeholderColor') || '#999999';
     },
   }, {
-    name: 'placeholderStyle',
+    name: 'placeholder-style',
     get(domNode) {
       return domNode.getAttribute('placeholder-style') || '';
     },
   }, {
-    name: 'placeholderClass',
+    name: 'placeholder-class',
     get(domNode) {
       return domNode.getAttribute('placeholder-class') || 'input-placeholder';
     },
@@ -53,7 +53,7 @@ export default {
       return !isNaN(value) ? value : 140;
     },
   }, {
-    name: 'cursorSpacing',
+    name: 'cursor-spacing',
     get(domNode) {
       return +domNode.getAttribute('cursor-spacing') || 0;
     },
@@ -63,12 +63,12 @@ export default {
       return !!domNode.getAttribute('autofocus');
     },
   }, {
-    name: 'confirmType',
+    name: 'confirm-type',
     get(domNode) {
       return domNode.getAttribute('confirm-type') || 'done';
     },
   }, {
-    name: 'confirmHold',
+    name: 'confirm-hold',
     get(domNode) {
       return !!domNode.getAttribute('confirm-hold');
     },
@@ -79,19 +79,19 @@ export default {
       return !isNaN(value) ? value : -1;
     },
   }, {
-    name: 'selectionStart',
+    name: 'selection-start',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('selection-start'), 10);
       return !isNaN(value) ? value : -1;
     },
   }, {
-    name: 'selectionEnd',
+    name: 'selection-end',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('selection-end'), 10);
       return !isNaN(value) ? value : -1;
     },
   }, {
-    name: 'adjustPosition',
+    name: 'adjust-position',
     get(domNode) {
       const value = domNode.getAttribute('adjust-position');
       return value !== undefined ? !!value : true;

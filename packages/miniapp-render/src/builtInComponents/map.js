@@ -43,13 +43,13 @@ export default {
       return value !== undefined ? value : [];
     },
   }, {
-    name: 'includePoints',
+    name: 'include-points',
     get(domNode) {
       const value = domNode.getAttribute('include-points');
       return value !== undefined ? value : [];
     },
   }, {
-    name: 'showLocation',
+    name: 'show-location',
     get(domNode) {
       return !!domNode.getAttribute('show-location');
     },
@@ -65,7 +65,7 @@ export default {
       return domNode.getAttribute('subkey') || '';
     },
   }, {
-    name: 'layerStyle',
+    name: 'layer-style',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('layer-style'), 10);
       return !isNaN(value) ? value : 1;
@@ -81,44 +81,44 @@ export default {
       return +domNode.getAttribute('skew') || 0;
     },
   }, {
-    name: 'enable3D',
+    name: 'enable-3D',
     get(domNode) {
       return !!domNode.getAttribute('enable-3D');
     },
   }, {
-    name: 'showCompass',
+    name: 'show-compass',
     get(domNode) {
       return !!domNode.getAttribute('show-compass');
     },
   }, {
-    name: 'enableOverlooking',
+    name: 'enable-overlooking',
     get(domNode) {
       return !!domNode.getAttribute('enable-overlooking');
     },
   }, {
-    name: 'enableZoom',
+    name: 'enable-zoom',
     get(domNode) {
       const value = domNode.getAttribute('enable-zoom');
       return value !== undefined ? !!value : true;
     },
   }, {
-    name: 'enableScroll',
+    name: 'enable-scroll',
     get(domNode) {
       const value = domNode.getAttribute('enable-scroll');
       return value !== undefined ? !!value : true;
     },
   }, {
-    name: 'enableRotate',
+    name: 'enable-rotate',
     get(domNode) {
       return !!domNode.getAttribute('enable-rotate');
     },
   }, {
-    name: 'enableSatellite',
+    name: 'enable-satellite',
     get(domNode) {
       return !!domNode.getAttribute('enable-satellite');
     },
   }, {
-    name: 'enableTraffic',
+    name: 'enable-traffic',
     get(domNode) {
       return !!domNode.getAttribute('enable-traffic');
     },

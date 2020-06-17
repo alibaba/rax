@@ -39,33 +39,33 @@ export default {
       return domNode.getAttribute('color') || '#e9e9e9';
     },
   }, {
-    name: 'selectedColor',
+    name: 'selected-color',
     get(domNode) {
       return domNode.getAttribute('selected-color') || '#1aad19';
     },
   }, {
-    name: 'activeColor',
+    name: 'active-color',
     get(domNode) {
       return domNode.getAttribute('active-color') || '#1aad19';
     },
   }, {
-    name: 'backgroundColor',
+    name: 'background-color',
     get(domNode) {
       return domNode.getAttribute('background-color') || '#e9e9e9';
     },
   }, {
-    name: 'blockSize',
+    name: 'block-size',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('block-size'), 10);
       return !isNaN(value) ? value : 28;
     },
   }, {
-    name: 'blockColor',
+    name: 'block-color',
     get(domNode) {
       return domNode.getAttribute('block-color') || '#ffffff';
     },
   }, {
-    name: 'showValue',
+    name: 'show-value',
     get(domNode) {
       return !!domNode.getAttribute('show-value');
     },

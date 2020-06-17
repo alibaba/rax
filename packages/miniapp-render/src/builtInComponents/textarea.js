@@ -16,17 +16,17 @@ export default {
       return domNode.placeholder;
     },
   }, {
-    name: 'placeholderColor',
+    name: 'placeholder-color',
     get(domNode) {
-      return domNode.getAttribute('placeholderColor') || '#999999';
+      return domNode.getAttribute('placeholder-color') || '#999999';
     },
   }, {
-    name: 'placeholderStyle',
+    name: 'placeholder-style',
     get(domNode) {
       return domNode.getAttribute('placeholder-style') || '';
     },
   }, {
-    name: 'placeholderClass',
+    name: 'placeholder-class',
     get(domNode) {
       return domNode.getAttribute('placeholder-class') || 'input-placeholder';
     },
@@ -52,7 +52,7 @@ export default {
       return !!domNode.getAttribute('focus');
     },
   }, {
-    name: 'autoHeight',
+    name: 'auto-height',
     get(domNode) {
       return !!domNode.getAttribute('auto-height');
     },
@@ -62,7 +62,7 @@ export default {
       return !!domNode.getAttribute('fixed');
     },
   }, {
-    name: 'cursorSpacing',
+    name: 'cursor-spacing',
     get(domNode) {
       return +domNode.getAttribute('cursor-spacing') || 0;
     },
@@ -73,25 +73,25 @@ export default {
       return !isNaN(value) ? value : -1;
     },
   }, {
-    name: 'showConfirmBar',
+    name: 'show-confirm-bar',
     get(domNode) {
       const value = domNode.getAttribute('show-confirm-bar');
       return value !== undefined ? !!value : true;
     },
   }, {
-    name: 'selectionStart',
+    name: 'selection-start',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('selection-start'), 10);
       return !isNaN(value) ? value : -1;
     },
   }, {
-    name: 'selectionEnd',
+    name: 'selection-end',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('selection-end'), 10);
       return !isNaN(value) ? value : -1;
     },
   }, {
-    name: 'adjustPosition',
+    name: 'adjust-position',
     get(domNode) {
       const value = domNode.getAttribute('adjust-position');
       return value !== undefined ? !!value : true;

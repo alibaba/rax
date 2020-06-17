@@ -2,23 +2,23 @@
 import { isWeChatMiniProgram } from 'universal-env';
 
 let props = [{
-  name: 'openType',
+  name: 'open-type',
   get(domNode) {
     return domNode.getAttribute('open-type') || 'navigate';
   },
 }, {
-  name: 'hoverClass',
+  name: 'hover-class',
   get(domNode) {
     return domNode.getAttribute('hover-class') || 'none';
   },
 }, {
-  name: 'hoverStartTime',
+  name: 'hover-start-time',
   get(domNode) {
     const value = parseInt(domNode.getAttribute('hover-start-time'), 10);
     return !isNaN(value) ? value : 50;
   },
 }, {
-  name: 'hoverStayTime',
+  name: 'hover-stay-time',
   get(domNode) {
     const value = parseInt(domNode.getAttribute('hover-stay-time'), 10);
     return !isNaN(value) ? value : 600;
@@ -47,7 +47,7 @@ if (isWeChatMiniProgram) {
       return !isNaN(value) ? value : 1;
     },
   }, {
-    name: 'appId',
+    name: 'app-id',
     get(domNode) {
       return domNode.getAttribute('app-id') || '';
     },
@@ -57,7 +57,7 @@ if (isWeChatMiniProgram) {
       return domNode.getAttribute('path') || '';
     },
   }, {
-    name: 'extraData',
+    name: 'extra-data',
     get(domNode) {
       return domNode.getAttribute('extra-data') || {};
     },
@@ -67,7 +67,7 @@ if (isWeChatMiniProgram) {
       return domNode.getAttribute('version') || 'release';
     },
   }, {
-    name: 'hoverStopPropagation',
+    name: 'hover-stop-propagation',
     get(domNode) {
       return !!domNode.getAttribute('hover-stop-propagation');
     },

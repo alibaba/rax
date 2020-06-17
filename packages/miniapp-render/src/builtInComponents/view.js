@@ -4,23 +4,23 @@ import { isMiniApp } from 'universal-env';
 const view = {
   name: 'view',
   props: [{
-    name: 'hoverClass',
+    name: 'hover-class',
     get(domNode) {
       return domNode.getAttribute('hover-class') || 'none';
     },
   }, {
-    name: 'hoverStopPropagation',
+    name: 'hover-stop-propagation',
     get(domNode) {
       return !!domNode.getAttribute('hover-stop-propagation');
     },
   }, {
-    name: 'hoverStartTime',
+    name: 'hover-start-time',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('hover-start-time'), 10);
       return !isNaN(value) ? value : 50;
     },
   }, {
-    name: 'hoverStayTime',
+    name: 'hover-stay-time',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('hover-stay-time'), 10);
       return !isNaN(value) ? value : 400;

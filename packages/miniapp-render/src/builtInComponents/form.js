@@ -1,12 +1,12 @@
 export default {
   name: 'form',
   props: [{
-    name: 'reportSubmit',
+    name: 'report-submit',
     get(domNode) {
       return !!domNode.getAttribute('report-submit');
     },
   }, {
-    name: 'reportSubmitTimeout',
+    name: 'report-submit-timeout',
     get(domNode) {
       return +domNode.getAttribute('report-submit-timeout') || 0;
     },

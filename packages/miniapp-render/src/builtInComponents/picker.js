@@ -21,7 +21,7 @@ const picker = {
         return value !== undefined ? value : [];
       },
     }, {
-      name: 'rangeKey',
+      name: 'range-key',
       get(domNode) {
         return domNode.getAttribute('range-key') || '';
       },

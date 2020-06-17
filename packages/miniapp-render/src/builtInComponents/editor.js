@@ -1,7 +1,7 @@
 export default {
   name: 'editor',
   props: [{
-    name: 'readOnly',
+    name: 'read-only',
     get(domNode) {
       return !!domNode.getAttribute('read-only');
     },
@@ -11,17 +11,17 @@ export default {
       return domNode.getAttribute('placeholder') || '';
     },
   }, {
-    name: 'showImgSize',
+    name: 'show-img-size',
     get(domNode) {
       return !!domNode.getAttribute('show-img-size');
     },
   }, {
-    name: 'showImgToolbar',
+    name: 'show-img-toolbar',
     get(domNode) {
       return !!domNode.getAttribute('show-img-toolbar');
     },
   }, {
-    name: 'showImgResize',
+    name: 'show-img-resize',
     get(domNode) {
       return !!domNode.getAttribute('show-img-resize');
     },

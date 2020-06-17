@@ -26,33 +26,33 @@ export default {
       return !!domNode.getAttribute('loading');
     },
   }, {
-    name: 'formType',
+    name: 'form-type',
     get(domNode) {
       return domNode.getAttribute('form-type') || '';
     },
   }, {
-    name: 'openType',
+    name: 'open-type',
     get(domNode) {
       return domNode.getAttribute('open-type') || '';
     },
   }, {
-    name: 'hoverClass',
+    name: 'hover-class',
     get(domNode) {
       return domNode.getAttribute('hover-class') || 'button-hover';
     },
   }, {
-    name: 'hoverStopPropagation',
+    name: 'hover-stop-propagation',
     get(domNode) {
       return !!domNode.getAttribute('hover-stop-propagation');
     },
   }, {
-    name: 'hoverStartTime',
+    name: 'hover-start-time',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('hover-start-time'), 10);
       return !isNaN(value) ? value : 20;
     },
   }, {
-    name: 'hoverStayTime',
+    name: 'hover-stay-time',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('hover-stay-time'), 10);
       return !isNaN(value) ? value : 70;
@@ -63,37 +63,37 @@ export default {
       return domNode.getAttribute('lang') || 'en';
     },
   }, {
-    name: 'sessionFrom',
+    name: 'session-from',
     get(domNode) {
       return domNode.getAttribute('session-from') || '';
     },
   }, {
-    name: 'sendMessageTitle',
+    name: 'send-message-title',
     get(domNode) {
       return domNode.getAttribute('send-message-title') || '';
     },
   }, {
-    name: 'sendMessagePath',
+    name: 'send-message-path',
     get(domNode) {
       return domNode.getAttribute('send-message-path') || '';
     },
   }, {
-    name: 'sendMessageImg',
+    name: 'send-message-img',
     get(domNode) {
       return domNode.getAttribute('send-message-img') || '';
     },
   }, {
-    name: 'appParameter',
+    name: 'app-parameter',
     get(domNode) {
       return domNode.getAttribute('app-parameter') || '';
     },
   }, {
-    name: 'showMessageCard',
+    name: 'show-message-card',
     get(domNode) {
       return !!domNode.getAttribute('show-message-card');
     },
   }, {
-    name: 'businessId',
+    name: 'business-id',
     get(domNode) {
       return domNode.getAttribute('business-id') || '';
     },

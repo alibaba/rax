@@ -1,7 +1,7 @@
 export default {
   name: 'swiper-item',
   props: [{
-    name: 'itemId',
+    name: 'item-id',
     get(domNode) {
       return domNode.getAttribute('item-id') || '';
     },

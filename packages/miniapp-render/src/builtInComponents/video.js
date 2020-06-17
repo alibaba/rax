@@ -17,18 +17,18 @@ let props = [{
     return domNode.controls;
   },
 }, {
-  name: 'danmuList',
+  name: 'danmu-list',
   get(domNode) {
     const value = domNode.getAttribute('danmu-list');
     return value !== undefined ? value : [];
   },
 }, {
-  name: 'danmuBtn',
+  name: 'danmu-btn',
   get(domNode) {
     return !!domNode.getAttribute('danmu-btn');
   },
 }, {
-  name: 'enableDanmu',
+  name: 'enable-danmu',
   get(domNode) {
     return !!domNode.getAttribute('enable-danmu');
   },
@@ -48,7 +48,7 @@ let props = [{
     return domNode.muted;
   },
 }, {
-  name: 'initialTime',
+  name: 'initial-time',
   get(domNode) {
     return +domNode.getAttribute('initial-time') || 0;
   },
@@ -59,37 +59,37 @@ let props = [{
     return !isNaN(value) ? value : -1;
   },
 }, {
-  name: 'showProgress',
+  name: 'show-progress',
   get(domNode) {
     const value = domNode.getAttribute('show-progress');
     return value !== undefined ? !!value : true;
   },
 }, {
-  name: 'showFullscreenBtn',
+  name: 'show-fullscreen-btn',
   get(domNode) {
     const value = domNode.getAttribute('show-fullscreen-btn');
     return value !== undefined ? !!value : true;
   },
 }, {
-  name: 'showPlayBtn',
+  name: 'show-play-btn',
   get(domNode) {
     const value = domNode.getAttribute('show-play-btn');
     return value !== undefined ? !!value : true;
   },
 }, {
-  name: 'showCenterPlayBtn',
+  name: 'show-center-play-btn',
   get(domNode) {
     const value = domNode.getAttribute('show-center-play-btn');
     return value !== undefined ? !!value : true;
   },
 }, {
-  name: 'enableProgressGesture',
+  name: 'enable-progress-gesture',
   get(domNode) {
     const value = domNode.getAttribute('enable-progress-gesture');
     return value !== undefined ? !!value : true;
   },
 }, {
-  name: 'objectFit',
+  name: 'object-fit',
   get(domNode) {
     return domNode.getAttribute('object-fit') || 'contain';
   },
@@ -99,7 +99,7 @@ let props = [{
     return domNode.poster;
   },
 }, {
-  name: 'showMuteBtn',
+  name: 'show-mute-btn',
   get(domNode) {
     return !!domNode.getAttribute('show-mute-btn');
   },
@@ -109,34 +109,34 @@ let props = [{
     return domNode.getAttribute('title') || '';
   },
 }, {
-  name: 'playBtnPosition',
+  name: 'play-btn-position',
   get(domNode) {
     return domNode.getAttribute('play-btn-position') || 'bottom';
   },
 }, {
-  name: 'enablePlayGesture',
+  name: 'enable-play-gesture',
   get(domNode) {
     return !!domNode.getAttribute('enable-play-gesture');
   },
 }, {
-  name: 'autoPauseIfNavigate',
+  name: 'auto-pause-if-navigate',
   get(domNode) {
     const value = domNode.getAttribute('auto-pause-if-navigate');
     return value !== undefined ? !!value : true;
   },
 }, {
-  name: 'autoPauseIfOpenNative',
+  name: 'auto-pause-if-open-native',
   get(domNode) {
     const value = domNode.getAttribute('auto-pause-if-open-native');
     return value !== undefined ? !!value : true;
   },
 }, {
-  name: 'vslideGesture',
+  name: 'vslide-gesture',
   get(domNode) {
     return !!domNode.getAttribute('vslide-gesture');
   },
 }, {
-  name: 'vslideGestureInFullscreen',
+  name: 'vslide-gesture-in-fullscreen',
   get(domNode) {
     const value = domNode.getAttribute('vslide-gesture-in-fullscreen');
     return value !== undefined ? !!value : true;

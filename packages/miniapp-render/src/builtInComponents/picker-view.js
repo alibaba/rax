@@ -9,22 +9,22 @@ export default {
       return value !== undefined ? value : [];
     },
   }, {
-    name: 'indicatorStyle',
+    name: 'indicator-style',
     get(domNode) {
       return domNode.getAttribute('indicator-style') || '';
     },
   }, {
-    name: 'indicatorClass',
+    name: 'indicator-class',
     get(domNode) {
       return domNode.getAttribute('indicator-class') || '';
     },
   }, {
-    name: 'maskStyle',
+    name: 'mask-style',
     get(domNode) {
       return domNode.getAttribute('mask-style') || '';
     },
   }, {
-    name: 'maskClass',
+    name: 'mask-class',
     get(domNode) {
       return domNode.getAttribute('mask-class') || '';
     },

@@ -6,7 +6,7 @@ export default {
       return domNode.getAttribute('mode') || 'normal';
     },
   }, {
-    name: 'devicePosition',
+    name: 'device-position',
     get(domNode) {
       return domNode.getAttribute('device-position') || 'back';
     },
@@ -16,7 +16,7 @@ export default {
       return domNode.getAttribute('flash') || 'auto';
     },
   }, {
-    name: 'frameSize',
+    name: 'frame-size',
     get(domNode) {
       return domNode.getAttribute('frame-size') || 'medium';
     },
