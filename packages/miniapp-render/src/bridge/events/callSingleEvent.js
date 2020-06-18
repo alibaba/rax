@@ -1,7 +1,7 @@
 import Event from '../../event/event';
 
 
-export default function(eventName, evt, pageId) {
+export default function(eventName, evt, pageId, args) {
   const domNode = this.getDomNodeFromEvt(eventName, evt, pageId);
   if (!domNode) return;
 
@@ -16,6 +16,7 @@ export default function(eventName, evt, pageId) {
       detail: evt && evt.detail,
       $$extra: evt && evt.extra,
     }),
+    args,
     currentTarget: domNode,
   });
 }

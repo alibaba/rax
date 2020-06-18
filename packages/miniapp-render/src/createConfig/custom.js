@@ -48,8 +48,8 @@ export default function() {
 
         if (componentEvents.length) {
           componentEvents.forEach((eventName) => {
-            this[`on${eventName}`] = function(evt) {
-              this.callSimpleEvent(eventName, evt, domNode);
+            this[`on${eventName}`] = function(...args) {
+              domNode.$$trigger(eventName, { args });
             };
           });
         }
