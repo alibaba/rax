@@ -49,7 +49,11 @@ export default function() {
         if (componentEvents.length) {
           componentEvents.forEach((eventName) => {
             this[`on${eventName}`] = function(...args) {
-              domNode.$$trigger(eventName, { args });
+              if (isMiniApp) {
+                domNode.$$trigger(eventName, { args });
+              } else {
+                this.callSimpleEvent(eventName, args[0], domNode);
+              }
             };
           });
         }
