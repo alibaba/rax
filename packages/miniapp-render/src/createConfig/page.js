@@ -46,12 +46,12 @@ export function getBaseLifeCycles(init, config) {
         if (tasks.length > 0) {
           if (this.$batchedUpdates) {
             if (this.firstRender) {
+              this.firstRender = false;
               this.setData({
                 [tasks[0].path]: [tasks[0].item]
               }, () => {
                 this.window.$$trigger('load');
                 this.window.$$trigger('pageload', { event: query });
-                this.firstRender = false;
               });
             } else {
               let callback;
