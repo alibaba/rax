@@ -33,7 +33,7 @@ export function getBaseLifeCycles(init, config) {
       this.window = window;
       this.document = document;
       this.query = query;
-
+      this.firstRender = true;
       // Update location page options
       this.window.history.location.__updatePageOption(query);
       // Set __pageId to global window object
@@ -43,39 +43,42 @@ export function getBaseLifeCycles(init, config) {
 
       // Handle update of body
       this.document.body.addEventListener('render', (...tasks) => {
-        if (this.$batchedUpdates) {
-          if (tasks[0].path === 'root.children') {
-            this.setData({
-              [tasks[0].path]: [tasks[0].item]
-            }, () => {
-              this.window.$$trigger('load');
-              this.window.$$trigger('pageload', { event: query });
-            });
-          } else {
-            let callback;
-            this.$batchedUpdates(() => {
-              tasks.forEach((task, index) => {
-                if (index === tasks.length - 1) {
-                  callback = () => {
-                    // eslint-disable-next-line no-undef
-                    console.log('time', Date.now() - getApp().startTime);
-                  };
-                }
-                if (task.type === 'children') {
-                  const spliceArgs = [task.start, task.deleteCount];
-                  this.$spliceData({
-                    [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
-                  }, callback);
-                } else {
-                  this.setData({
-                    [task.path]: task.value
-                  });
-                }
+        if (tasks.length > 0) {
+          if (this.$batchedUpdates) {
+            if (this.firstRender) {
+              this.setData({
+                [tasks[0].path]: [tasks[0].item]
+              }, () => {
+                this.window.$$trigger('load');
+                this.window.$$trigger('pageload', { event: query });
+                this.firstRender = false;
               });
-            });
+            } else {
+              let callback;
+              this.$batchedUpdates(() => {
+                tasks.forEach((task, index) => {
+                  if (index === tasks.length - 1) {
+                    callback = () => {
+                      // eslint-disable-next-line no-undef
+                      console.log('time', Date.now() - getApp().startTime);
+                    };
+                  }
+                  if (task.type === 'children') {
+                    const spliceArgs = [task.start, task.deleteCount];
+                    this.$spliceData({
+                      [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
+                    }, callback);
+                  } else {
+                    this.setData({
+                      [task.path]: task.value
+                    });
+                  }
+                });
+              });
+            }
+          } else {
+            this.setData(tasks[0]);
           }
-        } else {
-          this.setData(tasks[0]);
         }
       });
 
