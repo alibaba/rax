@@ -31,7 +31,7 @@ describe('svg', () => {
     expect(tspanNode.namespaceURI).toEqual('http://www.w3.org/2000/svg');
   });
 
-  it('should render transform', () => {
+  it('should set transform as attribute', () => {
     render((
       <svg height="90" width="200">
         <text transform="scale(1 0.5)" test={true}>
