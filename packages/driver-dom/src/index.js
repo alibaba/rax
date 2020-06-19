@@ -45,6 +45,16 @@ const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
+// These are all booleans.
+// Should be set as DOM properties rather than attributes.
+// If you 'setAttribute' {false} to these property, it will be a string 'false'.
+const MUST_USE_PROPERTIES = {
+  'checked': true,
+  'multiple': true,
+  'muted': true,
+  'selected': true
+};
+
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
@@ -366,13 +376,8 @@ export function setAttribute(node, propKey, propValue) {
 
   if (propKey === CLASS_NAME) propKey = CLASS;
 
-  if (propKey in node) {
-    try {
-      // Some node property is readonly when in strict mode
-      node[propKey] = propValue;
-    } catch (e) {
-      node[SET_ATTRIBUTE](propKey, propValue);
-    }
+  if (MUST_USE_PROPERTIES[propKey]) {
+    node[propKey] = propValue;
   } else {
     node[SET_ATTRIBUTE](propKey, propValue);
   }
