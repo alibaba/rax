@@ -25,7 +25,7 @@ class Window extends EventTarget {
     };
 
     // Simulate for react
-    this.HTMLIFrameElement = function() {}
+    this.HTMLIFrameElement = function() {};
   }
 
   // Forces the setData cache to be emptied
