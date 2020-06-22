@@ -1,4 +1,4 @@
-import { withRouter } from 'rax-use-router';
+import withRouter from './withRouter';
 import {
   useAppLaunch,
   useAppError,

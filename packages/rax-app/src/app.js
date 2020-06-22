@@ -1,5 +1,6 @@
-import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
-import { SHOW, HIDE, ERROR, LANUCH, NOT_FOUND, SHARE } from './constants';
+import { isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
+import { SHOW, HIDE, ERROR, LAUNCH, NOT_FOUND, SHARE, TAB_ITEM_CLICK } from './constants';
+import { isFunction } from './type';
 
 export const appCycles = {};
 
@@ -24,38 +25,42 @@ export function emit(cycle, context, ...args) {
   }
 }
 
-function useAppLifecycle(cycle, callback) {
-  const cycles = appCycles[cycle] = appCycles[cycle] || [];
-  cycles.push(callback);
+export function addAppLifeCyle(cycle, callback) {
+  if (isFunction(callback)) {
+    const cycles = appCycles[cycle] = appCycles[cycle] || [];
+    cycles.push(callback);
+  }
 }
 
+// All of the following hooks will be removed when the future break change
 export function useAppLaunch(callback) {
-  useAppLifecycle(LANUCH, callback);
+  addAppLifeCyle(LAUNCH, callback);
 }
 
 export function useAppShow(callback) {
-  useAppLifecycle(SHOW, callback);
+  addAppLifeCyle(SHOW, callback);
 }
 
 export function useAppHide(callback) {
-  useAppLifecycle(HIDE, callback);
+  addAppLifeCyle(HIDE, callback);
 }
 
 export function useAppError(callback) {
-  useAppLifecycle(ERROR, callback);
+  addAppLifeCyle(ERROR, callback);
 }
 
 export function usePageNotFound(callback) {
-  useAppLifecycle(NOT_FOUND, callback);
+  addAppLifeCyle(NOT_FOUND, callback);
 }
 
 export function useAppShare(callback) {
-  useAppLifecycle('appshare', callback);
+  addAppLifeCyle('appshare', callback);
 }
 
-if (isMiniApp || isWeChatMiniProgram) {
-  window.addEventListener(LANUCH, ({ options, context }) => {
-    emit(LANUCH, context, options);
+// Emit MiniApp App lifeCycles
+if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
+  window.addEventListener(LAUNCH, ({ options, context }) => {
+    emit(LAUNCH, context, options);
   });
   window.addEventListener('appshow', ({ options, context }) => {
     emit(SHOW, context, options);
@@ -71,5 +76,13 @@ if (isMiniApp || isWeChatMiniProgram) {
   });
   window.addEventListener('appshare', ({ context, shareInfo, options }) => {
     emit(SHARE, context, shareInfo, options);
+  });
+  window.addEventListener('tabitemclick', ({ options, context }) => {
+    emit(TAB_ITEM_CLICK, context, options);
+  });
+} else {
+  // Emit Web lifeCycles
+  window.addEventListener('error', event => {
+    emit(ERROR, null, event.error);
   });
 }

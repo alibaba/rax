@@ -1,12 +1,13 @@
 import { render, createElement, useState, useEffect, Fragment } from 'rax';
 import { Navigation, TabBar } from 'rax-pwa';
-import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram } from 'universal-env';
+import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
 import { useRouter } from 'rax-use-router';
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
 import { createMiniAppHistory } from 'miniapp-history';
 import UniversalDriver from 'driver-universal';
 import pathRedirect from './pathRedirect';
-import { emit, appCycles } from './app';
+import { emit, addAppLifeCyle } from './app';
+import { SHOW, LAUNCH, ERROR, HIDE, TAB_ITEM_CLICK, NOT_FOUND, SHARE, UNHANDLED_REJECTION } from './constants';
 
 const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
 const SHELL_DATA = 'shellData';
@@ -85,22 +86,65 @@ function isNullableComponent(component) {
   return !component || Array.isArray(component) && component.length === 0;
 }
 
-export default function runApp(appConfig, pageProps = {}) {
-  if (launched) throw new Error('Error: runApp can only be called once.');
-  if (pageProps && Object.prototype.toString.call(pageProps) !== '[object Object]') {
-    throw new Error('Error: pageProps can only be Object.');
+function handleDynamicConfig(config) {
+  if (config.dynamicConfig) {
+    const { onLaunch, onShow, onError, onHide, onTabItemClick } = config;
+    // multi-end valid lifecycle
+    // Add app lanuch callback
+    addAppLifeCyle(LAUNCH, onLaunch);
+    // Add app show callback
+    addAppLifeCyle(SHOW, onShow);
+    // Add app error callback
+    addAppLifeCyle(ERROR, onError);
+    // Add app hide callback
+    addAppLifeCyle(HIDE, onHide);
+    // Add tab bar item click callback
+    addAppLifeCyle(TAB_ITEM_CLICK, onTabItemClick);
+    // Add lifecycle callbacks which only valid in Wechat MiniProgram and ByteDance MicroApp
+    if (isWeChatMiniProgram || isByteDanceMicroApp) {
+      const { onPageNotFound, onShareAppMessage } = config;
+      // Add global share callback
+      addAppLifeCyle(SHARE, onShareAppMessage);
+      // Add page not found callback
+      addAppLifeCyle(NOT_FOUND, onPageNotFound);
+    }
+    // Add lifecycle callbacks which only valid in Alibaba MiniApp
+    if (isMiniApp) {
+      const { onShareAppMessage, onUnhandledRejection } = config;
+      // Add global share callback
+      addAppLifeCyle(SHARE, onShareAppMessage);
+      // Add unhandledrejection callback
+      addAppLifeCyle(UNHANDLED_REJECTION, onUnhandledRejection);
+    }
+    return {};
   }
+  // Compatible with pageProps
+  return config;
+}
+
+/**
+ * @param {object} staticConfig - the config that from app.json
+ * @param {object} dynamicConfig - the config that from developer dynamic set
+ */
+export default function runApp(staticConfig, dynamicConfig = {}) {
+  if (launched) throw new Error('Error: runApp can only be called once.');
+  if (dynamicConfig && Object.prototype.toString.call(dynamicConfig) !== '[object Object]') {
+    throw new Error('Error: the runApp method second param can only be Object.');
+  }
+
+  const pageProps = handleDynamicConfig(dynamicConfig);
+
   launched = true;
-  const { hydrate = false, routes, shell } = appConfig;
+  const { hydrate = false, routes, shell } = staticConfig;
 
   // Set custom driver
-  if (typeof appConfig.driver !== 'undefined') {
-    driver = appConfig.driver;
+  if (typeof staticConfig.driver !== 'undefined') {
+    driver = staticConfig.driver;
   }
 
   // Set history
-  if (typeof appConfig.history !== 'undefined') {
-    history = appConfig.history;
+  if (typeof staticConfig.history !== 'undefined') {
+    history = staticConfig.history;
   } else if (initialDataFromSSR) {
     // If that contains `initialDataFromSSR`, which means SSR is enabled,
     // we should use browser history to make it works.
@@ -113,7 +157,7 @@ export default function runApp(appConfig, pageProps = {}) {
   }
 
   // In MiniApp, it needn't return App Component
-  if (isMiniApp || isWeChatMiniProgram) {
+  if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
     window.history = createMiniAppHistory(routes);
     window.location = window.history.location;
     window.__pageProps = pageProps;
@@ -128,7 +172,7 @@ export default function runApp(appConfig, pageProps = {}) {
     .then((initialComponent) => {
       _initialComponent = initialComponent;
       let appInstance = createElement(App, {
-        appConfig,
+        appConfig: staticConfig,
         history,
         routes,
         pageProps,
