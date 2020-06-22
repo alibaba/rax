@@ -28,6 +28,7 @@ class Element extends Node {
     this.$_style = null;
     this.$_attrs = null;
 
+    this.__scrollTop = 0;
     this.$_initAttrs(options.attrs);
 
     this.onclick = null;
@@ -285,41 +286,6 @@ class Element extends Node {
   // The cloneNode interface is called to process additional properties
   $$dealWithAttrsForCloneNode() {
     return {};
-  }
-
-  // Gets the context object of the corresponding widget component
-  $$getContext() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
-          .exec();
-      } else {
-        window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject()).exec();
-      }
-    });
-  }
-
-  // Gets the NodesRef object for the corresponding node
-  $$getNodesRef() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        resolve(CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
-      } else {
-        resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
-      }
-    });
   }
 
   // Sets properties, but does not trigger updates
@@ -583,6 +549,18 @@ class Element extends Node {
   set src(value) {
     value = '' + value;
     this.$_attrs.set('src', value);
+  }
+
+  get scrollTop() {
+    return this.__scrollTop;
+  }
+
+  set scrollTop(value) {
+    if (this.$_tagName !== 'html') return;
+
+    value = parseInt(value, 10);
+    CONTAINER.pageScrollTo({scrollTop: value, duration: 0});
+    this.__scrollTop = value;
   }
 
   cloneNode(deep) {
