@@ -1,9 +1,7 @@
 import { useEffect } from 'rax';
 import { getHistory } from './runApp';
 import { isWeb, isWeex, isMiniApp, isWeChatMiniProgram } from 'universal-env';
-
-const SHOW = 'show';
-const HIDE = 'hide';
+import { SHOW, HIDE } from './constants';
 
 const visibleListeners = {};
 visibleListeners[SHOW] = [];

@@ -1,11 +1,5 @@
 import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
-
-const SHOW = 'show';
-const HIDE = 'hide';
-const LANUCH = 'launch';
-const ERROR = 'error';
-const NOT_FOUND = 'notfound';
-const SHARE = 'share';
+import { SHOW, HIDE, ERROR, LANUCH, NOT_FOUND, SHARE } from './constants';
 
 export const appCycles = {};
 

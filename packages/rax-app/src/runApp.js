@@ -6,7 +6,7 @@ import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'hi
 import { createMiniAppHistory } from 'miniapp-history';
 import UniversalDriver from 'driver-universal';
 import pathRedirect from './pathRedirect';
-import { emit } from './app';
+import { emit, appCycles } from './app';
 
 const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
 const SHELL_DATA = 'shellData';
