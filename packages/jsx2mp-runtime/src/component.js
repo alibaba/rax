@@ -234,7 +234,7 @@ export default class Component {
     // Step1: propTypes check, now skipped.
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.nextProps || this.props; // actually this is nextProps
-    const prevProps = this.prevProps || this.props;
+    const prevProps = this.props || this.prevProps;
 
     if (!shallowEqual(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
