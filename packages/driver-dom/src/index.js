@@ -45,16 +45,6 @@ const HYDRATION_INDEX = '__i';
 const HYDRATION_APPEND = '__a';
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
-// These are all booleans.
-// Should be set as DOM properties rather than attributes.
-// If you 'setAttribute' {false} to these property, it will be a string 'false'.
-const MUST_USE_PROPERTIES = {
-  'checked': true,
-  'multiple': true,
-  'muted': true,
-  'selected': true
-};
-
 let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
@@ -298,7 +288,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
-        setAttribute(node, prop, value);
+        setAttribute(node, prop, value, isSVGMode);
       }
     }
   }
@@ -368,7 +358,7 @@ export function removeAttribute(node, propKey) {
   node[REMOVE_ATTRIBUTE](propKey);
 }
 
-export function setAttribute(node, propKey, propValue) {
+export function setAttribute(node, propKey, propValue, isSvg) {
   // For reduce innerHTML operation to improve performance.
   if (propKey === DANGEROUSLY_SET_INNER_HTML && node[INNER_HTML] !== propValue[HTML]) {
     return node[INNER_HTML] = propValue[HTML];
@@ -376,8 +366,13 @@ export function setAttribute(node, propKey, propValue) {
 
   if (propKey === CLASS_NAME) propKey = CLASS;
 
-  if (MUST_USE_PROPERTIES[propKey]) {
-    node[propKey] = propValue;
+  if (!isSvg && propKey in node) {
+    try {
+      // Some node property is readonly when in strict mode
+      node[propKey] = propValue;
+    } catch (e) {
+      node[SET_ATTRIBUTE](propKey, propValue);
+    }
   } else {
     node[SET_ATTRIBUTE](propKey, propValue);
   }
