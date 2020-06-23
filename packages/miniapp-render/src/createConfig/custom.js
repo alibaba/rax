@@ -4,6 +4,16 @@ import createEventProxy from '../bridge/createEventProxy';
 import { getComponentLifeCycle } from '../bridge/lifeCycleAdapter';
 import cache from '../utils/cache';
 
+function getLatestData(domNode, componentProps) {
+  const data = {};
+  if (componentProps) {
+    for (const name of componentProps) {
+      data[name] = domNode.getAttribute(name);
+    }
+  }
+  return data;
+}
+
 export default function() {
   const config = {
     data: {
@@ -22,27 +32,27 @@ export default function() {
         value: {},
       },
     };
+    config.observers = {
+      'r.**': function() {
+        // observers Only works in WeChat MiniProgram
+        const props = this.properties;
+        const config = cache.getConfig();
+        const domNode = cache.getNode(props.r.pageId, props.r.nodeId);
+        const { props: componentProps } = config[props.r.behavior] || {};
+        const data = Object.assign({ __ready: true }, getLatestData(domNode, componentProps));
+        this.setData(data);
+      }
+    }
   }
   Object.assign(
     config,
     getComponentLifeCycle({
       mount() {
-        let props;
-        if (!isMiniApp) {
-          props = this.properties;
-        } else {
-          props = this.props;
-        }
-        const data = { __ready: true };
+        const props = isMiniApp ? this.props : this.properties;
         const config = cache.getConfig();
-        const { props: componentProps, events: componentEvents = [] } =
-          config[props.r.behavior] || {};
         const domNode = cache.getNode(props.r.pageId, props.r.nodeId);
-        if (componentProps) {
-          for (const name of componentProps) {
-            data[name] = domNode.getAttribute(name);
-          }
-        }
+        const { props: componentProps, events: componentEvents = [] } = config[props.r.behavior] || {};
+        const data = Object.assign({ __ready: true }, getLatestData(domNode, componentProps));
 
         Object.assign(this, createEventProxy());
 
@@ -60,6 +70,15 @@ export default function() {
 
         this.setData(data);
       },
+      update() {
+        // update method Only works in Alibaba MiniApp
+        const props = this.props;
+        const config = cache.getConfig();
+        const domNode = cache.getNode(props.r.pageId, props.r.nodeId);
+        const { props: componentProps } = config[props.r.behavior] || {};
+        const data = Object.assign({ __ready: true }, getLatestData(domNode, componentProps));
+        this.setData(data);
+      }
     })
   );
   return config;
