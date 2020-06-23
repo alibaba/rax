@@ -42,7 +42,7 @@ export default function() {
         const data = Object.assign({ __ready: true }, getLatestData(domNode, componentProps));
         this.setData(data);
       }
-    }
+    };
   }
   Object.assign(
     config,
