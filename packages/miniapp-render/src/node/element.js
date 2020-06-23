@@ -28,7 +28,6 @@ class Element extends Node {
     this.$_style = null;
     this.$_attrs = null;
 
-    this.__scrollTop = 0;
     this.$_initAttrs(options.attrs);
 
     this.onclick = null;
@@ -549,18 +548,6 @@ class Element extends Node {
   set src(value) {
     value = '' + value;
     this.$_attrs.set('src', value);
-  }
-
-  get scrollTop() {
-    return this.__scrollTop;
-  }
-
-  set scrollTop(value) {
-    if (this.$_tagName !== 'html') return;
-
-    value = parseInt(value, 10);
-    CONTAINER.pageScrollTo({scrollTop: value, duration: 0});
-    this.__scrollTop = value;
   }
 
   cloneNode(deep) {
