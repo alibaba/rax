@@ -234,7 +234,7 @@ export default class Component {
     // Step1: propTypes check, now skipped.
     // Step2: make props to prevProps, and trigger willReceiveProps
     const nextProps = this.nextProps || this.props; // actually this is nextProps
-    const prevProps = this.props = this.prevProps || this.props;
+    const prevProps = this.prevProps || this.props;
 
     if (!shallowEqual(prevProps, nextProps)) {
       this._trigger(COMPONENT_WILL_RECEIVE_PROPS, nextProps);
@@ -277,6 +277,8 @@ export default class Component {
       this.__forceUpdate = false;
       this._trigger(RENDER);
       this._trigger(COMPONENT_DID_UPDATE, prevProps, prevState);
+      // Reset __shouldUpdate
+      this.__shouldUpdate = false;
     }
   }
 
@@ -369,20 +371,15 @@ export default class Component {
       // Use setData update
       const normalData = {};
       for (let key in data) {
-        if (
-          Array.isArray(data[key]) &&
-          diffArray(currentData[key], data[key])
-        ) {
+        if (isArray(data[key]) && isArray(currentData[key]) && isAppendArray(currentData[key], data[key])) {
           arrayData[key] = [currentData[key].length, 0].concat(
             data[key].slice(currentData[key].length)
           );
-        } else {
-          if (diffData(currentData[key], data[key])) {
-            if (isPlainObject(data[key])) {
-              normalData[key] = Object.assign({}, currentData[key], data[key]);
-            } else {
-              normalData[key] = data[key];
-            }
+        } else if (isDifferentData(currentData[key], data[key])) {
+          if (isPlainObject(data[key])) {
+            normalData[key] = Object.assign({}, currentData[key], data[key]);
+          } else {
+            normalData[key] = data[key] === undefined ? null : data[key]; // Make undefined value compatible with Alibaba MiniApp incase that data is not sync in render and worker thread
           }
         }
       }
@@ -406,7 +403,7 @@ export default class Component {
           }
           if (!(key in this._internal)) {
             this._internal.$set(key, data[key]);
-          } else if (diffData(this._internal, data)) {
+          } else if (isDifferentData(this._internal, data)) {
             this._internal[key] = data[key];
           }
         }
@@ -415,14 +412,17 @@ export default class Component {
     } else {
       const normalData = {};
       for (let key in data) {
-        if (diffData(this._internal.data[key], data[key])) {
+        if (isDifferentData(this._internal.data[key], data[key])) {
           normalData[key] = data[key];
         }
       }
       if (!isEmptyObj(normalData)) {
         setDataTask.push((callback) => {
           $ready = normalData.$ready;
-          this._internal.setData(normalData, callback);
+          this._internal.setData(normalData, () => {
+            Object.assign(this._internal.data, normalData); // In Wechat MiniProgram, `this._internal.data` refers to its old val here, so it needs to be merged manually
+            callback();
+          });
         });
       }
     }
@@ -458,20 +458,22 @@ function triggerCallbacks(callbacks) {
   }
 }
 
-function diffArray(prev, next) {
-  if (!isArray(prev)) return false;
+function isAppendArray(prev, next) {
   // Only concern about list append case
   if (next.length === 0) return false;
   if (prev.length === 0) return true;
   // When item's type is object, they have differrent reference, so should use shallowEqual
-  return next.slice(0, prev.length).every((val, index) => shallowEqual(prev[index], val));
+  return next.length > prev.length && next.slice(0, prev.length).every((val, index) => shallowEqual(prev[index], val));
 }
 
-function diffData(prevData, nextData) {
+function isDifferentData(prevData, nextData) {
   const prevType = typeof prevData;
   const nextType = typeof nextData;
   if (prevType !== nextType) return true;
   if (prevType === 'object' && !isNull(prevData) && !isNull(nextData)) {
+    if (isArray(prevData) && isArray(nextData) && prevData.length === nextData.length) {
+      return nextData.some((val, index) => !shallowEqual(prevData[index], val));
+    }
     return !shallowEqual(prevData, nextData);
   } else {
     return prevData !== nextData;

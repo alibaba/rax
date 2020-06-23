@@ -116,7 +116,7 @@ export default {
     onTextareaFocus(evt) {
       const domNode = this.getDomNodeFromEvt('focus', evt);
       if (!domNode) return;
-      domNode.__textareaOldValue = domNode.value;
+      domNode.__textareaOldValue = domNode.value || '';
       domNode.$$setAttributeWithoutUpdate('focus', true);
 
       domNode.__oldValues = domNode.__oldValues || {};
@@ -131,8 +131,8 @@ export default {
 
       domNode.__oldValues = domNode.__oldValues || {};
       domNode.__oldValues.focus = false;
-      if (this.__textareaOldValue !== undefined && domNode.value !== this.__textareaOldValue) {
-        this.__textareaOldValue = undefined;
+      if (domNode.__textareaOldValue !== undefined && domNode.value !== domNode.__textareaOldValue) {
+        domNode.__textareaOldValue = undefined;
         callEvent('change', evt, this.pageId, this.nodeId);
       }
       callSimpleEvent('blur', evt, domNode);

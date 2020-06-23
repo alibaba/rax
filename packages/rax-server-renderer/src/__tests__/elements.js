@@ -34,7 +34,7 @@ describe('elements and children', () => {
           {''}
         </div>
       );
-      expect(str).toBe('<div></div>');
+      expect(str).toBe('<div><!--|--><!--|--></div>');
     });
 
     it('a div with multiple whitespace children', () => {
@@ -45,7 +45,7 @@ describe('elements and children', () => {
           {' '}
         </div>
       );
-      expect(str).toBe('<div>   </div>');
+      expect(str).toBe('<div> <!--|--> <!--|--> </div>');
     });
 
     it('a div with text sibling to a node', () => {
@@ -77,17 +77,12 @@ describe('elements and children', () => {
 
     it('a leading blank child with a text sibling', () => {
       const str = renderToString(<div>{''}foo</div>);
-      expect(str).toBe('<div>foo</div>');
-    });
-
-    it('a leading blank child with a text sibling', () => {
-      const str = renderToString(<div>{''}foo</div>);
-      expect(str).toBe('<div>foo</div>');
+      expect(str).toBe('<div><!--|-->foo</div>');
     });
 
     it('a trailing blank child with a text sibling', () => {
       const str = renderToString(<div>foo{''}</div>);
-      expect(str).toBe('<div>foo</div>');
+      expect(str).toBe('<div>foo<!--|--></div>');
     });
 
     it('an element with two text children', () => {
@@ -97,7 +92,7 @@ describe('elements and children', () => {
           {'bar'}
         </div>
       );
-      expect(str).toBe('<div>foobar</div>');
+      expect(str).toBe('<div>foo<!--|-->bar</div>');
     });
 
     it('a component returning text node between two text nodes', () => {
@@ -109,7 +104,7 @@ describe('elements and children', () => {
           {'c'}
         </div>
       );
-      expect(str).toBe('<div>abc</div>');
+      expect(str).toBe('<div>a<!--|-->b<!--|-->c</div>');
     });
 
     it('a tree with sibling host and text nodes', () => {
@@ -137,7 +132,7 @@ describe('elements and children', () => {
           e
         </div>,
       );
-      expect(str).toBe('<div>ab<div><!-- _ --><!-- _ -->c<!-- _ -->d</div>e</div>');
+      expect(str).toBe('<div>a<!--|-->b<div><!-- _ --><!-- _ -->c<!-- _ -->d</div>e</div>');
     });
   });
 
@@ -163,7 +158,7 @@ describe('elements and children', () => {
           {40}
         </div>
       );
-      expect(str).toBe('<div>foo40</div>');
+      expect(str).toBe('<div>foo<!--|-->40</div>');
     });
   });
 
@@ -502,7 +497,7 @@ describe('elements and children', () => {
       const str = renderToString(
         <Component>{['a', 'b', [undefined], [[false, 'c']]]}</Component>,
       );
-      expect(str).toBe('ab<!-- _ --><!-- _ -->c');
+      expect(str).toBe('a<!--|-->b<!-- _ --><!-- _ -->c');
     });
   });
 
@@ -521,7 +516,7 @@ describe('elements and children', () => {
           {'<span>Text2&quot;</span>'}
         </div>
       );
-      expect(str).toBe('<div>&lt;span&gt;Text1&amp;quot;&lt;/span&gt;&lt;span&gt;Text2&amp;quot;&lt;/span&gt;</div>');
+      expect(str).toBe('<div>&lt;span&gt;Text1&amp;quot;&lt;/span&gt;<!--|-->&lt;span&gt;Text2&amp;quot;&lt;/span&gt;</div>');
     });
   });
 
@@ -540,7 +535,7 @@ describe('elements and children', () => {
           {'\r\nbaz\nqux\u0000'}
         </div>
       );
-      expect(str).toBe('<div>foo\rbar\r\nbaz\nqux\u0000</div>');
+      expect(str).toBe('<div>foo\rbar<!--|-->\r\nbaz\nqux\u0000</div>');
     });
 
     it('an element with an attribute value with special characters', () => {

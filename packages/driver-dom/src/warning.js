@@ -71,6 +71,11 @@ export function warnForInsertedHydratedElement(
  * @returns {string} for example: <div#home.rax-view.home>
  */
 function getNodeName(node) {
+  // text node don`t have tagName
+  if (!node.tagName) {
+    return node.nodeName;
+  }
+
   const name = node.tagName.toLowerCase();
   const id = node.id ? '#' + node.id : '';
   const classStr = node.className || '';

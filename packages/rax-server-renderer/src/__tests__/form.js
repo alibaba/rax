@@ -146,7 +146,7 @@ describe('form', () => {
           <option value="bar">A {'B'}</option>
         </select>
       );
-      expect(str).toBe('<select value="bar"><option value="bar">A B</option></select>');
+      expect(str).toBe('<select value="bar"><option value="bar">A <!--|-->B</option></select>');
     });
   });
 

@@ -20,7 +20,7 @@ export default function() {
         outerProps: null
       },
       options: {
-        addGlobalClass: true,
+        styleIsolation: 'shared',
         multipleSlots: true
       }
     };
