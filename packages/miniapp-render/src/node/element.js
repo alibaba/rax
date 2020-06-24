@@ -434,7 +434,7 @@ class Element extends Node {
     this.$_children.length = 0;
 
     // Append the new child nodes
-    for (let i = 0, j = newChildNodes.length; i < j;i++) {
+    for (let i = 0, j = newChildNodes.length; i < j; i++) {
       this.appendChild(newChildNodes[i]);
     }
   }
