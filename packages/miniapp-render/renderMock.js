@@ -57,7 +57,7 @@ export default {
   html,
   createPage(type = 'home') {
     const pageId = 'p-1-1';
-    const page = createPage(pageId, config);
+    const page = createPage({ pageId }, config);
     page.window.__pageId = pageId;
     page.document.body.innerHTML = html;
 
