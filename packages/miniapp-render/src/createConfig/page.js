@@ -71,7 +71,7 @@ export function getBaseLifeCycles(init, config) {
                   } else {
                     this.setData({
                       [task.path]: task.value
-                    });
+                    }, callback);
                   }
                 });
               });
