@@ -1,5 +1,4 @@
 module.exports = [
-  'rax-text',
   'rax-scrollview',
   'rax-recyclerview',
   'rax-textinput',

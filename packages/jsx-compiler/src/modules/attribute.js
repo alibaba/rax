@@ -6,7 +6,7 @@ const DynamicBinding = require('../utils/DynamicBinding');
 const handleRefAttr = require('../utils/handleRefAttr');
 const isNativeComponent = require('../utils/isNativeComponent');
 
-function transformAttribute(ast, code, adapter) {
+function transformAttribute(ast, code, adapter, imported) {
   const refs = [];
   const dynamicRef = new DynamicBinding('_r');
   traverse(ast, {
@@ -29,20 +29,20 @@ function transformAttribute(ast, code, adapter) {
           break;
         case 'className':
           if (!adapter.styleKeyword) {
-            if (isNativeComponent(path, adapter.platform)) {
+            if (isNativeComponent(path, adapter.platform, imported)) {
               node.name.name = 'class';
             } else {
               // Object.assign for shallow copy, avoid self tag is same reference
               path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'),
                 Object.assign({}, node.value)));
             }
-          } else if (isNativeComponent(path, adapter.platform)) {
+          } else if (isNativeComponent(path, adapter.platform, imported)) {
             node.name.name = 'class';
           }
           break;
         case 'id':
           if (adapter.styleKeyword) {
-            if (!isNativeComponent(path, adapter.platform)) {
+            if (!isNativeComponent(path, adapter.platform, imported)) {
               // Object.assign for shallow copy, avoid self tag is same reference
               path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('componentId'),
                 Object.assign({}, node.value)));
@@ -50,7 +50,7 @@ function transformAttribute(ast, code, adapter) {
           }
           break;
         case 'style':
-          if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform)) {
+          if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform, imported)) {
             node.name.name = 'styleSheet';
           }
           break;
@@ -85,7 +85,7 @@ function transformAttribute(ast, code, adapter) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const { refs, dynamicRef } = transformAttribute(parsed.templateAST, code, options.adapter);
+    const { refs, dynamicRef } = transformAttribute(parsed.templateAST, code, options.adapter, parsed.imported);
     parsed.refs = refs;
     // Set global dynamic ref value
     parsed.dynamicRef = dynamicRef;

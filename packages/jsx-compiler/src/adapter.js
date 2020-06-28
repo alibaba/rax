@@ -42,6 +42,8 @@ const parserAdapters = {
     compatibleText: false,
     // Need transform style & class keyword
     styleKeyword: false,
+    // Need transform onClick -> bindonclick
+    needTransformEvent: false,
     slotScope: true,
     // Need transform key
     needTransformKey: false,
@@ -69,6 +71,8 @@ const parserAdapters = {
     },
     styleKeyword: true,
     slotScope: false,
+    // Need transform onClick -> bindonclick
+    needTransformEvent: true,
     needTransformKey: true,
     triggerRef: true,
     processSlider: true
@@ -94,6 +98,8 @@ const parserAdapters = {
     },
     styleKeyword: true,
     slotScope: false,
+    // Need transform onClick -> bindonclick
+    needTransformEvent: true,
     needTransformKey: true,
     triggerRef: true
   },
