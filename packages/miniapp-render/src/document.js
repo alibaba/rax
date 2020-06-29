@@ -44,7 +44,7 @@ class Document extends EventTarget {
   constructor(internal, nodeIdMap) {
     super();
 
-    const { usingComponents } = cache.getConfig();
+    const { usingComponents = {} } = cache.getConfig();
     this.usingComponents = usingComponents;
     const { pageId } = internal;
     this._internal = internal;
