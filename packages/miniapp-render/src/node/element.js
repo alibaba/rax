@@ -314,7 +314,11 @@ class Element extends Node {
     // update tree
     if (this.$_tree.getById(oldId) === this) this.$_tree.updateIdMap(oldId, null);
     if (id) this.$_tree.updateIdMap(id, this);
-    this._triggerUpdate();
+    const payload = {
+      path: `${this._path}.id`,
+      value: id
+    };
+    this._triggerUpdate(payload);
   }
 
   get tagName() {
@@ -368,12 +372,6 @@ class Element extends Node {
   set innerHTML(html) {
     if (typeof html !== 'string') return;
 
-    const fragment = this.ownerDocument.$$createElement({
-      tagName: 'documentfragment',
-      nodeId: `b-${tool.getId()}`,
-      nodeType: Node.DOCUMENT_FRAGMENT_NODE,
-    });
-
     // parse to ast
     let ast = null;
     try {
@@ -385,9 +383,10 @@ class Element extends Node {
     if (!ast) return;
 
     // Generate dom tree
+    const newChildNodes = [];
     ast.forEach(item => {
       const node = this.$_generateDomTree(item);
-      if (node) fragment.appendChild(node);
+      if (node) newChildNodes.push(node);
     });
 
     // Delete all child nodes
@@ -399,31 +398,9 @@ class Element extends Node {
     });
     this.$_children.length = 0;
 
-    // Appends the new child node
-    if (this.$_tagName === 'table') {
-      // The table node needs to determine whether a tbody exists
-      let hasTbody = false;
-
-      for (const child of fragment.childNodes) {
-        if (child.tagName === 'TBODY') {
-          hasTbody = true;
-          break;
-        }
-      }
-
-      if (!hasTbody) {
-        const tbody = this.ownerDocument.$$createElement({
-          tagName: 'tbody',
-          attrs: {},
-          nodeType: Node.ELEMENT_NODE,
-          nodeId: `b-${tool.getId()}`,
-        });
-
-        tbody.appendChild(fragment);
-        this.appendChild(tbody);
-      }
-    } else {
-      this.appendChild(fragment);
+    // Append the new child nodes
+    for (let i = 0, j = newChildNodes.length; i < j; i++) {
+      this.appendChild(newChildNodes[i]);
     }
   }
 
@@ -455,9 +432,6 @@ class Element extends Node {
       });
       this.$_children.length = 0;
 
-      // When first render doesn't trigger update
-      this.$_notTriggerUpdate = true;
-
       // Append new child nodes
       const children = [].concat(node.childNodes);
       for (const child of children) {
@@ -472,10 +446,6 @@ class Element extends Node {
       this.$_dataset = Object.assign({}, node.dataset);
 
       this.$$dealWithAttrsForOuterHTML(node);
-
-      // Trigger update
-      this.$_notTriggerUpdate = false;
-      this._triggerUpdate();
     }
   }
 
