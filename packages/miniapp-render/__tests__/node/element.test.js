@@ -112,17 +112,6 @@ test('element: innerHTML/outerHTML', () => {
   document.body.appendChild(node1);
   expect(node1.childNodes).toEqual([node2, node3, node8]);
 
-  let parentUpdateCount = 0;
-  let node1UpdateCount = 0;
-  const onParentUpdate = function() {
-    parentUpdateCount++;
-  };
-  const onNode1Update = function() {
-    node1UpdateCount++;
-  };
-  node1.parentNode.addEventListener('$$childNodesUpdate', onParentUpdate);
-  node1.addEventListener('$$childNodesUpdate', onNode1Update);
-
   node1.id = 'outer';
   node2.id = 'abc';
   node5.id = 'cba';
@@ -131,8 +120,6 @@ test('element: innerHTML/outerHTML', () => {
   node3.style.position = 'absolute';
   node3.style.top = '10px';
   node3.style.left = '20px';
-  expect(parentUpdateCount).toBe(1);
-  expect(node1UpdateCount).toBe(6);
   expect(node1.tagName).toBe('ARTICLE');
   expect(node1.id).toBe('outer');
   expect(node1.innerHTML).toBe('<span id="abc"></span><div id="cc" class="a b c" style="position:absolute;top:10px;left:20px;">123<span id="cba">555</span>321</div><br />');
@@ -156,8 +143,6 @@ test('element: innerHTML/outerHTML', () => {
   expect(node1.childNodes[2].style.textAlign).toBe('center');
   expect(node1.childNodes[2].childNodes.length).toBe(1);
   expect(node1.childNodes[2].childNodes[0].textContent).toBe('I am content');
-  expect(parentUpdateCount).toBe(1);
-  expect(node1UpdateCount).toBe(7);
 
   node1.outerHTML = '<header id="outer2"><div id="a">321<span id="inner" b="inner">765</span>123</div><div id="c">555</div><p style="color: green; text-align: center;">I am content</p></header>';
   expect(node1.tagName).toBe('HEADER');
@@ -179,11 +164,7 @@ test('element: innerHTML/outerHTML', () => {
   expect(node1.childNodes[2].style.textAlign).toBe('center');
   expect(node1.childNodes[2].childNodes.length).toBe(1);
   expect(node1.childNodes[2].childNodes[0].textContent).toBe('I am content');
-  expect(parentUpdateCount).toBe(2);
-  expect(node1UpdateCount).toBe(7);
 
-  node1.parentNode.addEventListener('$$childNodesUpdate', onParentUpdate);
-  node1.addEventListener('$$childNodesUpdate', onNode1Update);
   document.body.removeChild(node1);
 });
 
@@ -192,12 +173,6 @@ test('element: innerText/textContent', () => {
   node1.innerHTML = 'a<div>bc<span>de</span>f<div><span>g</span>h</div>ij</div>k';
   document.body.appendChild(node1);
 
-  let updateCount = 0;
-  const onUpdate = function() {
-    updateCount++;
-  };
-  node1.addEventListener('$$childNodesUpdate', onUpdate);
-
   expect(node1.innerText).toBe('abcdefghijk');
   expect(node1.textContent).toBe('abcdefghijk');
 
@@ -205,20 +180,17 @@ test('element: innerText/textContent', () => {
   expect(node1.childNodes.length).toBe(1);
   expect(node1.innerHTML).toBe('<div>123</div>');
   expect(node1.textContent).toBe('<div>123</div>');
-  expect(updateCount).toBe(1);
 
   node1.textContent = '<span>321</span>';
   expect(node1.childNodes.length).toBe(1);
   expect(node1.innerHTML).toBe('<span>321</span>');
   expect(node1.innerText).toBe('<span>321</span>');
-  expect(updateCount).toBe(2);
 
   node1.innerHTML = '<span>321</span>';
   expect(node1.childNodes.length).toBe(1);
   node1.textContent = '';
   expect(node1.childNodes.length).toBe(0);
 
-  node1.removeEventListener('$$childNodesUpdate', onUpdate);
   document.body.removeChild(node1);
 });
 
@@ -419,12 +391,6 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   document.body.appendChild(node);
   const attributes = node.attributes;
 
-  let updateCount = 0;
-  const onUpdate = function() {
-    updateCount++;
-  };
-  node.parentNode.addEventListener('$$childNodesUpdate', onUpdate);
-
   expect(node.getAttribute('id')).toBe('');
   expect(node.getAttribute('class')).toBe('');
   expect(node.getAttribute('style')).toBe('');
@@ -438,7 +404,6 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   expect(attributes.class).toBe(undefined);
   expect(attributes.style).toBe(undefined);
   expect(attributes.src).toBe(undefined);
-  expect(updateCount).toBe(0);
 
   node.id = 'abc';
   node.className = 'a b';
@@ -464,7 +429,6 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   expect(attributes.src).toBe(attributes[0]);
   // eslint-disable-next-line no-script-url
   expect(attributes.src).toEqual({name: 'src', value: 'javascript: void(0);'});
-  expect(updateCount).toBe(4);
 
   node.setAttribute('id', 'cba');
   node.setAttribute('class', 'c b a');
@@ -487,7 +451,6 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   expect(attributes.style).toEqual({name: 'style', value: 'display:inline;'});
   expect(attributes.src).toBe(attributes[0]);
   expect(attributes.src).toEqual({name: 'src', value: 'moc.haha.www'});
-  expect(updateCount).toBe(8);
 
   node.removeAttribute('id');
   node.removeAttribute('class');
@@ -510,21 +473,17 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   expect(attributes.class).toBe(undefined);
   expect(attributes.style).toBe(undefined);
   expect(attributes.src).toBe(undefined);
-  expect(updateCount).toBe(12);
 
   // object/array
   const obj = {a: 123, b: {c: 321, d: [1, 2, 3]}};
   node.setAttribute('object-attr', obj);
   expect(node.getAttribute('object-attr')).toBe(obj);
   expect(attributes.length).toEqual(1);
-  expect(updateCount).toBe(13);
   const arr = [{a: obj}, 123, null, 'haha'];
   node.setAttribute('array-attr', arr);
   expect(node.getAttribute('array-attr')).toBe(arr);
   expect(attributes.length).toEqual(2);
-  expect(updateCount).toBe(14);
 
-  node.parentNode.removeEventListener('$$childNodesUpdate', onUpdate);
   document.body.removeChild(node);
 });
 

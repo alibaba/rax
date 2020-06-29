@@ -126,33 +126,8 @@ test('document: createComment', () => {
 });
 
 test('document: createDocumentFragment', () => {
-  const parent = document.createElement('div');
-  const node1 = document.createElement('div');
-  const node2 = document.createElement('span');
-  const node3 = document.createElement('div');
-  const node4 = document.createElement('span');
-
-  expect(parent.children).toEqual([]);
-
   const fragment1 = document.createDocumentFragment();
-  fragment1.appendChild(node1);
-  fragment1.appendChild(node2);
-  fragment1.appendChild(node3);
-  parent.appendChild(fragment1);
   expect(fragment1.nodeType).toEqual(Node.DOCUMENT_FRAGMENT_NODE);
-  expect(parent.children).toEqual([node1, node2, node3]);
-
-  const fragment2 = document.createDocumentFragment();
-  fragment2.appendChild(node3);
-  fragment2.appendChild(node4);
-  parent.replaceChild(fragment2, node2);
-  expect(parent.children).toEqual([node1, node3, node4]);
-
-  const fragment3 = document.createDocumentFragment();
-  fragment3.appendChild(node2);
-  fragment3.appendChild(node4);
-  parent.insertBefore(fragment3, node3);
-  expect(parent.children).toEqual([node1, node2, node4, node3]);
 });
 
 test('document: createEvent', () => {

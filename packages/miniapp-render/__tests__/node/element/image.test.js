@@ -94,9 +94,6 @@ test('image', async() => {
   image1.width = 123;
   image1.height = 321;
   expect(image1.style.cssText).toBe('width:123px;height:321px;');
-  image1.setAttribute('width', 444);
-  image1.setAttribute('height', 555);
-  expect(image1.style.cssText).toBe('width:444px;height:555px;');
 
   // base64
   const image3 = new Image();
