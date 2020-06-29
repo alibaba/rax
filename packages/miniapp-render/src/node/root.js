@@ -1,5 +1,6 @@
 import Element from './element';
 import cache from '../utils/cache';
+import perf from '../utils/perf';
 import getProperty from '../utils/getProperty';
 import { propsMap } from '../builtInComponents';
 
@@ -80,7 +81,7 @@ class RootElement extends Element {
   executeRender() {
     this.pendingRender = true;
     setTimeout(() => {
-      // perf.start(SET_DATA);
+      perf.start('setData');
       this.pendingRender = false;
       // type 1: { path, start, deleteCount, item? } => need to simplify item
       // type 2: { path, value }

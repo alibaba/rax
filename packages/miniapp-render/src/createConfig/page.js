@@ -3,6 +3,7 @@ import tool from '../utils/tool';
 import injectLifeCycle from '../bridge/injectLifeCycle';
 import createEventProxy from '../bridge/createEventProxy';
 import { createWindow } from '../window';
+import perf from '../utils/perf';
 import Document from '../document';
 
 // Export for test
@@ -59,8 +60,7 @@ export function getBaseLifeCycles(init, config) {
                 tasks.forEach((task, index) => {
                   if (index === tasks.length - 1) {
                     callback = () => {
-                      // eslint-disable-next-line no-undef
-                      console.log('time', Date.now() - getApp().startTime);
+                      perf.stop('setData');
                     };
                   }
                   if (task.type === 'children') {
@@ -77,7 +77,9 @@ export function getBaseLifeCycles(init, config) {
               });
             }
           } else {
-            this.setData(tasks[0]);
+            this.setData(tasks[0], () => {
+              perf.stop('setData');
+            });
           }
         }
       });
