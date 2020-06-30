@@ -108,6 +108,7 @@ export function getBaseLifeCycles(init, config) {
       this.window.$$trigger('beforeunload');
       this.window.$$trigger('pageunload');
       this.document.body.$$recycle(); // Recycle DOM node
+      this.app && this.app.unmount(); // Manually unmount component instance
 
       cache.destroy(this.pageId);
 
