@@ -111,14 +111,22 @@ function getComponentCycles(Klass) {
       this.instance._mountComponent();
     },
     didUpdate(prevProps, nextProps) {
-      // Ensure this component is used in native project & has been rendered & prevProps and this.props are different
-      if (
-        this.instance
-        && /^t_\d+$/.test(this.instance.instanceId)
-        && this.data.$ready
-        && !shallowEqual(prevProps, nextProps)) {
-        this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
-        enqueueRender(this.instance);
+      if (this.instance) {
+        // Ensure this component is used in native project & has been rendered & prevProps and this.props are different
+        if (
+          /^t_\d+$/.test(this.instance.instanceId)
+          && this.data.$ready
+          && !shallowEqual(prevProps, nextProps)) {
+          this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
+          enqueueRender(this.instance);
+        }
+        if (prevProps.__tagId !== nextProps.__tagId) {
+          // Update instanceId
+          this.instance.instanceId = nextProps.__tagId;
+          // When tagId changed, invoke render directly.
+          this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
+          enqueueRender(this.instance);
+        }
       }
     },
     unmount: function() {

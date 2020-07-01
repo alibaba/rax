@@ -17,7 +17,7 @@ export function setComponentInstance(instance) {
   componentIntances[instanceId] = instance;
   // Check component should update chlid props
   if (updateChildPropsCallbacks[instanceId]) {
-    updateChildPropsCallbacks[instanceId]();
+    updateChildPropsCallbacks[instanceId](instanceId);
     updateChildPropsCallbacks[instanceId] = null;
   }
 }
@@ -39,15 +39,16 @@ export function removeComponentProps(instanceId) {
   }
 }
 
-export function updateChildProps(trigger, instanceId, nextUpdateProps) {
+export function updateChildProps(trigger, nextUpdateProps, instanceId) {
   if (trigger) {
     // Create a new object reference.
     const targetComponent = componentIntances[instanceId];
     if (targetComponent) {
+      if (targetComponent.instanceId !== instanceId) {
+        targetComponent.instanceId = instanceId;
+        return;
+      }
       const nextProps = Object.assign(
-        {
-          TAGID: instanceId
-        },
         targetComponent.props,
         nextUpdateProps
       );
@@ -75,7 +76,6 @@ export function updateChildProps(trigger, instanceId, nextUpdateProps) {
       updateChildPropsCallbacks[instanceId] = updateChildProps.bind(
         null,
         trigger,
-        instanceId,
         nextUpdateProps,
       );
     }

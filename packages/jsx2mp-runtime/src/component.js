@@ -117,7 +117,10 @@ export default class Component {
 
   _updateChildProps(tagId, props) {
     const chlidInstanceId = `${this.props[TAGID]}-${tagId}`;
-    updateChildProps(this, chlidInstanceId, props);
+    // When the component itself is updated, the subcomponents are updated
+    this._pendingCallbacks.push(() => {
+      updateChildProps(this, props, chlidInstanceId);
+    });
   }
 
   _registerRefs(refs) {
