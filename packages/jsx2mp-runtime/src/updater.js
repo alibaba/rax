@@ -44,10 +44,7 @@ export function updateChildProps(trigger, nextUpdateProps, instanceId) {
     // Create a new object reference.
     const targetComponent = componentIntances[instanceId];
     if (targetComponent) {
-      if (targetComponent.instanceId !== instanceId) {
-        targetComponent.instanceId = instanceId;
-        return;
-      }
+      if (targetComponent.instanceId !== instanceId) return;
       const nextProps = Object.assign(
         targetComponent.props,
         nextUpdateProps
