@@ -60,7 +60,9 @@ export function getBaseLifeCycles(init, config) {
                 tasks.forEach((task, index) => {
                   if (index === tasks.length - 1) {
                     callback = () => {
-                      perf.stop('setData');
+                      if (process.env.NODE_ENV === 'development') {
+                        perf.stop('setData');
+                      }
                     };
                   }
                   if (task.type === 'children') {
@@ -78,7 +80,9 @@ export function getBaseLifeCycles(init, config) {
             }
           } else {
             this.setData(tasks[0], () => {
-              perf.stop('setData');
+              if (process.env.NODE_ENV === 'development') {
+                perf.stop('setData');
+              }
             });
           }
         }

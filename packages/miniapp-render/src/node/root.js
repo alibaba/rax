@@ -85,7 +85,9 @@ class RootElement extends Element {
     if (!this.allowRender) {
       return;
     }
-    perf.start('setData');
+    if (process.env.NODE_ENV === 'development') {
+      perf.start('setData');
+    }
     // type 1: { path, start, deleteCount, item? } => need to simplify item
     // type 2: { path, value }
     const renderObject = {};

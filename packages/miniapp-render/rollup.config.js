@@ -36,28 +36,22 @@ function getContainerIdentifierName(platform) {
   }
 }
 
-function getRollupConfig(platform) {
+function getRollupConfig(platform, env = 'development') {
   return {
     input: 'src/index.js',
     output: [
       {
-        file: `dist/${platform}/index.js`,
-        format: 'umd',
-        name
-      },
-      {
-        file: `dist/${platform}/index.min.js`,
+        file: env === 'development' ? `dist/${platform}/index.js` : `dist/${platform}/index.min.js`,
         format: 'umd',
         name,
-        plugins: [terser()]
+        plugins: env === 'development' ? [] : [terser()]
       },
-
     ],
     plugins: [
       commonjs(),
       resolve(),
       replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        'process.env.NODE_ENV': `'${env}'`,
         'CONTAINER': getContainerIdentifierName(platform)
       }),
       babel(getBabelConfig(platform)),
@@ -68,5 +62,7 @@ function getRollupConfig(platform) {
 
 export default [
   getRollupConfig('ali'),
+  getRollupConfig('ali', 'production'),
   getRollupConfig('wechat'),
+  getRollupConfig('wechat', 'production'),
 ];
