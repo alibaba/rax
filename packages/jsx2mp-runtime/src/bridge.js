@@ -111,11 +111,10 @@ function getComponentCycles(Klass) {
       this.instance._mountComponent();
     },
     didUpdate(prevProps, nextProps) {
-      if (this.instance) {
+      if (this.instance && this.data.$ready) {
         // Ensure this component is used in native project & has been rendered & prevProps and this.props are different
         if (
           /^t_\d+$/.test(this.instance.instanceId)
-          && this.data.$ready
           && !shallowEqual(prevProps, nextProps)) {
           this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
           enqueueRender(this.instance);
