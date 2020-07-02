@@ -130,6 +130,7 @@ export default function(init, config, lifeCycles = []) {
     data: {
       pageId,
       root: {
+        pageId,
         children: []
       }
     },
