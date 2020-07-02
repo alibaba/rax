@@ -44,7 +44,6 @@ export function updateChildProps(trigger, nextUpdateProps, instanceId) {
     // Create a new object reference.
     const targetComponent = componentIntances[instanceId];
     if (targetComponent) {
-      if (targetComponent.instanceId !== instanceId) return;
       const nextProps = Object.assign(
         targetComponent.props,
         nextUpdateProps
@@ -61,9 +60,11 @@ export function updateChildProps(trigger, nextUpdateProps, instanceId) {
         targetComponent.nextProps = nextPropsMap[instanceId] = nextProps;
         // Ensure parent component did update.
         trigger._pendingCallbacks.push(() => {
+          if (targetComponent.instanceId !== instanceId) return;
           enqueueRender(targetComponent);
         });
       } else {
+        if (targetComponent.instanceId !== instanceId) return;
         targetComponent.props = propsMap[instanceId] = nextProps;
       }
     } else {
