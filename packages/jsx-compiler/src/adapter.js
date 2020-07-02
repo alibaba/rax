@@ -32,7 +32,7 @@ const parserAdapters = {
     for: 'a:for',
     forItem: 'a:for-item',
     forIndex: 'a:for-index',
-    key: 'key',
+    key: 'a:key',
 
     view: {
       ...componentCommonProps.ali,
