@@ -14,6 +14,7 @@ const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
 
 const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
+const MINIAPP_PLUGIN_COMPONENTS_REG = /^plugin\:\/\//;
 const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
 const GROUP_PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*?\\${sep}[^\\${sep}]*).*$`);
 
@@ -342,7 +343,9 @@ function getRealNpmPkgName(filePath, pkgName) {
 }
 
 function getComponentPath(alias, options) {
-  if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
+  if (MINIAPP_PLUGIN_COMPONENTS_REG.test(alias.from)) {
+    return alias.from;
+  } else if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
     // alias.local
     if (!options.resourcePath) {
       throw new Error('`resourcePath` must be passed to calc dependency path.');
