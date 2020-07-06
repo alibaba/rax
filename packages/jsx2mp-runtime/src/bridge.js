@@ -123,7 +123,8 @@ function getComponentCycles(Klass) {
           // Update instanceId
           this.instance.instanceId = nextProps.__tagId;
           // When tagId changed, invoke render directly.
-          this.instance.nextProps = Object.assign({}, this.instance.props, this[PROPS]);
+          this.instance.nextProps = nextProps;
+          this.instance.props = prevProps;
           enqueueRender(this.instance);
         }
       }
