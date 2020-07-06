@@ -65,7 +65,7 @@ class Attribute {
 
     if (name === 'id') {
       return map.id || '';
-    } if (name === 'class') {
+    } if (name === 'class' || name === 'className') {
       return element.className;
     } else if (name === 'style') {
       return element.style.cssText;
