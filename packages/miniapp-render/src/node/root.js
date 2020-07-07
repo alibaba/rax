@@ -10,16 +10,29 @@ function simplify(node) {
   for (let attr in domInfo) {
     simpleNode[attr] = domInfo[attr];
   }
-  let componentType;
-  if (node.behavior) {
-    componentType = simpleNode.behavior = node.behavior;
+  // TODO: Custom Component
+  // Miniapp Plugin
+  if (node.tagName === 'MINIAPP-PLUGIN') {
+    const config = cache.getConfig();
+    const pluginInfo = config.usingPlugins[node.behavior];
+    if (pluginInfo) {
+      pluginInfo.props.forEach(prop => simpleNode[prop] = node.getAttribute(prop));
+      // pluginInfo.events.forEach(event => simpleNode[event] = node.getAttribute(event));
+    }
+    simpleNode.pluginName = node.behavior;
   } else {
-    componentType = node.tagName;
-  }
-  // Get specific props
-  const specificProps = propsMap[componentType] || [];
-  for (let prop of specificProps) {
-    simpleNode[prop.name] = prop.get(node);
+    let componentType;
+    if (node.behavior) {
+      componentType = simpleNode.behavior = node.behavior;
+    } else {
+      componentType = node.tagName;
+    }
+
+    // Get specific props
+    const specificProps = propsMap[componentType] || [];
+    for (let prop of specificProps) {
+      simpleNode[prop.name] = prop.get(node);
+    }
   }
   return simpleNode;
 }
