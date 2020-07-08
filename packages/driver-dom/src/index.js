@@ -376,6 +376,7 @@ export function setAttribute(node, propKey, propValue, isSvg) {
 
   if (propKey === CLASS_NAME) propKey = CLASS;
 
+  // Prop for svg can only be set by attribute
   if (!isSvg && propKey in node) {
     try {
       // Some node property is readonly when in strict mode
