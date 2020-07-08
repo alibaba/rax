@@ -53,7 +53,7 @@ describe('attributes', () => {
       });
 
       let node = container.children[0];
-      expect(node.getAttribute('hidden')).toBe('true');
+      expect(node.getAttribute('hidden')).toBe('');
     });
 
     it('render boolean prop with false value', () => {
@@ -64,7 +64,7 @@ describe('attributes', () => {
       });
 
       let node = container.children[0];
-      expect(node.getAttribute('hidden')).toBe('false');
+      expect(node.getAttribute('hidden')).toBe(null);
     });
 
     it('render boolean prop with self value', () => {
@@ -75,7 +75,7 @@ describe('attributes', () => {
       });
 
       let node = container.children[0];
-      expect(node.getAttribute('hidden')).toBe('hidden');
+      expect(node.getAttribute('hidden')).toBe('');
     });
   });
 
