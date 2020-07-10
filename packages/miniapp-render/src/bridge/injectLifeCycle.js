@@ -6,11 +6,10 @@ function createLifeCycleCallback(lifeCycle) {
   if (lifeCycle === 'onShareAppMessage') {
     return function(options) {
       if (this.window) {
-        const shareInfo = {};
-        this.window.$$trigger('onShareAppMessage', {
-          event: { options, shareInfo }
+        const returnedShareInfo = this.window.$$trigger('onShareAppMessage', {
+          event: { options, shareInfo: {} }
         });
-        return shareInfo.content;
+        return returnedShareInfo || shareInfo.content;
       }
     };
   }

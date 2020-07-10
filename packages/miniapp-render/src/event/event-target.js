@@ -240,9 +240,16 @@ class EventTarget {
   // Trigger node event
   $$trigger(eventName, { event, args = [], isCapture, isTarget } = {}) {
     eventName = eventName.toLowerCase();
-    const handlers = this.__getHandles(eventName, isCapture);
-    const onEventName = `on${eventName}`;
+    const handlers = this.__getHandles(eventName, isCapture) || [];
 
+    if (eventName === 'onshareappmessage') {
+      if (process.env.NODE_ENV === 'development' && handlers.length > 1) {
+        console.warn('onShareAppMessage can only be listened with one callback function.')
+      }
+      return handlers[0] && handlers[0].call(this || null, event);
+    }
+
+    const onEventName = `on${eventName}`;
     if ((!isCapture || !isTarget) && typeof this[onEventName] === 'function') {
       // The event that triggers the onXXX binding
       if (event && event.$$immediateStop) return;
