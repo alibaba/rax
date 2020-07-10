@@ -19,28 +19,18 @@ test('text-node: nodeValue/textContent', () => {
   const node2 = document.createTextNode('haha');
   document.body.appendChild(node1);
 
-  let updateCount = 0;
-  const onUpdate = function() {
-    updateCount++;
-  };
-  node1.addEventListener('$$childNodesUpdate', onUpdate);
-
   node1.appendChild(node2);
   expect(node2.textContent).toBe('haha');
   expect(node2.nodeValue).toBe('haha');
-  expect(updateCount).toBe(1);
 
   node2.textContent = 'hehe';
   expect(node2.textContent).toBe('hehe');
   expect(node2.nodeValue).toBe('hehe');
-  expect(updateCount).toBe(2);
 
   node2.nodeValue = 'hoho';
   expect(node2.textContent).toBe('hoho');
   expect(node2.nodeValue).toBe('hoho');
-  expect(updateCount).toBe(3);
 
-  node1.removeEventListener('$$childNodesUpdate', onUpdate);
   document.body.removeChild(node1);
 });
 

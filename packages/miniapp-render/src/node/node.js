@@ -1,5 +1,5 @@
 import EventTarget from '../event/event-target';
-import cache from '../util/cache';
+import cache from '../utils/cache';
 
 class Node extends EventTarget {
   /**
@@ -40,6 +40,24 @@ class Node extends EventTarget {
    */
   $$updateParent(parentNode = null) {
     this.$_parentNode = parentNode;
+  }
+
+  get _path() {
+    if (this.$_parentNode !== null) {
+      const index = '[' + this.$_parentNode.childNodes.indexOf(this) + ']';
+
+      return `${this.parentNode._path}.children.${index}`;
+    }
+
+    return '';
+  }
+
+  get _root() {
+    if (this.$_parentNode !== null) {
+      return this.$_parentNode._root;
+    }
+
+    return null;
   }
 
   get parentNode() {

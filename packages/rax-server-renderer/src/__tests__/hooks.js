@@ -16,7 +16,7 @@ describe('hooks', () => {
       }
 
       let str = renderToString(<Counter />);
-      expect(str).toBe('<span>Count: 0</span>');
+      expect(str).toBe('<span>Count: <!--|-->0</span>');
     });
 
     it('lazy state initialization', () => {
@@ -28,7 +28,7 @@ describe('hooks', () => {
       }
 
       let str = renderToString(<Counter />);
-      expect(str).toBe('<span>Count: 0</span>');
+      expect(str).toBe('<span>Count: <!--|-->0</span>');
     });
 
     it('should ignore setCount on the server', () => {
@@ -41,7 +41,7 @@ describe('hooks', () => {
       }
 
       let str = renderToString(<Counter />);
-      expect(str).toBe('<span>Count: 0</span>');
+      expect(str).toBe('<span>Count: <!--|-->0</span>');
     });
   });
 
@@ -131,7 +131,7 @@ describe('hooks', () => {
       }
 
       let str = renderToString(<Counter />);
-      expect(str).toBe('<span>Count: 0</span>');
+      expect(str).toBe('<span>Count: <!--|-->0</span>');
     });
   });
 
@@ -145,7 +145,7 @@ describe('hooks', () => {
       }
 
       let str = renderToString(<Counter count={0} />);
-      expect(str).toBe('<span>Count: 0</span>');
+      expect(str).toBe('<span>Count: <!--|-->0</span>');
     });
   });
 
@@ -159,7 +159,7 @@ describe('hooks', () => {
       }
 
       let str = renderToString(<Counter count={0} />);
-      expect(str).toBe('<span>Count: 0</span>');
+      expect(str).toBe('<span>Count: <!--|-->0</span>');
     });
 
     it('should support render time callbacks', () => {

@@ -8,11 +8,7 @@ beforeAll(() => {
 });
 
 test('style', () => {
-  let updateCount = 0;
   const element = document.createElement('div');
-  element.addEventListener('$$domNodeUpdate', () => {
-    updateCount++;
-  });
   const style = element.style;
   style.cssText = 'position: absolute; top: 0; left: 0;';
 
@@ -25,7 +21,6 @@ test('style', () => {
   expect(style.width).toBe('100%');
   style.height = '13px';
   expect(style.height).toBe('13px');
-  expect(updateCount).toBe(3);
 
   expect(style.cssText).toBe('position:absolute;top:0;left:0;width:100%;height:13px;');
 
@@ -34,7 +29,6 @@ test('style', () => {
   expect(style.top).toBe('');
   expect(style.left).toBe('');
   expect(style.display).toBe('block');
-  expect(updateCount).toBe(4);
 
   expect(style.cssText).toBe('position:relative;display:block;');
 

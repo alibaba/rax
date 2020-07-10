@@ -66,7 +66,8 @@ function getPageCycles(Klass) {
       this.instance._mountComponent();
     },
     unmount() {
-      this.instance._unmountComponent();
+      // Ensure that instance exists
+      this.instance && this.instance._unmountComponent();
     },
     show() {
       if (this.instance && this.instance.__mounted) {
@@ -121,7 +122,7 @@ function getComponentCycles(Klass) {
       }
     },
     unmount: function() {
-      this.instance._unmountComponent();
+      this.instance && this.instance._unmountComponent();
     }
   });
 }
@@ -196,7 +197,7 @@ function createProxyMethods(events) {
               proxyedArgs[index] = dataset[key];
 
               if (!contextInfo.changed && idx !== index) {
-              // event does not exist on dataset
+                // event does not exist on dataset
                 proxyedArgs[idx] = event;
               }
             }
@@ -207,7 +208,7 @@ function createProxyMethods(events) {
            * when onClick={handleClick.bind(this, 1)}
            * or onClick={handleClick}
            */
-          if (contextInfo.changed || !proxyedArgs.length) {
+          if (contextInfo.changed || !proxyedArgs.includes(event)) {
             proxyedArgs.push(event);
           }
         } else {
@@ -230,6 +231,7 @@ function createReactiveClass(pureRender) {
     constructor(props) {
       super(props);
       this._render = pureRender;
+      this.__isReactiveComponent = true;
       this.__compares = pureRender.__compares;
 
       // Handle functional component shouldUpdateComponent
@@ -245,8 +247,8 @@ function createReactiveClass(pureRender) {
               break;
             }
           }
-
-          return !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
+          // Currently this component is function component, then when state which defined by useState updated, it need check __shouldUpdate.
+          return this.__shouldUpdate || !arePropsEqual || this.__prevForwardRef !== this._forwardRef;
         };
       }
     }
@@ -260,8 +262,6 @@ function createReactiveClass(pureRender) {
   };
   // Transfer __injectHistory
   Klass.__injectHistory = pureRender.__injectHistory;
-  // Set as function component
-  Klass.prototype.isFunctionComponent = true;
   return Klass;
 }
 
