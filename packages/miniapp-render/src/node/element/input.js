@@ -1,37 +1,14 @@
 import Element from '../element';
-import cache from '../../util/cache';
-import Pool from '../../util/pool';
-
-const pool = new Pool();
 
 class HTMLInputElement extends Element {
   // Create instance
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reuse element node
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new HTMLInputElement(options, tree);
   }
 
   // Override parent class recycle method
   $$recycle() {
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reuse element node
-      pool.add(this);
-    }
   }
 
   // $_generateHtml handle other attributes
@@ -108,9 +85,6 @@ class HTMLInputElement extends Element {
     if (!value && !this.changed) {
       value = this.$_attrs.get('defaultValue');
     }
-
-    if ((type === 'radio' || type === 'checkbox') && value === undefined)
-      return 'on';
     return value || '';
   }
 
@@ -171,17 +145,12 @@ class HTMLInputElement extends Element {
     return this.$_attrs.get('checked') || '';
   }
 
-  get focus() {
-    return !!this.$_attrs.get('focus');
-  }
-
-  set focus(value) {
-    value = !!value;
-    this.$_attrs.set('focus', value);
-  }
-
   blur() {
     this.$_attrs.set('focus', false);
+  }
+
+  focus() {
+    this.$_attrs.set('autofocus', true);
   }
 }
 
