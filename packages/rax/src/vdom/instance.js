@@ -63,22 +63,27 @@ export default {
     }
 
     // Update root component
-    let rootInstance = this.get(container);
-    if (rootInstance && rootInstance.__rootID) {
+    let prevRootInstance = this.get(container);
+    if (prevRootInstance && prevRootInstance.__rootID) {
       if (parentContext) {
         // Using __penddingContext to pass new context
-        rootInstance[INTERNAL].__penddingContext = parentContext;
+        prevRootInstance[INTERNAL].__penddingContext = parentContext;
       }
-      rootInstance.__update(element);
-    } else {
-      // Init root component with empty children
-      let renderedComponent = instantiateComponent(createElement(Root));
-      let defaultContext = parentContext || {};
-      let rootInstance = renderedComponent.__mountComponent(container, parent, defaultContext);
-      this.set(container, rootInstance);
-      // Mount new element through update queue avoid when there is in rendering phase
-      rootInstance.__update(element);
+      prevRootInstance.__update(element);
+
+      // After render callback
+      driver.afterRender && driver.afterRender(renderOptions);
+
+      return prevRootInstance;
     }
+
+    // Init root component with empty children
+    let renderedComponent = instantiateComponent(createElement(Root));
+    let defaultContext = parentContext || {};
+    let rootInstance = renderedComponent.__mountComponent(container, parent, defaultContext);
+    this.set(container, rootInstance);
+    // Mount new element through update queue avoid when there is in rendering phase
+    rootInstance.__update(element);
 
     // After render callback
     driver.afterRender && driver.afterRender(renderOptions);
