@@ -65,7 +65,7 @@ const picker = {
 };
 
 if (isWeChatMiniProgram) {
-  picker.props.concat([
+  picker.props = picker.props.concat([
     {
       name: 'mode',
       get(domNode) {
