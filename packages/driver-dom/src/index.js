@@ -298,7 +298,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
-        setAttribute(node, prop, value);
+        setAttribute(node, prop, value, isSVGMode);
       }
     }
   }
@@ -368,7 +368,7 @@ export function removeAttribute(node, propKey) {
   node[REMOVE_ATTRIBUTE](propKey);
 }
 
-export function setAttribute(node, propKey, propValue) {
+export function setAttribute(node, propKey, propValue, isSvg) {
   // For reduce innerHTML operation to improve performance.
   if (propKey === DANGEROUSLY_SET_INNER_HTML && node[INNER_HTML] !== propValue[HTML]) {
     return node[INNER_HTML] = propValue[HTML];
@@ -376,7 +376,8 @@ export function setAttribute(node, propKey, propValue) {
 
   if (propKey === CLASS_NAME) propKey = CLASS;
 
-  if (propKey in node) {
+  // Prop for svg can only be set by attribute
+  if (!isSvg && propKey in node) {
     try {
       // Some node property is readonly when in strict mode
       node[propKey] = propValue;
