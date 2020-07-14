@@ -58,7 +58,7 @@ const picker = {
       name: 'onPickerChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+        domNode.__setAttributeWithoutUpdate('value', evt.detail.value);
       }
     }
   ]
