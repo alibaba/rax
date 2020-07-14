@@ -1,77 +1,98 @@
 import { useEffect } from 'rax';
-import { getHistory } from './runApp';
-import { isWeb, isWeex, isMiniApp, isWeChatMiniProgram } from 'universal-env';
+import { getHistory } from './history';
+import { isWeex, isMiniAppPlatform, isWeb } from './env';
 import { SHOW, HIDE } from './constants';
 
+// visibleListeners => { [path]: { show: [], hide: [] } }
 const visibleListeners = {};
-visibleListeners[SHOW] = [];
-visibleListeners[HIDE] = [];
 
-let prevVisibleState = true;
-
-function emit(cycle, ...args) {
-  for (let i = 0, l = visibleListeners[cycle].length; i < l; i++) {
-    visibleListeners[cycle][i](...args);
+function addPageLifeCycle(cycle, callback) {
+  const history = getHistory();
+  if (history) {
+    const pathname = history.location.pathname;
+    if (!visibleListeners[pathname]) {
+      visibleListeners[pathname] = {
+        [SHOW]: [],
+        [HIDE]: []
+      };
+    }
+    visibleListeners[pathname][cycle].push(callback);
   }
 }
 
-function usePageLifecycle(cycle, callback) {
-  switch (cycle) {
-    case SHOW:
-    case HIDE:
-      useEffect(() => {
-        if (cycle === SHOW) {
-          callback();
-        }
-        visibleListeners[cycle].push(callback);
-        return () => {
-          const index = visibleListeners[cycle].indexOf(callback);
-          // When SPA componentWillUnMount call hide
-          // If user didn't use runApp create SPA, getHistory will return undefined.
-          if (cycle === HIDE && isWeb && getHistory()) {
-            callback();
-          }
-          visibleListeners[cycle].splice(index, 1);
-        };
-      }, []);
+export function emit(cycle, path, ...args) {
+  // Ensure queue exists
+  if (visibleListeners[path] && visibleListeners[path][cycle]) {
+    for (let i = 0, l = visibleListeners[path][cycle].length; i < l; i++) {
+      visibleListeners[path][cycle][i](...args);
+    }
   }
+}
+
+function usePageLifeCycle(cycle, callback) {
+  useEffect(() => {
+    if (cycle === SHOW) {
+      callback();
+    }
+    const history = getHistory();
+    if (history) {
+      const pathname = history.location.pathname;
+      addPageLifeCycle(cycle, callback);
+
+      return () => {
+        if (visibleListeners[pathname]) {
+          const index = visibleListeners[pathname][cycle].indexOf(callback);
+          if (index > -1) {
+            visibleListeners[pathname][cycle].splice(index, 1);
+          }
+        }
+      };
+    }
+  }, []);
 }
 
 export function usePageShow(callback) {
-  usePageLifecycle(SHOW, callback);
+  usePageLifeCycle(SHOW, callback);
 }
 
 export function usePageHide(callback) {
-  usePageLifecycle(HIDE, callback);
+  usePageLifeCycle(HIDE, callback);
 }
 
-if (isWeb) {
-  document.addEventListener('visibilitychange', function() {
-    const currentVisibleState = document.visibilityState === 'visible';
-    if (prevVisibleState !== currentVisibleState) {
-      emit(currentVisibleState ? SHOW : HIDE);
+export function withPageLifeCycle(Component) {
+  class Wrapper extends Component {
+    constructor() {
+      super();
+      if (this.onShow) {
+        if (!isMiniAppPlatform) {
+          this.onShow();
+        }
+        addPageLifeCycle(SHOW, this.onShow.bind(this));
+      }
+      if (this.onHide) {
+        addPageLifeCycle(HIDE, this.onHide.bind(this));
+      }
+      const history = getHistory();
+      if (history) {
+        this.pathname = history.location.pathname;
+      }
     }
-    prevVisibleState = currentVisibleState;
-  });
-} else if (isWeex) {
-  try {
-    // https://weex.apache.org/docs/modules/globalEvent.html#addeventlistener
-    // Use __weex_require__ in Rax project.
-    const globalEvent = __weex_require__('@weex-module/globalEvent');
-    globalEvent.addEventListener('WXApplicationDidBecomeActiveEvent', function() {
-      emit(SHOW);
-    });
-    globalEvent.addEventListener('WXApplicationWillResignActiveEvent', function() {
-      emit(HIDE);
-    });
-  } catch (err) {
-    console.log('@weex-module/globalEvent error: ' + err);
+    componentWillUnmount() {
+      visibleListeners[this.pathname] = null;
+    }
   }
-} else if (isMiniApp || isWeChatMiniProgram) {
+  return Wrapper;
+}
+
+if (isMiniAppPlatform) {
   window.addEventListener('pageshow', () => {
-    emit(SHOW);
+    // Get history
+    const history = getHistory();
+    emit(SHOW, history.location.pathname);
   });
   window.addEventListener('pagehide', () => {
-    emit(HIDE);
+    // Get history
+    const history = getHistory();
+    emit(HIDE, history.location.pathname);
   });
 }

@@ -6,20 +6,18 @@ import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'hi
 import { createMiniAppHistory } from 'miniapp-history';
 import UniversalDriver from 'driver-universal';
 import pathRedirect from './pathRedirect';
-import { emit, addAppLifeCyle } from './app';
+import { emit as appEmit, addAppLifeCycle } from './app';
 import { SHOW, LAUNCH, ERROR, HIDE, TAB_ITEM_CLICK, NOT_FOUND, SHARE, UNHANDLED_REJECTION } from './constants';
+import { setHistory } from './history';
+import router from './router';
+import { emit as pageEmit } from './page';
 
 const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
 const SHELL_DATA = 'shellData';
 
-let history;
 let launched = false;
 let driver = UniversalDriver;
 const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
-
-export function getHistory() {
-  return history;
-}
 
 function App(props) {
   const { appConfig, history, routes, pageProps, InitialComponent } = props;
@@ -90,31 +88,31 @@ function handleDynamicConfig(config) {
   if (config.dynamicConfig) {
     const { onLaunch, onShow, onError, onHide, onTabItemClick } = config;
     // multi-end valid lifecycle
-    // Add app lanuch callback
-    addAppLifeCyle(LAUNCH, onLaunch);
+    // Add app launch callback
+    addAppLifeCycle(LAUNCH, onLaunch);
     // Add app show callback
-    addAppLifeCyle(SHOW, onShow);
+    addAppLifeCycle(SHOW, onShow);
     // Add app error callback
-    addAppLifeCyle(ERROR, onError);
+    addAppLifeCycle(ERROR, onError);
     // Add app hide callback
-    addAppLifeCyle(HIDE, onHide);
+    addAppLifeCycle(HIDE, onHide);
     // Add tab bar item click callback
-    addAppLifeCyle(TAB_ITEM_CLICK, onTabItemClick);
+    addAppLifeCycle(TAB_ITEM_CLICK, onTabItemClick);
     // Add lifecycle callbacks which only valid in Wechat MiniProgram and ByteDance MicroApp
     if (isWeChatMiniProgram || isByteDanceMicroApp) {
       const { onPageNotFound, onShareAppMessage } = config;
       // Add global share callback
-      addAppLifeCyle(SHARE, onShareAppMessage);
+      addAppLifeCycle(SHARE, onShareAppMessage);
       // Add page not found callback
-      addAppLifeCyle(NOT_FOUND, onPageNotFound);
+      addAppLifeCycle(NOT_FOUND, onPageNotFound);
     }
     // Add lifecycle callbacks which only valid in Alibaba MiniApp
     if (isMiniApp) {
       const { onShareAppMessage, onUnhandledRejection } = config;
       // Add global share callback
-      addAppLifeCyle(SHARE, onShareAppMessage);
+      addAppLifeCycle(SHARE, onShareAppMessage);
       // Add unhandledrejection callback
-      addAppLifeCyle(UNHANDLED_REJECTION, onUnhandledRejection);
+      addAppLifeCycle(UNHANDLED_REJECTION, onUnhandledRejection);
     }
     return {};
   }
@@ -142,6 +140,7 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
     driver = staticConfig.driver;
   }
 
+  let history;
   // Set history
   if (typeof staticConfig.history !== 'undefined') {
     history = staticConfig.history;
@@ -151,26 +150,30 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
     history = createBrowserHistory();
   } else if (isWeb) {
     history = createHashHistory();
+  } else if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
+    window.history = createMiniAppHistory(routes);
+    window.location = window.history.location;
+    window.__pageProps = pageProps;
+    setHistory(window.history);
+    return;
   } else {
     // In other situation use memory history.
     history = createMemoryHistory();
   }
 
-  // In MiniApp, it needn't return App Component
-  if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
-    window.history = createMiniAppHistory(routes);
-    window.location = window.history.location;
-    window.__pageProps = pageProps;
-    return;
-  }
+  // Set global history
+  setHistory(history);
 
   // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
   pathRedirect(history, routes);
 
+  const pathname = history.location.pathname;
   let _initialComponent;
-  return matchInitialComponent(history.location.pathname, routes)
+
+  return matchInitialComponent(pathname, routes)
     .then((initialComponent) => {
       _initialComponent = initialComponent;
+
       let appInstance = createElement(App, {
         appConfig: staticConfig,
         history,
@@ -185,7 +188,29 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
       }
 
       // Emit app launch cycle.
-      emit('launch');
+      appEmit(LAUNCH);
+      appEmit(SHOW);
+
+      // Set current router
+      router.current = {
+        path: pathname,
+        visibiltyState: true
+      };
+
+      // Listen history change
+      history.listen((location) => {
+        if (location.pathname !== router.current.path) {
+          // Flow router info
+          router.prev = router.current;
+          router.current = {
+            path: location.pathname,
+            visibiltyState: true
+          };
+          router.prev.visibiltyState = false;
+          pageEmit(HIDE, router.prev.path);
+          pageEmit(SHOW, router.current.path);
+        }
+      });
 
       let rootEl = isWeex || isKraken ? null : document.getElementById('root');
       if (isWeb && rootEl === null) console.warn('Error: Can not find #root element, please check which exists in DOM.');
@@ -200,6 +225,7 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
 
 function matchInitialComponent(fullpath, routes) {
   let initialComponent = null;
+
   for (let i = 0, l = routes.length; i < l; i++) {
     if (fullpath === routes[i].path || routes[i].regexp && routes[i].regexp.test(fullpath)) {
       initialComponent = routes[i].component;

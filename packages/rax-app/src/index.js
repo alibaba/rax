@@ -7,7 +7,7 @@ import {
   useAppShow,
   usePageNotFound
 } from './app';
-import { usePageHide, usePageShow } from './page';
+import { usePageHide, usePageShow, withPageLifeCycle } from './page';
 import runApp from './runApp';
 import {
   registerNativeEventListeners,
@@ -26,6 +26,7 @@ export {
   usePageNotFound,
   usePageHide,
   usePageShow,
+  withPageLifeCycle,
   registerNativeEventListeners,
   addNativeEventListener,
   removeNativeEventListener
