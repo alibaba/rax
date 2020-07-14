@@ -1,4 +1,4 @@
-import withRouter from './withRouter';
+import router from './router';
 import {
   useAppLaunch,
   useAppError,
@@ -14,6 +14,8 @@ import {
   addNativeEventListener,
   removeNativeEventListener
 } from './nativeEventListener';
+
+const withRouter = router.withRouter;
 
 export {
   runApp,

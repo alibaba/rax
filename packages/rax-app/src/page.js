@@ -1,6 +1,6 @@
 import { useEffect } from 'rax';
 import { getHistory } from './history';
-import { isWeex, isMiniAppPlatform, isWeb } from './env';
+import { isMiniAppPlatform } from './env';
 import { SHOW, HIDE } from './constants';
 
 // visibleListeners => { [path]: { show: [], hide: [] } }
@@ -31,6 +31,7 @@ export function emit(cycle, path, ...args) {
 
 function usePageLifeCycle(cycle, callback) {
   useEffect(() => {
+    // When component did mount, it will trigger usePageShow callback
     if (cycle === SHOW) {
       callback();
     }
@@ -65,6 +66,7 @@ export function withPageLifeCycle(Component) {
       super();
       if (this.onShow) {
         if (!isMiniAppPlatform) {
+          // In MiniApp platform show event will trigger after addPageLifeCycle, so it needn't be execute in constructor
           this.onShow();
         }
         addPageLifeCycle(SHOW, this.onShow.bind(this));
@@ -74,6 +76,7 @@ export function withPageLifeCycle(Component) {
       }
       const history = getHistory();
       if (history) {
+        // Keep the path name corresponding to current page component
         this.pathname = history.location.pathname;
       }
     }
@@ -81,6 +84,7 @@ export function withPageLifeCycle(Component) {
       visibleListeners[this.pathname] = null;
     }
   }
+  Wrapper.displayName = 'withPageLifeCycle(' + (Component.displayName || Component.name) + ')';
   return Wrapper;
 }
 
