@@ -34,6 +34,12 @@ const view = {
 };
 
 if (isMiniApp) {
+  view.props.push({
+    name: 'disable-scroll',
+    get(domNode) {
+      return !!domNode.getAttribute('disable-scroll');
+    },
+  });
   view.simpleEvents = [{
     name: 'onViewAppear',
     eventName: 'appear'

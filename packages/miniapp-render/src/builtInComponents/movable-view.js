@@ -90,17 +90,17 @@ export default {
       name: 'onMovableViewChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
-        domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
+        domNode.__setAttributeWithoutUpdate('x', evt.detail.x);
+        domNode.__setAttributeWithoutUpdate('y', evt.detail.y);
       }
     },
     {
       name: 'onMovableViewScale',
       eventName: 'scale',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('x', evt.detail.x);
-        domNode.$$setAttributeWithoutUpdate('y', evt.detail.y);
-        domNode.$$setAttributeWithoutUpdate('scale-value', evt.detail.scale);
+        domNode.__setAttributeWithoutUpdate('x', evt.detail.x);
+        domNode.__setAttributeWithoutUpdate('y', evt.detail.y);
+        domNode.__setAttributeWithoutUpdate('scale-value', evt.detail.scale);
       }
     }
   ]

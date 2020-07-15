@@ -33,7 +33,7 @@ class Attribute {
     return this.$_list;
   }
 
-  set(name, value) {
+  set(name, value, immediate = true) {
     const element = this.$_element;
     const map = this.$_map;
 
@@ -53,7 +53,7 @@ class Attribute {
         path: `${this.$_element._path}.${name}`,
         value: value
       };
-      this.$_doUpdate(payload);
+      this.$_doUpdate(payload, immediate);
     }
 
     this.triggerUpdate();

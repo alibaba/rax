@@ -42,7 +42,7 @@ export default {
       return !isNaN(value) ? value : 140;
     }
   }, {
-    name: 'autofocus',
+    name: 'focus-state',
     get(domNode) {
       return !!domNode.getAttribute('autofocus');
     },
@@ -120,7 +120,7 @@ export default {
     eventName: 'input',
     middleware(evt, domNode, pageId, nodeId) {
       domNode.__textareaOldValue = domNode.value || '';
-      domNode.$$setAttributeWithoutUpdate('focus', true);
+      domNode.__setAttributeWithoutUpdate('focus-state', true);
       this.callSimpleEvent('focus', evt, domNode);
     }
   },
@@ -128,7 +128,7 @@ export default {
     name: 'onTextareaBlur',
     eventName: 'blur',
     middleware(evt, domNode, pageId, nodeId) {
-      domNode.$$setAttributeWithoutUpdate('focus', false);
+      domNode.__setAttributeWithoutUpdate('focus-state', false);
       if (domNode.__textareaOldValue !== undefined && domNode.value !== domNode.__textareaOldValue) {
         domNode.__textareaOldValue = undefined;
         this.callEvent('change', evt, pageId, nodeId);
@@ -141,7 +141,7 @@ export default {
     eventName: 'input',
     middleware(evt, domNode, pageId, nodeId) {
       const value = '' + evt.detail.value;
-      domNode.$$setAttributeWithoutUpdate('value', value);
+      domNode.__setAttributeWithoutUpdate('value', value);
 
       this.callEvent('input', evt, null, pageId, nodeId);
     }

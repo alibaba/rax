@@ -92,7 +92,7 @@ export default {
       name: 'onSwiperChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('current', evt.detail.current);
+        domNode.__setAttributeWithoutUpdate('current', evt.detail.current);
       }
     }
   ]

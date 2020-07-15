@@ -36,7 +36,7 @@ export default {
       name: 'onSwitchChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('checked', evt.detail.value);
+        domNode.__setAttributeWithoutUpdate('checked', evt.detail.value);
       }
     }
   ]
