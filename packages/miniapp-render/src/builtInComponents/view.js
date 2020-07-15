@@ -39,7 +39,7 @@ if (isMiniApp) {
     get(domNode) {
       return !!domNode.getAttribute('disable-scroll');
     },
-  })
+  });
   view.simpleEvents = [{
     name: 'onViewAppear',
     eventName: 'appear'
