@@ -124,7 +124,7 @@ class Element extends Node {
   _triggerUpdate(payload, immediate = true) {
     if (!this.__notTriggerUpdate) {
       this.enqueueRender(payload);
-    } else if (!immediate) {
+    } else if (!immediate && this._root) {
       this._root.renderStacks.push(payload);
     }
   }
