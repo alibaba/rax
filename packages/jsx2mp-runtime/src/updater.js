@@ -12,6 +12,11 @@ const componentIntances = {};
 
 const updateChildPropsCallbacks = {};
 
+export function updatePropsMap(instanceId, props, nextProps) {
+  propsMap[instanceId] = props;
+  nextPropsMap[instanceId] = nextProps;
+}
+
 export function setComponentInstance(instance) {
   const instanceId = instance.instanceId;
   componentIntances[instanceId] = instance;
@@ -45,6 +50,9 @@ export function updateChildProps(trigger, nextUpdateProps, instanceId) {
     const targetComponent = componentIntances[instanceId];
     if (targetComponent) {
       const nextProps = Object.assign(
+        {
+          TAGID: instanceId
+        },
         targetComponent.props,
         nextUpdateProps
       );

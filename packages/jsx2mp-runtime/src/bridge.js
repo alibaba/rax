@@ -4,7 +4,7 @@ import { isQuickApp } from 'universal-env';
 import { cycles as appCycles } from './app';
 import Component from './component';
 import { ON_SHOW, ON_HIDE, ON_SHARE_APP_MESSAGE, ON_LAUNCH, ON_ERROR } from './cycles';
-import { setComponentInstance, getComponentProps } from './updater';
+import { setComponentInstance, getComponentProps, updatePropsMap } from './updater';
 import {
   getNativePageLifecycle,
   getNativeComponentLifecycle,
@@ -123,8 +123,10 @@ function getComponentCycles(Klass) {
           // Update instanceId
           this.instance.instanceId = nextProps.__tagId;
           // When tagId changed, invoke render directly.
-          this.instance.nextProps = nextProps;
+          const cachedNextProps = getComponentProps(this.instance.instanceId);
+          this.instance.nextProps = cachedNextProps || prevProps;
           this.instance.props = prevProps;
+          updatePropsMap(prevProps.__tagId, this.instance.props, this.instance.nextProps);
           enqueueRender(this.instance);
         }
       }
