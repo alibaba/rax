@@ -71,7 +71,7 @@ class Window extends EventTarget {
       }
     }
 
-    super.$$trigger(eventName, options);
+    return super.$$trigger(eventName, options);
   }
 
   /**
