@@ -29,12 +29,20 @@ const ScrollView = {
     name: 'scroll-top',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-top'), 10);
+      if (Boolean(domNode.__scrollViewScrollTop) == value) {
+        return '';
+      }
+      domNode.__scrollViewScrollTop = value;
       return !isNaN(value) ? value : '';
     },
   }, {
     name: 'scroll-left',
     get(domNode) {
       const value = parseInt(domNode.getAttribute('scroll-left'), 10);
+      if (Boolean(domNode.__scrollViewScrollLeft) == value) {
+        return '';
+      }
+      domNode.__scrollViewScrollLeft = value;
       return !isNaN(value) ? value : '';
     },
   }, {
@@ -56,11 +64,6 @@ const ScrollView = {
     name: 'enable-back-to-top',
     get(domNode) {
       return !!domNode.getAttribute('enable-back-to-top');
-    },
-  }, {
-    name: 'enable-flex',
-    get(domNode) {
-      return !!domNode.getAttribute('enable-flex');
     },
   }, {
     name: 'animation',
@@ -90,6 +93,39 @@ const ScrollView = {
 };
 
 if (isWeChatMiniProgram) {
+  ScrollView.props = ScrollView.props.concat([,
+    {
+      name: 'scroll-anchoring',
+      get(domNode) {
+        return !!domNode.getAttribute('scroll-anchoring');
+      },
+    }, {
+      name: 'refresher-enabled',
+      get(domNode) {
+        return !!domNode.getAttribute('refresher-enabled');
+      },
+    }, {
+      name: 'refresher-threshold',
+      get(domNode) {
+        return domNode.getAttribute('refresher-threshold') || '45';
+      },
+    }, {
+      name: 'refresher-defaultStyle',
+      get(domNode) {
+        return domNode.getAttribute('refresher-default-style') || 'black';
+      },
+    }, {
+      name: 'refresher-background',
+      get(domNode) {
+        return domNode.getAttribute('refresher-background') || '#FFF';
+      },
+    }, {
+      name: 'refresher-triggered',
+      get(domNode) {
+        return !!domNode.getAttribute('refresher-triggered');
+      },
+    }
+  ]);
   ScrollView.singleEvents = ScrollView.singleEvents.concat([
     {
       name: 'onScrollViewRefresherPulling',

@@ -281,41 +281,6 @@ class Element extends Node {
     return {};
   }
 
-  // Gets the context object of the corresponding widget component
-  $$getContext() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
-          .exec();
-      } else {
-        window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject()).exec();
-      }
-    });
-  }
-
-  // Gets the NodesRef object for the corresponding node
-  $$getNodesRef() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        resolve(CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
-      } else {
-        resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
-      }
-    });
-  }
-
   // Sets properties, but does not trigger updates
   __setAttributeWithoutUpdate(name, value) {
     this.__notTriggerUpdate = true;
