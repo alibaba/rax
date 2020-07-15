@@ -30,15 +30,16 @@ const input = {
       return domNode.placeholder;
     },
   }, {
-    name: 'placeholderColor',
-    get(domNode) {
-      return domNode.getAttribute('placeholderColor') || '#999999';
-    },
-  }, {
     name: 'placeholder-style',
-    get(domNode) {
-      return domNode.getAttribute('placeholder-style') || '';
-    },
+    get: function get(domNode) {
+      let style = domNode.getAttribute('placeholder-style') || '';
+      // Compatible with placeholderColor attribute of rax-textinput
+      const color = domNode.getAttribute('placeholderColor');
+      if (color) {
+        style = 'color:' + color + ';' + style;
+      }
+      return style;
+    }
   }, {
     name: 'placeholder-class',
     get(domNode) {
@@ -107,7 +108,7 @@ const input = {
   }, {
     name: 'focus-state',
     get(domNode) {
-      return !!domNode.getAttribute('autofocus');
+      return !!(domNode.getAttribute('autofocus') || domNode.getAttribute('focus-state'));
     },
   }],
   simpleEvents: [{
