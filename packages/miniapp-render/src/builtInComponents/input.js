@@ -31,7 +31,7 @@ const input = {
     },
   }, {
     name: 'placeholder-style',
-    get: function get(domNode) {
+    get(domNode) {
       let style = domNode.getAttribute('placeholder-style') || '';
       // Compatible with placeholderColor attribute of rax-textinput
       const color = domNode.getAttribute('placeholderColor');
@@ -43,7 +43,7 @@ const input = {
   }, {
     name: 'placeholder-class',
     get(domNode) {
-      return domNode.getAttribute('placeholder-class') || 'input-placeholder';
+      return domNode.getAttribute('placeholder-class');
     },
   }, {
     name: 'disabled',

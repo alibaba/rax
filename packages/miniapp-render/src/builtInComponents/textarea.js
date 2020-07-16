@@ -16,19 +16,20 @@ export default {
       return domNode.placeholder;
     },
   }, {
-    name: 'placeholder-color',
-    get(domNode) {
-      return domNode.getAttribute('placeholder-color') || '#999999';
-    },
-  }, {
     name: 'placeholder-style',
     get(domNode) {
-      return domNode.getAttribute('placeholder-style') || '';
-    },
+      let style = domNode.getAttribute('placeholder-style') || '';
+      // Compatible with placeholderColor attribute of rax-textinput
+      const color = domNode.getAttribute('placeholderColor');
+      if (color) {
+        style = 'color:' + color + ';' + style;
+      }
+      return style;
+    }
   }, {
     name: 'placeholder-class',
     get(domNode) {
-      return domNode.getAttribute('placeholder-class') || 'input-placeholder';
+      return domNode.getAttribute('placeholder-class');
     },
   }, {
     name: 'disabled',
@@ -47,9 +48,9 @@ export default {
       return !!domNode.getAttribute('autofocus');
     },
   }, {
-    name: 'focus',
+    name: 'focus-state',
     get(domNode) {
-      return !!domNode.getAttribute('focus');
+      return !!(domNode.getAttribute('autofocus') || domNode.getAttribute('focus-state'));
     },
   }, {
     name: 'auto-height',
