@@ -123,11 +123,10 @@ class RootElement extends Element {
   }
 
   enqueueRender(payload) {
-    if (this.renderStacks.length === 0) {
-      setTimeout(() => {
-        this.executeRender();
-      }, 0);
-    }
+    clearTimeout(this.__timer);
+    this.__timer = setTimeout(() => {
+      this.executeRender();
+    }, 0);
     this.renderStacks.push(payload);
   }
 
