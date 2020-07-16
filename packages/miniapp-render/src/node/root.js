@@ -3,6 +3,7 @@ import cache from '../utils/cache';
 import perf from '../utils/perf';
 import getProperty from '../utils/getProperty';
 import { propsMap } from '../builtInComponents';
+import { isMiniApp } from 'universal-env';
 
 function simplify(node) {
   const domInfo = node.$$domInfo;
@@ -14,10 +15,23 @@ function simplify(node) {
   // Miniapp Plugin
   if (node.tagName === 'MINIAPP-PLUGIN') {
     const config = cache.getConfig();
+    const internal = cache.getElementInstance();
     const pluginInfo = config.usingPlugins[node.behavior];
     if (pluginInfo) {
       pluginInfo.props.forEach(prop => simpleNode[prop] = node.getAttribute(prop));
-      // pluginInfo.events.forEach(event => simpleNode[event] = node.getAttribute(event));
+      pluginInfo.events.forEach(event => {
+        const eventName = `${node.behavior}_${event}`;
+        simpleNode[event] = eventName;
+        if (!internal[eventName]) {
+          internal[eventName] = function(...args) {
+            if (isMiniApp) {
+              node.$$trigger(event, { args });
+            } else {
+              internal.callSimpleEvent(event, args[0], node);
+            }
+          }
+        }
+      });
     }
     simpleNode.pluginName = node.behavior;
   } else {

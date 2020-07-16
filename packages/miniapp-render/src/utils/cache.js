@@ -1,5 +1,6 @@
 const pageMap = {};
 let configCache = {};
+let elementCache = null;
 let window;
 
 // Init
@@ -68,6 +69,14 @@ function getConfig() {
   return configCache;
 }
 
+function setElementInstance(instance) {
+  elementCache = instance;
+}
+
+function getElementInstance() {
+  return elementCache;
+}
+
 export default {
   init,
   destroy,
@@ -78,4 +87,6 @@ export default {
   getNode,
   setConfig,
   getConfig,
+  setElementInstance,
+  getElementInstance
 };

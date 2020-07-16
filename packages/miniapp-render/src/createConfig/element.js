@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp } from 'universal-env';
 import createEventProxy from '../bridge/createEventProxy';
+import cache from '../utils/cache';
 
 export default function() {
   if (isMiniApp) {
@@ -8,7 +9,10 @@ export default function() {
       props: {
         r: {}
       },
-      methods: createEventProxy()
+      methods: createEventProxy(),
+      onInit() {
+        cache.setElementInstance(this);
+      }
     };
   } else {
     return {
@@ -21,7 +25,10 @@ export default function() {
       options: {
         styleIsolation: 'shared'
       },
-      methods: createEventProxy()
+      methods: createEventProxy(),
+      created() {
+        cache.setElementInstance(this);
+      }
     };
   }
 }
