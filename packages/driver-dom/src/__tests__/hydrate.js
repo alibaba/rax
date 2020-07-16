@@ -118,4 +118,18 @@ describe('Hydrate', () => {
 
     expect(container.childNodes[0].childNodes[2].tagName).toBe('DIV');
   });
+
+  it('should not recolect hydration child with innerHtml', () => {
+    const Component = () => {
+      return (
+        <div className="container" dangerouslySetInnerHTML={{__html: `<div>About Rax</div><div>Docs</div>`}} />
+      );
+    };
+
+    render(<Component />, container, { driver: DriverDOM, hydrate: true });
+
+    jest.runAllTimers();
+
+    expect(container.childNodes[0].childNodes[0].tagName).toBe('DIV');
+  });
 });
