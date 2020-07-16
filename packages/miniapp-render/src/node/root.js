@@ -12,7 +12,29 @@ function simplify(node) {
   for (let attr in domInfo) {
     simpleNode[attr] = domInfo[attr];
   }
-  // TODO: Custom Component
+  // Custom Component
+  if (node.tagName === 'CUSTOM-COMPONENT') {
+    const config = cache.getConfig();
+    const internal = cache.getElementInstance();
+    const componentInfo = config.usingComponents[node.behavior];
+    if (componentInfo) {
+      componentInfo.props.forEach(prop => simpleNode[prop] = node.getAttribute(prop));
+      componentInfo.events.forEach(event => {
+        const eventName = `${node.behavior}_${event}`;
+        simpleNode[event] = eventName;
+        if (!internal[eventName]) {
+          internal[eventName] = function(...args) {
+            if (isMiniApp) {
+              node.$$trigger(event, { args });
+            } else {
+              internal.callSimpleEvent(event, args[0], node);
+            }
+          };
+        }
+      });
+    }
+    simpleNode.customComponentName = node.behavior;
+  }
   // Miniapp Plugin
   if (node.tagName === 'MINIAPP-PLUGIN') {
     const config = cache.getConfig();
