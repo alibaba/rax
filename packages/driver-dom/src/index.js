@@ -371,7 +371,6 @@ export function removeAttribute(node, propKey) {
 
 export function setAttribute(node, propKey, propValue, isSvg) {
   if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-
     // For reduce innerHTML operation to improve performance.
     if (node[INNER_HTML] !== propValue[HTML]) {
       node[INNER_HTML] = propValue[HTML];
