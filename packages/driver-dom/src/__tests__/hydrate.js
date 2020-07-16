@@ -122,7 +122,7 @@ describe('Hydrate', () => {
   it('should not recolect hydration child with innerHtml', () => {
     const Component = () => {
       return (
-        <div className="container" dangerouslySetInnerHTML={{__html: `<div>About Rax</div><div>Docs</div>`}} />
+        <div className="container" dangerouslySetInnerHTML={{__html: '<div>About Rax</div><div>Docs</div>'}} />
       );
     };
 
