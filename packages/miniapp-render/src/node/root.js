@@ -1,9 +1,10 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp } from 'universal-env';
 import Element from './element';
 import cache from '../utils/cache';
 import perf from '../utils/perf';
 import getProperty from '../utils/getProperty';
 import { propsMap } from '../builtInComponents';
-import { isMiniApp } from 'universal-env';
 
 function simplify(node) {
   const domInfo = node.$$domInfo;
@@ -29,7 +30,7 @@ function simplify(node) {
             } else {
               internal.callSimpleEvent(event, args[0], node);
             }
-          }
+          };
         }
       });
     }
