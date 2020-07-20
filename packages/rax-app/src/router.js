@@ -1,10 +1,10 @@
 import { createElement } from 'rax';
-import { withRouter as webSPAWithRouter } from 'rax-use-router';
-import { isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
+import { withRouter as spaWithRouter } from 'rax-use-router';
+import { isMiniAppPlatform } from './env';
 
-let withRouter;
+let withRouter = spaWithRouter;
 
-if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
+if (isMiniAppPlatform) {
   withRouter = function(Component) {
     function Wrapper(props) {
       const history = window.history;
@@ -17,8 +17,6 @@ if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
     Wrapper.WrappedComponent = Component;
     return Wrapper;
   };
-} else {
-  withRouter = webSPAWithRouter;
 }
 
 export default {

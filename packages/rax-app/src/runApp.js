@@ -1,19 +1,21 @@
 import { render, createElement, useState, useEffect, Fragment } from 'rax';
 import { Navigation, TabBar } from 'rax-pwa';
-import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
 import { useRouter } from 'rax-use-router';
-import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
-import { createMiniAppHistory } from 'miniapp-history';
 import UniversalDriver from 'driver-universal';
 import pathRedirect from './pathRedirect';
 import { emit as appEmit, addAppLifeCycle } from './app';
-import { SHOW, LAUNCH, ERROR, HIDE, TAB_ITEM_CLICK, NOT_FOUND, SHARE, UNHANDLED_REJECTION } from './constants';
-import { setHistory } from './history';
+import {
+  SHOW, LAUNCH, ERROR, HIDE, TAB_ITEM_CLICK, NOT_FOUND, SHARE, UNHANDLED_REJECTION,
+  INITIAL_DATA_FROM_SSR,
+  SHELL_DATA
+} from './constants';
+import { createHistory } from './history';
 import router from './router';
 import { emit as pageEmit } from './page';
-
-const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
-const SHELL_DATA = 'shellData';
+import {
+  isMiniAppPlatform, isWeex, isWeb, isKraken,
+  isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp
+} from './env';
 
 let launched = false;
 let driver = UniversalDriver;
@@ -140,29 +142,12 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
     driver = staticConfig.driver;
   }
 
-  let history;
-  // Set history
-  if (typeof staticConfig.history !== 'undefined') {
-    history = staticConfig.history;
-  } else if (initialDataFromSSR) {
-    // If that contains `initialDataFromSSR`, which means SSR is enabled,
-    // we should use browser history to make it works.
-    history = createBrowserHistory();
-  } else if (isWeb) {
-    history = createHashHistory();
-  } else if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
-    window.history = createMiniAppHistory(routes);
-    window.location = window.history.location;
-    window.__pageProps = pageProps;
-    setHistory(window.history);
-    return;
-  } else {
-    // In other situation use memory history.
-    history = createMemoryHistory();
-  }
+  const history = createHistory(routes, staticConfig.history);
 
-  // Set global history
-  setHistory(history);
+  if (isMiniAppPlatform) {
+    window.__pageProps = pageProps;
+    return;
+  }
 
   // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
   pathRedirect(history, routes);

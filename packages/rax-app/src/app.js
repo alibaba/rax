@@ -1,6 +1,6 @@
 import { isMiniAppPlatform, isWeex } from './env';
 import { SHOW, HIDE, ERROR, LAUNCH, NOT_FOUND, SHARE, TAB_ITEM_CLICK } from './constants';
-import { isFunction } from './type';
+import { isFunction, isUndef } from './type';
 import { getHistory } from './history';
 import router from './router';
 import { emit as pageEmit } from './page';
@@ -109,7 +109,7 @@ if (isMiniAppPlatform) {
   } catch (err) {
     console.log('@weex-module/globalEvent error: ' + err);
   }
-} else {
+} else if (!isUndef(document) && !isUndef(window)) {
   document.addEventListener('visibilitychange', function() {
     // Get history
     const history = getHistory();
