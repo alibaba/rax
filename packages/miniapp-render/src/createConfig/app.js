@@ -1,14 +1,23 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp } from 'universal-env';
 import { createWindow } from '../window';
+import createDocument from '../document';
 import cache from '../utils/cache';
 
-export default function(init) {
+export default function(init, config) {
+  cache.setConfig(config);
   const appConfig = {
     onLaunch(options) {
       const window = createWindow();
       cache.setWindow(window);
-      init(window);
+
+      // Use page route as pageId
+      // eslint-disable-next-line no-undef
+      const currentPageId = getCurrentPages()[0].route;
+      const currentDocument = createDocument(currentPageId);
+      window.__pageId = currentPageId;
+
+      init(window, currentDocument);
       this.window = window;
       this.window.$$trigger('launch', {
         event: {

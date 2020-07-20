@@ -21,13 +21,6 @@ function getId() {
 }
 
 /**
- * Gets the route of the miniapp page from the pageId
- */
-function getPageRoute(pageId) {
-  return pageId.split('-')[2];
-}
-
-/**
  * Throttling, which is called only once in a synchronous flow
  */
 const waitFuncSet = new Set();
@@ -83,7 +76,6 @@ export default {
   toDash,
   toCamel,
   getId,
-  getPageRoute,
   throttle,
   flushThrottleCache,
   decodeContent,

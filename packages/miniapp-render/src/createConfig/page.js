@@ -1,40 +1,16 @@
 import cache from '../utils/cache';
-import tool from '../utils/tool';
 import injectLifeCycle from '../bridge/injectLifeCycle';
 import createEventProxy from '../bridge/createEventProxy';
-import { createWindow } from '../window';
 import perf from '../utils/perf';
-import Document from '../document';
 
-// Export for test
-export function createPage(internal, config) {
-  if (config) cache.setConfig(config);
-
-  const nodeIdMap = {};
-  const window = createWindow();
-  const document = new Document(internal, nodeIdMap);
-
-  cache.setWindow(window);
-  cache.init(internal.pageId, {
-    document,
-    nodeIdMap
-  });
-
-  return {
-    window,
-    document
-  };
-}
-
-export function getBaseLifeCycles(init, config) {
+export function getBaseLifeCycles() {
   return {
     onLoad(query) {
-      this.pageId = this.data.pageId;
-      const { window, document } = createPage(this, config);
-      this.window = window;
-      this.document = document;
+      this.window = cache.getWindow();
+      this.document = cache.getDocument(this.pageId);
+      // Bind page internal to page document
+      this.document._internal = this;
       this.query = query;
-      this.firstRender = true;
       // Update location page options
       this.window.history.location.__updatePageOption(query);
       // Set __pageId to global window object
@@ -88,8 +64,7 @@ export function getBaseLifeCycles(init, config) {
         }
       });
 
-      init(this.window, this.document);
-      this.app = this.window.createApp();
+      // this.app = this.window.createApp();
       this.window.$$trigger('DOMContentLoaded');
     },
     onShow() {
@@ -124,9 +99,10 @@ export function getBaseLifeCycles(init, config) {
   };
 }
 
-export default function(init, config, lifeCycles = []) {
-  const pageId = `p-${tool.getId()}`;
+export default function(pageId, lifeCycles = []) {
   const pageConfig = {
+    firstRender: true,
+    pageId,
     data: {
       pageId,
       root: {
@@ -134,7 +110,7 @@ export default function(init, config, lifeCycles = []) {
         children: []
       }
     },
-    ...getBaseLifeCycles(init, config),
+    ...getBaseLifeCycles(),
     ...createEventProxy(pageId)
   };
   // Define page lifecycles, like onReachBottom
