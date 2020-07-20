@@ -129,7 +129,7 @@ if (isMiniAppPlatform) {
       }
     }
   });
-  // Emit Web lifeCycles
+  // Emit error lifeCycles
   window.addEventListener('error', event => {
     emit(ERROR, null, event.error);
   });
