@@ -7,24 +7,38 @@ import cache from '../utils/cache';
 export default function(init, config) {
   cache.setConfig(config);
   const appConfig = {
+    launched: false,
     onLaunch(options) {
       const window = createWindow();
       cache.setWindow(window);
 
-      // Use page route as pageId key word
-      // eslint-disable-next-line no-undef
-      const currentPageId = `${getCurrentPages()[0].route}-0`;
-      const currentDocument = createDocument(currentPageId);
-      window.__pageId = currentPageId;
+      // In wechat miniprogram getCurrentPages() length is 0, so web bundle only can be executed in first page
+      if (isMiniApp) {
+        // Use page route as pageId key word
+        // eslint-disable-next-line no-undef
+        const currentPageId = `${getCurrentPages()[0].route}-0`;
+        const currentDocument = createDocument(currentPageId);
+        window.__pageId = currentPageId;
 
-      init(window, currentDocument);
+        init(window, currentDocument);
+        window.$$trigger('launch', {
+          event: {
+            options,
+            context: this
+          }
+        });
+      } else {
+        this.init = (document) => {
+          init(window, document);
+          window.$$trigger('launch', {
+            event: {
+              options,
+              context: this
+            }
+          });
+        };
+      }
       this.window = window;
-      this.window.$$trigger('launch', {
-        event: {
-          options,
-          context: this
-        }
-      });
     },
     onShow(options) {
       if (this.window) {

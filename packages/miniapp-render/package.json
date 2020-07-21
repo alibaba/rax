@@ -31,9 +31,7 @@
     "type": "git",
     "url": "https://github.com/alibaba/rax.git"
   },
-  "author": {
-    "name": "rax"
-  },
+  "author": "Rax Team",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.5",

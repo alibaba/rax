@@ -3,6 +3,8 @@ import injectLifeCycle from '../bridge/injectLifeCycle';
 import createEventProxy from '../bridge/createEventProxy';
 import perf from '../utils/perf';
 import createDocument from '../document';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp } from 'universal-env';
 
 export function getBaseLifeCycles() {
   return {
@@ -11,6 +13,16 @@ export function getBaseLifeCycles() {
       this.document = cache.getDocument(this.pageId);
       if (!this.document) {
         this.document = createDocument(this.pageId);
+      }
+
+      // In wechat miniprogram web bundle need be executed in first page
+      if (!isMiniApp) {
+        // eslint-disable-next-line no-undef
+        const app = getApp();
+        if (!app.launched) {
+          app.init(this.document);
+          app.launched = true;
+        }
       }
       // Bind page internal to page document
       this.document._internal = this;
@@ -22,8 +34,8 @@ export function getBaseLifeCycles() {
 
       // Find self render function
       // eslint-disable-next-line no-undef
-      this.renderInfo = this.window.__pagesRenderInfo.find(({ path }) => getCurrentPages()[0].route === path);
-
+      this.renderInfo = this.window.__pagesRenderInfo.find(({ path }) => this.pageId.substring(0, this.pageId.lastIndexOf('-')) === path);
+      this.render();
       // Handle update of body
       this.document.body.addEventListener('render', (...tasks) => {
         if (tasks.length > 0) {
@@ -77,8 +89,9 @@ export function getBaseLifeCycles() {
       if (this.window) {
         // Update pageId
         this.window.__pageId = this.pageId;
-        this.renderInfo.setCurrentDocument(this.document);
-        this.renderInfo.render();
+        if (!this.firstRender) {
+          this.render();
+        }
         this.window.$$trigger('pageshow');
         // compatible with original name
         this.window.$$trigger('onShow');
@@ -119,6 +132,10 @@ export default function(route, lifeCycles = []) {
         pageId,
         children: []
       }
+    },
+    render() {
+      this.renderInfo.setCurrentDocument(this.document);
+      this.renderInfo.render();
     },
     ...getBaseLifeCycles(),
     ...createEventProxy(pageId)
