@@ -119,7 +119,7 @@ describe('Hydrate', () => {
     expect(container.childNodes[0].childNodes[2].tagName).toBe('DIV');
   });
 
-  it('should not recolect hydration child with innerHtml', () => {
+  it('should not compare and delete hydration child with innerHTML', () => {
     const Component = () => {
       return (
         <div className="container" dangerouslySetInnerHTML={{__html: '<div>About Rax</div><div>Docs</div>'}} />
