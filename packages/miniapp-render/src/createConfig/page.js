@@ -2,12 +2,16 @@ import cache from '../utils/cache';
 import injectLifeCycle from '../bridge/injectLifeCycle';
 import createEventProxy from '../bridge/createEventProxy';
 import perf from '../utils/perf';
+import createDocument from '../document';
 
 export function getBaseLifeCycles() {
   return {
     onLoad(query) {
       this.window = cache.getWindow();
       this.document = cache.getDocument(this.pageId);
+      if (!this.document) {
+        this.document = createDocument(this.pageId);
+      }
       // Bind page internal to page document
       this.document._internal = this;
       this.query = query;
@@ -15,8 +19,10 @@ export function getBaseLifeCycles() {
       this.window.history.location.__updatePageOption(query);
       // Set __pageId to global window object
       this.window.__pageId = this.pageId;
-      // Remove rax inited flag
-      this.window.__RAX_INITIALISED__ = false;
+
+      // Find self render function
+      // eslint-disable-next-line no-undef
+      this.renderInfo = this.window.__pagesRenderInfo.find(({ path }) => getCurrentPages()[0].route === path);
 
       // Handle update of body
       this.document.body.addEventListener('render', (...tasks) => {
@@ -71,6 +77,8 @@ export function getBaseLifeCycles() {
       if (this.window) {
         // Update pageId
         this.window.__pageId = this.pageId;
+        this.renderInfo.setCurrentDocument(this.document);
+        this.renderInfo.render();
         this.window.$$trigger('pageshow');
         // compatible with original name
         this.window.$$trigger('onShow');
@@ -86,8 +94,9 @@ export function getBaseLifeCycles() {
     onUnload() {
       this.window.$$trigger('beforeunload');
       this.window.$$trigger('pageunload');
+
+      this.document && this.document.__unmount(); // Manually unmount component instance
       this.document.body.$$recycle(); // Recycle DOM node
-      this.app && this.app.unmount(); // Manually unmount component instance
 
       cache.destroy(this.pageId);
 
@@ -99,7 +108,8 @@ export function getBaseLifeCycles() {
   };
 }
 
-export default function(pageId, lifeCycles = []) {
+export default function(route, lifeCycles = []) {
+  const pageId = `${route}-${cache.getRouteId(route)}`;
   const pageConfig = {
     firstRender: true,
     pageId,

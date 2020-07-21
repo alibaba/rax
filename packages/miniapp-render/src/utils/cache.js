@@ -1,5 +1,6 @@
 const pageMap = {};
-let configCache = {};
+const routeMap = {};
+let config = {};
 let window;
 
 // Init
@@ -59,13 +60,21 @@ function getNode(pageId, nodeId) {
 }
 
 // Store global config
-function setConfig(config) {
-  configCache = config;
+function setConfig(value) {
+  config = value;
 }
 
 // Get global config
 function getConfig() {
-  return configCache;
+  return config;
+}
+
+function getRouteId(route) {
+  if (!routeMap[route]) {
+    return routeMap[route] = 0;
+  } else {
+    return ++routeMap[route];
+  }
 }
 
 export default {
@@ -78,4 +87,5 @@ export default {
   getNode,
   setConfig,
   getConfig,
+  getRouteId
 };

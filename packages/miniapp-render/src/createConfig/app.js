@@ -11,9 +11,9 @@ export default function(init, config) {
       const window = createWindow();
       cache.setWindow(window);
 
-      // Use page route as pageId
+      // Use page route as pageId key word
       // eslint-disable-next-line no-undef
-      const currentPageId = getCurrentPages()[0].route;
+      const currentPageId = `${getCurrentPages()[0].route}-0`;
       const currentDocument = createDocument(currentPageId);
       window.__pageId = currentPageId;
 

@@ -114,7 +114,7 @@ if (isMiniAppPlatform) {
     // Get history
     const history = getHistory();
     // The app switches from foreground to background
-    if (router.current && history.pathname === router.current.path) {
+    if (router.current && history.location.pathname === router.current.path) {
       router.current.visibiltyState = !router.current.visibiltyState;
       if (router.current.visibiltyState) {
         // Emit app show

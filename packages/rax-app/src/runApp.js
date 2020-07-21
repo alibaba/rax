@@ -1,7 +1,12 @@
-import { render, createElement, useState, useEffect, Fragment } from 'rax';
+import { render, createElement, Component, useState, useEffect, Fragment } from 'rax';
 import { Navigation, TabBar } from 'rax-pwa';
 import { useRouter } from 'rax-use-router';
 import UniversalDriver from 'driver-universal';
+import {
+  isMiniAppPlatform, isWeex, isWeb, isKraken,
+  isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp
+} from './env';
+import { isFunction } from './type';
 import pathRedirect from './pathRedirect';
 import { emit as appEmit, addAppLifeCycle } from './app';
 import {
@@ -12,10 +17,6 @@ import {
 import { createHistory } from './history';
 import router from './router';
 import { emit as pageEmit } from './page';
-import {
-  isMiniAppPlatform, isWeex, isWeb, isKraken,
-  isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp
-} from './env';
 
 let launched = false;
 let driver = UniversalDriver;
@@ -82,6 +83,15 @@ function App(props) {
   }
 }
 
+class MiniAppRoot extends Component {
+  render() {
+    const { Page, ...otherProps } = this.props;
+    return <div id="root">
+      <Page {...otherProps} />
+    </div>;
+  }
+}
+
 function isNullableComponent(component) {
   return !component || Array.isArray(component) && component.length === 0;
 }
@@ -122,6 +132,10 @@ function handleDynamicConfig(config) {
   return config;
 }
 
+function isClassComponent(Klass) {
+  return Klass.prototype instanceof Component;
+}
+
 /**
  * @param {object} staticConfig - the config that from app.json
  * @param {object} dynamicConfig - the config that from developer dynamic set
@@ -144,27 +158,57 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
 
   const history = createHistory(routes, staticConfig.history);
 
+  if (!isMiniAppPlatform) {
+    // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
+    pathRedirect(history, routes);
+  }
+
+  const pathname = history.location.pathname;
+
   if (isMiniAppPlatform) {
-    window.__pageProps = pageProps;
+    /**
+     * Set pages render info on window
+     * Step 1:
+     * Find target page: routes.find(({ path }) => path === getCurrentPages()[0].route)
+     * Step 2:
+     * Set current document: renderInfo.setCurrentDocument(this.document)
+     * Step 3:
+     * Execute render method: renderInfo.render();
+     */
+    window.__pagesRenderInfo = routes.map(({ source, component }) => {
+      return {
+        path: source,
+        component: component(),
+        render() {
+          const document = this.document;
+          const appInstance = render(createElement(MiniAppRoot, {
+            history,
+            location: history.location,
+            pageProps,
+            Page: isClassComponent(this.component) ? this.component : this.component()
+          }), document.body, {
+            driver: UniversalDriver
+          });
+          // Every dsl need set __unmount function to document
+          document.__unmount = appInstance._internal.unmountComponent.bind(appInstance._internal);
+        },
+        setCurrentDocument(document) {
+          this.document = document;
+        }
+      };
+    });
+
     return;
   }
 
-  // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
-  pathRedirect(history, routes);
-
-  const pathname = history.location.pathname;
-  let _initialComponent;
-
   return matchInitialComponent(pathname, routes)
     .then((initialComponent) => {
-      _initialComponent = initialComponent;
-
       let appInstance = createElement(App, {
         appConfig: staticConfig,
         history,
         routes,
         pageProps,
-        InitialComponent: _initialComponent
+        InitialComponent: initialComponent
       });
 
       if (shell) {
@@ -214,7 +258,7 @@ function matchInitialComponent(fullpath, routes) {
   for (let i = 0, l = routes.length; i < l; i++) {
     if (fullpath === routes[i].path || routes[i].regexp && routes[i].regexp.test(fullpath)) {
       initialComponent = routes[i].component;
-      if (typeof initialComponent === 'function') initialComponent = initialComponent();
+      if (isFunction(initialComponent)) initialComponent = initialComponent();
       break;
     }
   }
