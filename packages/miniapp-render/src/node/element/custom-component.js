@@ -53,7 +53,7 @@ class CustomComponent extends Element {
     }
     if (nativeInfo) {
       nativeInfo.props.forEach(prop => {
-        domInfo[prop] = domInfo[prop] || this.$__attrs.get(prop)
+        domInfo[prop] = domInfo[prop] || this.$__attrs.get(prop);
       });
       nativeInfo.events.forEach(event => {
         const eventName = `${this.$_behavior}_${event}_${__methodCount++}`;
@@ -69,7 +69,7 @@ class CustomComponent extends Element {
             }
           }
         });
-      })
+      });
     }
     return domInfo;
   }

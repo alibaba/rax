@@ -89,7 +89,7 @@ function setElementMethods(methodName, methodFn) {
   if (elementsCache.length > 0) {
     elementsCache.forEach(element => {
       element[methodName] = methodFn;
-    })
+    });
   } else {
     elementMethodsCache.set(methodName, methodFn);
   }
