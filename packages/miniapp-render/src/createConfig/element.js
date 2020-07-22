@@ -2,6 +2,7 @@
 import { isMiniApp } from 'universal-env';
 import createEventProxy from '../bridge/createEventProxy';
 import cache from '../utils/cache';
+import { getComponentLifeCycle } from '../bridge/lifeCycleAdapter';
 
 export default function() {
   if (isMiniApp) {
@@ -10,9 +11,11 @@ export default function() {
         r: {}
       },
       methods: createEventProxy(),
-      onInit() {
-        cache.setElementInstance(this);
-      }
+      ...getComponentLifeCycle({
+        mount() {
+          cache.setElementInstance(this);
+        }
+      })
     };
   } else {
     return {
@@ -26,9 +29,11 @@ export default function() {
         styleIsolation: 'shared'
       },
       methods: createEventProxy(),
-      created() {
-        cache.setElementInstance(this);
-      }
+      ...getComponentLifeCycle({
+        mount() {
+          cache.setElementInstance(this);
+        }
+      })
     };
   }
 }
