@@ -2,8 +2,8 @@
 import { isMiniApp } from 'universal-env';
 import Element from '../element';
 import cache from '../../utils/cache';
+import tool from '../../utils/tool';
 
-let __methodCount = 0;
 class CustomComponent extends Element {
   // Create instance
   static $$create(options, tree) {
@@ -56,7 +56,7 @@ class CustomComponent extends Element {
         domInfo[prop] = domInfo[prop] || this.$__attrs.get(prop);
       });
       nativeInfo.events.forEach(event => {
-        const eventName = `${this.$_behavior}_${event}_${__methodCount++}`;
+        const eventName = `${this.$_behavior}_${event}_${tool.getId()}`;
         domInfo[event] = eventName;
         cache.setElementMethods(eventName, (...args) => {
           if (isMiniApp) {
