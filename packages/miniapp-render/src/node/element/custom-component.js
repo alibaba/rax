@@ -52,9 +52,11 @@ class CustomComponent extends Element {
       nativeInfo = config.usingPlugins[this.$_behavior];
     }
     if (nativeInfo) {
+      // Inject props scanned by babel plugin into domInfo
       nativeInfo.props.forEach(prop => {
         domInfo[prop] = domInfo[prop] || this.$__attrs.get(prop);
       });
+      // Bind methods to every element which is used recursively to generate dom tree
       nativeInfo.events.forEach(event => {
         const eventName = `${this.$_behavior}_${event}_${tool.getId()}`;
         domInfo[event] = eventName;
