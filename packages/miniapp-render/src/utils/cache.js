@@ -1,7 +1,7 @@
 const pageMap = {};
 let configCache = {};
-let elementsCache = [];
-let elementMethodsCache = new Map();
+const elementsCache = [];
+const elementMethodsCache = new Map();
 let window;
 
 // Init
