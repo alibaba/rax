@@ -20,8 +20,8 @@ if (isMiniAppPlatform) {
 }
 
 export default {
-  // prev: { path, visibiltyState }
-  // current: { path, visibiltyState }
+  // prev: { pathname, visibiltyState }
+  // current: { pathname, visibiltyState }
   prev: null,
   current: null,
   withRouter
