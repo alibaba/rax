@@ -1,4 +1,4 @@
-import { withRouter } from 'rax-use-router';
+import router from './router';
 import {
   useAppLaunch,
   useAppError,
@@ -7,13 +7,15 @@ import {
   useAppShow,
   usePageNotFound
 } from './app';
-import { usePageHide, usePageShow } from './page';
+import { usePageHide, usePageShow, withPageLifeCycle } from './page';
 import runApp from './runApp';
 import {
   registerNativeEventListeners,
   addNativeEventListener,
   removeNativeEventListener
 } from './nativeEventListener';
+
+const withRouter = router.withRouter;
 
 export {
   runApp,
@@ -26,6 +28,7 @@ export {
   usePageNotFound,
   usePageHide,
   usePageShow,
+  withPageLifeCycle,
   registerNativeEventListeners,
   addNativeEventListener,
   removeNativeEventListener

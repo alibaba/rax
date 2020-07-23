@@ -1,5 +1,5 @@
 export function registerNativeEventListeners(Klass, events) {
-// TODO: distinguish page configuration
+  // For rax miniapp runtime babel plugins prev compile
 }
 
 export function addNativeEventListener(eventName, callback) {
