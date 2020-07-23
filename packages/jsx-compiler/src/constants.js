@@ -1,3 +1,5 @@
+const { sep } = require('path');
+
 export const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
 export const MINIAPP_PLUGIN_COMPONENTS_REG = /^plugin\:\/\//;
 

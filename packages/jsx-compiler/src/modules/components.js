@@ -1,4 +1,4 @@
-const { join, relative, dirname, resolve, sep } = require('path');
+const { join, relative, dirname, resolve } = require('path');
 const { readJSONSync } = require('fs-extra');
 const resolveModule = require('resolve');
 const t = require('@babel/types');
