@@ -22,9 +22,9 @@ function simplify(node) {
 
   // Get specific props
   const specificProps = propsMap[componentType] || [];
-  for (let prop of specificProps) {
+  specificProps.forEach(prop => {
     simpleNode[prop.name] = prop.get(node);
-  }
+  });
 
   return simpleNode;
 }
