@@ -97,14 +97,14 @@ if (isMiniAppPlatform) {
       // Emit app show
       emit(SHOW);
       // Emit page show
-      pageEmit(SHOW, router.current.path);
+      pageEmit(SHOW, router.current.pathname);
     });
     globalEvent.addEventListener('WXApplicationWillResignActiveEvent', function() {
       router.current.visibiltyState = false;
       // Emit app hide
       emit(HIDE);
       // Emit page hide
-      pageEmit(HIDE, router.current.path);
+      pageEmit(HIDE, router.current.pathname);
     });
   } catch (err) {
     console.log('@weex-module/globalEvent error: ' + err);
@@ -114,18 +114,18 @@ if (isMiniAppPlatform) {
     // Get history
     const history = getHistory();
     // The app switches from foreground to background
-    if (router.current && history.location.pathname === router.current.path) {
+    if (router.current && history.location.pathname === router.current.pathname) {
       router.current.visibiltyState = !router.current.visibiltyState;
       if (router.current.visibiltyState) {
         // Emit app show
         emit(SHOW);
         // Emit page show
-        pageEmit(SHOW, router.current.path);
+        pageEmit(SHOW, router.current.pathname);
       } else {
         // Emit app hide
         emit(HIDE);
         // Emit page hide
-        pageEmit(HIDE, router.current.path);
+        pageEmit(HIDE, router.current.pathname);
       }
     }
   });
