@@ -102,9 +102,10 @@ class RootElement extends Element {
         const ElementNode = renderTask.item;
         const simplifiedNode = traverseTree(ElementNode, simplify);
         renderTask.item = simplifiedNode;
+        // path cache should save lastest taskInfo value
         pathCache.push({
           path: renderTask.path,
-          value: renderTask.item
+          value: taskInfo.value
         });
       }
 
