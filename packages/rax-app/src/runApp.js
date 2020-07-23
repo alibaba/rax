@@ -178,7 +178,7 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
 
       // Set current router
       router.current = {
-        path: pathname,
+        pathname,
         visibiltyState: true
       };
 
@@ -188,7 +188,7 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
           // Flow router info
           router.prev = router.current;
           router.current = {
-            path: location.pathname,
+            pathname: location.pathname,
             visibiltyState: true
           };
           router.prev.visibiltyState = false;

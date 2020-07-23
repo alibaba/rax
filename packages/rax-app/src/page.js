@@ -3,7 +3,7 @@ import { getHistory } from './history';
 import { isMiniAppPlatform } from './env';
 import { SHOW, HIDE } from './constants';
 
-// visibleListeners => { [path]: { show: [], hide: [] } }
+// visibleListeners => { [pathname]: { show: [], hide: [] } }
 const visibleListeners = {};
 
 function addPageLifeCycle(cycle, callback) {
@@ -20,11 +20,11 @@ function addPageLifeCycle(cycle, callback) {
   }
 }
 
-export function emit(cycle, path, ...args) {
+export function emit(cycle, pathname, ...args) {
   // Ensure queue exists
-  if (visibleListeners[path] && visibleListeners[path][cycle]) {
-    for (let i = 0, l = visibleListeners[path][cycle].length; i < l; i++) {
-      visibleListeners[path][cycle][i](...args);
+  if (visibleListeners[pathname] && visibleListeners[pathname][cycle]) {
+    for (let i = 0, l = visibleListeners[pathname][cycle].length; i < l; i++) {
+      visibleListeners[pathname][cycle][i](...args);
     }
   }
 }
