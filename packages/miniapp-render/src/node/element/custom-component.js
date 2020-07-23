@@ -65,6 +65,17 @@ class CustomComponent extends Element {
     }
     return domInfo;
   }
+
+  setAttribute(name, value, immediate = true) {
+    if (typeof name !== 'string') return;
+
+    if (name === 'id') {
+      // id to be handled here in advance
+      this.id = value;
+    } else {
+      this.$_attrs.set(name, value, immediate);
+    }
+  }
 }
 
 export default CustomComponent;
