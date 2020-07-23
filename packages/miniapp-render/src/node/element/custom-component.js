@@ -1,5 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp } from 'universal-env';
 import Element from '../element';
 import cache from '../../utils/cache';
 import tool from '../../utils/tool';
@@ -61,15 +59,7 @@ class CustomComponent extends Element {
         const eventName = `${this.$_behavior}_${event}_${tool.getId()}`;
         domInfo[event] = eventName;
         cache.setElementMethods(eventName, (...args) => {
-          if (isMiniApp) {
-            this.$$trigger(event, { args });
-          } else {
-            const pageInstance = cache.getDocument(this.__pageId)._internal;
-            const domNode = pageInstance.getDomNodeFromEvt(eventName, args[0], this.__pageId);
-            if (domNode) {
-              domNode.$$trigger(event, { args });
-            }
-          }
+          this.$$trigger(event, { args });
         });
       });
     }
