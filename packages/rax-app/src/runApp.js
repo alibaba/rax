@@ -171,16 +171,18 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
      * Step 1:
      * Find target page: routes.find(({ path }) => path === getCurrentPages()[0].route)
      * Step 2:
-     * Set current document: renderInfo.setCurrentDocument(this.document)
-     * Step 3:
      * Execute render method: renderInfo.render();
+     * (1) Override global document
+     * (2) Execute Rax render method
      */
     window.__pagesRenderInfo = routes.map(({ source, component }) => {
       return {
         path: source,
         component: component(),
-        render() {
-          const document = this.document;
+        render(currentDocument) {
+          // Override global document
+          // eslint-disable-next-line no-native-reassign
+          document = currentDocument;
           const appInstance = render(createElement(MiniAppRoot, {
             history,
             location: history.location,
@@ -191,9 +193,6 @@ export default function runApp(staticConfig, dynamicConfig = {}) {
           });
           // Every dsl need set __unmount function to document
           document.__unmount = appInstance._internal.unmountComponent.bind(appInstance._internal);
-        },
-        setCurrentDocument(document) {
-          this.document = document;
         }
       };
     });

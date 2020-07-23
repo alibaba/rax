@@ -34,8 +34,14 @@ export function getBaseLifeCycles() {
 
       // Find self render function
       // eslint-disable-next-line no-undef
-      this.renderInfo = this.window.__pagesRenderInfo.find(({ path }) => this.pageId.substring(0, this.pageId.lastIndexOf('-')) === path);
-      this.render();
+      const renderInfo = this.window.__pagesRenderInfo.find(({ path }) => this.pageId.substring(0, this.pageId.lastIndexOf('-')) === path);
+
+      if (renderInfo) {
+        this.render = renderInfo.render.bind(renderInfo);
+      } else if (process.env.NODE_ENV === 'development') {
+        throw new Error("Could't find target render method.");
+      }
+      this.render(this.document);
       // Handle update of body
       this.document.body.addEventListener('render', (...tasks) => {
         if (tasks.length > 0) {
@@ -52,13 +58,14 @@ export function getBaseLifeCycles() {
               let callback;
               this.$batchedUpdates(() => {
                 tasks.forEach((task, index) => {
-                  if (index === tasks.length - 1) {
-                    callback = () => {
-                      if (process.env.NODE_ENV === 'development') {
+                  if (process.env.NODE_ENV === 'development') {
+                    if (index === tasks.length - 1) {
+                      callback = () => {
                         perf.stop('setData');
-                      }
-                    };
+                      };
+                    }
                   }
+
                   if (task.type === 'children') {
                     const spliceArgs = [task.start, task.deleteCount];
                     this.$spliceData({
@@ -90,7 +97,7 @@ export function getBaseLifeCycles() {
         // Update pageId
         this.window.__pageId = this.pageId;
         if (!this.firstRender) {
-          this.render();
+          this.render(this.document);
         }
         this.window.$$trigger('pageshow');
         // compatible with original name
@@ -132,10 +139,6 @@ export default function(route, lifeCycles = []) {
         pageId,
         children: []
       }
-    },
-    render() {
-      this.renderInfo.setCurrentDocument(this.document);
-      this.renderInfo.render();
     },
     ...getBaseLifeCycles(),
     ...createEventProxy(pageId)
