@@ -1,24 +1,25 @@
 import { render, createElement, useState, useEffect, Fragment } from 'rax';
 import { Navigation, TabBar } from 'rax-pwa';
-import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram } from 'universal-env';
 import { useRouter } from 'rax-use-router';
-import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
-import { createMiniAppHistory } from 'miniapp-history';
 import UniversalDriver from 'driver-universal';
 import pathRedirect from './pathRedirect';
-import { emit } from './app';
+import { emit as appEmit, addAppLifeCycle } from './app';
+import {
+  SHOW, LAUNCH, ERROR, HIDE, TAB_ITEM_CLICK, NOT_FOUND, SHARE, UNHANDLED_REJECTION,
+  INITIAL_DATA_FROM_SSR,
+  SHELL_DATA
+} from './constants';
+import { createHistory } from './history';
+import router from './router';
+import { emit as pageEmit } from './page';
+import {
+  isMiniAppPlatform, isWeex, isWeb, isKraken,
+  isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp
+} from './env';
 
-const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
-const SHELL_DATA = 'shellData';
-
-let history;
 let launched = false;
 let driver = UniversalDriver;
 const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
-
-export function getHistory() {
-  return history;
-}
 
 function App(props) {
   const { appConfig, history, routes, pageProps, InitialComponent } = props;
@@ -85,37 +86,65 @@ function isNullableComponent(component) {
   return !component || Array.isArray(component) && component.length === 0;
 }
 
-export default function runApp(appConfig, pageProps = {}) {
-  if (launched) throw new Error('Error: runApp can only be called once.');
-  if (pageProps && Object.prototype.toString.call(pageProps) !== '[object Object]') {
-    throw new Error('Error: pageProps can only be Object.');
+function handleDynamicConfig(config) {
+  if (config.dynamicConfig) {
+    const { onLaunch, onShow, onError, onHide, onTabItemClick } = config;
+    // multi-end valid lifecycle
+    // Add app launch callback
+    addAppLifeCycle(LAUNCH, onLaunch);
+    // Add app show callback
+    addAppLifeCycle(SHOW, onShow);
+    // Add app error callback
+    addAppLifeCycle(ERROR, onError);
+    // Add app hide callback
+    addAppLifeCycle(HIDE, onHide);
+    // Add tab bar item click callback
+    addAppLifeCycle(TAB_ITEM_CLICK, onTabItemClick);
+    // Add lifecycle callbacks which only valid in Wechat MiniProgram and ByteDance MicroApp
+    if (isWeChatMiniProgram || isByteDanceMicroApp) {
+      const { onPageNotFound, onShareAppMessage } = config;
+      // Add global share callback
+      addAppLifeCycle(SHARE, onShareAppMessage);
+      // Add page not found callback
+      addAppLifeCycle(NOT_FOUND, onPageNotFound);
+    }
+    // Add lifecycle callbacks which only valid in Alibaba MiniApp
+    if (isMiniApp) {
+      const { onShareAppMessage, onUnhandledRejection } = config;
+      // Add global share callback
+      addAppLifeCycle(SHARE, onShareAppMessage);
+      // Add unhandledrejection callback
+      addAppLifeCycle(UNHANDLED_REJECTION, onUnhandledRejection);
+    }
+    return {};
   }
+  // Compatible with pageProps
+  return config;
+}
+
+/**
+ * @param {object} staticConfig - the config that from app.json
+ * @param {object} dynamicConfig - the config that from developer dynamic set
+ */
+export default function runApp(staticConfig, dynamicConfig = {}) {
+  if (launched) throw new Error('Error: runApp can only be called once.');
+  if (dynamicConfig && Object.prototype.toString.call(dynamicConfig) !== '[object Object]') {
+    throw new Error('Error: the runApp method second param can only be Object.');
+  }
+
+  const pageProps = handleDynamicConfig(dynamicConfig);
+
   launched = true;
-  const { hydrate = false, routes, shell } = appConfig;
+  const { hydrate = false, routes, shell } = staticConfig;
 
   // Set custom driver
-  if (typeof appConfig.driver !== 'undefined') {
-    driver = appConfig.driver;
+  if (typeof staticConfig.driver !== 'undefined') {
+    driver = staticConfig.driver;
   }
 
-  // Set history
-  if (typeof appConfig.history !== 'undefined') {
-    history = appConfig.history;
-  } else if (initialDataFromSSR) {
-    // If that contains `initialDataFromSSR`, which means SSR is enabled,
-    // we should use browser history to make it works.
-    history = createBrowserHistory();
-  } else if (isWeb) {
-    history = createHashHistory();
-  } else {
-    // In other situation use memory history.
-    history = createMemoryHistory();
-  }
+  const history = createHistory(routes, staticConfig.history);
 
-  // In MiniApp, it needn't return App Component
-  if (isMiniApp || isWeChatMiniProgram) {
-    window.history = createMiniAppHistory(routes);
-    window.location = window.history.location;
+  if (isMiniAppPlatform) {
     window.__pageProps = pageProps;
     return;
   }
@@ -123,12 +152,15 @@ export default function runApp(appConfig, pageProps = {}) {
   // Like https://xxx.com?_path=/page1, use `_path` to jump to a specific route.
   pathRedirect(history, routes);
 
+  const pathname = history.location.pathname;
   let _initialComponent;
-  return matchInitialComponent(history.location.pathname, routes)
+
+  return matchInitialComponent(pathname, routes)
     .then((initialComponent) => {
       _initialComponent = initialComponent;
+
       let appInstance = createElement(App, {
-        appConfig,
+        appConfig: staticConfig,
         history,
         routes,
         pageProps,
@@ -141,7 +173,29 @@ export default function runApp(appConfig, pageProps = {}) {
       }
 
       // Emit app launch cycle.
-      emit('launch');
+      appEmit(LAUNCH);
+      appEmit(SHOW);
+
+      // Set current router
+      router.current = {
+        pathname,
+        visibiltyState: true
+      };
+
+      // Listen history change
+      history.listen((location) => {
+        if (location.pathname !== router.current.pathname) {
+          // Flow router info
+          router.prev = router.current;
+          router.current = {
+            pathname: location.pathname,
+            visibiltyState: true
+          };
+          router.prev.visibiltyState = false;
+          pageEmit(HIDE, router.prev.pathname);
+          pageEmit(SHOW, router.current.pathname);
+        }
+      });
 
       let rootEl = isWeex || isKraken ? null : document.getElementById('root');
       if (isWeb && rootEl === null) console.warn('Error: Can not find #root element, please check which exists in DOM.');
@@ -156,6 +210,7 @@ export default function runApp(appConfig, pageProps = {}) {
 
 function matchInitialComponent(fullpath, routes) {
   let initialComponent = null;
+
   for (let i = 0, l = routes.length; i < l; i++) {
     if (fullpath === routes[i].path || routes[i].regexp && routes[i].regexp.test(fullpath)) {
       initialComponent = routes[i].component;
