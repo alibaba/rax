@@ -104,11 +104,11 @@ describe('Transform JSXElement', () => {
         dynamicValue
       }, adapter, sourceCode);
 
-      expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo, _d3: fn(), _d4: foo.method(), _d5: a, _d6: a() ? 1 : 2, _d7: ~a, _d8: b, _d9: c, _d10: new Foo(), _d11: delete foo.bar, _d12: typeof aaa, _d13: { ...{ a: 1 } } }');
+      expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: this.state.bar, _d1: foo, _d2: fn(), _d3: foo.method(), _d4: a, _d5: a() ? 1 : 2, _d6: ~a, _d7: b, _d8: c, _d9: new Foo(), _d10: delete foo.bar, _d11: typeof aaa, _d12: { ...{ a: 1 } } }');
 
       expect(genDynamicEvents(dynamicEvents)).toEqual('{ _e0: event => { console.log(event); }, _e1: console.log, _e2: function (event) { console.log(event); } }');
 
-      expect(genInlineCode(ast).code).toEqual('<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{_d0}}" state="{{_d1}}" member="{{_d2.bar.c}}" call1="{{_d3}}" call2="{{_d4}}" conditional="{{_d5 ? 1 : 2}}" conditionalComplex="{{_d6}}" compare="{{_d5 >= 1}}" math="{{_d5 - 1}}" bitwise="{{_d7}}" logical="{{_d5 || _d8}}" stringOp="{{\'a\' + _d9}}" comma="{{_d5, _d9}}" inst="{{_d10}}" delete="{{_d11}}" type="{{_d12}}" relation="{{\'a\' in _d8}}" group="{{_d5 + 1}}" spread="{{_d13}}" />');
+      expect(genInlineCode(ast).code).toEqual(`<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{foo}}" state="{{_d0}}" member="{{_d1.bar.c}}" call1="{{_d2}}" call2="{{_d3}}" conditional="{{_d4 ? 1 : 2}}" conditionalComplex="{{_d5}}" compare="{{_d4 >= 1}}" math="{{_d4 - 1}}" bitwise="{{_d6}}" logical="{{_d4 || _d7}}" stringOp="{{'a' + _d8}}" comma="{{_d4, _d8}}" inst="{{_d9}}" delete="{{_d10}}" type="{{_d11}}" relation="{{'a' in _d7}}" group="{{_d4 + 1}}" spread="{{_d12}}" />`);
     });
 
     it('unsupported', () => {
@@ -319,27 +319,27 @@ describe('Transform JSXElement', () => {
       }, adapter, sourceCode);
 
       expect(genInlineCode(ast).code).toEqual(`<View>
+        {{ foo }}
         {{ _d0 }}
-        {{ _d1 }}
-        {{ _d2.bar.c }}
+        {{ _d1.bar.c }}
+        {{ _d2 }}
         {{ _d3 }}
-        {{ _d4 }}
-        {{ _d5 ? 1 : 2 }}
-        {{ _d5 >= 1 }}
-        {{ _d5 - 1 }}
-        {{ _d6 }}
-        {{ _d5 || _d7 }}
-        {{ 'a' + _d8 }}
-        {{ _d5, _d8 }}
+        {{ _d4 ? 1 : 2 }}
+        {{ _d4 >= 1 }}
+        {{ _d4 - 1 }}
+        {{ _d5 }}
+        {{ _d4 || _d6 }}
+        {{ 'a' + _d7 }}
+        {{ _d4, _d7 }}
+        {{ _d8 }}
         {{ _d9 }}
         {{ _d10 }}
+        {{ 'a' in _d6 }}
+        {{ _d4 + 1 }}
         {{ _d11 }}
-        {{ 'a' in _d7 }}
-        {{ _d5 + 1 }}
-        {{ _d12 }}
       </View>`);
 
-      expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: this.props.foo, _d1: this.state.bar, _d2: foo, _d3: fn(), _d4: foo.method(), _d5: a, _d6: ~a, _d7: b, _d8: c, _d9: new Foo(), _d10: delete foo.bar, _d11: typeof aaa, _d12: { ...{ a: 1 } } }');
+      expect(genDynamicValue(dynamicValue)).toEqual('{ _d0: this.state.bar, _d1: foo, _d2: fn(), _d3: foo.method(), _d4: a, _d5: ~a, _d6: b, _d7: c, _d8: new Foo(), _d9: delete foo.bar, _d10: typeof aaa, _d11: { ...{ a: 1 } } }');
     });
 
     it('should handle text', () => {
