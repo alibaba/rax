@@ -108,7 +108,7 @@ describe('Transform JSXElement', () => {
 
       expect(genDynamicEvents(dynamicEvents)).toEqual('{ _e0: event => { console.log(event); }, _e1: console.log, _e2: function (event) { console.log(event); } }');
 
-      expect(genInlineCode(ast).code).toEqual(`<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{foo}}" state="{{_d0}}" member="{{_d1.bar.c}}" call1="{{_d2}}" call2="{{_d3}}" conditional="{{_d4 ? 1 : 2}}" conditionalComplex="{{_d5}}" compare="{{_d4 >= 1}}" math="{{_d4 - 1}}" bitwise="{{_d6}}" logical="{{_d4 || _d7}}" stringOp="{{'a' + _d8}}" comma="{{_d4, _d8}}" inst="{{_d9}}" delete="{{_d10}}" type="{{_d11}}" relation="{{'a' in _d7}}" group="{{_d4 + 1}}" spread="{{_d12}}" />`);
+      expect(genInlineCode(ast).code).toEqual('<View onFn1="_e0" onFn2="_e1" onFn3="_e2" prop="{{foo}}" state="{{_d0}}" member="{{_d1.bar.c}}" call1="{{_d2}}" call2="{{_d3}}" conditional="{{_d4 ? 1 : 2}}" conditionalComplex="{{_d5}}" compare="{{_d4 >= 1}}" math="{{_d4 - 1}}" bitwise="{{_d6}}" logical="{{_d4 || _d7}}" stringOp="{{\'a\' + _d8}}" comma="{{_d4, _d8}}" inst="{{_d9}}" delete="{{_d10}}" type="{{_d11}}" relation="{{\'a\' in _d7}}" group="{{_d4 + 1}}" spread="{{_d12}}" />');
     });
 
     it('unsupported', () => {
