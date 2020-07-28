@@ -2,7 +2,6 @@ import { useEffect } from 'rax';
 import { getHistory } from './history';
 import { isMiniAppPlatform, isWeb } from './env';
 import { SHOW, HIDE, DEFAULT_PATH_NAME } from './constants';
-import { isUndef } from './type';
 
 let listeningDocumentState = false;
 // visibleListeners => { [pathname]: { show: [], hide: [] } }
@@ -13,7 +12,7 @@ function addPageLifeCycle(cycle, callback) {
   let pathname = DEFAULT_PATH_NAME;
   if (history) {
     pathname = history.location.pathname;
-  } else if (isWeb && !isUndef(document) && !listeningDocumentState) {
+  } else if (isWeb && !listeningDocumentState) {
     // In Web mutiple page, user not execute runApp method, so there should listen visibilitychange
     listeningDocumentState = true;
     document.addEventListener('visibilitychange', function() {
