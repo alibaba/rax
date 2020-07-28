@@ -1,5 +1,5 @@
 import { isMiniAppPlatform, isWeex } from './env';
-import { SHOW, HIDE, ERROR, LAUNCH, NOT_FOUND, SHARE, TAB_ITEM_CLICK } from './constants';
+import { SHOW, HIDE, ERROR, LAUNCH, NOT_FOUND, SHARE, TAB_ITEM_CLICK, DEFAULT_PATH_NAME } from './constants';
 import { isFunction, isUndef } from './type';
 import { getHistory } from './history';
 import router from './router';
@@ -93,18 +93,28 @@ if (isMiniAppPlatform) {
     // Use __weex_require__ in Rax project.
     const globalEvent = __weex_require__('@weex-module/globalEvent');
     globalEvent.addEventListener('WXApplicationDidBecomeActiveEvent', function() {
-      router.current.visibiltyState = true;
+      // /index as default pathname
+      let pathname = DEFAULT_PATH_NAME;
+      if (router.current) {
+        router.current.visibiltyState = true;
+        pathname = router.current.pathname;
+      }
       // Emit app show
       emit(SHOW);
       // Emit page show
-      pageEmit(SHOW, router.current.pathname);
+      pageEmit(SHOW, pathname);
     });
     globalEvent.addEventListener('WXApplicationWillResignActiveEvent', function() {
-      router.current.visibiltyState = false;
+      // /index as default pathname
+      let pathname = DEFAULT_PATH_NAME;
+      if (router.current) {
+        router.current.visibiltyState = false;
+        pathname = router.current.pathname;
+      }
       // Emit app hide
       emit(HIDE);
       // Emit page hide
-      pageEmit(HIDE, router.current.pathname);
+      pageEmit(HIDE, pathname);
     });
   } catch (err) {
     console.log('@weex-module/globalEvent error: ' + err);

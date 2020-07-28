@@ -10,3 +10,5 @@ export const UNHANDLED_REJECTION = 'unhandledrejection';
 export const INITIAL_DATA_FROM_SSR = '__INITIAL_DATA__';
 
 export const SHELL_DATA = 'shellData';
+
+export const DEFAULT_PATH_NAME = '/index';

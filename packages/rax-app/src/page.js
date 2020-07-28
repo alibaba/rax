@@ -1,23 +1,32 @@
 import { useEffect } from 'rax';
 import { getHistory } from './history';
-import { isMiniAppPlatform } from './env';
-import { SHOW, HIDE } from './constants';
+import { isMiniAppPlatform, isWeb } from './env';
+import { SHOW, HIDE, DEFAULT_PATH_NAME } from './constants';
+import { isUndef } from './type';
 
+let listeningDocumentState = false;
 // visibleListeners => { [pathname]: { show: [], hide: [] } }
 const visibleListeners = {};
 
 function addPageLifeCycle(cycle, callback) {
   const history = getHistory();
+  let pathname = DEFAULT_PATH_NAME;
   if (history) {
-    const pathname = history.location.pathname;
-    if (!visibleListeners[pathname]) {
-      visibleListeners[pathname] = {
-        [SHOW]: [],
-        [HIDE]: []
-      };
-    }
-    visibleListeners[pathname][cycle].push(callback);
+    pathname = history.location.pathname;
+  } else if (isWeb && !isUndef(document) && !listeningDocumentState) {
+    // In Web mutiple page, user not execute runApp method, so there should listen visibilitychange
+    listeningDocumentState = true;
+    document.addEventListener('visibilitychange', function() {
+      emit(document.visibilityState === 'visible' ? SHOW : HIDE, pathname);
+    });
   }
+  if (!visibleListeners[pathname]) {
+    visibleListeners[pathname] = {
+      [SHOW]: [],
+      [HIDE]: []
+    };
+  }
+  visibleListeners[pathname][cycle].push(callback);
 }
 
 export function emit(cycle, pathname, ...args) {
@@ -35,20 +44,21 @@ function usePageLifeCycle(cycle, callback) {
     if (cycle === SHOW) {
       callback();
     }
+    let pathname = DEFAULT_PATH_NAME;
     const history = getHistory();
     if (history) {
-      const pathname = history.location.pathname;
-      addPageLifeCycle(cycle, callback);
-
-      return () => {
-        if (visibleListeners[pathname]) {
-          const index = visibleListeners[pathname][cycle].indexOf(callback);
-          if (index > -1) {
-            visibleListeners[pathname][cycle].splice(index, 1);
-          }
-        }
-      };
+      pathname = history.location.pathname;
     }
+    addPageLifeCycle(cycle, callback);
+
+    return () => {
+      if (visibleListeners[pathname]) {
+        const index = visibleListeners[pathname][cycle].indexOf(callback);
+        if (index > -1) {
+          visibleListeners[pathname][cycle].splice(index, 1);
+        }
+      }
+    };
   }, []);
 }
 
@@ -75,10 +85,8 @@ export function withPageLifeCycle(Component) {
         addPageLifeCycle(HIDE, this.onHide.bind(this));
       }
       const history = getHistory();
-      if (history) {
-        // Keep the path name corresponding to current page component
-        this.pathname = history.location.pathname;
-      }
+      // Keep the path name corresponding to current page component
+      this.pathname = history ? history.location.pathname : DEFAULT_PATH_NAME;
     }
     componentWillUnmount() {
       visibleListeners[this.pathname] = null;
