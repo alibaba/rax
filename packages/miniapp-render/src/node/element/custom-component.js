@@ -52,7 +52,7 @@ class CustomComponent extends Element {
     if (nativeInfo) {
       // Inject props scanned by babel plugin into domInfo
       nativeInfo.props.forEach(prop => {
-        domInfo[prop] = domInfo[prop] || this.$__attrs.get(prop);
+        domInfo[prop] = domInfo[prop] || this.$_attrs && this.$__attrs.get(prop);
       });
       // Bind methods to every element which is used recursively to generate dom tree
       nativeInfo.events.forEach(event => {
