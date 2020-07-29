@@ -1,4 +1,7 @@
-export default {
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp } from 'universal-env';
+
+const input = {
   name: 'input',
   props: [{
     name: 'value',
@@ -27,19 +30,20 @@ export default {
       return domNode.placeholder;
     },
   }, {
-    name: 'placeholderColor',
-    get(domNode) {
-      return domNode.getAttribute('placeholderColor') || '#999999';
-    },
-  }, {
     name: 'placeholder-style',
     get(domNode) {
-      return domNode.getAttribute('placeholder-style') || '';
-    },
+      let style = domNode.getAttribute('placeholder-style') || '';
+      // Compatible with placeholderColor attribute of rax-textinput
+      const color = domNode.getAttribute('placeholderColor');
+      if (color) {
+        style = 'color:' + color + ';' + style;
+      }
+      return style;
+    }
   }, {
     name: 'placeholder-class',
     get(domNode) {
-      return domNode.getAttribute('placeholder-class') || 'input-placeholder';
+      return domNode.getAttribute('placeholder-class');
     },
   }, {
     name: 'disabled',
@@ -56,11 +60,6 @@ export default {
     name: 'cursor-spacing',
     get(domNode) {
       return +domNode.getAttribute('cursor-spacing') || 0;
-    },
-  }, {
-    name: 'autofocus',
-    get(domNode) {
-      return !!domNode.getAttribute('autofocus');
     },
   }, {
     name: 'confirm-type',
@@ -107,9 +106,9 @@ export default {
       return domNode.getAttribute('animation');
     }
   }, {
-    name: 'controlled',
+    name: 'focus-state',
     get(domNode) {
-      return !!domNode.getAttribute('controlled');
+      return !!(domNode.getAttribute('autofocus') || domNode.getAttribute('focus-state'));
     },
   }],
   simpleEvents: [{
@@ -125,7 +124,7 @@ export default {
     eventName: 'input',
     middleware(evt, domNode, pageId, nodeId) {
       const value = '' + evt.detail.value;
-      domNode.$$setAttributeWithoutUpdate('value', value);
+      domNode.__setAttributeWithoutUpdate('value', value);
 
       this.callEvent('input', evt, null, pageId, nodeId);
     }
@@ -135,7 +134,7 @@ export default {
     eventName: 'focus',
     middleware(evt, domNode, pageId, nodeId) {
       domNode.__inputOldValue = domNode.value || '';
-      domNode.$$setAttributeWithoutUpdate('focus', true);
+      domNode.__setAttributeWithoutUpdate('focus-state', true);
 
       this.callSimpleEvent('focus', evt, domNode);
     }
@@ -144,7 +143,7 @@ export default {
     name: 'onInputBlur',
     eventName: 'blur',
     middleware(evt, domNode, pageId, nodeId) {
-      domNode.$$setAttributeWithoutUpdate('focus', false);
+      domNode.__setAttributeWithoutUpdate('focus-state', false);
 
       if (domNode.__inputOldValue !== undefined && domNode.value !== domNode.__inputOldValue) {
         domNode.__inputOldValue = undefined;
@@ -154,3 +153,14 @@ export default {
     }
   }]
 };
+
+if (!isMiniApp) {
+  input.props.push({
+    name: 'controlled',
+    get(domNode) {
+      return !!domNode.getAttribute('controlled');
+    },
+  });
+}
+
+export default input;

@@ -198,14 +198,14 @@ export default {
       name: 'onVideoTimeUpdate',
       eventName: 'timeupdate',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
+        domNode.__setAttributeWithoutUpdate('currentTime', evt.detail.currentTime);
       }
     },
     {
       name: 'onVideoProgress',
       eventName: 'progress',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('buffered', evt.detail.buffered);
+        domNode.__setAttributeWithoutUpdate('buffered', evt.detail.buffered);
       }
     }
   ]

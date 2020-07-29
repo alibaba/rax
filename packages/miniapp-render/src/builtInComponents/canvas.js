@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { isWeChatMiniProgram } from 'universal-env';
+import { isWeChatMiniProgram, isMiniApp } from 'universal-env';
 
-export default {
+const canvas = {
   name: 'canvas',
   props: [{
     name: 'type',
@@ -49,3 +49,21 @@ export default {
     eventName: 'error'
   }]
 };
+
+if (isMiniApp) {
+  canvas.props = canvas.props.concat([
+    {
+      name: 'width',
+      get(domNode) {
+        return domNode.getAttribute('width') || '';
+      },
+    }, {
+      name: 'height',
+      get(domNode) {
+        return domNode.getAttribute('height') || '';
+      },
+    }
+  ]);
+}
+
+export default canvas;

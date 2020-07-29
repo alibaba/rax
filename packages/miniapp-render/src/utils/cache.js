@@ -1,5 +1,7 @@
 const pageMap = {};
 let configCache = {};
+const elementsCache = [];
+const elementMethodsCache = new Map();
 let window;
 
 // Init
@@ -68,6 +70,31 @@ function getConfig() {
   return configCache;
 }
 
+function setElementInstance(instance) {
+  elementsCache.push(instance);
+  if (elementMethodsCache.size > 0) {
+    elementMethodsCache.forEach((methodFn, methodName) => {
+      if (!instance[methodName]) {
+        instance[methodName] = methodFn;
+      }
+    });
+  }
+}
+
+function getElementInstance() {
+  return elementsCache;
+}
+
+function setElementMethods(methodName, methodFn) {
+  if (elementsCache.length > 0) {
+    elementsCache.forEach(element => {
+      element[methodName] = methodFn;
+    });
+  } else {
+    elementMethodsCache.set(methodName, methodFn);
+  }
+}
+
 export default {
   init,
   destroy,
@@ -78,4 +105,7 @@ export default {
   getNode,
   setConfig,
   getConfig,
+  setElementInstance,
+  getElementInstance,
+  setElementMethods
 };

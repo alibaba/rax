@@ -44,8 +44,9 @@ class Document extends EventTarget {
   constructor(internal, nodeIdMap) {
     super();
 
-    const { usingComponents = {} } = cache.getConfig();
+    const { usingComponents = {}, usingPlugins = {} } = cache.getConfig();
     this.usingComponents = usingComponents;
+    this.usingPlugins = usingPlugins;
     const { pageId } = internal;
     this._internal = internal;
     this.__pageId = internal.pageId;
@@ -122,7 +123,12 @@ class Document extends EventTarget {
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
       return CustomComponent.$$create(options, tree);
-    } else if (!tool.isTagNameSupport(tagName)) {
+    } else if (this.usingPlugins[originTagName]) {
+      options.tagName = 'miniapp-plugin';
+      options.attrs = options.attrs || {};
+      options.componentName = originTagName;
+      return CustomComponent.$$create(options, tree);
+    } if (!tool.isTagNameSupport(tagName)) {
       throw new Error(`${tagName} is not supported.`);
     } else {
       return Element.$$create(options, tree);

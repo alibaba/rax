@@ -1,6 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp } from 'universal-env';
 import createEventProxy from '../bridge/createEventProxy';
+import cache from '../utils/cache';
+import { getComponentLifeCycle } from '../bridge/lifeCycleAdapter';
 
 export default function() {
   if (isMiniApp) {
@@ -8,7 +10,12 @@ export default function() {
       props: {
         r: {}
       },
-      methods: createEventProxy()
+      methods: createEventProxy(),
+      ...getComponentLifeCycle({
+        mount() {
+          cache.setElementInstance(this);
+        }
+      })
     };
   } else {
     return {
@@ -21,7 +28,12 @@ export default function() {
       options: {
         styleIsolation: 'shared'
       },
-      methods: createEventProxy()
+      methods: createEventProxy(),
+      ...getComponentLifeCycle({
+        mount() {
+          cache.setElementInstance(this);
+        }
+      })
     };
   }
 }
