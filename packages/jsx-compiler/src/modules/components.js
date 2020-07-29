@@ -1,4 +1,4 @@
-const { join, relative, dirname, resolve, sep } = require('path');
+const { join, relative, dirname, resolve } = require('path');
 const { readJSONSync } = require('fs-extra');
 const resolveModule = require('resolve');
 const t = require('@babel/types');
@@ -12,10 +12,7 @@ const Expression = require('../utils/Expression');
 const getCompiledComponents = require('../getCompiledComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
-
-const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
-const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
-const GROUP_PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*?\\${sep}[^\\${sep}]*).*$`);
+const { RELATIVE_COMPONENTS_REG, MINIAPP_PLUGIN_COMPONENTS_REG, PKG_NAME_REG, GROUP_PKG_NAME_REG} = require('../constants');
 
 let tagCount = 0;
 
@@ -342,7 +339,9 @@ function getRealNpmPkgName(filePath, pkgName) {
 }
 
 function getComponentPath(alias, options) {
-  if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
+  if (MINIAPP_PLUGIN_COMPONENTS_REG.test(alias.from)) {
+    return alias.from;
+  } else if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
     // alias.local
     if (!options.resourcePath) {
       throw new Error('`resourcePath` must be passed to calc dependency path.');
