@@ -1,7 +1,14 @@
 const { sep } = require('path');
 
-export const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
-export const MINIAPP_PLUGIN_COMPONENTS_REG = /^plugin\:\/\//;
+const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
+const MINIAPP_PLUGIN_COMPONENTS_REG = /^plugin\:\/\//;
 
-export const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
-export const GROUP_PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*?\\${sep}[^\\${sep}]*).*$`);
+const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
+const GROUP_PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*?\\${sep}[^\\${sep}]*).*$`);
+
+module.exports = {
+  RELATIVE_COMPONENTS_REG,
+  MINIAPP_PLUGIN_COMPONENTS_REG,
+  PKG_NAME_REG,
+  GROUP_PKG_NAME_REG
+}
