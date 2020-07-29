@@ -11,4 +11,4 @@ module.exports = {
   MINIAPP_PLUGIN_COMPONENTS_REG,
   PKG_NAME_REG,
   GROUP_PKG_NAME_REG
-}
+};
