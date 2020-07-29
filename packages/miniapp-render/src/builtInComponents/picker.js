@@ -58,14 +58,14 @@ const picker = {
       name: 'onPickerChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.$$setAttributeWithoutUpdate('value', evt.detail.value);
+        domNode.__setAttributeWithoutUpdate('value', evt.detail.value);
       }
     }
   ]
 };
 
 if (isWeChatMiniProgram) {
-  picker.props.concat([
+  picker.props = picker.props.concat([
     {
       name: 'mode',
       get(domNode) {

@@ -8,7 +8,7 @@ const getAliasCorrespondingValue = require('../utils/getAliasCorrespondingValue'
 const parserOption = require('./option');
 const md5 = require('md5');
 
-const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
+const { RELATIVE_COMPONENTS_REG, MINIAPP_PLUGIN_COMPONENTS_REG } = require('../constants');
 
 function getTagName(str) {
   return 'c-' + md5(str).slice(0, 6);
@@ -47,7 +47,7 @@ function getImported(ast, aliasEntries, resourcePath) {
           ret.importFrom = specifier.imported.name;
         }
 
-        if (RELATIVE_COMPONENTS_REG.test(source)) {
+        if (RELATIVE_COMPONENTS_REG.test(source) || MINIAPP_PLUGIN_COMPONENTS_REG.test(source)) {
           // alias = 'c-xxxxx'
           ret.name = getTagName(source);
           ret.isCustomEl = true;
