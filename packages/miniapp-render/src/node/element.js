@@ -257,7 +257,8 @@ class Element extends Node {
       id: this.id,
       className: this.className,
       style: this.$__style ? this.style.cssText : '',
-      animation: this.$__attrs ? this.$__attrs.get('animation') : {}
+      animation: this.$__attrs ? this.$__attrs.get('animation') : {},
+      slot: this.$__attrs ? this.$__attrs.get('slot') : null,
     };
   }
 
