@@ -1,7 +1,7 @@
 import { createMemoryHistory, createHashHistory, createBrowserHistory } from 'history';
 import { createMiniAppHistory } from 'miniapp-history';
 import { INITIAL_DATA_FROM_SSR } from './constants';
-import { isMiniAppPlatform, isWeb } from './env';
+import { isMiniAppPlatform, isWeb, isKraken } from './env';
 
 const initialDataFromSSR = global[INITIAL_DATA_FROM_SSR];
 
@@ -14,6 +14,9 @@ export function createHistory(routes, userHistory) {
     // If that contains `initialDataFromSSR`, which means SSR is enabled,
     // we should use browser history to make it works.
     history = createBrowserHistory();
+  } else if (isKraken) {
+    // In other situation use memory history.
+    history = createMemoryHistory();
   } else if (isWeb) {
     history = createHashHistory();
   } else if (isMiniAppPlatform) {
