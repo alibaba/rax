@@ -1,8 +1,8 @@
 import { createElement, useState, useEffect, Fragment } from 'rax';
 import { withRouter as raxWithRouter } from 'rax-use-router';
-import createShareAPI from '@ice/create-app-shared';
-import raxRenderer from '@ice/rax-renderer';
-import miniappRenderer from '@ice/miniapp-renderer';
+import createShareAPI from 'create-app-shared';
+import raxRenderer from 'rax-renderer';
+import miniappRenderer from 'miniapp-renderer';
 import { isWeChatMiniProgram, isMiniApp, isByteDanceMicroApp, isWeb } from 'universal-env';
 import App from './App';
 import { enhanceAppLifeCycle, useAppLaunch, useAppShare, useAppError, useAppShow, useAppHide, usePageNotFound } from './appLifyCycles';
