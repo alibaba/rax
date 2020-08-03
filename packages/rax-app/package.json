@@ -14,9 +14,9 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "@ice/create-app-shared": "^0.1.0",
-    "@ice/miniapp-renderer": "^0.1.0",
-    "@ice/rax-renderer": "^0.1.0",
+    "create-app-shared": "^0.1.0",
+    "miniapp-renderer": "^0.1.0",
+    "rax-renderer": "^0.1.0",
     "driver-universal": "^3.1.0",
     "rax-pwa": "^2.0.0",
     "rax-use-router": "^3.0.0",
