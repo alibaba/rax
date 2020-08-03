@@ -1,13 +1,21 @@
-import { createElement, useState, useEffect, Fragment } from 'rax';
+import { createElement, render, useEffect, Component } from 'rax';
 import { withRouter as raxWithRouter } from 'rax-use-router';
 import createShareAPI from 'create-app-shared';
 import raxRenderer from 'rax-renderer';
 import miniappRenderer from 'miniapp-renderer';
+import DriverUniversal from 'driver-universal';
 import { isWeChatMiniProgram, isMiniApp, isByteDanceMicroApp, isWeb, isKraken } from 'universal-env';
 import App from './App';
 import { enhanceAppLifeCycle, useAppLaunch, useAppShare, useAppError, useAppShow, useAppHide, usePageNotFound } from './appLifyCycles';
 
 const initialDataFromSSR = global.__INITIAL_DATA__;
+
+
+function renderFactory(appInstance, rootEl) {
+  return render(appInstance, rootEl, {
+    driver: DriverUniversal
+  });
+}
 
 const {
   getHistory,
@@ -31,15 +39,22 @@ const {
 function runApp(staticConfig, dynamicConfig = {}) {
   let renderer = raxRenderer;
   let createAppInstance;
-  enhanceAppLifeCycle(dynamicConfig);
+  let pageProps;
   const appConfig = {
-    app: Object.assign({
-      rootId: 'root',
-    }, dynamicConfig),
     router: {}
   };
+  enhanceAppLifeCycle(dynamicConfig);
+
+  if (dynamicConfig.dynamicConfig) {
+    Object.assign(appConfig, {
+      app: dynamicConfig
+    });
+  } else {
+    pageProps = dynamicConfig;
+  }
+
   const { shell, routes } = staticConfig;
-  if (isWeChatMiniProgram, isMiniApp, isByteDanceMicroApp) {
+  if (isWeChatMiniProgram || isMiniApp || isByteDanceMicroApp) {
     renderer = miniappRenderer;
   } else {
     createAppInstance = (initialComponent) => {
@@ -48,7 +63,7 @@ function runApp(staticConfig, dynamicConfig = {}) {
         appConfig: staticConfig,
         history,
         routes,
-        pageProps: !dynamicConfig.dynamicConfig && dynamicConfig,
+        pageProps,
         InitialComponent: initialComponent
       });
 
@@ -60,6 +75,7 @@ function runApp(staticConfig, dynamicConfig = {}) {
       return appInstance;
     };
   }
+
 
   renderer({
     createBaseApp: () => {
@@ -73,16 +89,21 @@ function runApp(staticConfig, dynamicConfig = {}) {
       appConfig.router.history = history;
       collectAppLifeCycle(appConfig);
       return {
-        appConfig
+        appConfig,
       };
     },
     createHistory,
     staticConfig,
     appConfig,
+    pageProps,
     getHistory,
     pathRedirect,
     createAppInstance,
     emitLifeCycles
+  }, {
+    createElement,
+    renderFactory,
+    Component
   });
 }
 

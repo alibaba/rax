@@ -1,13 +1,10 @@
 const pageMap = {};
-<<<<<<< HEAD
 const routeMap = {};
 let config = {};
-=======
-let configCache = {};
+let window;
+
 const elementsCache = [];
 const elementMethodsCache = new Map();
->>>>>>> master
-let window;
 
 // Init
 function init(pageId, options) {
@@ -118,11 +115,8 @@ export default {
   getNode,
   setConfig,
   getConfig,
-<<<<<<< HEAD
-  getRouteId
-=======
+  getRouteId,
   setElementInstance,
   getElementInstance,
   setElementMethods
->>>>>>> master
 };

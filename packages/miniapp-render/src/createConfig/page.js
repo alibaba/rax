@@ -34,14 +34,13 @@ export function getBaseLifeCycles() {
 
       // Find self render function
       // eslint-disable-next-line no-undef
-      const renderInfo = this.window.__pagesRenderInfo.find(({ path }) => this.pageId.substring(0, this.pageId.lastIndexOf('-')) === path);
+      this.renderInfo = this.window.__pagesRenderInfo.find(({ path }) => this.pageId.substring(0, this.pageId.lastIndexOf('-')) === path);
 
-      if (renderInfo) {
-        this.render = renderInfo.render.bind(renderInfo);
-      } else if (process.env.NODE_ENV === 'development') {
+      if (!this.renderInfo && process.env.NODE_ENV === 'development') {
         throw new Error("Could't find target render method.");
       }
-      this.render(this.document);
+      this.renderInfo.setDocument(this.document);
+      this.renderInfo.render();
       // Handle update of body
       this.document.body.addEventListener('render', (...tasks) => {
         if (tasks.length > 0) {
@@ -97,7 +96,7 @@ export function getBaseLifeCycles() {
         // Update pageId
         this.window.__pageId = this.pageId;
         if (!this.firstRender) {
-          this.render(this.document);
+          this.renderInfo && this.renderInfo.setDocument(this.document);
         }
         this.window.$$trigger('pageshow');
         // compatible with original name
