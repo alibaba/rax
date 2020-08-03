@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp } from 'universal-env';
 import Element from './element';
 import cache from '../utils/cache';
 import perf from '../utils/perf';
@@ -10,17 +12,20 @@ function simplify(node) {
   for (let attr in domInfo) {
     simpleNode[attr] = domInfo[attr];
   }
+
   let componentType;
   if (node.behavior) {
     componentType = simpleNode.behavior = node.behavior;
   } else {
     componentType = node.tagName;
   }
+
   // Get specific props
   const specificProps = propsMap[componentType] || [];
   specificProps.forEach(prop => {
     simpleNode[prop.name] = prop.get(node);
   });
+
   return simpleNode;
 }
 
@@ -102,9 +107,10 @@ class RootElement extends Element {
         const ElementNode = renderTask.item;
         const simplifiedNode = traverseTree(ElementNode, simplify);
         renderTask.item = simplifiedNode;
+        // path cache should save lastest taskInfo value
         pathCache.push({
           path: renderTask.path,
-          value: renderTask.item
+          value: taskInfo.value
         });
       }
 

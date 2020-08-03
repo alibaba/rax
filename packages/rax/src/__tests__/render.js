@@ -66,12 +66,24 @@ describe('render', () => {
     expect(instance1 === instance2).toBe(true);
   });
 
-  it('should reuse markup if rendering to the same target twice', function() {
+  it('should trigger afterRender twice when render to the same target twice', () => {
+    let beforeRenderCount = 0;
+    let afterRenderCount = 0;
     let container = createNodeElement('container');
-    let instance1 = render(<div />, container);
-    let instance2 = render(<div />, container);
+    Host.driver = Object.assign({}, Host.driver, {
+      beforeRender() {
+        beforeRenderCount += 1;
+      },
+      afterRender() {
+        afterRenderCount += 1;
+      },
+    });
 
-    expect(instance1 === instance2).toBe(true);
+    render(<div />, container);
+    render(<span />, container);
+
+    expect(beforeRenderCount).toBe(2);
+    expect(afterRenderCount).toBe(2);
   });
 
   it('should not throw error when have callback and options is null', function(done) {

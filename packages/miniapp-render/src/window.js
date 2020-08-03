@@ -78,7 +78,7 @@ class Window extends EventTarget {
    * External properties and methods
    */
   get document() {
-    return cache.getDocument(this.__pageId) || null;
+    return cache.getDocument(this.__pageId);
   }
 
   get CustomEvent() {
