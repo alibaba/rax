@@ -88,7 +88,6 @@ export function getBaseLifeCycles() {
         }
       });
 
-      // this.app = this.window.createApp();
       this.window.$$trigger('DOMContentLoaded');
     },
     onShow() {
@@ -114,7 +113,7 @@ export function getBaseLifeCycles() {
       this.window.$$trigger('beforeunload');
       this.window.$$trigger('pageunload');
 
-      this.document && this.document.__unmount(); // Manually unmount component instance
+      this.document.__unmount && this.document.__unmount(); // Manually unmount component instance
       this.document.body.$$recycle(); // Recycle DOM node
 
       cache.destroy(this.pageId);

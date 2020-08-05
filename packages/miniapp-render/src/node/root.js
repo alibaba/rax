@@ -102,7 +102,7 @@ class RootElement extends Element {
       const renderTask = this.renderStacks[i];
       const path = renderTask.path;
       const taskInfo = getProperty(internal.data, path, pathCache);
-      if (!taskInfo.parentRendered) break;
+      if (!taskInfo.parentRendered || internal.firstRender && path !== 'root.children') break;
       if (renderTask.type === 'children') {
         const ElementNode = renderTask.item;
         const simplifiedNode = traverseTree(ElementNode, simplify);
