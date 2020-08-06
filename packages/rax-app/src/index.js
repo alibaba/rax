@@ -1,7 +1,7 @@
 import { createElement, useState, useEffect, Fragment } from 'rax';
 import { withRouter as raxWithRouter } from 'rax-use-router';
 import createShareAPI from 'create-app-shared';
-import raxRenderer from 'rax-renderer';
+import raxAppRenderer from 'rax-app-renderer';
 import miniappRenderer from 'miniapp-renderer';
 import { isWeChatMiniProgram, isMiniApp, isByteDanceMicroApp, isWeb } from 'universal-env';
 import App from './App';
@@ -29,7 +29,7 @@ const {
 });
 
 function runApp(staticConfig, dynamicConfig = {}) {
-  let renderer = raxRenderer;
+  let renderer = raxAppRenderer;
   let createAppInstance;
   enhanceAppLifeCycle(dynamicConfig);
   const appConfig = {
