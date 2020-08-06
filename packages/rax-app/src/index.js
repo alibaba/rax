@@ -10,11 +10,15 @@ import { enhanceAppLifeCycle, useAppLaunch, useAppShare, useAppError, useAppShow
 
 const initialDataFromSSR = global.__INITIAL_DATA__;
 
-
-function render(appInstance, rootEl) {
-  return raxRender(appInstance, rootEl, {
+let app;
+function mount(appInstance, rootEl) {
+  return app = raxRender(appInstance, rootEl, {
     driver: DriverUniversal
   });
+}
+
+function unmount() {
+  app._internal.unmountComponent.bind(app._internal);
 }
 
 const {
@@ -41,6 +45,7 @@ function runApp(staticConfig, dynamicConfig = {}) {
   let createAppInstance;
   let pageProps;
   const appConfig = {
+    app: {},
     router: {}
   };
   enhanceAppLifeCycle(dynamicConfig);
@@ -102,8 +107,9 @@ function runApp(staticConfig, dynamicConfig = {}) {
     emitLifeCycles
   }, {
     createElement,
-    render,
-    Component
+    Component,
+    mount,
+    unmount
   });
 }
 
