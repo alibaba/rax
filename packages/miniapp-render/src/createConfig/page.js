@@ -45,39 +45,33 @@ export function getBaseLifeCycles() {
       this.document.body.addEventListener('render', (...tasks) => {
         if (tasks.length > 0) {
           if (this.$batchedUpdates) {
-            if (this.firstRender) {
-              this.firstRender = false;
-              this.setData({
-                [tasks[0].path]: [tasks[0].item]
-              }, () => {
-                this.window.$$trigger('load');
-                this.window.$$trigger('pageload', { event: query });
-              });
-            } else {
-              let callback;
-              this.$batchedUpdates(() => {
-                tasks.forEach((task, index) => {
-                  if (process.env.NODE_ENV === 'development') {
-                    if (index === tasks.length - 1) {
-                      callback = () => {
-                        perf.stop('setData');
-                      };
+            let callback;
+            this.$batchedUpdates(() => {
+              tasks.forEach((task, index) => {
+                if (index === tasks.length - 1) {
+                  callback = () => {
+                    if (process.env.NODE_ENV === 'development') {
+                      perf.stop('setData');
                     }
-                  }
-
-                  if (task.type === 'children') {
-                    const spliceArgs = [task.start, task.deleteCount];
-                    this.$spliceData({
-                      [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
-                    }, callback);
-                  } else {
-                    this.setData({
-                      [task.path]: task.value
-                    }, callback);
-                  }
-                });
+                    if (this.firstRender) {
+                      this.firstRender = false;
+                      this.window.$$trigger('load');
+                      this.window.$$trigger('pageload', { event: query });
+                    }
+                  };
+                }
+                if (task.type === 'children') {
+                  const spliceArgs = [task.start, task.deleteCount];
+                  this.$spliceData({
+                    [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
+                  }, callback);
+                } else {
+                  this.setData({
+                    [task.path]: task.value
+                  }, callback);
+                }
               });
-            }
+            });
           } else {
             this.setData(tasks[0], () => {
               if (process.env.NODE_ENV === 'development') {
