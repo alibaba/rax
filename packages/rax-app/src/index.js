@@ -1,4 +1,4 @@
-import { createElement, render, useEffect, Component } from 'rax';
+import { createElement, render as raxRender, useEffect, Component } from 'rax';
 import { withRouter as raxWithRouter } from 'rax-use-router';
 import createShareAPI from 'create-app-shared';
 import raxAppRenderer from 'rax-app-renderer';
@@ -11,8 +11,8 @@ import { enhanceAppLifeCycle, useAppLaunch, useAppShare, useAppError, useAppShow
 const initialDataFromSSR = global.__INITIAL_DATA__;
 
 
-function renderFactory(appInstance, rootEl) {
-  return render(appInstance, rootEl, {
+function render(appInstance, rootEl) {
+  return raxRender(appInstance, rootEl, {
     driver: DriverUniversal
   });
 }
@@ -102,7 +102,7 @@ function runApp(staticConfig, dynamicConfig = {}) {
     emitLifeCycles
   }, {
     createElement,
-    renderFactory,
+    render,
     Component
   });
 }
