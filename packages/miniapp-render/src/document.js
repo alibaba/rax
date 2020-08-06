@@ -41,15 +41,13 @@ function checkIsBuiltInComponent(tagName) {
 }
 
 class Document extends EventTarget {
-  constructor(internal, nodeIdMap) {
+  constructor(pageId, nodeIdMap) {
     super();
 
     const { usingComponents = {}, usingPlugins = {} } = cache.getConfig();
     this.usingComponents = usingComponents;
     this.usingPlugins = usingPlugins;
-    const { pageId } = internal;
-    this._internal = internal;
-    this.__pageId = internal.pageId;
+    this.__pageId = pageId;
 
     // Used to encapsulate special tag and corresponding constructors
     const that = this;
@@ -260,4 +258,14 @@ class Document extends EventTarget {
   }
 }
 
-export default Document;
+export default function createDocument(pageId) {
+  const nodeIdMap = {};
+  const document = new Document(pageId, nodeIdMap);
+
+  cache.init(pageId, {
+    document,
+    nodeIdMap
+  });
+
+  return document;
+};

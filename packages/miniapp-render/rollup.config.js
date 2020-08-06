@@ -4,7 +4,13 @@ import filesize from 'rollup-plugin-filesize';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
-import { name } from './package.json';
+import { name, version, author } from './package.json';
+
+const banner =
+`${'/*!\n' + ' * '}${name} v${version}\n` +
+` * (c) 2019-${new Date().getFullYear()} ${author}\n` +
+' * Released under the BSD-3-Clause License.\n' +
+' */';
 
 function getBabelConfig(platform) {
   return {
@@ -44,7 +50,8 @@ function getRollupConfig(platform, env = 'development') {
         file: env === 'development' ? `dist/${platform}/index.js` : `dist/${platform}/index.min.js`,
         format: 'umd',
         name,
-        plugins: env === 'development' ? [] : [terser()]
+        plugins: env === 'development' ? [] : [terser()],
+        banner
       },
     ],
     plugins: [
