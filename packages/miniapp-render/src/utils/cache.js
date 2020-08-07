@@ -100,9 +100,8 @@ function setElementMethods(methodName, methodFn) {
     elementsCache.forEach(element => {
       element[methodName] = methodFn;
     });
-  } else {
-    elementMethodsCache.set(methodName, methodFn);
   }
+  elementMethodsCache.set(methodName, methodFn);
 }
 
 export default {
