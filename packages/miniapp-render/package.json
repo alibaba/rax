@@ -1,6 +1,6 @@
 {
   "name": "miniapp-render",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "DOM simulator for MiniApp",
   "files": [
     "dist"
@@ -31,9 +31,7 @@
     "type": "git",
     "url": "https://github.com/alibaba/rax.git"
   },
-  "author": {
-    "name": "rax"
-  },
+  "author": "Rax Team",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.4.5",

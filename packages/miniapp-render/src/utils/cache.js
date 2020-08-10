@@ -1,8 +1,10 @@
 const pageMap = {};
-let configCache = {};
+const routeMap = {};
+let config = {};
+let window;
+
 const elementsCache = [];
 const elementMethodsCache = new Map();
-let window;
 
 // Init
 function init(pageId, options) {
@@ -61,13 +63,21 @@ function getNode(pageId, nodeId) {
 }
 
 // Store global config
-function setConfig(config) {
-  configCache = config;
+function setConfig(value) {
+  config = value;
 }
 
 // Get global config
 function getConfig() {
-  return configCache;
+  return config;
+}
+
+function getRouteId(route) {
+  if (!routeMap[route]) {
+    return routeMap[route] = 0;
+  } else {
+    return ++routeMap[route];
+  }
 }
 
 function setElementInstance(instance) {
@@ -90,9 +100,8 @@ function setElementMethods(methodName, methodFn) {
     elementsCache.forEach(element => {
       element[methodName] = methodFn;
     });
-  } else {
-    elementMethodsCache.set(methodName, methodFn);
   }
+  elementMethodsCache.set(methodName, methodFn);
 }
 
 export default {
@@ -105,6 +114,7 @@ export default {
   getNode,
   setConfig,
   getConfig,
+  getRouteId,
   setElementInstance,
   getElementInstance,
   setElementMethods
