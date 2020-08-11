@@ -6,7 +6,6 @@ import miniappRenderer from 'miniapp-renderer';
 import DriverUniversal from 'driver-universal';
 import { isWeChatMiniProgram, isMiniApp, isByteDanceMicroApp, isWeb, isKraken } from 'universal-env';
 import App from './App';
-import { enhanceAppLifeCycle, useAppLaunch, useAppShare, useAppError, useAppShow, useAppHide, usePageNotFound } from './appLifyCycles';
 
 const initialDataFromSSR = global.__INITIAL_DATA__;
 
@@ -29,6 +28,7 @@ const {
   usePageHide,
   usePageShow,
   collectAppLifeCycle,
+  addAppLifeCycle,
   emitLifeCycles,
   registerNativeEventListeners,
   addNativeEventListener,
@@ -40,6 +40,30 @@ const {
   useEffect
 });
 
+function useAppShow(callback) {
+  addAppLifeCycle('show', callback);
+}
+
+function useAppLaunch(callback) {
+  addAppLifeCycle('launch', callback);
+}
+
+function useAppShare(callback) {
+  addAppLifeCycle('share', callback);
+}
+
+function useAppError(callback) {
+  addAppLifeCycle('error', callback);
+}
+
+function useAppHide(callback) {
+  addAppLifeCycle('hide', callback);
+}
+
+function usePageNotFound(callback) {
+  addAppLifeCycle('notfound', callback);
+}
+
 function runApp(staticConfig, dynamicConfig = {}) {
   let renderer = raxAppRenderer;
   let createAppInstance;
@@ -48,7 +72,6 @@ function runApp(staticConfig, dynamicConfig = {}) {
     app: {},
     router: {}
   };
-  enhanceAppLifeCycle(dynamicConfig);
 
   if (dynamicConfig.dynamicConfig) {
     Object.assign(appConfig, {
