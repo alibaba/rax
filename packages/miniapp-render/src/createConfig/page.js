@@ -77,6 +77,11 @@ export function getBaseLifeCycles() {
               if (process.env.NODE_ENV === 'development') {
                 perf.stop('setData');
               }
+              if (this.firstRender) {
+                this.firstRender = false;
+                this.window.$$trigger('load');
+                this.window.$$trigger('pageload', { event: query });
+              }
             });
           }
         }
