@@ -115,9 +115,8 @@ const WEB_TAG_MAP = {
   TEXTAREA: 'textarea',
   VIDEO: 'video'
 };
-
-Object.entries(WEB_TAG_MAP).forEach(([TAG_NAME, builtinTagName]) => {
-  propsMap[TAG_NAME] = propsMap[builtinTagName];
+Object.keys(WEB_TAG_MAP).forEach(TAG_NAME => {
+  propsMap[TAG_NAME] = propsMap[WEB_TAG_MAP[TAG_NAME]];
 });
 
 export { propsMap, handlesMap };
