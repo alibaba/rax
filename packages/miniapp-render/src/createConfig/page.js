@@ -53,11 +53,7 @@ export function getBaseLifeCycles() {
                     if (process.env.NODE_ENV === 'development') {
                       perf.stop('setData');
                     }
-                    if (this.firstRender) {
-                      this.firstRender = false;
-                      this.window.$$trigger('load');
-                      this.window.$$trigger('pageload', { event: query });
-                    }
+                    this.firstRenderCallback(query);
                   };
                 }
                 if (task.type === 'children') {
@@ -77,6 +73,7 @@ export function getBaseLifeCycles() {
               if (process.env.NODE_ENV === 'development') {
                 perf.stop('setData');
               }
+              this.firstRenderCallback(query);
             });
           }
         }
@@ -130,6 +127,15 @@ export default function(route, lifeCycles = []) {
       root: {
         pageId,
         children: []
+      }
+    },
+    firstRenderCallback(query) {
+      if (this.firstRender) {
+        this.firstRender = false;
+        if (this.window) {
+          this.window.$$trigger('load');
+          this.window.$$trigger('pageload', { event: query });
+        }
       }
     },
     ...getBaseLifeCycles(),
