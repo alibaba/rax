@@ -49,7 +49,7 @@ test('event', () => {
   e.addEventListener('click', onEEvent);
 
   target = e;
-  expect(EventTarget.$$process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(countMap.doc).toBe(1);
   expect(countMap.a).toBe(1);
   expect(countMap.b).toBe(1);
@@ -60,7 +60,7 @@ test('event', () => {
 
   target = c;
   seqList.length = 0;
-  expect(EventTarget.$$process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(countMap.doc).toBe(2);
   expect(countMap.a).toBe(2);
   expect(countMap.b).toBe(2);
@@ -72,9 +72,9 @@ test('event', () => {
   target = d;
   seqList.length = 0;
   d.removeEventListener('click', onDEvent);
-  expect(EventTarget.$$process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   d.removeEventListener('click', onDEvent, true);
-  expect(EventTarget.$$process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(countMap.doc).toBe(4);
   expect(countMap.a).toBe(4);
   expect(countMap.b).toBe(4);
@@ -86,7 +86,7 @@ test('event', () => {
   target = e;
   seqList.length = 0;
   d.addEventListener('click', onDEvent);
-  expect(EventTarget.$$process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(target, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(countMap.doc).toBe(5);
   expect(countMap.a).toBe(5);
   expect(countMap.b).toBe(5);
@@ -154,20 +154,20 @@ test('event', () => {
   document.addEventListener('click', onDocEvent3);
   a.addEventListener('click', onAEvent3);
   c.addEventListener('click', onCEvent3);
-  expect(EventTarget.$$process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(passEvt.eventPhase).toBe(Event.NONE);
   expect(seqList).toEqual(['doc', 'a', 'c', 'c', 'a', 'doc']);
 
   seqList.length = 0;
   b.addEventListener('click', onBEvent2, true);
-  expect(EventTarget.$$process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(passEvt.eventPhase).toBe(Event.NONE);
   expect(seqList).toEqual(['doc', 'a', 'b']);
 
   seqList.length = 0;
   b.removeEventListener('click', onBEvent2, true);
   b.addEventListener('click', onBEvent3);
-  expect(EventTarget.$$process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(passEvt.eventPhase).toBe(Event.NONE);
   expect(seqList).toEqual(['doc', 'a', 'c', 'c', 'b']);
 
@@ -203,7 +203,7 @@ test('event', () => {
   b.addEventListener('click', onBEvent6);
   c.addEventListener('click', onCEvent4);
 
-  expect(EventTarget.$$process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
+  expect(EventTarget._process(c, 'click', miniprogramEvent)).toBeInstanceOf(Event);
   expect(seqList).toEqual(['c', 'b1', 'b2']);
 
   a.removeEventListener('click', onAEvent4);

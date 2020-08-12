@@ -10,7 +10,7 @@ beforeAll(() => {
 test('class-list', () => {
   const element = document.createElement('div');
   const classList = element.classList;
-  classList.$$parse('a b c');
+  classList._parse('a b c');
 
   // item
   expect(classList.item(0)).toBe('a');
@@ -54,6 +54,6 @@ test('class-list', () => {
   // toString
   expect(classList.toString()).toBe('a d c');
 
-  classList.$$parse('c   b   a dd');
+  classList._parse('c   b   a dd');
   expect(classList.toString()).toBe('c b a dd');
 });
