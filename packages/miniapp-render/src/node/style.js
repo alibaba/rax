@@ -29,42 +29,42 @@ function parse(styleText) {
 class Style {
   constructor(element, onUpdate) {
     this.__settedStyle = {};
-    this.$$init(element, onUpdate);
+    this._init(element, onUpdate);
   }
 
-  static $$create(element, onUpdate) {
+  static _create(element, onUpdate) {
     return new Style(element, onUpdate);
   }
 
   // Init instance
-  $$init(element, onUpdate) {
-    this.$_element = element;
-    this.$_doUpdate = onUpdate || (() => {});
+  _init(element, onUpdate) {
+    this.__element = element;
+    this._doUpdate = onUpdate || (() => {});
     // Whether checking for updates is disabled
-    this.$_disableCheckUpdate = false;
+    this.__disableCheckUpdate = false;
   }
 
-  $$destroy() {
-    this.$_element = null;
-    this.$_doUpdate = null;
-    this.$_disableCheckUpdate = false;
+  _destroy() {
+    this.__element = null;
+    this._doUpdate = null;
+    this.__disableCheckUpdate = false;
 
     styleList.forEach(name => {
       this.__settedStyle[name] = undefined;
     });
   }
 
-  $$recycle() {
-    this.$$destroy();
+  _recycle() {
+    this._destroy();
   }
 
-  $_checkUpdate() {
-    if (!this.$_disableCheckUpdate) {
+  _checkUpdate() {
+    if (!this.__disableCheckUpdate) {
       const payload = {
-        path: `${this.$_element._path}.style`,
+        path: `${this.__element._path}.style`,
         value: this.cssText
       };
-      this.$_doUpdate(payload);
+      this._doUpdate(payload);
     }
   }
 
@@ -86,12 +86,11 @@ class Style {
     const rules = parse(styleText);
 
     // Merge the Settings for each rule into an update
-    this.$_disableCheckUpdate = true;
+    this.__disableCheckUpdate = true;
     for (const name of styleList) {
       this[name] = rules[name];
     }
-    this.$_disableCheckUpdate = false;
-    // this.$_checkUpdate();
+    this.__disableCheckUpdate = false;
   }
 
   getPropertyValue(name) {
@@ -117,7 +116,7 @@ styleList.forEach(name => {
 
       this.__settedStyle[name] = value;
       if (oldValue !== value) {
-        this.$_checkUpdate();
+        this._checkUpdate();
       }
     },
   };

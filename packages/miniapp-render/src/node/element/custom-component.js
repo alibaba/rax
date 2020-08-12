@@ -4,62 +4,62 @@ import tool from '../../utils/tool';
 
 class CustomComponent extends Element {
   // Create instance
-  static $$create(options, tree) {
+  static _create(options, tree) {
     return new CustomComponent(options, tree);
   }
 
-  $$init(options, tree) {
-    this.$_behavior = options.componentName;
+  _init(options, tree) {
+    this.__behavior = options.componentName;
     this.__nativeType = options.tagName === 'custom-component' ? 'customComponent' : 'miniappPlugin';
-    super.$$init(options, tree);
+    super._init(options, tree);
   }
 
-  $$destroy() {
-    super.$$destroy();
+  _destroy() {
+    super._destroy();
 
-    this.$_behavior = null;
+    this.__behavior = null;
   }
 
-  $$recycle() {
-    this.$$destroy();
+  _recycle() {
+    this._destroy();
   }
 
-  get behavior() {
-    return this.$_behavior;
+  get _behavior() {
+    return this.__behavior;
   }
 
-  get $$domInfo() {
+  get _domInfo() {
     const domInfo = {
-      nodeId: this.$$nodeId,
+      nodeId: this._nodeId,
       pageId: this.__pageId,
-      nodeType: this.$_type,
-      tagName: this.$_tagName,
+      nodeType: this.__type,
+      tagName: this.__tagName,
       id: this.id,
       className: this.className,
-      style: this.$__style ? this.style.cssText : '',
-      animation: this.$__attrs ? this.$__attrs.get('animation') : {}
+      style: this.__style ? this.style.cssText : '',
+      animation: this.__attrs ? this.__attrs.get('animation') : {}
     };
 
     const config = cache.getConfig();
     let nativeInfo = null;
     if (this.__nativeType === 'customComponent') {
-      domInfo.customComponentName = this.$_behavior;
-      nativeInfo = config.usingComponents[this.$_behavior];
+      domInfo.customComponentName = this.__behavior;
+      nativeInfo = config.usingComponents[this.__behavior];
     } else if (this.__nativeType === 'miniappPlugin') {
-      domInfo.miniappPluginName = this.$_behavior;
-      nativeInfo = config.usingPlugins[this.$_behavior];
+      domInfo.miniappPluginName = this.__behavior;
+      nativeInfo = config.usingPlugins[this.__behavior];
     }
     if (nativeInfo) {
       // Inject props scanned by babel plugin into domInfo
       nativeInfo.props.forEach(prop => {
-        domInfo[prop] = domInfo[prop] || this.$_attrs && this.$__attrs.get(prop);
+        domInfo[prop] = domInfo[prop] || this._attrs && this.__attrs.get(prop);
       });
       // Bind methods to every element which is used recursively to generate dom tree
       nativeInfo.events.forEach(event => {
-        const eventName = `${this.$_behavior}_${event}_${tool.getId()}`;
+        const eventName = `${this.__behavior}_${event}_${tool.getId()}`;
         domInfo[event] = eventName;
         cache.setElementMethods(eventName, (...args) => {
-          this.$$trigger(event, { args });
+          this._trigger(event, { args });
         });
       });
     }
@@ -73,7 +73,7 @@ class CustomComponent extends Element {
       // id to be handled here in advance
       this.id = value;
     } else {
-      this.$_attrs.set(name, value, immediate);
+      this._attrs.set(name, value, immediate);
     }
   }
 }

@@ -9,7 +9,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
   const originNode = cache.getNode(pageId, nodeId);
 
   if (!originNode) return;
-  EventTarget.$$process(
+  EventTarget._process(
     originNode,
     eventName,
     evt,
@@ -34,7 +34,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
 
               if (!targetDomNode)
                 targetDomNode = domNode.querySelector(
-                  'builtIn-component[behavior=switch]'
+                  'builtIn-component[_behavior=switch]'
                 );
             }
 
@@ -47,7 +47,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
             } else if (targetDomNode.tagName === 'BUILTIN-COMPONENT') {
               if (checkEventAccessDomNode(evt, targetDomNode, domNode)) return;
 
-              const behavior = targetDomNode.behavior;
+              const behavior = targetDomNode._behavior;
               if (behavior === 'switch') {
                 const checked = !targetDomNode.getAttribute('checked');
                 targetDomNode.setAttribute('checked', checked);
@@ -61,7 +61,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
           } else if (
             (domNode.tagName === 'BUTTON' ||
               domNode.tagName === 'BUILTIN-COMPONENT' &&
-                domNode.behavior === 'button') &&
+                domNode._behavior === 'button') &&
             evt.type === 'click' &&
             !isCapture
           ) {
@@ -84,13 +84,13 @@ export default function(eventName, evt, extra, pageId, nodeId) {
               'textarea[name]'
             );
             const switchList = form
-              .querySelectorAll('builtin-component[behavior=switch]')
+              .querySelectorAll('builtin-component[_behavior=switch]')
               .filter((item) => !!item.getAttribute('name'));
             const sliderList = form
-              .querySelectorAll('builtin-component[behavior=slider]')
+              .querySelectorAll('builtin-component[_behavior=slider]')
               .filter((item) => !!item.getAttribute('name'));
             const pickerList = form
-              .querySelectorAll('builtin-component[behavior=picker]')
+              .querySelectorAll('builtin-component[_behavior=picker]')
               .filter((item) => !!item.getAttribute('name'));
 
             if (type === 'submit') {
@@ -126,13 +126,13 @@ export default function(eventName, evt, extra, pageId, nodeId) {
                 );
 
               const detail = { value: formData };
-              if (form._formId) {
-                detail.formId = form._formId;
-                form._formId = null;
+              if (form.__formId) {
+                detail.formId = form.__formId;
+                form.__formId = null;
               }
               this.callSimpleEvent(
                 'submit',
-                { detail, extra: { $$from: 'button' } },
+                { detail, extra: { __from: 'button' } },
                 form
               );
             } else if (type === 'reset') {
@@ -156,7 +156,7 @@ export default function(eventName, evt, extra, pageId, nodeId) {
                   item.setAttribute('value', undefined)
                 );
 
-              this.callSimpleEvent('reset', { extra: { $$from: 'button' } }, form);
+              this.callSimpleEvent('reset', { extra: { __from: 'button' } }, form);
             }
           }
         }, 0);

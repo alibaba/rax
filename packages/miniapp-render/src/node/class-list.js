@@ -1,28 +1,28 @@
 function ClassList(element, onUpdate) {
-  this.$$init(element, onUpdate);
+  this._init(element, onUpdate);
 }
 
-ClassList.$$create = function(element, onUpdate) {
+ClassList._create = function(element, onUpdate) {
   return new ClassList(element, onUpdate);
 };
 
 ClassList.prototype = Object.assign([], {
-  $$init(element, onUpdate) {
-    this.$_element = element;
-    this.$_doUpdate = onUpdate;
+  _init(element, onUpdate) {
+    this.__element = element;
+    this._doUpdate = onUpdate;
   },
 
-  $$destroy() {
-    this.$_element = null;
-    this.$_doUpdate = null;
+  _destroy() {
+    this.__element = null;
+    this._doUpdate = null;
     this.length = 0;
   },
 
-  $$recycle() {
-    this.$$destroy();
+  _recycle() {
+    this._destroy();
   },
 
-  $$parse(className = '') {
+  _parse(className = '') {
     this.length = 0;
 
     className = className.trim();
@@ -33,11 +33,11 @@ ClassList.prototype = Object.assign([], {
     }
 
     const payload = {
-      path: `${this.$_element._path}.className`,
+      path: `${this.__element._path}.className`,
       value: this.slice().join(' ')
     };
 
-    this.$_doUpdate(payload);
+    this._doUpdate(payload);
   },
 
   item(index) {
@@ -66,10 +66,10 @@ ClassList.prototype = Object.assign([], {
 
     if (isUpdate) {
       const payload = {
-        path: `${this.$_element._path}.className`,
+        path: `${this.__element._path}.className`,
         value: this.slice().join(' ')
       };
-      this.$_doUpdate(payload);
+      this._doUpdate(payload);
     }
   },
 
@@ -92,10 +92,10 @@ ClassList.prototype = Object.assign([], {
 
     if (isUpdate) {
       const payload = {
-        path: `${this.$_element._path}.className`,
+        path: `${this.__element._path}.className`,
         value: this.slice().join(' ')
       };
-      this.$_doUpdate(payload);
+      this._doUpdate(payload);
     }
   },
 

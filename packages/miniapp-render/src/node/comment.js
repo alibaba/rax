@@ -2,25 +2,25 @@ import tool from '../utils/tool';
 import Node from './node';
 
 class Comment extends Node {
-  static $$create(options, tree) {
+  static _create(options, tree) {
     return new Comment(options, tree);
   }
 
-  $$init(options, tree) {
+  _init(options, tree) {
     options.type = 'comment';
 
-    super.$$init(options, tree);
+    super._init(options, tree);
   }
 
-  $$recycle() {
-    this.$$destroy();
+  _recycle() {
+    this._destroy();
   }
 
-  get $$domInfo() {
+  get _domInfo() {
     return {
-      nodeId: this.$_nodeId,
+      nodeId: this.__nodeId,
       pageId: this.__pageId,
-      nodeType: this.$_type,
+      nodeType: this.__type,
     };
   }
 
@@ -33,7 +33,7 @@ class Comment extends Node {
   }
 
   cloneNode() {
-    return this.ownerDocument.$$createComment({
+    return this.ownerDocument._createComment({
       nodeId: `b-${tool.getId()}`,
     });
   }

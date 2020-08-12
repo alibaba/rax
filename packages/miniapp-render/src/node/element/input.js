@@ -2,17 +2,17 @@ import Element from '../element';
 
 class HTMLInputElement extends Element {
   // Create instance
-  static $$create(options, tree) {
+  static _create(options, tree) {
     return new HTMLInputElement(options, tree);
   }
 
   // Override parent class recycle method
-  $$recycle() {
-    this.$$destroy();
+  _recycle() {
+    this._destroy();
   }
 
-  // $_generateHtml handle other attributes
-  $$dealWithAttrsForGenerateHtml(html, node) {
+  // _generateHtml handle other attributes
+  _dealWithAttrsForGenerateHtml(html, node) {
     const type = node.type;
     if (type) html += ` type="${type}"`;
 
@@ -33,7 +33,7 @@ class HTMLInputElement extends Element {
   }
 
   // outerHtml
-  $$dealWithAttrsForOuterHTML(node) {
+  _dealWithAttrsForOuterHTML(node) {
     this.type = node.type || '';
     this.value = node.value || '';
     this.disabled = node.disabled || '';
@@ -47,7 +47,7 @@ class HTMLInputElement extends Element {
   /**
    * The cloneNode interface is invoked to handle additional properties
    */
-  $$dealWithAttrsForCloneNode() {
+  _dealWithAttrsForCloneNode() {
     return {
       type: this.type,
       value: this.value,
@@ -62,28 +62,28 @@ class HTMLInputElement extends Element {
 
   // Attribute
   get name() {
-    return this.$_attrs.get('name');
+    return this._attrs.get('name');
   }
 
   set name(value) {
     value = '' + value;
-    this.$_attrs.set('name', value);
+    this._attrs.set('name', value);
   }
 
   get type() {
-    return this.$_attrs.get('type') || 'text';
+    return this._attrs.get('type') || 'text';
   }
 
   set type(value) {
     value = '' + value;
-    this.$_attrs.set('type', value);
+    this._attrs.set('type', value);
   }
 
   get value() {
-    const type = this.$_attrs.get('type');
-    let value = this.$_attrs.get('value');
+    const type = this._attrs.get('type');
+    let value = this._attrs.get('value');
     if (!value && !this.changed) {
-      value = this.$_attrs.get('defaultValue');
+      value = this._attrs.get('defaultValue');
     }
     return value || '';
   }
@@ -91,66 +91,66 @@ class HTMLInputElement extends Element {
   set value(value) {
     this.changed = true;
     value = '' + value;
-    this.$_attrs.set('value', value);
+    this._attrs.set('value', value);
   }
 
   get readOnly() {
-    return !!this.$_attrs.get('readOnly');
+    return !!this._attrs.get('readOnly');
   }
 
   set readOnly(value) {
-    this.$_attrs.set('readOnly', !!value);
+    this._attrs.set('readOnly', !!value);
   }
 
   get disabled() {
-    return !!this.$_attrs.get('disabled');
+    return !!this._attrs.get('disabled');
   }
 
   set disabled(value) {
     value = !!value;
-    this.$_attrs.set('disabled', value);
+    this._attrs.set('disabled', value);
   }
 
   get maxlength() {
-    return this.$_attrs.get('maxlength');
+    return this._attrs.get('maxlength');
   }
 
   set maxlength(value) {
-    this.$_attrs.set('maxlength', value);
+    this._attrs.set('maxlength', value);
   }
 
   get placeholder() {
-    return this.$_attrs.get('placeholder') || '';
+    return this._attrs.get('placeholder') || '';
   }
 
   set placeholder(value) {
     value = '' + value;
-    this.$_attrs.set('placeholder', value);
+    this._attrs.set('placeholder', value);
   }
 
   get autofocus() {
-    return !!this.$_attrs.get('autofocus');
+    return !!this._attrs.get('autofocus');
   }
 
   set autofocus(value) {
     value = !!value;
-    this.$_attrs.set('autofocus', value);
+    this._attrs.set('autofocus', value);
   }
 
   set checked(value) {
-    this.$_attrs.set('checked', value);
+    this._attrs.set('checked', value);
   }
 
   get checked() {
-    return this.$_attrs.get('checked') || '';
+    return this._attrs.get('checked') || '';
   }
 
   blur() {
-    this.$_attrs.set('focus', false);
+    this._attrs.set('focus', false);
   }
 
   focus() {
-    this.$_attrs.set('autofocus', true);
+    this._attrs.set('autofocus', true);
   }
 }
 

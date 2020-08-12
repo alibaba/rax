@@ -8,26 +8,26 @@ import tool from '../utils/tool';
 import parser from '../tree/parser';
 
 class Element extends Node {
-  static $$create(options, tree) {
+  static _create(options, tree) {
     return new Element(options, tree);
   }
 
-  // Override the $$init method of the parent class
-  $$init(options, tree) {
+  // Override the _init method of the parent class
+  _init(options, tree) {
     options.type = 'element';
 
-    super.$$init(options, tree);
+    super._init(options, tree);
 
-    this.$_tagName = options.tagName || '';
-    this.$_children = [];
-    this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
-    this.$_unary = !!parser.voidMap[this.$_tagName.toLowerCase()];
-    this.$_dataset = null;
-    this.$_classList = null;
-    this.$_style = null;
-    this.$_attrs = null;
+    this.__tagName = options.tagName || '';
+    this.__children = [];
+    this.__nodeType = options.nodeType || Node.ELEMENT_NODE;
+    this.__unary = !!parser.voidMap[this.__tagName.toLowerCase()];
+    this._dateset = null;
+    this._classList = null;
+    this._style = null;
+    this._attrs = null;
 
-    this.$_initAttrs(options.attrs);
+    this._initAttrs(options.attrs);
 
     this.onclick = null;
     this.ontouchstart = null;
@@ -38,68 +38,68 @@ class Element extends Node {
     this.onerror = null;
   }
 
-  // Override the $$destroy method of the parent class
-  $$destroy() {
-    super.$$destroy();
+  // Override the _destroy method of the parent class
+  _destroy() {
+    super._destroy();
 
-    this.$_tagName = '';
-    this.$_children.length = 0;
-    this.$_nodeType = Node.ELEMENT_NODE;
-    this.$_unary = null;
-    this.$_dataset = null;
-    this.$_classList = null;
-    this.$_style = null;
-    this.$_attrs = null;
+    this.__tagName = '';
+    this.__children.length = 0;
+    this.__nodeType = Node.ELEMENT_NODE;
+    this.__unary = null;
+    this._dateset = null;
+    this._classList = null;
+    this._style = null;
+    this._attrs = null;
   }
 
   // Recycling instance
-  $$recycle() {
-    this.$_children.forEach(child => child.$$recycle());
-    this.$$destroy();
+  _recycle() {
+    this.__children.forEach(child => child._recycle());
+    this._destroy();
   }
 
-  set $_dataset(value) {
-    this.$__dataset = value;
+  set _dateset(value) {
+    this.__dataset = value;
   }
 
-  get $_dataset() {
-    if (!this.$__dataset) this.$__dataset = Object.create(null);
-    return this.$__dataset;
+  get _dateset() {
+    if (!this.__dataset) this.__dataset = Object.create(null);
+    return this.__dataset;
   }
 
-  set $_classList(value) {
-    if (!value && this.$__classList) this.$__classList.$$recycle();
-    this.$__classList = value;
+  set _classList(value) {
+    if (!value && this.__classList) this.__classList._recycle();
+    this.__classList = value;
   }
 
-  get $_classList() {
-    if (!this.$__classList) this.$__classList = ClassList.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
-    return this.$__classList;
+  get _classList() {
+    if (!this.__classList) this.__classList = ClassList._create(this, this._onClassOrStyleUpdate.bind(this));
+    return this.__classList;
   }
 
-  set $_style(value) {
-    if (!value && this.$__style) this.$__style.$$recycle();
-    this.$__style = value;
+  set _style(value) {
+    if (!value && this.__style) this.__style._recycle();
+    this.__style = value;
   }
 
-  get $_style() {
-    if (!this.$__style) this.$__style = Style.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
-    return this.$__style;
+  get _style() {
+    if (!this.__style) this.__style = Style._create(this, this._onClassOrStyleUpdate.bind(this));
+    return this.__style;
   }
 
-  set $_attrs(value) {
-    if (!value && this.$__attrs) this.$__attrs.$$recycle();
-    this.$__attrs = value;
+  set _attrs(value) {
+    if (!value && this.__attrs) this.__attrs._recycle();
+    this.__attrs = value;
   }
 
-  get $_attrs() {
-    if (!this.$__attrs) this.$__attrs = Attribute.$$create(this, this._triggerUpdate.bind(this));
-    return this.$__attrs;
+  get _attrs() {
+    if (!this.__attrs) this.__attrs = Attribute._create(this, this._triggerUpdate.bind(this));
+    return this.__attrs;
   }
 
   // Init attribute
-  $_initAttrs(attrs = {}) {
-    // Avoid create $_attrs when component init
+  _initAttrs(attrs = {}) {
+    // Avoid create _attrs when component init
     const attrKeys = Object.keys(attrs);
     if (!attrKeys.length) return;
 
@@ -107,7 +107,7 @@ class Element extends Node {
       if (name.indexOf('data-') === 0) {
         // dataset
         const datasetName = tool.toCamel(name.substr(5));
-        this.$_dataset[datasetName] = attrs[name];
+        this._dateset[datasetName] = attrs[name];
       } else {
         // Other attributes
         this.__setAttributeWithoutUpdate(name, attrs[name]);
@@ -116,8 +116,8 @@ class Element extends Node {
   }
 
   // Listen for class or style attribute values to change
-  $_onClassOrStyleUpdate(payload) {
-    if (this.$__attrs) this.$_attrs.triggerUpdate();
+  _onClassOrStyleUpdate(payload) {
+    if (this.__attrs) this._attrs.triggerUpdate();
     this._triggerUpdate(payload);
   }
 
@@ -146,23 +146,23 @@ class Element extends Node {
 
     // Update nodeId - dom map
     if (isRemove) {
-      cache.setNode(this.__pageId, node.$$nodeId, null);
+      cache.setNode(this.__pageId, node._nodeId, null);
     } else {
-      cache.setNode(this.__pageId, node.$$nodeId, node);
+      cache.setNode(this.__pageId, node._nodeId, node);
     }
 
     // Update id - dom map
     if (id) {
       if (isRemove) {
-        this.$_tree.updateIdMap(id, null);
+        this.__tree.updateIdMap(id, null);
       } else {
-        this.$_tree.updateIdMap(id, node);
+        this.__tree.updateIdMap(id, node);
       }
     }
   }
 
   // Traverse the dom tree to generate the HTML
-  $_generateHtml(node) {
+  _generateHtml(node) {
     if (node.nodeType === Node.TEXT_NODE) {
       // Text node
       return node.textContent;
@@ -189,20 +189,20 @@ class Element extends Node {
         html += ` data-${tool.toDash(name)}="${dataset[name]}"`;
       });
 
-      html = this.$$dealWithAttrsForGenerateHtml(html, node);
+      html = this._dealWithAttrsForGenerateHtml(html, node);
 
-      if (node.$$isUnary) {
+      if (node._isUnary) {
         // Empty tag
         return `${html} />`;
       } else {
-        const childrenHtml = node.childNodes.map(child => this.$_generateHtml(child)).join('');
+        const childrenHtml = node.childNodes.map(child => this._generateHtml(child)).join('');
         return `${html}>${childrenHtml}</${tagName}>`;
       }
     }
   }
 
   // Traverse the ast to generate the dom tree
-  $_generateDomTree(node) {
+  _generateDomTree(node) {
     const {
       type,
       tagName = '',
@@ -228,12 +228,12 @@ class Element extends Node {
         attrsMap[name] = value;
       }
 
-      const element = this.ownerDocument.$$createElement({
+      const element = this.ownerDocument._createElement({
         tagName, attrs: attrsMap, nodeId
       });
 
       for (let child of children) {
-        child = this.$_generateDomTree(child);
+        child = this._generateDomTree(child);
 
         if (child) element.appendChild(child);
       }
@@ -241,44 +241,44 @@ class Element extends Node {
       return element;
     } else if (type === 'text') {
       // Text node
-      return this.ownerDocument.$$createTextNode({
+      return this.ownerDocument._createTextNode({
         content: tool.decodeContent(content), nodeId
       });
     }
   }
 
   // Dom info
-  get $$domInfo() {
+  get _domInfo() {
     return {
-      nodeId: this.$$nodeId,
+      nodeId: this._nodeId,
       pageId: this.__pageId,
-      nodeType: this.$_type,
-      tagName: this.$_tagName,
+      nodeType: this.__type,
+      tagName: this.__tagName,
       id: this.id,
       className: this.className,
-      style: this.$__style ? this.style.cssText : '',
-      animation: this.$__attrs ? this.$__attrs.get('animation') : {},
-      slot: this.$__attrs ? this.$__attrs.get('slot') : null,
+      style: this.__style ? this.style.cssText : '',
+      animation: this.__attrs ? this.__attrs.get('animation') : {},
+      slot: this.__attrs ? this.__attrs.get('slot') : null,
     };
   }
 
   // Check Empty tag
-  get $$isUnary() {
-    return this.$_unary;
+  get _isUnary() {
+    return this.__unary;
   }
 
-  // The $_generateHtml interface is called to handle additional attributes
-  $$dealWithAttrsForGenerateHtml(html) {
+  // The _generateHtml interface is called to handle additional attributes
+  _dealWithAttrsForGenerateHtml(html) {
     // The concrete implementation logic is implemented by subclasses
     return html;
   }
 
   // The setter for outerHTML is called to handle the extra properties
-  $$dealWithAttrsForOuterHTML() {
+  _dealWithAttrsForOuterHTML() {
   }
 
   // The cloneNode interface is called to process additional properties
-  $$dealWithAttrsForCloneNode() {
+  _dealWithAttrsForCloneNode() {
     return {};
   }
 
@@ -290,23 +290,23 @@ class Element extends Node {
   }
 
   get id() {
-    if (!this.$__attrs) return '';
+    if (!this.__attrs) return '';
 
-    return this.$_attrs.get('id');
+    return this._attrs.get('id');
   }
 
   set id(id) {
     if (typeof id !== 'string') return;
 
     id = id.trim();
-    const oldId = this.$_attrs.get('id');
-    this.$_attrs.set('id', id);
+    const oldId = this._attrs.get('id');
+    this._attrs.set('id', id);
 
     if (id === oldId) return;
 
     // update tree
-    if (this.$_tree.getById(oldId) === this) this.$_tree.updateIdMap(oldId, null);
-    if (id) this.$_tree.updateIdMap(id, this);
+    if (this.__tree.getById(oldId) === this) this.__tree.updateIdMap(oldId, null);
+    if (id) this.__tree.updateIdMap(id, this);
     const payload = {
       path: `${this._path}.id`,
       value: id
@@ -315,23 +315,23 @@ class Element extends Node {
   }
 
   get tagName() {
-    return this.$_tagName.toUpperCase();
+    return this.__tagName.toUpperCase();
   }
 
   get className() {
-    if (!this.$__classList) return '';
+    if (!this.__classList) return '';
 
-    return this.$_classList.toString();
+    return this._classList.toString();
   }
 
   set className(className) {
     if (typeof className !== 'string') return;
 
-    this.$_classList.$$parse(className);
+    this._classList._parse(className);
   }
 
   get classList() {
-    return this.$_classList;
+    return this._classList;
   }
 
   get nodeName() {
@@ -339,27 +339,27 @@ class Element extends Node {
   }
 
   get nodeType() {
-    return this.$_nodeType;
+    return this.__nodeType;
   }
 
   get childNodes() {
-    return this.$_children;
+    return this.__children;
   }
 
   get children() {
-    return this.$_children.filter(child => child.nodeType === Node.ELEMENT_NODE);
+    return this.__children.filter(child => child.nodeType === Node.ELEMENT_NODE);
   }
 
   get firstChild() {
-    return this.$_children[0];
+    return this.__children[0];
   }
 
   get lastChild() {
-    return this.$_children[this.$_children.length - 1];
+    return this.__children[this.__children.length - 1];
   }
 
   get innerHTML() {
-    return this.$_children.map(child => this.$_generateHtml(child)).join('');
+    return this.__children.map(child => this._generateHtml(child)).join('');
   }
 
   set innerHTML(html) {
@@ -378,18 +378,18 @@ class Element extends Node {
     // Generate dom tree
     const newChildNodes = [];
     ast.forEach(item => {
-      const node = this.$_generateDomTree(item);
+      const node = this._generateDomTree(item);
       if (node) newChildNodes.push(node);
     });
 
     // Delete all child nodes
-    this.$_children.forEach(node => {
-      node.$$updateParent(null);
+    this.__children.forEach(node => {
+      node._updateParent(null);
 
       // Update the mapping table
       this._traverseNodeMap(node, true);
     });
-    this.$_children.length = 0;
+    this.__children.length = 0;
 
     // Append the new child nodes
     for (let i = 0, j = newChildNodes.length; i < j; i++) {
@@ -398,7 +398,7 @@ class Element extends Node {
   }
 
   get outerHTML() {
-    return this.$_generateHtml(this);
+    return this._generateHtml(this);
   }
 
   set outerHTML(html) {
@@ -414,16 +414,16 @@ class Element extends Node {
 
     if (ast) {
       // Generate dom tree
-      const node = this.$_generateDomTree(ast);
+      const node = this._generateDomTree(ast);
 
       // Delete all child nodes
-      this.$_children.forEach(node => {
-        node.$$updateParent(null);
+      this.__children.forEach(node => {
+        node._updateParent(null);
 
         // Update the mapping table
         this._traverseNodeMap(node, true);
       });
-      this.$_children.length = 0;
+      this.__children.length = 0;
 
       // Append new child nodes
       const children = [].concat(node.childNodes);
@@ -431,14 +431,14 @@ class Element extends Node {
         this.appendChild(child);
       }
 
-      this.$_tagName = node.tagName.toLowerCase();
+      this.__tagName = node.tagName.toLowerCase();
       this.id = node.id || '';
       this.className = node.className || '';
       this.style.cssText = node.style.cssText || '';
       this.src = node.src || '';
-      this.$_dataset = Object.assign({}, node.dataset);
+      this._dateset = Object.assign({}, node.dataset);
 
-      this.$$dealWithAttrsForOuterHTML(node);
+      this._dealWithAttrsForOuterHTML(node);
     }
   }
 
@@ -452,15 +452,15 @@ class Element extends Node {
   }
 
   get textContent() {
-    return this.$_children.map(child => child.textContent).join('');
+    return this.__children.map(child => child.textContent).join('');
   }
 
   set textContent(text) {
     text = '' + text;
 
     // Delete all child nodes
-    this.$_children.forEach(node => {
-      node.$$updateParent(null);
+    this.__children.forEach(node => {
+      node._updateParent(null);
 
       // Update mapping table
       this._traverseNodeMap(node, true);
@@ -472,55 +472,55 @@ class Element extends Node {
         type: 'children',
         path: `${this._path}.children`,
         start: 0,
-        deleteCount: this.$_children.length
+        deleteCount: this.__children.length
       };
-      this.$_children.length = 0;
+      this.__children.length = 0;
       this._triggerUpdate(payload);
     } else {
-      this.$_children.length = 0;
+      this.__children.length = 0;
       // Generated at run time, using the b- prefix
       const nodeId = `b-${tool.getId()}`;
-      const child = this.ownerDocument.$$createTextNode({content: text, nodeId});
+      const child = this.ownerDocument._createTextNode({content: text, nodeId});
 
       this.appendChild(child);
     }
   }
 
   get style() {
-    return this.$_style;
+    return this._style;
   }
 
   set style(value) {
-    this.$_style.cssText = value;
+    this._style.cssText = value;
   }
 
   get dataset() {
-    return this.$_dataset;
+    return this._dateset;
   }
 
   get attributes() {
-    return this.$_attrs.list;
+    return this._attrs.list;
   }
 
   get src() {
-    if (!this.$__attrs) return '';
+    if (!this.__attrs) return '';
 
-    return this.$_attrs.get('src');
+    return this._attrs.get('src');
   }
 
   set src(value) {
     value = '' + value;
-    this.$_attrs.set('src', value);
+    this._attrs.set('src', value);
   }
 
   cloneNode(deep) {
     const dataset = {};
-    Object.keys(this.$_dataset).forEach(name => {
-      dataset[`data-${tool.toDash(name)}`] = this.$_dataset[name];
+    Object.keys(this._dateset).forEach(name => {
+      dataset[`data-${tool.toDash(name)}`] = this._dateset[name];
     });
 
-    const newNode = this.ownerDocument.$$createElement({
-      tagName: this.$_tagName,
+    const newNode = this.ownerDocument._createElement({
+      tagName: this.__tagName,
       attrs: {
         id: this.id,
         class: this.className,
@@ -528,15 +528,15 @@ class Element extends Node {
         src: this.src,
 
         ...dataset,
-        ...this.$$dealWithAttrsForCloneNode(),
+        ...this._dealWithAttrsForCloneNode(),
       },
-      nodeType: this.$_nodeType,
+      nodeType: this.__nodeType,
       nodeId: `b-${tool.getId()}`,
     });
 
     if (deep) {
       // Deep clone
-      for (const child of this.$_children) {
+      for (const child of this.__children) {
         newNode.appendChild(child.cloneNode(deep));
       }
     }
@@ -550,9 +550,9 @@ class Element extends Node {
     if (node === this) return;
     if (node.parentNode) node.parentNode.removeChild(node);
 
-    this.$_children.push(node);
+    this.__children.push(node);
     // Set parentNode
-    node.$$updateParent(this);
+    node._updateParent(this);
 
     // Update map
     this._traverseNodeMap(node);
@@ -561,7 +561,7 @@ class Element extends Node {
     const payload = {
       type: 'children',
       path: `${this._path}.children`,
-      start: this.$_children.length - 1,
+      start: this.__children.length - 1,
       deleteCount: 0,
       item: node
     };
@@ -573,13 +573,13 @@ class Element extends Node {
   removeChild(node) {
     if (!(node instanceof Node)) return;
 
-    const index = this.$_children.indexOf(node);
+    const index = this.__children.indexOf(node);
 
     if (index >= 0) {
       // Inserted, need to delete
-      this.$_children.splice(index, 1);
+      this.__children.splice(index, 1);
 
-      node.$$updateParent(null);
+      node._updateParent(null);
 
       // Update map
       this._traverseNodeMap(node, true);
@@ -604,7 +604,7 @@ class Element extends Node {
     if (node === this) return;
     if (node.parentNode) node.parentNode.removeChild(node);
 
-    const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
+    const insertIndex = ref ? this.__children.indexOf(ref) : -1;
     const payload = {
       type: 'children',
       path: `${this._path}.children`,
@@ -613,15 +613,15 @@ class Element extends Node {
     };
     if (insertIndex === -1) {
       // Insert to the end
-      this.$_children.push(node);
-      payload.start = this.$_children.length - 1;
+      this.__children.push(node);
+      payload.start = this.__children.length - 1;
     } else {
       // Inserted before ref
-      this.$_children.splice(insertIndex, 0, node);
+      this.__children.splice(insertIndex, 0, node);
       payload.start = insertIndex;
     }
     // Set parentNode
-    node.$$updateParent(this);
+    node._updateParent(this);
 
     // Update the mapping table
     this._traverseNodeMap(node);
@@ -634,21 +634,21 @@ class Element extends Node {
   replaceChild(node, old) {
     if (!(node instanceof Node) || !(old instanceof Node)) return;
 
-    const replaceIndex = this.$_children.indexOf(old);
-    if (replaceIndex !== -1) this.$_children.splice(replaceIndex, 1);
+    const replaceIndex = this.__children.indexOf(old);
+    if (replaceIndex !== -1) this.__children.splice(replaceIndex, 1);
 
     if (node === this) return;
     if (node.parentNode) node.parentNode.removeChild(node);
 
     if (replaceIndex === -1) {
       // Insert to the end
-      this.$_children.push(node);
+      this.__children.push(node);
     } else {
       // Replace to old
-      this.$_children.splice(replaceIndex, 0, node);
+      this.__children.splice(replaceIndex, 0, node);
     }
     // Set parentNode
-    node.$$updateParent(this);
+    node._updateParent(this);
     // Update the mapping table
     this._traverseNodeMap(node);
     this._traverseNodeMap(old, true);
@@ -657,7 +657,7 @@ class Element extends Node {
     const payload = {
       type: 'children',
       path: `${this._path}.children`,
-      start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
+      start: replaceIndex === -1 ? this.__children.length - 1 : replaceIndex,
       deleteCount: replaceIndex === -1 ? 0 : 1,
       item: node
     };
@@ -667,31 +667,31 @@ class Element extends Node {
   }
 
   hasChildNodes() {
-    return this.$_children.length > 0;
+    return this.__children.length > 0;
   }
 
   getElementsByTagName(tagName) {
     if (typeof tagName !== 'string') return [];
 
-    return this.$_tree.getByTagName(tagName, this);
+    return this.__tree.getByTagName(tagName, this);
   }
 
   getElementsByClassName(className) {
     if (typeof className !== 'string') return [];
 
-    return this.$_tree.getByClassName(className, this);
+    return this.__tree.getByClassName(className, this);
   }
 
   querySelector(selector) {
     if (typeof selector !== 'string') return;
 
-    return this.$_tree.query(selector, this)[0] || null;
+    return this.__tree.query(selector, this)[0] || null;
   }
 
   querySelectorAll(selector) {
     if (typeof selector !== 'string') return [];
 
-    return this.$_tree.query(selector, this);
+    return this.__tree.query(selector, this);
   }
 
   setAttribute(name, value, immediate = true) {
@@ -705,28 +705,28 @@ class Element extends Node {
       // id to be handled here in advance
       this.id = value;
     } else {
-      this.$_attrs.set(name, value, immediate);
+      this._attrs.set(name, value, immediate);
     }
   }
 
   getAttribute(name) {
     if (typeof name !== 'string') return '';
-    if (!this.$__attrs) return name === 'id' || name === 'style' || name === 'class' ? '' : undefined;
+    if (!this.__attrs) return name === 'id' || name === 'style' || name === 'class' ? '' : undefined;
 
-    return this.$_attrs.get(name);
+    return this._attrs.get(name);
   }
 
   hasAttribute(name) {
     if (typeof name !== 'string') return false;
-    if (!this.$__attrs) return false;
+    if (!this.__attrs) return false;
 
-    return this.$_attrs.has(name);
+    return this._attrs.has(name);
   }
 
   removeAttribute(name) {
     if (typeof name !== 'string') return false;
 
-    return this.$_attrs.remove(name);
+    return this._attrs.remove(name);
   }
 
   contains(otherElement) {

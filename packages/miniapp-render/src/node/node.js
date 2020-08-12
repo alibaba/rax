@@ -3,48 +3,48 @@ import cache from '../utils/cache';
 
 class Node extends EventTarget {
   /**
-   * Override parent class $$init method
+   * Override parent class _init method
    */
-  $$init(options, tree) {
-    super.$$init();
+  _init(options, tree) {
+    super._init();
 
-    this.$_nodeId = options.nodeId; // unique
-    this.$_type = options.type;
-    this.$_parentNode = null;
-    this.$_tree = tree;
+    this.__nodeId = options.nodeId; // unique
+    this.__type = options.type;
+    this.__parentNode = null;
+    this.__tree = tree;
     this.__pageId = tree.pageId;
   }
 
   /**
-   * Override parent class $$destroy method
+   * Override parent class _destroy method
    */
-  $$destroy() {
-    super.$$destroy();
+  _destroy() {
+    super._destroy();
 
-    this.$_nodeId = null;
-    this.$_type = null;
-    this.$_parentNode = null;
-    this.$_tree = null;
+    this.__nodeId = null;
+    this.__type = null;
+    this.__parentNode = null;
+    this.__tree = null;
     this.__pageId = null;
   }
 
   /**
    * private nodeId
    */
-  get $$nodeId() {
-    return this.$_nodeId;
+  get _nodeId() {
+    return this.__nodeId;
   }
 
   /**
    * update parent node
    */
-  $$updateParent(parentNode = null) {
-    this.$_parentNode = parentNode;
+  _updateParent(parentNode = null) {
+    this.__parentNode = parentNode;
   }
 
   get _path() {
-    if (this.$_parentNode !== null) {
-      const index = '[' + this.$_parentNode.childNodes.indexOf(this) + ']';
+    if (this.__parentNode !== null) {
+      const index = '[' + this.__parentNode.childNodes.indexOf(this) + ']';
 
       return `${this.parentNode._path}.children.${index}`;
     }
@@ -53,15 +53,15 @@ class Node extends EventTarget {
   }
 
   get _root() {
-    if (this.$_parentNode !== null) {
-      return this.$_parentNode._root;
+    if (this.__parentNode !== null) {
+      return this.__parentNode._root;
     }
 
     return null;
   }
 
   get parentNode() {
-    return this.$_parentNode;
+    return this.__parentNode;
   }
 
   get nodeValue() {

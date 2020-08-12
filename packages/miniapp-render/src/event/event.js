@@ -15,22 +15,22 @@ function checkRelation(node1, node2) {
 
 class Event {
   constructor(options) {
-    this.$_name = options.name.toLowerCase();
-    this.$_target = options.target;
-    this.$_timeStamp = options.timeStamp || Date.now();
-    this.$_currentTarget = options.currentTarget || options.target;
-    this.$_eventPhase = options.eventPhase || Event.NONE;
-    this.$_detail = options.detail || null;
-    this.$_immediateStop = false;
-    this.$_canBubble = true;
-    this.$_bubbles = options.bubbles || false;
-    this.$_touches = null;
-    this.$_targetTouches = null;
-    this.$_changedTouches = null;
-    this.$_cancelable = false;
+    this.__name = options.name.toLowerCase();
+    this.__target = options.target;
+    this.__timeStamp = options.timeStamp || Date.now();
+    this.__currentTarget = options.currentTarget || options.target;
+    this.__eventPhase = options.eventPhase || Event.NONE;
+    this.__detail = options.detail || null;
+    this.__immediateStop = false;
+    this.__canBubble = true;
+    this.__bubbles = options.bubbles || false;
+    this.__touches = null;
+    this.__targetTouches = null;
+    this.__changedTouches = null;
+    this.__cancelable = false;
 
     // Add fields
-    const extra = options.$$extra;
+    const extra = options.__extra;
     if (extra) {
       Object.keys(extra).forEach(key => {
         this[key] = extra[key];
@@ -39,120 +39,120 @@ class Event {
 
     // Handle touches
     if (options.touches && options.touches.length) {
-      this.$_touches = options.touches.map(touch => ({...touch, target: options.target}));
+      this.__touches = options.touches.map(touch => ({...touch, target: options.target}));
 
-      this.$$checkTargetTouches();
+      this._checkTargetTouches();
     }
 
     // Handle changedTouches
     if (options.changedTouches && options.changedTouches.length) {
-      this.$_changedTouches = options.changedTouches.map(touch => ({...touch, target: options.target}));
+      this.__changedTouches = options.changedTouches.map(touch => ({...touch, target: options.target}));
     }
   }
 
   // Whether the event is stopped immediately
-  get $$immediateStop() {
-    return this.$_immediateStop;
+  get _immediateStop() {
+    return this.__immediateStop;
   }
 
   // Whether can bubble
-  get $$canBubble() {
-    return this.$_canBubble;
+  get _canBubble() {
+    return this.__canBubble;
   }
 
   // Set target
-  $$setTarget(target) {
-    this.$_target = target;
+  _setTarget(target) {
+    this.__target = target;
   }
 
   // Set currentTarget
-  $$setCurrentTarget(currentTarget) {
-    this.$_currentTarget = currentTarget;
-    this.$$checkTargetTouches();
+  _setCurrentTarget(currentTarget) {
+    this.__currentTarget = currentTarget;
+    this._checkTargetTouches();
   }
 
   // Set the stage of the event
-  $$setEventPhase(eventPhase) {
-    this.$_eventPhase = eventPhase;
+  _setEventPhase(eventPhase) {
+    this.__eventPhase = eventPhase;
   }
 
   // Check targetTouches
-  $$checkTargetTouches() {
-    if (this.$_touches && this.$_touches.length) {
-      this.$_targetTouches = this.$_touches.filter(touch => checkRelation(touch.target, this.$_currentTarget));
+  _checkTargetTouches() {
+    if (this.__touches && this.__touches.length) {
+      this.__targetTouches = this.__touches.filter(touch => checkRelation(touch.target, this.__currentTarget));
     }
   }
 
   get bubbles() {
-    return this.$_bubbles;
+    return this.__bubbles;
   }
 
   get cancelable() {
-    return this.$_cancelable;
+    return this.__cancelable;
   }
 
   get target() {
-    return this.$_target;
+    return this.__target;
   }
 
   get currentTarget() {
-    return this.$_currentTarget;
+    return this.__currentTarget;
   }
 
   get eventPhase() {
-    return this.$_eventPhase;
+    return this.__eventPhase;
   }
 
   get type() {
-    return this.$_name;
+    return this.__name;
   }
 
   get timeStamp() {
-    return this.$_timeStamp;
+    return this.__timeStamp;
   }
 
   get touches() {
-    return this.$_touches;
+    return this.__touches;
   }
 
   get targetTouches() {
-    return this.$_targetTouches;
+    return this.__targetTouches;
   }
 
   get changedTouches() {
-    return this.$_changedTouches;
+    return this.__changedTouches;
   }
 
   set detail(value) {
-    this.$_detail = value;
+    this.__detail = value;
   }
 
   get detail() {
-    return this.$_detail;
+    return this.__detail;
   }
 
   preventDefault() {
-    this.$_cancelable = true;
+    this.__cancelable = true;
   }
 
   stopPropagation() {
     if (this.eventPhase === Event.NONE) return;
 
-    this.$_canBubble = false;
+    this.__canBubble = false;
   }
 
   stopImmediatePropagation() {
     if (this.eventPhase === Event.NONE) return;
 
-    this.$_immediateStop = true;
-    this.$_canBubble = false;
+    this.__immediateStop = true;
+    this.__canBubble = false;
   }
 
   initEvent(name = '', bubbles) {
     if (typeof name !== 'string') return;
 
-    this.$_name = name.toLowerCase();
-    this.$_bubbles = bubbles === undefined ? this.$_bubbles : !!bubbles;
+    this.__name = name.toLowerCase();
+    this.__bubbles = bubbles === undefined ? this.__bubbles : !!bubbles;
   }
 }
 

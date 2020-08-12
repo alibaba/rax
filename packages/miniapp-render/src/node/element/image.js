@@ -4,70 +4,64 @@ import Event from '../../event/event';
 
 class Image extends Element {
   // Create instance
-  static $$create(options, tree) {
+  static _create(options, tree) {
     return new Image(options, tree);
   }
 
-  // Override the parent class's $$init instance method
-  $$init(options, tree) {
+  // Override the parent class's _init instance method
+  _init(options, tree) {
     const width = options.width;
     const height = options.height;
 
     if (typeof width === 'number' && width >= 0) options.attrs.width = width;
     if (typeof height === 'number' && height >= 0) options.attrs.height = height;
 
-    super.$$init(options, tree);
+    super._init(options, tree);
 
-    this.$_naturalWidth = 0;
-    this.$_naturalHeight = 0;
+    this.__naturalWidth = 0;
+    this.__naturalHeight = 0;
 
-    this.$_initRect();
+    this._initRect();
   }
 
   // Override the parent class's destroy instance method
-  $$destroy() {
-    super.$$destroy();
+  _destroy() {
+    super._destroy();
 
-    this.$_naturalWidth = null;
-    this.$_naturalHeight = null;
+    this.__naturalWidth = null;
+    this.__naturalHeight = null;
   }
 
   // Override the parent class's recovery instance method
-  $$recycle() {
-    this.$$destroy();
-  }
-
-  // Update parent
-  $_triggerParentUpdate(payload) {
-    this.$_initRect();
-    super.$_triggerParentUpdate(payload);
+  _recycle() {
+    this._destroy();
   }
 
   // Init length
-  $_initRect() {
-    const width = parseInt(this.$_attrs.get('width'), 10);
-    const height = parseInt(this.$_attrs.get('height'), 10);
+  _initRect() {
+    const width = parseInt(this._attrs.get('width'), 10);
+    const height = parseInt(this._attrs.get('height'), 10);
 
-    if (typeof width === 'number' && width >= 0) this.$_style.width = `${width}px`;
-    if (typeof height === 'number' && height >= 0) this.$_style.height = `${height}px`;
+    if (typeof width === 'number' && width >= 0) this._style.width = `${width}px`;
+    if (typeof height === 'number' && height >= 0) this._style.height = `${height}px`;
   }
 
   // Reset width & height
-  $_resetRect(rect = {}) {
-    this.$_naturalWidth = rect.width || 0;
-    this.$_naturalHeight = rect.height || 0;
+  _resetRect(rect = {}) {
+    this.__naturalWidth = rect.width || 0;
+    this.__naturalHeight = rect.height || 0;
 
-    this.$_initRect();
+    this._initRect();
   }
 
   get src() {
-    return this.$_attrs.get('src') || '';
+    return this._attrs.get('src') || '';
   }
 
   set src(value) {
     if (!value || typeof value !== 'string') return;
 
-    this.$_attrs.set('src', value);
+    this._attrs.set('src', value);
 
     setTimeout(() => {
       if (this.src.indexOf('data:image') !== 0) {
@@ -75,10 +69,10 @@ class Image extends Element {
           src: this.src,
           success: res => {
             // Load successfully, adjust the width and height of the picture
-            this.$_resetRect(res);
+            this._resetRect(res);
 
             // Load event
-            this.$$trigger('load', {
+            this._trigger('load', {
               event: new Event({
                 name: 'load',
                 target: this,
@@ -89,10 +83,10 @@ class Image extends Element {
           },
           fail: () => {
             // Load failed, adjust the width and height of the image
-            this.$_resetRect({width: 0, height: 0});
+            this._resetRect({width: 0, height: 0});
 
             // Trigger error event
-            this.$$trigger('error', {
+            this._trigger('error', {
               event: new Event({
                 name: 'error',
                 target: this,
@@ -107,33 +101,33 @@ class Image extends Element {
   }
 
   get width() {
-    return +this.$_attrs.get('width') || 0;
+    return +this._attrs.get('width') || 0;
   }
 
   set width(value) {
     if (typeof value !== 'number' || !isFinite(value) || value < 0) return;
 
-    this.$_attrs.set('width', value);
-    this.$_initRect();
+    this._attrs.set('width', value);
+    this._initRect();
   }
 
   get height() {
-    return +this.$_attrs.get('height') || 0;
+    return +this._attrs.get('height') || 0;
   }
 
   set height(value) {
     if (typeof value !== 'number' || !isFinite(value) || value < 0) return;
 
-    this.$_attrs.set('height', value);
-    this.$_initRect();
+    this._attrs.set('height', value);
+    this._initRect();
   }
 
   get naturalWidth() {
-    return this.$_naturalWidth;
+    return this.__naturalWidth;
   }
 
   get naturalHeight() {
-    return this.$_naturalHeight;
+    return this.__naturalHeight;
   }
 }
 

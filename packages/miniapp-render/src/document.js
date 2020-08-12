@@ -51,18 +51,17 @@ class Document extends EventTarget {
 
     // Used to encapsulate special tag and corresponding constructors
     const that = this;
-    this.$_imageConstructor = function HTMLImageElement(width, height) {
-      return Image.$$create({
+    this._imageConstructor = function HTMLImageElement(width, height) {
+      return Image._create({
         tagName: 'img',
         nodeId: `b-${tool.getId()}`,
         attrs: {},
         width,
         height,
-      }, that.$_tree);
+      }, that.__tree);
     };
 
-    this.__pageId = pageId;
-    this.$_tree = new Tree(pageId, {
+    this.__tree = new Tree(pageId, {
       type: 'element',
       tagName: 'body',
       attrs: {},
@@ -70,77 +69,76 @@ class Document extends EventTarget {
       nodeId: 'e-body',
       children: [],
     }, nodeIdMap, this);
-    this.$_config = null;
 
     // documentElement
-    this.$_node = this.$$createElement({
+    this.__node = this._createElement({
       tagName: 'html',
       attrs: {},
       nodeId: `a-${tool.getId()}`,
       type: Node.DOCUMENT_NODE,
     });
     // documentElement's parentNode is document
-    this.$_node.$$updateParent(this);
-    this.$_node.scrollTop = 0;
+    this.__node._updateParent(this);
+    this.__node.scrollTop = 0;
 
     // head
-    this.$_head = this.createElement('head');
+    this.__head = this.createElement('head');
 
     // update body's parentNode
-    this.$_tree.root.$$updateParent(this.$_node);
+    this.__tree.root._updateParent(this.__node);
   }
 
   // Image constructor
-  get $$imageConstructor() {
-    return this.$_imageConstructor;
+  get imageConstructor() {
+    return this._imageConstructor;
   }
 
   // Event trigger
-  $$trigger(eventName, options) {
-    this.documentElement.$$trigger(eventName, options);
+  _trigger(eventName, options) {
+    this.documentElement._trigger(eventName, options);
   }
 
-  $$createElement(options, tree) {
+  _createElement(options, tree) {
     const originTagName = options.tagName;
     const tagName = originTagName.toUpperCase();
     const componentName = checkIsBuiltInComponent(originTagName) ? originTagName : null;
-    tree = tree || this.$_tree;
+    tree = tree || this.__tree;
 
     const constructorClass = CONSTRUCTOR_MAP[tagName];
     if (constructorClass) {
-      return constructorClass.$$create(options, tree);
+      return constructorClass._create(options, tree);
     } else if (componentName) {
       // Transform to builtin-component
       options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
-      options.attrs.behavior = componentName;
-      return BuiltInComponent.$$create(options, tree);
+      options.attrs._behavior = componentName;
+      return BuiltInComponent._create(options, tree);
     } else if (this.usingComponents[originTagName]) {
       // Transform to custom-component
       options.tagName = 'custom-component';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
-      return CustomComponent.$$create(options, tree);
+      return CustomComponent._create(options, tree);
     } else if (this.usingPlugins[originTagName]) {
       options.tagName = 'miniapp-plugin';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
-      return CustomComponent.$$create(options, tree);
+      return CustomComponent._create(options, tree);
     } if (!tool.isTagNameSupport(tagName)) {
       throw new Error(`${tagName} is not supported.`);
     } else {
-      return Element.$$create(options, tree);
+      return Element._create(options, tree);
     }
   }
 
   // Create text node
-  $$createTextNode(options, tree) {
-    return TextNode.$$create(options, tree || this.$_tree);
+  _createTextNode(options, tree) {
+    return TextNode._create(options, tree || this.__tree);
   }
 
   // Create comment node
-  $$createComment(options, tree) {
-    return Comment.$$create(options, tree || this.$_tree);
+  _createComment(options, tree) {
+    return Comment._create(options, tree || this.__tree);
   }
 
   // Node type
@@ -149,11 +147,11 @@ class Document extends EventTarget {
   }
 
   get documentElement() {
-    return this.$_node;
+    return this.__node;
   }
 
   get body() {
-    return this.$_tree.root;
+    return this.__tree.root;
   }
 
   get nodeName() {
@@ -161,7 +159,7 @@ class Document extends EventTarget {
   }
 
   get head() {
-    return this.$_head;
+    return this.__head;
   }
 
   get defaultView() {
@@ -171,31 +169,31 @@ class Document extends EventTarget {
   getElementById(id) {
     if (typeof id !== 'string') return;
 
-    return this.$_tree.getById(id) || null;
+    return this.__tree.getById(id) || null;
   }
 
   getElementsByTagName(tagName) {
     if (typeof tagName !== 'string') return [];
 
-    return this.$_tree.getByTagName(tagName);
+    return this.__tree.getByTagName(tagName);
   }
 
   getElementsByClassName(className) {
     if (typeof className !== 'string') return [];
 
-    return this.$_tree.getByClassName(className);
+    return this.__tree.getByClassName(className);
   }
 
   querySelector(selector) {
     if (typeof selector !== 'string') return;
 
-    return this.$_tree.query(selector)[0] || null;
+    return this.__tree.query(selector)[0] || null;
   }
 
   querySelectorAll(selector) {
     if (typeof selector !== 'string') return [];
 
-    return this.$_tree.query(selector);
+    return this.__tree.query(selector);
   }
 
   createElement(tagName) {
@@ -204,7 +202,7 @@ class Document extends EventTarget {
     tagName = tagName.trim();
     if (!tagName) return;
 
-    return this.$$createElement({
+    return this._createElement({
       tagName,
       nodeId: `b-${tool.getId()}`,
     });
@@ -218,7 +216,7 @@ class Document extends EventTarget {
   createTextNode(content) {
     content = '' + content;
 
-    return this.$$createTextNode({
+    return this._createTextNode({
       content,
       nodeId: `b-${tool.getId()}`,
     });
@@ -226,17 +224,17 @@ class Document extends EventTarget {
 
   createComment() {
     // Ignore the incoming comment content
-    return this.$$createComment({
+    return this._createComment({
       nodeId: `b-${tool.getId()}`,
     });
   }
 
   createDocumentFragment() {
-    return Element.$$create({
+    return Element._create({
       tagName: 'documentfragment',
       nodeId: `b-${tool.getId()}`,
       nodeType: Node.DOCUMENT_FRAGMENT_NODE,
-    }, this.$_tree);
+    }, this.__tree);
   }
 
   createEvent() {

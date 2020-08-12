@@ -2,38 +2,38 @@ import tool from '../utils/tool';
 import Node from '../node/node';
 
 class TextNode extends Node {
-  static $$create(options, tree) {
+  static _create(options, tree) {
     return new TextNode(options, tree);
   }
 
-  $$init(options, tree) {
+  _init(options, tree) {
     options.type = 'text';
 
-    super.$$init(options, tree);
+    super._init(options, tree);
 
-    this.$_content = options.content || '';
+    this.__content = options.content || '';
   }
 
-  $$destroy() {
-    super.$$destroy();
+  _destroy() {
+    super._destroy();
 
-    this.$_content = '';
+    this.__content = '';
   }
 
-  $$recycle() {
-    this.$$destroy();
+  _recycle() {
+    this._destroy();
   }
 
   _triggerUpdate(payload) {
     this._root && this._root.enqueueRender(payload);
   }
 
-  get $$domInfo() {
+  get _domInfo() {
     return {
-      nodeId: this.$_nodeId,
+      nodeId: this.__nodeId,
       pageId: this.__pageId,
-      nodeType: this.$_type,
-      content: this.$_content,
+      nodeType: this.__type,
+      content: this.__content,
     };
   }
 
@@ -54,13 +54,13 @@ class TextNode extends Node {
   }
 
   get textContent() {
-    return this.$_content;
+    return this.__content;
   }
 
   set textContent(value) {
     value += '';
 
-    this.$_content = value;
+    this.__content = value;
     const payload = {
       path: `${this._path}.content`,
       value
@@ -77,8 +77,8 @@ class TextNode extends Node {
   }
 
   cloneNode() {
-    return this.ownerDocument.$$createTextNode({
-      content: this.$_content,
+    return this.ownerDocument._createTextNode({
+      content: this.__content,
       nodeId: `b-${tool.getId()}`,
     });
   }

@@ -55,9 +55,9 @@ class Tree {
       let childNode;
 
       if (child.type === 'element') {
-        childNode = document.$$createElement(child, this);
+        childNode = document._createElement(child, this);
       } else if (child.type === 'text') {
-        childNode = document.$$createTextNode(child, this);
+        childNode = document._createTextNode(child, this);
       }
 
       const id = childNode.id;

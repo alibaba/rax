@@ -14,10 +14,10 @@ class Window extends EventTarget {
 
     const timeOrigin = +new Date();
 
-    this.$_elementConstructor = function HTMLElement(...args) {
-      return Element.$$create(...args);
+    this._elementConstructor = function HTMLElement(...args) {
+      return Element._create(...args);
     };
-    this.$_customEventConstructor = class CustomEvent extends OriginalCustomEvent {
+    this._customEventConstructor = class CustomEvent extends OriginalCustomEvent {
       constructor(name = '', options = {}) {
         options.timeStamp = +new Date() - timeOrigin;
         super(name, options);
@@ -29,12 +29,12 @@ class Window extends EventTarget {
   }
 
   // Forces the setData cache to be emptied
-  $$forceRender() {
+  _forceRender() {
     tool.flushThrottleCache();
   }
 
   // Trigger node event
-  $$trigger(eventName, options = {}) {
+  _trigger(eventName, options = {}) {
     if (eventName === 'error' && typeof options.event === 'string') {
       const errStack = options.event;
       const errLines = errStack.split('\n');
@@ -50,9 +50,9 @@ class Window extends EventTarget {
 
       const error = new Error(message);
       error.stack = errStack;
-      options.event = new this.$_customEventConstructor('error', {
+      options.event = new this._customEventConstructor('error', {
         target: this,
-        $$extra: {
+        __extra: {
           message,
           filename: '',
           lineno: 0,
@@ -62,16 +62,16 @@ class Window extends EventTarget {
       });
       options.args = [message, error];
 
-      if (typeof this.onerror === 'function' && !this.onerror.$$isOfficial) {
+      if (typeof this.onerror === 'function' && !this.onerror.__isOfficial) {
         const oldOnError = this.onerror;
         this.onerror = (event, message, error) => {
           oldOnError.call(this, message, '', 0, 0, error);
         };
-        this.onerror.$$isOfficial = true;
+        this.onerror.__isOfficial = true;
       }
     }
 
-    return super.$$trigger(eventName, options);
+    return super._trigger(eventName, options);
   }
 
   /**
@@ -82,7 +82,7 @@ class Window extends EventTarget {
   }
 
   get CustomEvent() {
-    return this.$_customEventConstructor;
+    return this._customEventConstructor;
   }
 
   get self() {
@@ -90,7 +90,7 @@ class Window extends EventTarget {
   }
 
   get Image() {
-    return this.document.$$imageConstructor;
+    return this.document.imageConstructor;
   }
 
   get setTimeout() {
@@ -110,7 +110,7 @@ class Window extends EventTarget {
   }
 
   get HTMLElement() {
-    return this.$_elementConstructor;
+    return this._elementConstructor;
   }
 
   get Element() {

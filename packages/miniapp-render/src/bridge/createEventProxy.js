@@ -34,7 +34,7 @@ export default function(pageId) {
     config[name] = function(evt) {
       const __pageId = getPageId(this, pageId);
       const document = cache.getDocument(__pageId);
-      if (document && document.__checkEvent(evt)) {
+      if (document && document._checkEvent(evt)) {
         const nodeId = evt.currentTarget.dataset.privateNodeId;
         this.callEvent(eventName, evt, extra, __pageId, nodeId); // Default Left button
       }

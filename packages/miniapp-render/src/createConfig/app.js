@@ -21,7 +21,7 @@ export default function(init, config) {
         window.__pageId = currentPageId;
 
         init(window, currentDocument);
-        window.$$trigger('launch', {
+        window._trigger('launch', {
           event: {
             options,
             context: this
@@ -30,7 +30,7 @@ export default function(init, config) {
       } else {
         this.init = (document) => {
           init(window, document);
-          window.$$trigger('launch', {
+          window._trigger('launch', {
             event: {
               options,
               context: this
@@ -42,7 +42,7 @@ export default function(init, config) {
     },
     onShow(options) {
       if (this.window) {
-        this.window.$$trigger('appshow', {
+        this.window._trigger('appshow', {
           event: {
             options,
             context: this
@@ -52,7 +52,7 @@ export default function(init, config) {
     },
     onHide() {
       if (this.window) {
-        this.window.$$trigger('apphide', {
+        this.window._trigger('apphide', {
           event: {
             context: this
           }
@@ -65,11 +65,11 @@ export default function(init, config) {
         const pages = getCurrentPages() || [];
         const currentPage = pages[pages.length - 1];
         if (currentPage && currentPage.window) {
-          currentPage.window.$$trigger('error', {
+          currentPage.window._trigger('error', {
             event: err
           });
         }
-        this.window.$$trigger('apperror', {
+        this.window._trigger('apperror', {
           event: {
             context: this,
             error: err
@@ -79,7 +79,7 @@ export default function(init, config) {
     },
     onPageNotFound(options) {
       if (this.window) {
-        this.window.$$trigger('pagenotfound', {
+        this.window._trigger('pagenotfound', {
           event: {
             options,
             context: this
@@ -92,7 +92,7 @@ export default function(init, config) {
     appConfig.onShareAppMessage = function(options) {
       if (this.window) {
         const shareInfo = {};
-        this.window.$$trigger('appshare', {
+        this.window._trigger('appshare', {
           event: { options, shareInfo }
         });
         return shareInfo.content;

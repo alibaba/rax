@@ -5,7 +5,7 @@ export default function(eventName, evt, pageId) {
   const domNode = this.getDomNodeFromEvt(eventName, evt, pageId);
   if (!domNode) return;
 
-  domNode.$$trigger(eventName, {
+  domNode._trigger(eventName, {
     event: new Event({
       timeStamp: evt && evt.timeStamp,
       touches: evt && evt.touches,
@@ -14,7 +14,7 @@ export default function(eventName, evt, pageId) {
       target: domNode,
       eventPhase: Event.AT_TARGET,
       detail: evt && evt.detail,
-      $$extra: evt && evt.extra,
+      __extra: evt && evt.extra,
     }),
     currentTarget: domNode,
   });

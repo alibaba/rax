@@ -2,40 +2,40 @@ import tool from '../utils/tool';
 
 class Attribute {
   constructor(element, onUpdate) {
-    this.$$init(element, onUpdate);
+    this._init(element, onUpdate);
   }
 
-  static $$create(element, onUpdate) {
+  static _create(element, onUpdate) {
     return new Attribute(element, onUpdate);
   }
 
-  $$init(element, onUpdate) {
-    this.$_element = element;
-    this.$_doUpdate = onUpdate;
-    this.$_map = {};
-    this.$_list = [];
+  _init(element, onUpdate) {
+    this.__element = element;
+    this.__map = {};
+    this.__list = [];
+    this._doUpdate = onUpdate;
 
     this.triggerUpdate();
   }
 
-  $$destroy() {
-    this.$_element = null;
-    this.$_doUpdate = null;
-    this.$_map = null;
-    this.$_list = null;
+  _destroy() {
+    this.__element = null;
+    this._doUpdate = null;
+    this.__map = null;
+    this.__list = null;
   }
 
-  $$recycle() {
-    this.$$destroy();
+  _recycle() {
+    this._destroy();
   }
 
   get list() {
-    return this.$_list;
+    return this.__list;
   }
 
   set(name, value, immediate = true) {
-    const element = this.$_element;
-    const map = this.$_map;
+    const element = this.__element;
+    const map = this.__map;
 
     if (name === 'id') {
       map.id = value;
@@ -50,18 +50,18 @@ class Attribute {
       map[name] = value;
 
       const payload = {
-        path: `${this.$_element._path}.${name}`,
+        path: `${this.__element._path}.${name}`,
         value: value
       };
-      this.$_doUpdate(payload, immediate);
+      this._doUpdate(payload, immediate);
     }
 
     this.triggerUpdate();
   }
 
   get(name) {
-    const element = this.$_element;
-    const map = this.$_map;
+    const element = this.__element;
+    const map = this.__map;
 
     if (name === 'id') {
       return map.id || '';
@@ -71,7 +71,7 @@ class Attribute {
       return element.style.cssText;
     } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      if (!element.$__dataset) return undefined;
+      if (!element.__dataset) return undefined;
       return element.dataset[datasetName];
     } else {
       return map[name];
@@ -79,8 +79,8 @@ class Attribute {
   }
 
   has(name) {
-    const element = this.$_element;
-    const map = this.$_map;
+    const element = this.__element;
+    const map = this.__map;
 
     if (name === 'id') {
       return !!element.id;
@@ -90,7 +90,7 @@ class Attribute {
       return !!element.style.cssText;
     } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      if (!element.$__dataset) return false;
+      if (!element.__dataset) return false;
       return Object.prototype.hasOwnProperty.call(element.dataset, datasetName);
     } else {
       return Object.prototype.hasOwnProperty.call(map, name);
@@ -98,8 +98,8 @@ class Attribute {
   }
 
   remove(name) {
-    const element = this.$_element;
-    const map = this.$_map;
+    const element = this.__element;
+    const map = this.__map;
 
     if (name === 'id') {
       element.id = '';
@@ -107,23 +107,23 @@ class Attribute {
       this.set(name, '');
     } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      if (element.$__dataset) delete element.dataset[datasetName];
+      if (element.__dataset) delete element.dataset[datasetName];
     } else {
       // The Settings for the other fields need to trigger the parent component to update
       delete map[name];
       const payload = {
-        path: `${this.$_element._path}.${name}`,
+        path: `${this.__element._path}.${name}`,
         value: ''
       };
-      this.$_doUpdate(payload);
+      this._doUpdate(payload);
     }
 
     this.triggerUpdate();
   }
 
   triggerUpdate() {
-    const map = this.$_map;
-    const list = this.$_list;
+    const map = this.__map;
+    const list = this.__list;
 
     // Empty the old list
     list.forEach(item => {

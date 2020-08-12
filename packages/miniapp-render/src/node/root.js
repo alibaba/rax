@@ -7,15 +7,15 @@ import getProperty from '../utils/getProperty';
 import { propsMap } from '../builtInComponents';
 
 function simplify(node) {
-  const domInfo = node.$$domInfo;
+  const domInfo = node._domInfo;
   const simpleNode = {};
   for (let attr in domInfo) {
     simpleNode[attr] = domInfo[attr];
   }
 
   let componentType;
-  if (node.behavior) {
-    componentType = simpleNode.behavior = node.behavior;
+  if (node._behavior) {
+    componentType = simpleNode.behavior = node._behavior;
   } else {
     componentType = node.tagName;
   }
@@ -46,9 +46,9 @@ function traverseTree(node, action) {
       curNode.__parent.children = curNode.__parent.children || [];
       curNode.__parent.children.push(result);
     }
-    if (curNode.$_children && curNode.$_children.length) {
-      curNode.$_children.forEach(n => n.__parent = result);
-      queue = queue.concat(curNode.$_children);
+    if (curNode.__children && curNode.__children.length) {
+      curNode.__children.forEach(n => n.__parent = result);
+      queue = queue.concat(curNode.__children);
     }
     if (!result.children) {
       result.children = [];
@@ -58,14 +58,14 @@ function traverseTree(node, action) {
 }
 
 class RootElement extends Element {
-  $$init(options, tree) {
-    super.$$init(options, tree);
+  _init(options, tree) {
+    super._init(options, tree);
     this.allowRender = true;
     this.renderStacks = [];
   }
 
-  $$destroy() {
-    super.$$destroy();
+  _destroy() {
+    super._destroy();
     this.allowRender = null;
     this.renderStacks = null;
   }
@@ -131,7 +131,7 @@ class RootElement extends Element {
       }
     }
 
-    this.$$trigger('render', { args: internal.$batchedUpdates ? renderStacks : renderObject });
+    this._trigger('render', { args: internal.$batchedUpdates ? renderStacks : renderObject });
     this.renderStacks = [];
   }
 }

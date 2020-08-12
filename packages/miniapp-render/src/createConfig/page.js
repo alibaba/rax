@@ -79,7 +79,7 @@ export function getBaseLifeCycles() {
         }
       });
 
-      this.window.$$trigger('DOMContentLoaded');
+      this.window._trigger('DOMContentLoaded');
     },
     onShow() {
       if (this.window) {
@@ -88,24 +88,24 @@ export function getBaseLifeCycles() {
         if (!this.firstRender) {
           this.renderInfo && this.renderInfo.setDocument(this.document);
         }
-        this.window.$$trigger('pageshow');
+        this.window._trigger('pageshow');
         // compatible with original name
-        this.window.$$trigger('onShow');
+        this.window._trigger('onShow');
       }
     },
     onHide() {
       if (this.window) {
-        this.window.$$trigger('pagehide');
+        this.window._trigger('pagehide');
         // compatible with original name
-        this.window.$$trigger('onHide');
+        this.window._trigger('onHide');
       }
     },
     onUnload() {
-      this.window.$$trigger('beforeunload');
-      this.window.$$trigger('pageunload');
+      this.window._trigger('beforeunload');
+      this.window._trigger('pageunload');
 
       this.document.__unmount && this.document.__unmount(); // Manually unmount component instance
-      this.document.body.$$recycle(); // Recycle DOM node
+      this.document.body._recycle(); // Recycle DOM node
 
       cache.destroy(this.pageId);
 
@@ -133,8 +133,8 @@ export default function(route, lifeCycles = []) {
       if (this.firstRender) {
         this.firstRender = false;
         if (this.window) {
-          this.window.$$trigger('load');
-          this.window.$$trigger('pageload', { event: query });
+          this.window._trigger('load');
+          this.window._trigger('pageload', { event: query });
         }
       }
     },
