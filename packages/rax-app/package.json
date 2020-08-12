@@ -1,8 +1,9 @@
 {
   "name": "rax-app",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Rax application framework for univesal app.",
-  "main": "src/index.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "author": "Rax Team",
   "repository": {
     "type": "git",

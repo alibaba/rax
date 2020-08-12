@@ -69,7 +69,9 @@ function runApp(staticConfig, dynamicConfig = {}) {
   let createAppInstance;
   let pageProps;
   const appConfig = {
-    app: {},
+    app: {
+      rootId: 'root'
+    },
     router: {}
   };
 
@@ -115,6 +117,7 @@ function runApp(staticConfig, dynamicConfig = {}) {
       }
       const history = createHistory({ routes, customHistory: staticConfig.history, type });
       appConfig.router.history = history;
+      appConfig.router.type = type;
       collectAppLifeCycle(appConfig);
       return {
         appConfig,
