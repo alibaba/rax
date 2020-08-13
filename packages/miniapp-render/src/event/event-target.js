@@ -97,7 +97,6 @@ class EventTarget {
       if (key.indexOf('on') === 0) this[key] = null;
       // Handles private properties that are hung externally
       if (key[0] === '_') this[key] = null;
-      if (key[0] === '$' && (key[1] !== '_' && key[1] !== '$')) this[key] = null;
     });
 
     this.__miniappEvent = null;

@@ -43,7 +43,7 @@ class Element extends Node {
     super._destroy();
 
     this.__tagName = '';
-    this.__children.length = 0;
+    this.__children = null;
     this.__nodeType = Node.ELEMENT_NODE;
     this.__unary = null;
     this._dateset = null;
