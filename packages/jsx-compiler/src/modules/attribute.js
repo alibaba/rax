@@ -12,6 +12,7 @@ function transformAttribute(ast, code, adapter, imported) {
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
+      const { node: { name: tagName }} = path.parentPath.get('name');
       const attrName = node.name.name;
       switch (attrName) {
         case 'key':
@@ -29,14 +30,14 @@ function transformAttribute(ast, code, adapter, imported) {
           break;
         case 'className':
           if (!adapter.styleKeyword) {
-            if (isNativeComponent(path, adapter.platform, imported)) {
+            if (isNativeComponent(tagName, adapter.platform, imported)) {
               node.name.name = 'class';
             } else {
               // Object.assign for shallow copy, avoid self tag is same reference
               path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'),
                 Object.assign({}, node.value)));
             }
-          } else if (isNativeComponent(path, adapter.platform, imported)) {
+          } else if (isNativeComponent(tagName, adapter.platform, imported)) {
             node.name.name = 'class';
           }
           break;
@@ -50,7 +51,7 @@ function transformAttribute(ast, code, adapter, imported) {
           }
           break;
         case 'style':
-          if (adapter.styleKeyword && !isNativeComponent(path, adapter.platform, imported)) {
+          if (adapter.styleKeyword && !isNativeComponent(tagName, adapter.platform, imported)) {
             node.name.name = 'styleSheet';
           }
           break;

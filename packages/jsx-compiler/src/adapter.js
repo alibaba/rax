@@ -103,6 +103,7 @@ const parserAdapters = {
     needTransformKey: true,
     triggerRef: true
   },
+  componentCommonProps
 };
 
 module.exports = parserAdapters;
