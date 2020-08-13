@@ -1,4 +1,7 @@
-export default {
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { isMiniApp, isWeChatMiniProgram } from 'universal-env';
+
+const swiper = {
   name: 'swiper',
   props: [{
     name: 'indicator-dots',
@@ -82,10 +85,6 @@ export default {
   singleEvents: [{
     name: 'onSwiperTransition',
     eventName: 'transition'
-  },
-  {
-    name: 'onSwiperAnimationfinish',
-    eventName: 'animationfinish'
   }],
   functionalSingleEvents: [
     {
@@ -97,3 +96,18 @@ export default {
     }
   ]
 };
+
+if (isMiniApp) {
+  swiper.singleEvents.push({
+    name: 'onSwiperAnimationEnd',
+    eventName: 'animationEnd'
+  });
+}
+if (isWeChatMiniProgram) {
+  swiper.singleEvents.push({
+    name: 'onSwiperAnimationFinish',
+    eventName: 'animationfinish'
+  });
+}
+
+export default swiper;
