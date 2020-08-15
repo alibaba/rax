@@ -9,6 +9,14 @@ let lastRafTime = 0;
 let window;
 
 class Window extends EventTarget {
+  __sharedEventNames = ['pageshow', 'pagehide']
+
+  // Collect event handlers which undifferentiated pages
+  __sharedHandlers = []
+
+  // Simulate for react
+  HTMLIFrameElement = function() {}
+
   constructor() {
     super();
 
@@ -23,11 +31,6 @@ class Window extends EventTarget {
         super(name, options);
       }
     };
-
-    this.__sharedHandlers = [];
-
-    // Simulate for react
-    this.HTMLIFrameElement = function() {};
   }
 
   // Forces the setData cache to be emptied
@@ -35,13 +38,8 @@ class Window extends EventTarget {
     tool.flushThrottleCache();
   }
 
-  $$destroy() {
-    this.__sharedHandlers = [];
-    super.$$destroy();
-  }
-
   addEventListener(eventName, handler, options) {
-    if (eventName === 'pageshow' || eventName === 'pagehide') {
+    if (this.__sharedEventNames.indexOf(eventName) > 0) {
       this.__sharedHandlers.push({
         eventName,
         handler
@@ -89,16 +87,15 @@ class Window extends EventTarget {
       }
     }
 
-    if (eventName === 'pageshow' || eventName === 'pagehide') {
+    if (this.__sharedEventNames.indexOf(eventName) > 0) {
       this.__sharedHandlers
         .filter((handlerInfo) => handlerInfo.eventName === eventName)
         .forEach(({ handler }) => {
           handler.call(this);
         });
-      return;
+    } else {
+      return super.$$trigger(eventName, options);
     }
-
-    return super.$$trigger(eventName, options);
   }
 
   /**
