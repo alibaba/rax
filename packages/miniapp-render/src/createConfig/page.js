@@ -6,23 +6,26 @@ import createDocument from '../document';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp } from 'universal-env';
 
-export function getBaseLifeCycles() {
+export function getBaseLifeCycles(route) {
   return {
     onLoad(query) {
+      // eslint-disable-next-line no-undef
+      const app = getApp();
       this.window = cache.getWindow();
-      this.document = cache.getDocument(this.pageId);
-      if (!this.document) {
+
+      this.pageId = route + '-' + cache.getRouteId(route);
+      if (this.pageId === app.__pageId) {
+        this.document = cache.getDocument(this.pageId);
+      } else {
         this.document = createDocument(this.pageId);
       }
 
       // In wechat miniprogram web bundle need be executed in first page
-      if (!isMiniApp) {
-        // eslint-disable-next-line no-undef
-        const app = getApp();
-        if (!app.launched) {
-          app.init(this.document);
-          app.launched = true;
-        }
+      if (!isMiniApp && !app.launched) {
+        app.init(this.document);
+        app.launched = true;
+        // The real app show has passed when init function execute
+        app.onShow.call(app, app.__showOptions);
       }
       // Bind page internal to page document
       this.document._internal = this;
@@ -47,6 +50,12 @@ export function getBaseLifeCycles() {
           if (this.$batchedUpdates) {
             let callback;
             this.$batchedUpdates(() => {
+              if (this.firstRender) {
+                this.setData({
+                  pageId: this.pageId,
+                  'root.pageId': this.pageId
+                });
+              }
               tasks.forEach((task, index) => {
                 if (index === tasks.length - 1) {
                   callback = () => {
@@ -69,6 +78,12 @@ export function getBaseLifeCycles() {
               });
             });
           } else {
+            if (this.firstRender) {
+              Object.assign(tasks[0], {
+                pageId: this.pageId,
+                'root.pageId': this.pageId
+              });
+            }
             this.setData(tasks[0], () => {
               if (process.env.NODE_ENV === 'development') {
                 perf.stop('setData');
@@ -118,14 +133,10 @@ export function getBaseLifeCycles() {
 }
 
 export default function(route, lifeCycles = []) {
-  const pageId = `${route}-${cache.getRouteId(route)}`;
   const pageConfig = {
     firstRender: true,
-    pageId,
     data: {
-      pageId,
       root: {
-        pageId,
         children: []
       }
     },
@@ -138,8 +149,8 @@ export default function(route, lifeCycles = []) {
         }
       }
     },
-    ...getBaseLifeCycles(),
-    ...createEventProxy(pageId)
+    ...getBaseLifeCycles(route),
+    ...createEventProxy()
   };
   // Define page lifecycles, like onReachBottom
   injectLifeCycle(lifeCycles, pageConfig);

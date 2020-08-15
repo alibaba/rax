@@ -74,7 +74,7 @@ function getConfig() {
 
 function getRouteId(route) {
   if (!routeMap[route]) {
-    return routeMap[route] = 0;
+    return routeMap[route] = 1;
   } else {
     return ++routeMap[route];
   }

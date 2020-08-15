@@ -24,6 +24,8 @@ class Window extends EventTarget {
       }
     };
 
+    this.__sharedHandlers = [];
+
     // Simulate for react
     this.HTMLIFrameElement = function() {};
   }
@@ -31,6 +33,22 @@ class Window extends EventTarget {
   // Forces the setData cache to be emptied
   $$forceRender() {
     tool.flushThrottleCache();
+  }
+
+  $$destroy() {
+    this.__sharedHandlers = [];
+    super.$$destroy();
+  }
+
+  addEventListener(eventName, handler, options) {
+    if (eventName === 'pageshow' || eventName === 'pagehide') {
+      this.__sharedHandlers.push({
+        eventName,
+        handler
+      });
+      return;
+    }
+    return super.addEventListener(eventName, handler, options);
   }
 
   // Trigger node event
@@ -69,6 +87,15 @@ class Window extends EventTarget {
         };
         this.onerror.$$isOfficial = true;
       }
+    }
+
+    if (eventName === 'pageshow' || eventName === 'pagehide') {
+      this.__sharedHandlers
+        .filter((handlerInfo) => handlerInfo.eventName === eventName)
+        .forEach(({ handler }) => {
+          handler.call(this);
+        });
+      return;
     }
 
     return super.$$trigger(eventName, options);
