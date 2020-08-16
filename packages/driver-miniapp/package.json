@@ -1,0 +1,22 @@
+{
+  "name": "driver-miniapp",
+  "version": "0.1.2",
+  "description": "MiniApp (runtime) driver for Rax",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "devDependencies": {
+    "rax": "^1.0.0"
+  },
+  "dependencies": {
+    "driver-dom": "^2.0.6"
+  }
+}

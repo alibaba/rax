@@ -1,0 +1,19 @@
+{
+  "name": "driver-kraken",
+  "version": "0.2.1",
+  "description": "Kraken driver for Rax.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "devDependencies": {
+    "rax": "^1.1.0"
+  }
+}

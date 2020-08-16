@@ -1,0 +1,33 @@
+{
+  "name": "rax-redux",
+  "version": "1.0.0",
+  "description": "Official Rax bindings for Redux.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "invariant": "^2.2.4"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0",
+    "redux": "^2.0.0 || ^3.0.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "rax": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "rax-test-renderer": "^1.0.0"
+  }
+}

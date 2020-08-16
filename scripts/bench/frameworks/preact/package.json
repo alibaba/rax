@@ -1,0 +1,20 @@
+{
+  "name": "js-framework-benchmark-preact",
+  "version": "1.0.0",
+  "description": "Benchmark for preact",
+  "scripts": {
+    "build-dev": "webpack -w -d",
+    "build-prod": "webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "webpack": "4.22.0",
+    "webpack-cli": "3.1.2"
+  },
+  "dependencies": {
+    "preact": "^8.2.6"
+  }
+}

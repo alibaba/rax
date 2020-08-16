@@ -1,0 +1,26 @@
+{
+  "name": "rax-server",
+  "version": "1.0.1",
+  "description": "Rax server.",
+  "license": "BSD-3-Clause",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0"
+  },
+  "dependencies": {
+    "path-to-regexp": "^3.0.0",
+    "rax-pwa": "^1.0.0",
+    "rax-server-renderer": "^1.0.1"
+  }
+}

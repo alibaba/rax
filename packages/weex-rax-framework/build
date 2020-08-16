@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# Example: ./build -n tnpm -b
+
+# Reset in case getopts has been used previously in the shell.
+OPTIND=1
+
+# Initialize our own variables:
+npm="npm"
+install="link"
+onlyBuild=0
+
+while getopts "bin:" opt; do
+  case "$opt" in
+    b) onlyBuild=1
+    ;;
+    i) install="install"
+    ;;
+    n) npm=$OPTARG
+    ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+[ "$1" = "--" ] && shift
+
+echo "Make sure you has been build `weex-rax-framework` by `npm run dist` in `rax` project root"
+
+echo "Creates global weex-rax-framework link:"
+$npm link
+
+if [[ $onlyBuild == 1 ]]; then
+
+  echo "Build without prerequisites:"
+  cd weex
+
+else
+
+  echo "Clone the weex repository and install prerequisites:"
+  git clone https://github.com/alibaba/weex.git --depth=1
+  cd weex
+  $npm install
+
+fi
+
+echo "Install/Link the weex-rax-framework of your dependency:"
+npm $install weex-rax-framework
+
+echo "Config weex/html5/frameworks/index.js"
+echo -e "import * as Weex from './legacy/index'\nimport Rax from 'weex-rax-framework'\nexport default {\n  Rax, Weex\n}" > html5/frameworks/index.js
+
+echo "Build jsfm for native renderer to weex/dist/native.js"
+$npm run build:native
+
+echo "Done"

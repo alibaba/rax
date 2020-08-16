@@ -1,0 +1,28 @@
+{
+  "name": "driver-universal",
+  "version": "3.1.3",
+  "description": "Driver for Universal App.",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "devDependencies": {
+    "rax": "^1.0.0"
+  },
+  "dependencies": {
+    "driver-dom": "^2.0.5",
+    "driver-kraken": "^0.2.0",
+    "driver-miniapp": "^0.1.0",
+    "driver-weex": "^2.0.0",
+    "style-unit": "^2.0.0",
+    "universal-env": "^3.0.0"
+  }
+}

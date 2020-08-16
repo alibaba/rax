@@ -1,0 +1,29 @@
+{
+  "name": "rax-clone-element",
+  "version": "1.0.0",
+  "description": "Rax cloneElement",
+  "license": "BSD-3-Clause",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alibaba/rax.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alibaba/rax/issues"
+  },
+  "homepage": "https://github.com/alibaba/rax#readme",
+  "engines": {
+    "npm": ">=3.0.0"
+  },
+  "dependencies": {
+    "rax-is-valid-element": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0",
+    "driver-server": "^1.0.0",
+    "rax-create-factory": "^1.0.0"
+  },
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  }
+}

@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot Link changes the class when hovered 1`] = `
+Object {
+  "attributes": Object {
+    "class": "normal",
+    "href": "https://example.com",
+  },
+  "children": Array [
+    "Example",
+  ],
+  "eventListeners": Object {
+    "mouseenter": [Function],
+    "mouseleave": [Function],
+  },
+  "tagName": "A",
+}
+`;
+
+exports[`snapshot Link changes the class when hovered 2`] = `
+Object {
+  "attributes": Object {
+    "class": "hovered",
+    "href": "https://example.com",
+  },
+  "children": Array [
+    "Example",
+  ],
+  "eventListeners": Object {
+    "mouseenter": [Function],
+    "mouseleave": [Function],
+  },
+  "tagName": "A",
+}
+`;
+
+exports[`snapshot Link changes the class when hovered 3`] = `
+Object {
+  "attributes": Object {
+    "class": "normal",
+    "href": "https://example.com",
+  },
+  "children": Array [
+    "Example",
+  ],
+  "eventListeners": Object {
+    "mouseenter": [Function],
+    "mouseleave": [Function],
+  },
+  "tagName": "A",
+}
+`;
