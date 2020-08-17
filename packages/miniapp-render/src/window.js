@@ -9,14 +9,6 @@ let lastRafTime = 0;
 let window;
 
 class Window extends EventTarget {
-  __sharedEventNames = ['pageshow', 'pagehide']
-
-  // Collect event handlers which undifferentiated pages
-  __sharedHandlers = []
-
-  // Simulate for react
-  HTMLIFrameElement = function() {}
-
   constructor() {
     super();
 
@@ -31,6 +23,14 @@ class Window extends EventTarget {
         super(name, options);
       }
     };
+
+    this.__sharedEventNames = ['pageshow', 'pagehide'];
+
+    // Collect event handlers which undifferentiated pages
+    this.__sharedHandlers = [];
+
+    // Simulate for react
+    this.HTMLIFrameElement = function() {};
   }
 
   // Forces the setData cache to be emptied

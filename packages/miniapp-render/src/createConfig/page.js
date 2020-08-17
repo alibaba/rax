@@ -50,20 +50,14 @@ export function getBaseLifeCycles(route) {
           if (this.$batchedUpdates) {
             let callback;
             this.$batchedUpdates(() => {
-              if (this.firstRender) {
-                this.setData({
-                  pageId: this.pageId,
-                  'root.pageId': this.pageId
-                });
-              }
               tasks.forEach((task, index) => {
                 if (index === tasks.length - 1) {
                   callback = () => {
                     if (process.env.NODE_ENV === 'development') {
                       perf.stop('setData');
                     }
-                    this.firstRenderCallback(query);
                   };
+                  this.firstRenderCallback(query);
                 }
                 if (task.type === 'children') {
                   const spliceArgs = [task.start, task.deleteCount];
@@ -78,17 +72,11 @@ export function getBaseLifeCycles(route) {
               });
             });
           } else {
-            if (this.firstRender) {
-              Object.assign(tasks[0], {
-                pageId: this.pageId,
-                'root.pageId': this.pageId
-              });
-            }
+            this.firstRenderCallback(query, tasks[0]);
             this.setData(tasks[0], () => {
               if (process.env.NODE_ENV === 'development') {
                 perf.stop('setData');
               }
-              this.firstRenderCallback(query);
             });
           }
         }
@@ -140,12 +128,17 @@ export default function(route, lifeCycles = []) {
         children: []
       }
     },
-    firstRenderCallback(query) {
+    firstRenderCallback(task) {
       if (this.firstRender) {
         this.firstRender = false;
-        if (this.window) {
-          this.window.$$trigger('load');
-          this.window.$$trigger('pageload', { event: query });
+        const initData = {
+          pageId: this.pageId,
+          'root.pageId': this.pageId
+        };
+        if (task) {
+          Object.assign(task, initData);
+        } else {
+          this.setData(initData);
         }
       }
     },
