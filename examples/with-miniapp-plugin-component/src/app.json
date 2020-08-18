@@ -1,0 +1,17 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "source": "pages/Home/index"
+    }
+  ],
+  "plugins": {
+    "myPlugin": {
+      "version": "dev",
+      "provider": "{{currentPluginId}}"
+    }
+  },
+  "window": {
+    "title": "Rax App"
+  }
+}
