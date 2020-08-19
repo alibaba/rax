@@ -57,7 +57,7 @@ export function getBaseLifeCycles(route) {
                       perf.stop('setData');
                     }
                   };
-                  this.firstRenderCallback(query);
+                  this.firstRenderCallback();
                 }
                 if (task.type === 'children') {
                   const spliceArgs = [task.start, task.deleteCount];
@@ -72,7 +72,7 @@ export function getBaseLifeCycles(route) {
               });
             });
           } else {
-            this.firstRenderCallback(query, tasks[0]);
+            this.firstRenderCallback(tasks[0]);
             this.setData(tasks[0], () => {
               if (process.env.NODE_ENV === 'development') {
                 perf.stop('setData');
