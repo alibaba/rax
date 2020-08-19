@@ -4,7 +4,7 @@ Component({
     list: {
       type: Array,
       value: [],
-      observer: function (newVal, oldVal, changedPath) {
+      observer: function(newVal, oldVal, changedPath) {
         this.setData({ list: newVal });
       }
     }
@@ -19,4 +19,4 @@ Component({
       this.triggerEvent('Test');
     }
   }
-})
+});

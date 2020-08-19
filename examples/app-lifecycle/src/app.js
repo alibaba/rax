@@ -15,10 +15,10 @@ useAppHide(() => {
 
 useAppShare(() => {
   return {
-    title : '分享标题' ,
-    desc : '分享详细说明' ,
-    path : 'pages/Home/index'
-  }
+    title: '分享标题',
+    desc: '分享详细说明',
+    path: 'pages/Home/index'
+  };
 });
 
 useAppError(() => {

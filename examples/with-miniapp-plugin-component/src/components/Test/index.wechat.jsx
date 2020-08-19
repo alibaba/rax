@@ -10,14 +10,18 @@ export default function Home() {
   const list = [1, 2, 3];
   return (
     <View className="home">
-      <View
-        x-for={item in [1,2,3,4,5,6]}
-        key={item}
-      >
-        <Plugin list={list} onTest={() => {
-          test(item)
-        }} />
-      </View>
+      {
+        [1, 2, 3, 4, 5, 6].map(item => {
+          return (
+            <View key={item}>
+              <Plugin list={list} onTest={() => {
+                test(item);
+              }} />
+            </View>
+          );
+        })
+      }
+
     </View>
   );
 }
