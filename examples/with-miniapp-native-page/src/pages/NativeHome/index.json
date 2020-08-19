@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "comp1": "../../public/components/comp1/index",
+    "comp2": "../../public/components/comp2/index"
+  }
+}

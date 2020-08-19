@@ -1,0 +1,7 @@
+/* plugin/components/hello-component.wxss */
+.container {
+  margin: 1em;
+}
+.item {
+  display: block;
+}
