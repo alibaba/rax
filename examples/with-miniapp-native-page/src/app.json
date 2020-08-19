@@ -1,0 +1,15 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "source": "pages/Home/index"
+    },
+    {
+      "path": "/native",
+      "source": "pages/NativeHome/index"
+    }
+  ],
+  "window": {
+    "title": "Rax App"
+  }
+}

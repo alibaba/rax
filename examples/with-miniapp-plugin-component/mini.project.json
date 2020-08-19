@@ -1,0 +1,6 @@
+{
+  "miniprogramRoot": "build/miniapp",
+  "pluginRoot": "ali-miniapp-plugin",
+  "compileType": "plugin",
+  "component2": false
+}

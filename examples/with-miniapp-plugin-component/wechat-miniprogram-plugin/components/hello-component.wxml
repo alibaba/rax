@@ -1,0 +1,4 @@
+<!--plugin/components/hello-component.wxml-->
+<view class="container" bindtap="onClick">
+  <text class="item" wx:key="item" wx:for="{{ list }}">{{ item }}</text>
+</view>
