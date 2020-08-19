@@ -10,20 +10,19 @@ const Home = () => {
   return (
     <View>
       <View onClick={() => {
-        console.log(1123)
-      setVisible(true)
-      
+        console.log(1123);
+        setVisible(true);
       }}>open</View>
       <Modal
         visible={visible}
         onHide={() => {
-          setVisible(false)
+          setVisible(false);
         }}
       >
         <Text>Hello, world</Text>
       </Modal>
     </View>
   );
-}
+};
 
 export default Home;

@@ -12,10 +12,10 @@ function handler(lifeCycle) {
     console.log('about page ' + lifeCycle);
     if (lifeCycle === 'onShareAppMessage') {
       return {
-        title : '分享标题' ,
-        desc : '分享详细说明' ,
-        path : 'pages/Home/index'
-      }
+        title: '分享标题',
+        desc: '分享详细说明',
+        path: 'pages/Home/index'
+      };
     }
   };
 }
@@ -35,9 +35,15 @@ function About(props) {
     <View className="home">
       <Logo uri="//gw.alicdn.com/tfs/TB1MRC_cvb2gK0jSZK9XXaEgFXa-1701-1535.png" />
       <Text className="title">这里是 About 页面</Text>
-      <Text className="info" onClick={() => { props.history.push('/about');}}>history.push Home 页面</Text>
-      <Text className="info" onClick={() => { props.history.replace('/about'); }}>history.replace Home 页面</Text>
-      <Text className="info" onClick={() => { props.history.goBack(); }}>history.back Home 页面</Text>
+      <Text className="info" onClick={() => {
+        props.history.push('/about');
+      }}>history.push Home 页面</Text>
+      <Text className="info" onClick={() => {
+        props.history.replace('/about');
+      }}>history.replace Home 页面</Text>
+      <Text className="info" onClick={() => {
+        props.history.goBack();
+      }}>history.back Home 页面</Text>
 
     </View>
   );

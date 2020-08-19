@@ -1,14 +1,14 @@
-var data = 'init data'
+var data = 'init data';
 
 function getData() {
-  return data
+  return data;
 }
 
 function setData(value) {
-  data = value
+  data = value;
 }
 
 module.exports = {
   getData: getData,
   setData: setData
-}
+};

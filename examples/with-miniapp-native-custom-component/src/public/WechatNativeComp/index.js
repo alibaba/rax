@@ -4,4 +4,4 @@ Component({
       this.triggerEvent('click');
     }
   }
-})
+});

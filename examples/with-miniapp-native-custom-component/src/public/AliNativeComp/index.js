@@ -4,4 +4,4 @@ Component({
       this.props.onClick && this.props.onClick();
     }
   }
-})
+});

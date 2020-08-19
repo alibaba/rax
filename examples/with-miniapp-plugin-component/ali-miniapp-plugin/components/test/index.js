@@ -8,4 +8,4 @@ Component({
       this.props.onTest && this.props.onTest(pluginName);
     }
   }
-})
+});
