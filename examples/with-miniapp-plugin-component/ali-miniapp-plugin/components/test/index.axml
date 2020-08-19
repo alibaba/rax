@@ -1,0 +1,3 @@
+<view onTap="onClick">
+  <view>{{pluginName}}</view>
+</view>
