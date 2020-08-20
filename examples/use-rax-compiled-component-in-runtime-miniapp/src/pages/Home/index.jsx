@@ -10,7 +10,6 @@ const Home = () => {
   return (
     <View>
       <View onClick={() => {
-        console.log(1123);
         setVisible(true);
       }}>open</View>
       <Modal
