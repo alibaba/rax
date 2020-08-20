@@ -24,6 +24,11 @@ class Window extends EventTarget {
       }
     };
 
+    this.__sharedEventNames = ['pageshow', 'pagehide'];
+
+    // Collect event handlers which undifferentiated pages
+    this.__sharedHandlers = [];
+
     // Simulate for react
     this.HTMLIFrameElement = function() {};
   }
@@ -31,6 +36,17 @@ class Window extends EventTarget {
   // Forces the setData cache to be emptied
   $$forceRender() {
     tool.flushThrottleCache();
+  }
+
+  addEventListener(eventName, handler, options) {
+    if (this.__sharedEventNames.indexOf(eventName) > 0) {
+      this.__sharedHandlers.push({
+        eventName,
+        handler
+      });
+      return;
+    }
+    return super.addEventListener(eventName, handler, options);
   }
 
   // Trigger node event
@@ -71,7 +87,15 @@ class Window extends EventTarget {
       }
     }
 
-    return super.$$trigger(eventName, options);
+    if (this.__sharedEventNames.indexOf(eventName) > 0) {
+      this.__sharedHandlers
+        .filter((handlerInfo) => handlerInfo.eventName === eventName)
+        .forEach(({ handler }) => {
+          handler.call(this);
+        });
+    } else {
+      return super.$$trigger(eventName, options);
+    }
   }
 
   /**

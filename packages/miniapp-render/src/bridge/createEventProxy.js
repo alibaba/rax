@@ -19,7 +19,7 @@ function getPageId(internal, pageId) {
   return props && props.r.pageId;
 }
 
-export default function(pageId) {
+export default function() {
   const config = {};
   // Add get DOM Node from event method
   config.getDomNodeFromEvt = getDomNodeFromEvt;
@@ -32,7 +32,7 @@ export default function(pageId) {
   // Add reactive event define which will bubble
   baseEvents.forEach(({ name, extra = null, eventName }) => {
     config[name] = function(evt) {
-      const __pageId = getPageId(this, pageId);
+      const __pageId = getPageId(this, this.data.pageId);
       const document = cache.getDocument(__pageId);
       if (document && document.__checkEvent(evt)) {
         const nodeId = evt.currentTarget.dataset.privateNodeId;
@@ -43,7 +43,7 @@ export default function(pageId) {
   // Add reactive event define which won't bubble
   handlesMap.simpleEvents.forEach(({ name, eventName }) => {
     config[name] = function(evt) {
-      const __pageId = getPageId(this, pageId);
+      const __pageId = getPageId(this, this.data.pageId);
       const nodeId = evt.currentTarget.dataset.privateNodeId;
       const targetNode = cache.getNode(__pageId, nodeId);
       if (!targetNode) return;
@@ -54,7 +54,7 @@ export default function(pageId) {
   // Add reactive event define which only trigger once
   handlesMap.singleEvents.forEach(({ name, eventName }) => {
     config[name] = function(evt) {
-      const __pageId = getPageId(this, pageId);
+      const __pageId = getPageId(this, this.data.pageId);
       this.callSingleEvent(eventName, evt, __pageId);
     };
   });
@@ -62,7 +62,7 @@ export default function(pageId) {
   // Add reactive event define which only trigger once and need middleware
   handlesMap.functionalSingleEvents.forEach(({ name, eventName, middleware }) => {
     config[name] = function(evt) {
-      const __pageId = getPageId(this, pageId);
+      const __pageId = getPageId(this, this.data.pageId);
       const domNode = this.getDomNodeFromEvt(eventName, evt, __pageId);
       if (!domNode) return;
       middleware.call(this, evt, domNode);
@@ -73,7 +73,7 @@ export default function(pageId) {
   // Add reactive event define which complex
   handlesMap.complexEvents.forEach(({ name, eventName, middleware }) => {
     config[name] = function(evt) {
-      const __pageId = getPageId(this, pageId);
+      const __pageId = getPageId(this, this.data.pageId);
       const domNode = this.getDomNodeFromEvt(eventName, evt, __pageId);
       if (!domNode) return;
       middleware.call(this, evt, domNode, __pageId, evt.currentTarget.dataset.privateNodeId);

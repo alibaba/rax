@@ -14,8 +14,8 @@ function simplify(node) {
   }
 
   let componentType;
-  if (node.behavior) {
-    componentType = simpleNode.behavior = node.behavior;
+  if (node._behavior) {
+    componentType = simpleNode.behavior = node._behavior;
   } else {
     componentType = node.tagName;
   }

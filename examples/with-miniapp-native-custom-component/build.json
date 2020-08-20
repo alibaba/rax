@@ -15,7 +15,6 @@
           "buildType": "runtime"
         }
       }
-    ],
-    "@ali/build-plugin-rax-app-def"
+    ]
   ]
 }

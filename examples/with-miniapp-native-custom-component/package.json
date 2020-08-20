@@ -27,8 +27,7 @@
     "eslint-config-rax": "^0.1.0",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-module": "^0.1.0",
-    "eslint-plugin-react": "^7.18.0",
-    "@ali/build-plugin-rax-app-def": "^1.0.2"
+    "eslint-plugin-react": "^7.18.0"
   },
   "private": true,
   "originTemplate": "@rax-materials/scaffolds-app-js"
