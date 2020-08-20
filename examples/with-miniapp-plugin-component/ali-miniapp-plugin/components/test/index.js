@@ -1,6 +1,6 @@
 Component({
   props: {
-    pluginName: ''
+    pluginName: 'plugin'
   },
   methods: {
     onClick() {

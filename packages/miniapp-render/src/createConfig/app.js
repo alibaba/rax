@@ -7,7 +7,7 @@ import cache from '../utils/cache';
 export default function(init, config) {
   cache.setConfig(config);
   const appConfig = {
-    launched: false,
+    launched: isMiniApp,
     onLaunch(options) {
       const window = createWindow();
       cache.setWindow(window);
@@ -16,9 +16,9 @@ export default function(init, config) {
       if (isMiniApp) {
         // Use page route as pageId key word
         // eslint-disable-next-line no-undef
-        const currentPageId = `${getCurrentPages()[0].route}-0`;
+        const currentPageId = `${getCurrentPages()[0].route}-1`;
         const currentDocument = createDocument(currentPageId);
-        window.__pageId = currentPageId;
+        this.__pageId = window.__pageId = currentPageId;
 
         init(window, currentDocument);
         window.$$trigger('launch', {
@@ -41,7 +41,8 @@ export default function(init, config) {
       this.window = window;
     },
     onShow(options) {
-      if (this.window) {
+      if (this.window && this.launched) {
+        this.__showOptions = options;
         this.window.$$trigger('appshow', {
           event: {
             options,
