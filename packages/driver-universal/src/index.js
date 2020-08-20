@@ -14,7 +14,7 @@ if (isWeex) {
 } else if (isMiniApp || isWeChatMiniProgram) {
   currentDriver = MiniAppDriver;
 } else {
-  throw new Error('Your environment was not supported by driver-universal.');
+  console.warn('Warning: Your environment was not supported by driver-universal.');
 }
 
 export default currentDriver;
