@@ -9,7 +9,7 @@ class CustomComponent extends Element {
   }
 
   $$init(options, tree) {
-    this.$_behavior = options.componentName;
+    this.__behavior = options.componentName;
     this.__nativeType = options.tagName === 'custom-component' ? 'customComponent' : 'miniappPlugin';
     super.$$init(options, tree);
   }
@@ -17,15 +17,15 @@ class CustomComponent extends Element {
   $$destroy() {
     super.$$destroy();
 
-    this.$_behavior = null;
+    this.__behavior = null;
   }
 
   $$recycle() {
     this.$$destroy();
   }
 
-  get behavior() {
-    return this.$_behavior;
+  get _behavior() {
+    return this.__behavior;
   }
 
   get $$domInfo() {
@@ -43,11 +43,11 @@ class CustomComponent extends Element {
     const config = cache.getConfig();
     let nativeInfo = null;
     if (this.__nativeType === 'customComponent') {
-      domInfo.customComponentName = this.$_behavior;
-      nativeInfo = config.usingComponents[this.$_behavior];
+      domInfo.customComponentName = this.__behavior;
+      nativeInfo = config.usingComponents[this.__behavior];
     } else if (this.__nativeType === 'miniappPlugin') {
-      domInfo.miniappPluginName = this.$_behavior;
-      nativeInfo = config.usingPlugins[this.$_behavior];
+      domInfo.miniappPluginName = this.__behavior;
+      nativeInfo = config.usingPlugins[this.__behavior];
     }
     if (nativeInfo) {
       // Inject props scanned by babel plugin into domInfo
@@ -56,7 +56,7 @@ class CustomComponent extends Element {
       });
       // Bind methods to every element which is used recursively to generate dom tree
       nativeInfo.events.forEach(event => {
-        const eventName = `${this.$_behavior}_${event}_${tool.getId()}`;
+        const eventName = `${this.__behavior}_${event}_${tool.getId()}`;
         domInfo[event] = eventName;
         cache.setElementMethods(eventName, (...args) => {
           this.$$trigger(event, { args });
