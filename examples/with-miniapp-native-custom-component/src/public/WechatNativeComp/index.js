@@ -4,8 +4,4 @@ Component({
       this.triggerEvent('click');
     }
   }
-<<<<<<< HEAD
-})
-=======
 });
->>>>>>> master

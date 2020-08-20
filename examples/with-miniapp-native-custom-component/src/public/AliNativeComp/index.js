@@ -4,8 +4,4 @@ Component({
       this.props.onClick && this.props.onClick();
     }
   }
-<<<<<<< HEAD
-})
-=======
 });
->>>>>>> master

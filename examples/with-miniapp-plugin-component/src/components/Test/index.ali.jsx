@@ -8,17 +8,6 @@ export default function Home() {
   }
   return (
     <View className="home">
-<<<<<<< HEAD
-      <View
-        x-for={item in [1,2,3,4,5,6]}
-        key={item}
-      >
-        <Test
-          onTest={test}
-          pluginName={`插件 No.${item}`}
-        />
-      </View>
-=======
       {
         [1, 2, 3, 4, 5, 6].map(item => {
           return (
@@ -31,7 +20,6 @@ export default function Home() {
           );
         })
       }
->>>>>>> master
     </View>
   );
 }
