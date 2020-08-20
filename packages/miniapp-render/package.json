@@ -1,6 +1,6 @@
 {
   "name": "miniapp-render",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "DOM simulator for MiniApp",
   "files": [
     "dist"
