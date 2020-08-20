@@ -113,7 +113,7 @@ class Document extends EventTarget {
       // Transform to builtin-component
       options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
-      options.attrs.behavior = componentName;
+      options.attrs._behavior = componentName;
       return BuiltInComponent.$$create(options, tree);
     } else if (this.usingComponents[originTagName]) {
       // Transform to custom-component

@@ -12,14 +12,14 @@ class BuiltInComponent extends Element {
     this.$$destroy();
   }
 
-  get behavior() {
-    return this.$_attrs.get('behavior') || '';
+  get _behavior() {
+    return this.$_attrs.get('_behavior') || '';
   }
 
-  set behavior(value) {
+  set _behavior(value) {
     if (typeof value !== 'string') return;
 
-    this.$_attrs.set('behavior', value);
+    this.$_attrs.set('_behavior', value);
   }
 
 
