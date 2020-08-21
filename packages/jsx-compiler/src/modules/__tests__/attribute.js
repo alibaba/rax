@@ -10,7 +10,7 @@ describe('Transform JSX Attribute', () => {
     const code = '<View key={1}>test</View>';
     const ast = parseExpression(code);
     _transformAttribute(ast, code, adapter);
-    expect(genCode(ast).code).toEqual('<View key={1}>test</View>');
+    expect(genCode(ast).code).toEqual('<View a:key={1}>test</View>');
   });
   it('should transform attribute name is className', () => {
     const code = '<rax-view className="box">test</rax-view>';

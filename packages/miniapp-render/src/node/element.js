@@ -22,7 +22,6 @@ class Element extends Node {
     this.$_children = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.$_unary = !!parser.voidMap[this.$_tagName.toLowerCase()];
-    this.$_notTriggerUpdate = false;
     this.$_dataset = null;
     this.$_classList = null;
     this.$_style = null;
@@ -47,7 +46,6 @@ class Element extends Node {
     this.$_children.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
     this.$_unary = null;
-    this.$_notTriggerUpdate = false;
     this.$_dataset = null;
     this.$_classList = null;
     this.$_style = null;
@@ -105,9 +103,6 @@ class Element extends Node {
     const attrKeys = Object.keys(attrs);
     if (!attrKeys.length) return;
 
-    // Initialization does not trigger updates
-    this.$_notTriggerUpdate = true;
-
     attrKeys.forEach(name => {
       if (name.indexOf('data-') === 0) {
         // dataset
@@ -115,12 +110,9 @@ class Element extends Node {
         this.$_dataset[datasetName] = attrs[name];
       } else {
         // Other attributes
-        this.setAttribute(name, attrs[name]);
+        this.__setAttributeWithoutUpdate(name, attrs[name]);
       }
     });
-
-    // Restart triggers update
-    this.$_notTriggerUpdate = false;
   }
 
   // Listen for class or style attribute values to change
@@ -129,9 +121,11 @@ class Element extends Node {
     this._triggerUpdate(payload);
   }
 
-  _triggerUpdate(payload) {
-    if (!this.$_notTriggerUpdate) {
+  _triggerUpdate(payload, immediate = true) {
+    if (!this.__notTriggerUpdate) {
       this.enqueueRender(payload);
+    } else if (!immediate && this._root) {
+      this._root.renderStacks.push(payload);
     }
   }
 
@@ -263,7 +257,8 @@ class Element extends Node {
       id: this.id,
       className: this.className,
       style: this.$__style ? this.style.cssText : '',
-      animation: this.$__attrs ? this.$__attrs.get('animation') : {}
+      animation: this.$__attrs ? this.$__attrs.get('animation') : {},
+      slot: this.$__attrs ? this.$__attrs.get('slot') : null,
     };
   }
 
@@ -287,48 +282,11 @@ class Element extends Node {
     return {};
   }
 
-  // Gets the context object of the corresponding widget component
-  $$getContext() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
-          .exec();
-      } else {
-        window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject()).exec();
-      }
-    });
-  }
-
-  // Gets the NodesRef object for the corresponding node
-  $$getNodesRef() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        resolve(CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
-      } else {
-        resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
-      }
-    });
-  }
-
   // Sets properties, but does not trigger updates
-  $$setAttributeWithoutUpdate(name, value) {
-    if (typeof name !== 'string') return;
-
-    this.$_notTriggerUpdate = true;
-    this.$_attrs.set(name, value);
-    this.$_notTriggerUpdate = false;
+  __setAttributeWithoutUpdate(name, value) {
+    this.__notTriggerUpdate = true;
+    this.setAttribute(name, value, false);
+    this.__notTriggerUpdate = false;
   }
 
   get id() {
@@ -736,7 +694,7 @@ class Element extends Node {
     return this.$_tree.query(selector, this);
   }
 
-  setAttribute(name, value) {
+  setAttribute(name, value, immediate = true) {
     if (typeof name !== 'string') return;
 
     // preserve the original contents of the object/Array/boolean/undefined to facilitate the use of the built-in components of miniapp
@@ -747,7 +705,7 @@ class Element extends Node {
       // id to be handled here in advance
       this.id = value;
     } else {
-      this.$_attrs.set(name, value);
+      this.$_attrs.set(name, value, immediate);
     }
   }
 

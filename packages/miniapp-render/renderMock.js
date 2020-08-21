@@ -1,4 +1,6 @@
-import { createPage } from './src/createConfig/page';
+import { createWindow } from './src/window';
+import createDocument from './src/document';
+import cache from './src/utils/cache';
 
 const config = {
   optimization: {
@@ -55,13 +57,29 @@ global.CONTAINER = global.wx;
 
 export default {
   html,
-  createPage(type = 'home') {
-    const pageId = 'p-1-1';
-    const page = createPage({ pageId }, config);
-    page.window.__pageId = pageId;
-    page.document.body.innerHTML = html;
+  createPage() {
+    const pageId = '/pages/home/index-1';
+    const window = createWindow();
+    const document = createDocument(pageId);
+    document.body.innerHTML = html;
+    document._internal = {
+      data: {
+        pageId
+      },
+      setData: (data, callback) => {
+        setTimeout(() => {
+          callback();
+        }, 0);
+      }
+    };
+    window.__pageId = pageId;
+    cache.setWindow(window);
+    cache.setConfig(config);
 
-    return page;
+    return {
+      window,
+      document
+    };
   },
   async sleep(time) {
     return new Promise(resolve => setTimeout(resolve, time));

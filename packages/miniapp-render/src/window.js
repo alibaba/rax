@@ -71,14 +71,14 @@ class Window extends EventTarget {
       }
     }
 
-    super.$$trigger(eventName, options);
+    return super.$$trigger(eventName, options);
   }
 
   /**
    * External properties and methods
    */
   get document() {
-    return cache.getDocument(this.__pageId) || null;
+    return cache.getDocument(this.__pageId);
   }
 
   get CustomEvent() {
