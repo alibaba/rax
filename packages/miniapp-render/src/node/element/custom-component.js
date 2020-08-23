@@ -9,9 +9,21 @@ class CustomComponent extends Element {
   }
 
   $$init(options, tree) {
+    const config = cache.getConfig();
     this.__behavior = options.componentName;
-    this.__nativeType = options.tagName === 'custom-component' ? 'customComponent' : 'miniappPlugin';
+    this.__domInfo = {};
+    if (options.tagName === 'custom-component') {
+      this.__nativeType = 'customComponent';
+      this.__domInfo.customComponentName = this.__behavior;
+      this.__nativeInfo = config.usingComponents[this.__behavior];
+    } else if (options.tagName === 'miniapp-plugin') {
+      this.__nativeType = 'miniappPlugin';
+      this.__domInfo.miniappPluginName = this.__behavior;
+      this.__nativeInfo = config.usingPlugins[this.__behavior];
+    }
     super.$$init(options, tree);
+
+    this.__events = [];
   }
 
   $$destroy() {
@@ -29,7 +41,7 @@ class CustomComponent extends Element {
   }
 
   get $$domInfo() {
-    const domInfo = {
+    const domInfo = Object.assign({}, {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
       nodeType: this.$_type,
@@ -38,28 +50,21 @@ class CustomComponent extends Element {
       className: this.className,
       style: this.$__style ? this.style.cssText : '',
       animation: this.$__attrs ? this.$__attrs.get('animation') : {}
-    };
+    }, this.__domInfo);
 
-    const config = cache.getConfig();
-    let nativeInfo = null;
-    if (this.__nativeType === 'customComponent') {
-      domInfo.customComponentName = this.__behavior;
-      nativeInfo = config.usingComponents[this.__behavior];
-    } else if (this.__nativeType === 'miniappPlugin') {
-      domInfo.miniappPluginName = this.__behavior;
-      nativeInfo = config.usingPlugins[this.__behavior];
-    }
-    if (nativeInfo) {
+    if (this.__nativeInfo) {
       // Inject props scanned by babel plugin into domInfo
-      nativeInfo.props.forEach(prop => {
+      this.__nativeInfo.props.forEach(prop => {
+        if (prop.name) {
+          prop = prop.name;
+        }
         domInfo[prop] = domInfo[prop] || this.$_attrs && this.$__attrs.get(prop);
       });
       // Bind methods to every element which is used recursively to generate dom tree
-      nativeInfo.events.forEach(event => {
-        const eventName = `${this.__behavior}_${event}_${tool.getId()}`;
-        domInfo[event] = eventName;
+      this.__events.forEach(({ eventName, name }) => {
+        domInfo[name] = eventName;
         cache.setElementMethods(eventName, (...args) => {
-          this.$$trigger(event, { args });
+          this.$$trigger(eventName, { args });
         });
       });
     }
@@ -72,6 +77,13 @@ class CustomComponent extends Element {
     if (name === 'id') {
       // id to be handled here in advance
       this.id = value;
+    } else if (typeof value === 'function') {
+      const eventName = `${this.__behavior}_${name}_${tool.getId()}`;
+      this.addEventListener(eventName, value);
+      this.__events.push({
+        eventName,
+        name
+      });
     } else {
       this.$_attrs.set(name, value, immediate);
     }
