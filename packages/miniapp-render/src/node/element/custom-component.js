@@ -12,6 +12,7 @@ class CustomComponent extends Element {
     const config = cache.getConfig();
     this.__behavior = options.componentName;
     this.__domInfo = {};
+    this.__events = [];
     if (options.tagName === 'custom-component') {
       this.__nativeType = 'customComponent';
       this.__domInfo.customComponentName = this.__behavior;
@@ -22,8 +23,6 @@ class CustomComponent extends Element {
       this.__nativeInfo = config.usingPlugins[this.__behavior];
     }
     super.$$init(options, tree);
-
-    this.__events = [];
   }
 
   $$destroy() {
@@ -54,11 +53,8 @@ class CustomComponent extends Element {
 
     if (this.__nativeInfo) {
       // Inject props scanned by babel plugin into domInfo
-      this.__nativeInfo.props.forEach(prop => {
-        if (prop.name) {
-          prop = prop.name;
-        }
-        domInfo[prop] = domInfo[prop] || this.$_attrs && this.$__attrs.get(prop);
+      this.__nativeInfo.props.forEach(({ name }) => {
+        domInfo[name] = domInfo[name] || this.$_attrs && this.$__attrs.get(name);
       });
       // Bind methods to every element which is used recursively to generate dom tree
       this.__events.forEach(({ eventName, name }) => {
@@ -77,7 +73,11 @@ class CustomComponent extends Element {
     if (name === 'id') {
       // id to be handled here in advance
       this.id = value;
-    } else if (typeof value === 'function') {
+    } else if (
+      typeof value === 'function'
+      && this.__nativeInfo
+      && this.__nativeInfo.events.some(({ name: originalName }) => originalName === name)
+    ) {
       const eventName = `${this.__behavior}_${name}_${tool.getId()}`;
       this.addEventListener(eventName, value);
       this.__events.push({
