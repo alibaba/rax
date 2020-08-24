@@ -3,27 +3,12 @@ import Node from './node';
 import ClassList from './class-list';
 import Style from './style';
 import Attribute from './attribute';
-import Pool from '../util/pool';
-import cache from '../util/cache';
-import tool from '../util/tool';
+import cache from '../utils/cache';
+import tool from '../utils/tool';
 import parser from '../tree/parser';
-
-const pool = new Pool();
 
 class Element extends Node {
   static $$create(options, tree) {
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reusing element node
-      const instance = pool.get();
-
-      if (instance) {
-        instance.$$init(options, tree);
-        return instance;
-      }
-    }
-
     return new Element(options, tree);
   }
 
@@ -37,7 +22,6 @@ class Element extends Node {
     this.$_children = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.$_unary = !!parser.voidMap[this.$_tagName.toLowerCase()];
-    this.$_notTriggerUpdate = false;
     this.$_dataset = null;
     this.$_classList = null;
     this.$_style = null;
@@ -62,7 +46,6 @@ class Element extends Node {
     this.$_children.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
     this.$_unary = null;
-    this.$_notTriggerUpdate = false;
     this.$_dataset = null;
     this.$_classList = null;
     this.$_style = null;
@@ -73,13 +56,6 @@ class Element extends Node {
   $$recycle() {
     this.$_children.forEach(child => child.$$recycle());
     this.$$destroy();
-
-    const config = cache.getConfig();
-
-    if (config.optimization.elementMultiplexing) {
-      // Reusing element node
-      pool.add(this);
-    }
   }
 
   set $_dataset(value) {
@@ -97,7 +73,7 @@ class Element extends Node {
   }
 
   get $_classList() {
-    if (!this.$__classList) this.$__classList = ClassList.$$create(this.$_onClassOrStyleUpdate.bind(this));
+    if (!this.$__classList) this.$__classList = ClassList.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
     return this.$__classList;
   }
 
@@ -107,7 +83,7 @@ class Element extends Node {
   }
 
   get $_style() {
-    if (!this.$__style) this.$__style = Style.$$create(this.$_onClassOrStyleUpdate.bind(this));
+    if (!this.$__style) this.$__style = Style.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
     return this.$__style;
   }
 
@@ -117,7 +93,7 @@ class Element extends Node {
   }
 
   get $_attrs() {
-    if (!this.$__attrs) this.$__attrs = Attribute.$$create(this, this.$_triggerParentUpdate.bind(this));
+    if (!this.$__attrs) this.$__attrs = Attribute.$$create(this, this._triggerUpdate.bind(this));
     return this.$__attrs;
   }
 
@@ -127,9 +103,6 @@ class Element extends Node {
     const attrKeys = Object.keys(attrs);
     if (!attrKeys.length) return;
 
-    // Initialization does not trigger updates
-    this.$_notTriggerUpdate = true;
-
     attrKeys.forEach(name => {
       if (name.indexOf('data-') === 0) {
         // dataset
@@ -137,33 +110,38 @@ class Element extends Node {
         this.$_dataset[datasetName] = attrs[name];
       } else {
         // Other attributes
-        this.setAttribute(name, attrs[name]);
+        this.__setAttributeWithoutUpdate(name, attrs[name]);
       }
     });
-
-    // Restart triggers update
-    this.$_notTriggerUpdate = false;
   }
 
   // Listen for class or style attribute values to change
-  $_onClassOrStyleUpdate() {
+  $_onClassOrStyleUpdate(payload) {
     if (this.$__attrs) this.$_attrs.triggerUpdate();
-    this.$_triggerParentUpdate();
+    this._triggerUpdate(payload);
   }
 
-  // Update parent tree
-  $_triggerParentUpdate() {
-    if (this.parentNode && !this.$_notTriggerUpdate) this.parentNode.$$trigger('$$childNodesUpdate');
-    if (!this.$_notTriggerUpdate) this.$$trigger('$$domNodeUpdate');
+  _triggerUpdate(payload, immediate = true) {
+    if (!this.__notTriggerUpdate) {
+      this.enqueueRender(payload);
+    } else if (!immediate && this._root) {
+      this._root.renderStacks.push(payload);
+    }
   }
 
-  // Update child nodes
-  $_triggerMeUpdate() {
-    if (!this.$_notTriggerUpdate) this.$$trigger('$$childNodesUpdate');
+  _traverseNodeMap(node, isRemove) {
+    let queue = [];
+    queue.push(node);
+    while (queue.length) {
+      let curNode = queue.shift();
+      this._updateNodeMap(curNode, isRemove);
+      if (curNode.childNodes && curNode.childNodes.length) {
+        queue = queue.concat(curNode.childNodes);
+      }
+    }
   }
-
   // Changes to the mapping table caused by changes to update child nodes
-  $_updateChildrenExtra(node, isRemove) {
+  _updateNodeMap(node, isRemove) {
     const id = node.id;
 
     // Update nodeId - dom map
@@ -179,12 +157,6 @@ class Element extends Node {
         this.$_tree.updateIdMap(id, null);
       } else {
         this.$_tree.updateIdMap(id, node);
-      }
-    }
-
-    if (node.childNodes && node.childNodes.length) {
-      for (const child of node.childNodes) {
-        this.$_updateChildrenExtra(child, isRemove);
       }
     }
   }
@@ -280,12 +252,13 @@ class Element extends Node {
     return {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
-      type: this.$_type,
+      nodeType: this.$_type,
       tagName: this.$_tagName,
       id: this.id,
       className: this.className,
       style: this.$__style ? this.style.cssText : '',
-      animation: this.$__attrs ? this.$__attrs.get('animation') : {}
+      animation: this.$__attrs ? this.$__attrs.get('animation') : {},
+      slot: this.$__attrs ? this.$__attrs.get('slot') : null,
     };
   }
 
@@ -309,48 +282,11 @@ class Element extends Node {
     return {};
   }
 
-  // Gets the context object of the corresponding widget component
-  $$getContext() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject())
-          .exec();
-      } else {
-        window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => res && res.context ? resolve(res.context) : reject()).exec();
-      }
-    });
-  }
-
-  // Gets the NodesRef object for the corresponding node
-  $$getNodesRef() {
-    // Clears out setData
-    tool.flushThrottleCache();
-    const window = cache.getWindow();
-    return new Promise((resolve, reject) => {
-      if (!window) reject();
-
-      if (this.tagName === 'CANVAS') {
-        // TODO, for the sake of compatibility with a bug in the underlying library, for the time being
-        resolve(CONTAINER.createSelectorQuery().in(this._builtInComponent).select(`.node-${this.$_nodeId}`));
-      } else {
-        resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`));
-      }
-    });
-  }
-
   // Sets properties, but does not trigger updates
-  $$setAttributeWithoutUpdate(name, value) {
-    if (typeof name !== 'string') return;
-
-    this.$_notTriggerUpdate = true;
-    this.$_attrs.set(name, value);
-    this.$_notTriggerUpdate = false;
+  __setAttributeWithoutUpdate(name, value) {
+    this.__notTriggerUpdate = true;
+    this.setAttribute(name, value, false);
+    this.__notTriggerUpdate = false;
   }
 
   get id() {
@@ -371,7 +307,11 @@ class Element extends Node {
     // update tree
     if (this.$_tree.getById(oldId) === this) this.$_tree.updateIdMap(oldId, null);
     if (id) this.$_tree.updateIdMap(id, this);
-    this.$_triggerParentUpdate();
+    const payload = {
+      path: `${this._path}.id`,
+      value: id
+    };
+    this._triggerUpdate(payload);
   }
 
   get tagName() {
@@ -425,12 +365,6 @@ class Element extends Node {
   set innerHTML(html) {
     if (typeof html !== 'string') return;
 
-    const fragment = this.ownerDocument.$$createElement({
-      tagName: 'documentfragment',
-      nodeId: `b-${tool.getId()}`,
-      nodeType: Node.DOCUMENT_FRAGMENT_NODE,
-    });
-
     // parse to ast
     let ast = null;
     try {
@@ -442,9 +376,10 @@ class Element extends Node {
     if (!ast) return;
 
     // Generate dom tree
+    const newChildNodes = [];
     ast.forEach(item => {
       const node = this.$_generateDomTree(item);
-      if (node) fragment.appendChild(node);
+      if (node) newChildNodes.push(node);
     });
 
     // Delete all child nodes
@@ -452,35 +387,13 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update the mapping table
-      this.$_updateChildrenExtra(node, true);
+      this._traverseNodeMap(node, true);
     });
     this.$_children.length = 0;
 
-    // Appends the new child node
-    if (this.$_tagName === 'table') {
-      // The table node needs to determine whether a tbody exists
-      let hasTbody = false;
-
-      for (const child of fragment.childNodes) {
-        if (child.tagName === 'TBODY') {
-          hasTbody = true;
-          break;
-        }
-      }
-
-      if (!hasTbody) {
-        const tbody = this.ownerDocument.$$createElement({
-          tagName: 'tbody',
-          attrs: {},
-          nodeType: Node.ELEMENT_NODE,
-          nodeId: `b-${tool.getId()}`,
-        });
-
-        tbody.appendChild(fragment);
-        this.appendChild(tbody);
-      }
-    } else {
-      this.appendChild(fragment);
+    // Append the new child nodes
+    for (let i = 0, j = newChildNodes.length; i < j; i++) {
+      this.appendChild(newChildNodes[i]);
     }
   }
 
@@ -508,12 +421,9 @@ class Element extends Node {
         node.$$updateParent(null);
 
         // Update the mapping table
-        this.$_updateChildrenExtra(node, true);
+        this._traverseNodeMap(node, true);
       });
       this.$_children.length = 0;
-
-      // When first render doesn't trigger update
-      this.$_notTriggerUpdate = true;
 
       // Append new child nodes
       const children = [].concat(node.childNodes);
@@ -529,10 +439,6 @@ class Element extends Node {
       this.$_dataset = Object.assign({}, node.dataset);
 
       this.$$dealWithAttrsForOuterHTML(node);
-
-      // Trigger update
-      this.$_notTriggerUpdate = false;
-      this.$_triggerParentUpdate();
     }
   }
 
@@ -557,18 +463,27 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update mapping table
-      this.$_updateChildrenExtra(node, true);
+      this._traverseNodeMap(node, true);
     });
-    this.$_children.length = 0;
 
     // An empty string does not add a textNode node
-    if (!text) return;
+    if (!text) {
+      const payload = {
+        type: 'children',
+        path: `${this._path}.children`,
+        start: 0,
+        deleteCount: this.$_children.length
+      };
+      this.$_children.length = 0;
+      this._triggerUpdate(payload);
+    } else {
+      this.$_children.length = 0;
+      // Generated at run time, using the b- prefix
+      const nodeId = `b-${tool.getId()}`;
+      const child = this.ownerDocument.$$createTextNode({content: text, nodeId});
 
-    // Generated at run time, using the b- prefix
-    const nodeId = `b-${tool.getId()}`;
-    const child = this.ownerDocument.$$createTextNode({content: text, nodeId});
-
-    this.appendChild(child);
+      this.appendChild(child);
+    }
   }
 
   get style() {
@@ -632,32 +547,25 @@ class Element extends Node {
   appendChild(node) {
     if (!(node instanceof Node)) return;
 
-    let nodes;
-    let hasUpdate = false;
+    if (node === this) return;
+    if (node.parentNode) node.parentNode.removeChild(node);
 
-    if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      // documentFragment
-      nodes = [].concat(node.childNodes);
-    } else {
-      nodes = [node];
-    }
+    this.$_children.push(node);
+    // Set parentNode
+    node.$$updateParent(this);
 
-    for (const node of nodes) {
-      if (node === this) continue;
-      if (node.parentNode) node.parentNode.removeChild(node);
+    // Update map
+    this._traverseNodeMap(node);
 
-      this.$_children.push(node);
-      // Set parentNode
-      node.$$updateParent(this);
-
-      // Update map
-      this.$_updateChildrenExtra(node);
-
-      hasUpdate = true;
-    }
-
-    // Trigger webview update
-    if (hasUpdate) this.$_triggerMeUpdate();
+    // Trigger update
+    const payload = {
+      type: 'children',
+      path: `${this._path}.children`,
+      start: this.$_children.length - 1,
+      deleteCount: 0,
+      item: node
+    };
+    this._triggerUpdate(payload);
 
     return this;
   }
@@ -674,10 +582,16 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update map
-      this.$_updateChildrenExtra(node, true);
+      this._traverseNodeMap(node, true);
 
-      // Trigger webview update
-      this.$_triggerMeUpdate();
+      // Trigger update
+      const payload = {
+        type: 'children',
+        path: `${this._path}.children`,
+        start: index,
+        deleteCount: 1
+      };
+      this._triggerUpdate(payload);
     }
 
     return node;
@@ -687,46 +601,32 @@ class Element extends Node {
     if (!(node instanceof Node)) return;
     if (ref && !(ref instanceof Node)) return;
 
-    let nodes;
-    let hasUpdate = false;
+    if (node === this) return;
+    if (node.parentNode) node.parentNode.removeChild(node);
 
-    if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      // documentFragment
-      nodes = [];
-      for (let i = 0; i < node.childNodes.length; i++) {
-        // Need to invert them
-        nodes.push(node.childNodes[i]);
-      }
+    const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
+    const payload = {
+      type: 'children',
+      path: `${this._path}.children`,
+      deleteCount: 0,
+      item: node
+    };
+    if (insertIndex === -1) {
+      // Insert to the end
+      this.$_children.push(node);
+      payload.start = this.$_children.length - 1;
     } else {
-      nodes = [node];
+      // Inserted before ref
+      this.$_children.splice(insertIndex, 0, node);
+      payload.start = insertIndex;
     }
+    // Set parentNode
+    node.$$updateParent(this);
 
-    for (const node of nodes) {
-      if (node === this) continue;
-      if (node.parentNode) node.parentNode.removeChild(node);
-
-      const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
-
-      if (insertIndex === -1) {
-        // Insert to the end
-        this.$_children.push(node);
-      } else {
-        // Inserted before ref
-        this.$_children.splice(insertIndex, 0, node);
-      }
-      // Set parentNode
-      node.$$updateParent(this);
-
-      // Update the mapping table
-      this.$_updateChildrenExtra(node);
-
-      hasUpdate = true;
-    }
-
-
-    // Trigger the webview update
-    if (hasUpdate) this.$_triggerMeUpdate();
-
+    // Update the mapping table
+    this._traverseNodeMap(node);
+    // Trigger update
+    this._triggerUpdate(payload);
 
     return node;
   }
@@ -734,45 +634,34 @@ class Element extends Node {
   replaceChild(node, old) {
     if (!(node instanceof Node) || !(old instanceof Node)) return;
 
-    let nodes;
-    let hasUpdate = false;
-
-    if (node.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-      // documentFragment
-      nodes = [];
-      for (let i = node.childNodes.length - 1; i >= 0; i--) {
-        // Inserted one by one, it need to reverse the order
-        nodes.push(node.childNodes[i]);
-      }
-    } else {
-      nodes = [node];
-    }
-
     const replaceIndex = this.$_children.indexOf(old);
     if (replaceIndex !== -1) this.$_children.splice(replaceIndex, 1);
 
-    for (const node of nodes) {
-      if (node === this) continue;
-      if (node.parentNode) node.parentNode.removeChild(node);
+    if (node === this) return;
+    if (node.parentNode) node.parentNode.removeChild(node);
 
-      if (replaceIndex === -1) {
-        // Insert to the end
-        this.$_children.push(node);
-      } else {
-        // Replace to old
-        this.$_children.splice(replaceIndex, 0, node);
-      }
-      // Set parentNode
-      node.$$updateParent(this);
-      // Update the mapping table
-      this.$_updateChildrenExtra(node);
-      this.$_updateChildrenExtra(old, true);
-
-      hasUpdate = true;
+    if (replaceIndex === -1) {
+      // Insert to the end
+      this.$_children.push(node);
+    } else {
+      // Replace to old
+      this.$_children.splice(replaceIndex, 0, node);
     }
+    // Set parentNode
+    node.$$updateParent(this);
+    // Update the mapping table
+    this._traverseNodeMap(node);
+    this._traverseNodeMap(old, true);
 
-    // Trigger the webview side update
-    if (hasUpdate) this.$_triggerMeUpdate();
+    // Trigger update
+    const payload = {
+      type: 'children',
+      path: `${this._path}.children`,
+      start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
+      deleteCount: replaceIndex === -1 ? 0 : 1,
+      item: node
+    };
+    this._triggerUpdate(payload);
 
     return old;
   }
@@ -805,7 +694,7 @@ class Element extends Node {
     return this.$_tree.query(selector, this);
   }
 
-  setAttribute(name, value) {
+  setAttribute(name, value, immediate = true) {
     if (typeof name !== 'string') return;
 
     // preserve the original contents of the object/Array/boolean/undefined to facilitate the use of the built-in components of miniapp
@@ -816,7 +705,7 @@ class Element extends Node {
       // id to be handled here in advance
       this.id = value;
     } else {
-      this.$_attrs.set(name, value);
+      this.$_attrs.set(name, value, immediate);
     }
   }
 
@@ -854,6 +743,13 @@ class Element extends Node {
     }
 
     return false;
+  }
+
+  enqueueRender(payload) {
+    if (this._root === null) {
+      return;
+    }
+    this._root.enqueueRender(payload);
   }
 
   getBoundingClientRect() {

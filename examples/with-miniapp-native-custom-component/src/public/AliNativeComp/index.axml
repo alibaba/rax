@@ -1,0 +1,5 @@
+<view class="test" onTap="onClick">
+  <slot name="header" />
+  <view>我是小程序原生自定义组件</view>
+  <slot name="footer" />
+</view>

@@ -1,0 +1,19 @@
+{
+  "inlineStyle": false,
+  "plugins": [
+    [
+      "build-plugin-rax-app",
+      {
+        "targets": [
+          "miniapp"
+        ],
+        "miniapp": {
+          "buildType": "runtime"
+        },
+        "wechat-miniprogram": {
+          "buildType": "runtime"
+        }
+      }
+    ]
+  ]
+}

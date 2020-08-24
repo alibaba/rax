@@ -1,0 +1,34 @@
+{
+  "name": "@rax-materials/scaffolds-app-js",
+  "author": "rax",
+  "description": "Rax 无线跨端应用工程，使用 JavaScript。",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "build-scripts build",
+    "start": "build-scripts start",
+    "lint": "eslint --ext .js --ext .jsx ./"
+  },
+  "dependencies": {
+    "driver-universal": "^3.0.0",
+    "mini-ali-ui": "^1.1.4",
+    "rax": "^1.1.0",
+    "rax-app": "^2.0.0",
+    "rax-document": "^0.1.0",
+    "rax-image": "^2.0.0",
+    "rax-link": "^1.0.1",
+    "rax-text": "^1.0.0",
+    "rax-view": "^1.0.0"
+  },
+  "devDependencies": {
+    "@alib/build-scripts": "^0.1.0",
+    "babel-eslint": "^10.0.3",
+    "build-plugin-rax-app": "^5.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-rax": "^0.1.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-module": "^0.1.0",
+    "eslint-plugin-react": "^7.18.0"
+  },
+  "private": true,
+  "originTemplate": "@rax-materials/scaffolds-app-js"
+}

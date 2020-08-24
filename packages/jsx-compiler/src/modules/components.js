@@ -1,4 +1,4 @@
-const { join, relative, dirname, resolve, sep } = require('path');
+const { join, relative, dirname, resolve } = require('path');
 const { readJSONSync } = require('fs-extra');
 const resolveModule = require('resolve');
 const t = require('@babel/types');
@@ -12,10 +12,7 @@ const Expression = require('../utils/Expression');
 const getCompiledComponents = require('../getCompiledComponents');
 const replaceComponentTagName = require('../utils/replaceComponentTagName');
 const { getNpmName, normalizeFileName, addRelativePathPrefix, normalizeOutputFilePath } = require('../utils/pathHelper');
-
-const RELATIVE_COMPONENTS_REG = /^\..*(\.jsx?)?$/i;
-const PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*).*$`);
-const GROUP_PKG_NAME_REG = new RegExp(`^.*\\${sep}node_modules\\${sep}([^\\${sep}]*?\\${sep}[^\\${sep}]*).*$`);
+const { RELATIVE_COMPONENTS_REG, MINIAPP_PLUGIN_COMPONENTS_REG, PKG_NAME_REG, GROUP_PKG_NAME_REG} = require('../constants');
 
 let tagCount = 0;
 
@@ -159,120 +156,129 @@ function transformIdentifierComponentName(path, alias, dynamicValue, parsed, opt
 }
 
 function transformComponents(parsed, options) {
-  const { ast, templateAST, imported } = parsed;
+  const { ast, templateAST, imported, exported } = parsed;
   const dynamicValue = {};
   const contextList = [];
   const componentsAlias = {};
-  traverse(templateAST, {
-    JSXOpeningElement(path) {
-      const { node } = path;
-      if (t.isJSXIdentifier(node.name)) {
-        // <View/>
-        const componentTag = node.name.name;
-        const alias = getComponentAlias(componentTag, imported);
-        if (alias) {
-          removeImport(ast, alias);
-          const componentTag = transformIdentifierComponentName(path, alias, dynamicValue, parsed, options);
-          if (componentTag) {
-            // Collect renamed component tag & path info
-            componentsAlias[componentTag] = alias;
-          }
-        } else if (componentTag === 'slot') {
-          transformIdentifierComponentName(
-            path,
-            {
-              name: 'slot',
-              default: true
-            },
-            dynamicValue,
-            parsed,
-            options
-          );
-        }
-      } else if (t.isJSXMemberExpression(node.name)) {
-        // <RecyclerView.Cell /> or <Context.Provider>
-        const { object, property } = node.name;
-        if (t.isJSXIdentifier(object) && t.isJSXIdentifier(property)) {
-          if (property.name === 'Provider') {
-            // <Context.Provider>
-            const valueAttribute = node.attributes.find(a =>
-              t.isJSXIdentifier(a.name, { name: 'value' }),
-            );
-            const contextInitValue = valueAttribute && valueAttribute.value.expression;
-            const contextItem = {
-              contextInitValue,
-              contextName: object.name,
-            };
-            contextList.push(contextItem);
-            replaceComponentTagName(path, t.jsxIdentifier('block'));
-            node.attributes = [];
-          } else {
-            // <RecyclerView.Cell />
-            const alias = getComponentAlias(object.name, imported);
-            removeImport(parsed.ast, alias);
-            if (alias) {
-              const pkg = getComponentConfig(alias.from, options.resourcePath);
-              const isSingleComponent = pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name];
-              const isComponentLibrary = pkg.miniappConfig && pkg.miniappConfig.subPackages && pkg.miniappConfig.subPackages[alias.local] && pkg.miniappConfig.subPackages[alias.local].subComponents && pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
 
-              if (isSingleComponent) {
-                let subComponent = pkg.miniappConfig.subComponents[property.name];
-                replaceComponentTagName(
-                  path,
-                  t.jsxIdentifier(subComponent.tagNameMap),
-                );
-                // subComponent default style
-                if (subComponent.attributes && subComponent.attributes.style) {
-                  node.attributes.push(
-                    t.jsxAttribute(
-                      t.jsxIdentifier('style'),
-                      t.stringLiteral(subComponent.attributes.style),
-                    ),
+  if (templateAST) {
+    traverse(templateAST, {
+      JSXOpeningElement(path) {
+        const { node } = path;
+        if (t.isJSXIdentifier(node.name)) {
+          // <View/>
+          const componentTag = node.name.name;
+          const alias = getComponentAlias(componentTag, imported);
+          if (alias) {
+            removeImport(ast, alias);
+            const componentTag = transformIdentifierComponentName(path, alias, dynamicValue, parsed, options);
+            if (componentTag) {
+              // Collect renamed component tag & path info
+              componentsAlias[componentTag] = alias;
+            }
+          } else if (componentTag === 'slot') {
+            transformIdentifierComponentName(
+              path,
+              {
+                name: 'slot',
+                default: true
+              },
+              dynamicValue,
+              parsed,
+              options
+            );
+          }
+        } else if (t.isJSXMemberExpression(node.name)) {
+          // <RecyclerView.Cell /> or <Context.Provider>
+          const { object, property } = node.name;
+          if (t.isJSXIdentifier(object) && t.isJSXIdentifier(property)) {
+            if (property.name === 'Provider') {
+              // <Context.Provider>
+              const valueAttribute = node.attributes.find(a =>
+                t.isJSXIdentifier(a.name, { name: 'value' }),
+              );
+              const contextInitValue = valueAttribute && valueAttribute.value.expression;
+              const contextItem = {
+                contextInitValue,
+                contextName: object.name,
+              };
+              contextList.push(contextItem);
+              replaceComponentTagName(path, t.jsxIdentifier('block'));
+              node.attributes = [];
+            } else {
+              // <RecyclerView.Cell />
+              const alias = getComponentAlias(object.name, imported);
+              removeImport(parsed.ast, alias);
+              if (alias) {
+                const pkg = getComponentConfig(alias.from, options.resourcePath);
+                const isSingleComponent = pkg.miniappConfig && pkg.miniappConfig.subComponents && pkg.miniappConfig.subComponents[property.name];
+                const isComponentLibrary = pkg.miniappConfig && pkg.miniappConfig.subPackages && pkg.miniappConfig.subPackages[alias.local] && pkg.miniappConfig.subPackages[alias.local].subComponents && pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+
+                if (isSingleComponent) {
+                  let subComponent = pkg.miniappConfig.subComponents[property.name];
+                  replaceComponentTagName(
+                    path,
+                    t.jsxIdentifier(subComponent.tagNameMap),
                   );
+                  // subComponent default style
+                  if (subComponent.attributes && subComponent.attributes.style) {
+                    node.attributes.push(
+                      t.jsxAttribute(
+                        t.jsxIdentifier('style'),
+                        t.stringLiteral(subComponent.attributes.style),
+                      ),
+                    );
+                  }
+                } else if (isComponentLibrary) {
+                  let subComponent = pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
+                  const componentTag = subComponent.tagNameMap || `${alias.name}-${object.name}-${property.name}`.toLowerCase().replace(/@|\//g, '_');
+                  replaceComponentTagName(
+                    path,
+                    t.jsxIdentifier(componentTag)
+                  );
+                  componentsAlias[componentTag] = Object.assign({
+                    isSubComponent: true,
+                    subComponentName: property.name
+                  }, alias);
                 }
-              } else if (isComponentLibrary) {
-                let subComponent = pkg.miniappConfig.subPackages[alias.local].subComponents[property.name];
-                const componentTag = subComponent.tagNameMap || `${alias.name}-${object.name}-${property.name}`.toLowerCase().replace(/@|\//g, '_');
-                replaceComponentTagName(
-                  path,
-                  t.jsxIdentifier(componentTag)
-                );
-                componentsAlias[componentTag] = Object.assign({
-                  isSubComponent: true,
-                  subComponentName: property.name
-                }, alias);
               }
             }
+          } else {
+            throw new Error(
+              `NOT_SUPPORTED: Unsupported type of sub components. ${genExpression(
+                node,
+              )}`,
+            );
           }
-        } else {
-          throw new Error(
-            `NOT_SUPPORTED: Unsupported type of sub components. ${genExpression(
-              node,
-            )}`,
-          );
         }
-      }
-    },
-    JSXExpressionContainer(path) {
-      const { node, parentPath } = path;
-      // Only process under JSXEelement
-      if (parentPath.isJSXElement()) {
-        if (
-          ['this.props.children', 'props.children', 'children'].indexOf(
-            genExpression(node.expression),
-          ) > -1
-        ) {
-          path.replaceWith(createJSX('slot'));
+      },
+      JSXExpressionContainer(path) {
+        const { node, parentPath } = path;
+        // Only process under JSXEelement
+        if (parentPath.isJSXElement()) {
+          if (
+            ['this.props.children', 'props.children', 'children'].indexOf(
+              genExpression(node.expression),
+            ) > -1
+          ) {
+            path.replaceWith(createJSX('slot'));
+          }
         }
+      },
+      JSXFragment(path) {
+        // Transform <></> => <block></block>
+        const blockNode = t.jsxIdentifier('block');
+        const { children = [] } = path.node;
+        path.replaceWith(t.jsxElement(t.jsxOpeningElement(blockNode, []), t.jsxClosingElement(blockNode), children));
       }
-    },
-    JSXFragment(path) {
-      // Transform <></> => <block></block>
-      const blockNode = t.jsxIdentifier('block');
-      const { children = [] } = path.node;
-      path.replaceWith(t.jsxElement(t.jsxOpeningElement(blockNode, []), t.jsxClosingElement(blockNode), children));
+    });
+  } else {
+    // add export muilt component
+    for (let exportName of exported) {
+      const alias = getComponentAlias(exportName, imported);
+      if (alias && alias.name) componentsAlias[alias.name] = alias;
     }
-  });
+  }
   return {
     contextList,
     dynamicValue,
@@ -312,11 +318,11 @@ module.exports = {
   _transformComponents: transformComponents
 };
 
-function getComponentAlias(tagName, imported) {
+function getComponentAlias(quoteName, imported) {
   if (imported) {
     for (let [key, value] of Object.entries(imported)) {
       for (let i = 0, l = value.length; i < l; i++) {
-        if (value[i].local === tagName)
+        if (value[i].local === quoteName)
           return Object.assign({ from: key }, value[i]);
       }
     }
@@ -342,7 +348,9 @@ function getRealNpmPkgName(filePath, pkgName) {
 }
 
 function getComponentPath(alias, options) {
-  if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
+  if (MINIAPP_PLUGIN_COMPONENTS_REG.test(alias.from)) {
+    return alias.from;
+  } else if (RELATIVE_COMPONENTS_REG.test(alias.from)) {
     // alias.local
     if (!options.resourcePath) {
       throw new Error('`resourcePath` must be passed to calc dependency path.');
@@ -362,7 +370,7 @@ function getComponentPath(alias, options) {
 
     // Use specific path to import native miniapp component
     if (pkgName !== alias.from) {
-      return normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, alias.from.replace(pkgName, realPkgName)))));
+      return disableCopyNpm ? alias.from : normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, alias.from.replace(pkgName, realPkgName)))));
     }
     // Use miniappConfig in package.json to import native miniapp component
     const pkg = getComponentConfig(alias.from, options.resourcePath);

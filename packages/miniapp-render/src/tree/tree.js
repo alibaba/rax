@@ -1,3 +1,4 @@
+import RootElement from '../node/root';
 import QuerySelector from './query-selector';
 
 // Traverse the dom tree to collect a list of nodes corresponding to the class and label
@@ -24,7 +25,14 @@ function walkDomTree(node, cache) {
 class Tree {
   constructor(pageId, root, nodeIdMap, document) {
     this.pageId = pageId;
-    this.root = document.$$createElement(root, this);
+    this.root = new RootElement({
+      type: 'element',
+      tagName: 'body',
+      attrs: {},
+      unary: false,
+      nodeId: 'e-body',
+      children: [],
+    }, this);
     this.nodeIdMap = nodeIdMap;
     this.idMap = {};
     this.document = document;

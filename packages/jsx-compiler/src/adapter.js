@@ -32,7 +32,7 @@ const parserAdapters = {
     for: 'a:for',
     forItem: 'a:for-item',
     forIndex: 'a:for-index',
-    key: 'key',
+    key: 'a:key',
 
     view: {
       ...componentCommonProps.ali,
@@ -48,7 +48,9 @@ const parserAdapters = {
     // Need transform key
     needTransformKey: false,
     // Handle rax-slider
-    processSlider: false
+    processSlider: false,
+    // Need register props before program run
+    needRegisterProps: false,
   },
   'wechat': {
     platform: 'wechat',
@@ -75,7 +77,8 @@ const parserAdapters = {
     needTransformEvent: true,
     needTransformKey: true,
     triggerRef: true,
-    processSlider: true
+    processSlider: true,
+    needRegisterProps: true,
   },
   'bytedance': {
     platform: 'bytedance',
@@ -101,7 +104,8 @@ const parserAdapters = {
     // Need transform onClick -> bindonclick
     needTransformEvent: true,
     needTransformKey: true,
-    triggerRef: true
+    triggerRef: true,
+    needRegisterProps: true,
   },
   componentCommonProps
 };

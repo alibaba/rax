@@ -1,0 +1,6 @@
+
+<view>
+  <view>这里是原生页面</view>
+  <comp1></comp1>
+  <comp2></comp2>
+</view>

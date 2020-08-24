@@ -4,13 +4,12 @@ import Node from './node/node';
 import Element from './node/element';
 import TextNode from './node/text-node';
 import Comment from './node/comment';
-import tool from './util/tool';
-import cache from './util/cache';
+import tool from './utils/tool';
+import cache from './utils/cache';
 import Image from './node/element/image';
 import Input from './node/element/input';
 import Textarea from './node/element/textarea';
 import Video from './node/element/video';
-import Canvas from './node/element/canvas';
 import BuiltInComponent from './node/element/builtin-component';
 import CustomComponent from './node/element/custom-component';
 
@@ -19,7 +18,6 @@ const CONSTRUCTOR_MAP = {
   INPUT: Input,
   TEXTAREA: Textarea,
   VIDEO: Video,
-  CANVAS: Canvas,
   'BUILTIN-COMPONENT': BuiltInComponent,
 };
 const BUILTIN_COMPONENT_LIST = [
@@ -46,10 +44,9 @@ class Document extends EventTarget {
   constructor(pageId, nodeIdMap) {
     super();
 
-    const config = cache.getConfig();
-    const nativeCustomComponent = config.nativeCustomComponent || {};
-    this.usingComponents = nativeCustomComponent.usingComponents || {};
-
+    const { usingComponents = {}, usingPlugins = {} } = cache.getConfig();
+    this.usingComponents = usingComponents;
+    this.usingPlugins = usingPlugins;
     this.__pageId = pageId;
 
     // Used to encapsulate special tag and corresponding constructors
@@ -116,7 +113,7 @@ class Document extends EventTarget {
       // Transform to builtin-component
       options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
-      options.attrs.behavior = componentName;
+      options.attrs._behavior = componentName;
       return BuiltInComponent.$$create(options, tree);
     } else if (this.usingComponents[originTagName]) {
       // Transform to custom-component
@@ -124,7 +121,12 @@ class Document extends EventTarget {
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
       return CustomComponent.$$create(options, tree);
-    } else if (!tool.isTagNameSupport(tagName)) {
+    } else if (this.usingPlugins[originTagName]) {
+      options.tagName = 'miniapp-plugin';
+      options.attrs = options.attrs || {};
+      options.componentName = originTagName;
+      return CustomComponent.$$create(options, tree);
+    } if (!tool.isTagNameSupport(tagName)) {
       throw new Error(`${tagName} is not supported.`);
     } else {
       return Element.$$create(options, tree);
@@ -256,4 +258,14 @@ class Document extends EventTarget {
   }
 }
 
-export default Document;
+export default function createDocument(pageId) {
+  const nodeIdMap = {};
+  const document = new Document(pageId, nodeIdMap);
+
+  cache.init(pageId, {
+    document,
+    nodeIdMap
+  });
+
+  return document;
+};
