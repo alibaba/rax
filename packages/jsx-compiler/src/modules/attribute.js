@@ -6,13 +6,13 @@ const DynamicBinding = require('../utils/DynamicBinding');
 const handleRefAttr = require('../utils/handleRefAttr');
 const isNativeComponent = require('../utils/isNativeComponent');
 
-function transformAttribute(ast, code, adapter, imported) {
+function transformAttribute(ast, code, adapter) {
   const refs = [];
   const dynamicRef = new DynamicBinding('_r');
   traverse(ast, {
     JSXAttribute(path) {
       const { node } = path;
-      const { node: { name: tagName }} = path.parentPath.get('name');
+      const { node: componentTagNode } = path.parentPath.get('name');
       const attrName = node.name.name;
       switch (attrName) {
         case 'key':
@@ -30,20 +30,20 @@ function transformAttribute(ast, code, adapter, imported) {
           break;
         case 'className':
           if (!adapter.styleKeyword) {
-            if (isNativeComponent(tagName, adapter.platform, imported)) {
+            if (isNativeComponent(componentTagNode, adapter.platform)) {
               node.name.name = 'class';
             } else {
               // Object.assign for shallow copy, avoid self tag is same reference
               path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('class'),
                 Object.assign({}, node.value)));
             }
-          } else if (isNativeComponent(tagName, adapter.platform, imported)) {
+          } else if (isNativeComponent(componentTagNode, adapter.platform)) {
             node.name.name = 'class';
           }
           break;
         case 'id':
           if (adapter.styleKeyword) {
-            if (!isNativeComponent(path, adapter.platform, imported)) {
+            if (!isNativeComponent(componentTagNode, adapter.platform)) {
               // Object.assign for shallow copy, avoid self tag is same reference
               path.parentPath.node.attributes.push(t.jsxAttribute(t.jsxIdentifier('componentId'),
                 Object.assign({}, node.value)));
@@ -51,7 +51,7 @@ function transformAttribute(ast, code, adapter, imported) {
           }
           break;
         case 'style':
-          if (adapter.styleKeyword && !isNativeComponent(tagName, adapter.platform, imported)) {
+          if (adapter.styleKeyword && !isNativeComponent(componentTagNode, adapter.platform)) {
             node.name.name = 'styleSheet';
           }
           break;
@@ -86,7 +86,7 @@ function transformAttribute(ast, code, adapter, imported) {
 
 module.exports = {
   parse(parsed, code, options) {
-    const { refs, dynamicRef } = transformAttribute(parsed.templateAST, code, options.adapter, parsed.imported);
+    const { refs, dynamicRef } = transformAttribute(parsed.templateAST, code, options.adapter);
     parsed.refs = refs;
     // Set global dynamic ref value
     parsed.dynamicRef = dynamicRef;

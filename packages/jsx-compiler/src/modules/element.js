@@ -34,8 +34,7 @@ function transformTemplate(
     dynamicValue
   },
   adapter,
-  sourceCode,
-  imported
+  sourceCode
 ) {
   const dynamicEvents = new DynamicBinding('_e');
   function handleJSXExpressionContainer(path) {
@@ -517,26 +516,25 @@ function transformTemplate(
               );
             }
           }
-          // Handle rax base components, like rax-image
-          // In rax base components, if needTransformEvent, just add bind before event
-          // Then in rax base components, it should trigger event with the param ${attr.name.name}
-          if (baseComponents.indexOf(name) > -1 && adapter.needTransformEvent) {
-            node.attributes.forEach(attr => {
-              if (attr.value && attr.value.value && attr.value.value.indexOf('_e') > -1) {
-                attr.name.name = `bind${attr.name.name}`;
-              }
-            });
-          }
+
           // Handle native components
           // In native components, events in componentCommonProps should be transformed
           // Other Events should be changed if needTransformEvent
-          if (isNativeComponent(componentTagNode.name, adapter.platform, imported)) {
+          if (isNativeComponent(componentTagNode, adapter.platform)) {
             node.attributes.forEach(attr => {
               const attrName = attr.name.name;
               if (componentCommonProps[adapter.platform][attrName]) {
                 attr.name.name = componentCommonProps[adapter.platform][attrName];
               } else if (attr.value && attr.value.value && attr.value.value.indexOf('_e') > -1 && adapter.needTransformEvent) {
                 attr.name.name = attr.name.name.replace('on', 'bind').toLowerCase();
+              }
+            });
+          } else if (adapter.needTransformEvent && baseComponents.indexOf(name) > -1) {
+            // Rax base component should add bind before onXXX
+            // While events in custom component should not be changed
+            node.attributes.forEach(attr => {
+              if (attr.value && attr.value.value && attr.value.value.indexOf('_e') > -1) {
+                attr.name.name = `bind${attr.name.name}`;
               }
             });
           }
@@ -862,8 +860,7 @@ module.exports = {
       const { dynamicEvents } = transformTemplate(
         parsed,
         options.adapter,
-        code,
-        parsed.imported
+        code
       );
 
       parsed.dynamicEvents = dynamicEvents;

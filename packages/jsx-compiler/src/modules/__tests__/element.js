@@ -156,6 +156,8 @@ describe('Transform JSXElement', () => {
       /**
        * { _e0: this.handleClick }
        */
+      ast.openingElement.name.isCustom = true;
+
       const { dynamicEvents } = _transform({
         templateAST: ast,
       }, adapter);
@@ -169,6 +171,8 @@ describe('Transform JSXElement', () => {
           onClick={props.onClick}
         />
       `);
+      ast.openingElement.name.isCustom = true;
+
       const { dynamicEvents } = _transform({
         templateAST: ast
       }, adapter);
@@ -184,6 +188,8 @@ describe('Transform JSXElement', () => {
           onKeyPress={this.handleClick.bind(this, 'hello')}
         />
       `);
+      ast.openingElement.name.isCustom = true;
+
       const { dynamicEvents } = _transform({
         templateAST: ast
       }, adapter);
@@ -247,6 +253,88 @@ describe('Transform JSXElement', () => {
       }, wxAdapter);
 
       expect(genInlineCode(ast).code).toEqual('<text bindtap="_e0" class="__rax-text" />');
+    });
+
+    it('should not transform events in rax base components (except rax-view) in alibaba miniapp', () => {
+      const ast = parseExpression(`
+        <rax-image
+          onClick={onClick}
+          onChange={onChange}
+        />
+      `);
+      ast.openingElement.name.isCustom = true;
+      _transform({
+        templateAST: ast
+      }, adapter);
+      expect(genInlineCode(ast).code).toEqual('<rax-image onClick="_e0" onChange="_e1" />');
+    });
+
+    it('should transform events in rax base components (except rax-view/rax-text) in wechat miniprogram', () => {
+      const ast = parseExpression(`
+        <rax-image
+          onClick={onClick}
+          onChange={onChange}
+        />
+      `);
+      ast.openingElement.name.isCustom = true;
+      _transform({
+        templateAST: ast
+      }, wxAdapter);
+      expect(genInlineCode(ast).code).toEqual('<rax-image bindonClick="_e0" bindonChange="_e1" />');
+    });
+
+    it('should transform click event and not transform other normal event in native components in alibaba miniapp', () => {
+      const ast = parseExpression(`
+        <button
+          onClick={onClick}
+          onChange={onChange}
+        />
+      `);
+      _transform({
+        templateAST: ast
+      }, adapter);
+      expect(genInlineCode(ast).code).toEqual('<button onTap="_e0" onChange="_e1" />');
+    });
+
+    it('should transform events in native components in wechat miniprogram', () => {
+      const ast = parseExpression(`
+        <button
+          onClick={onClick}
+          onChange={onChange}
+        />
+      `);
+      _transform({
+        templateAST: ast
+      }, wxAdapter);
+      expect(genInlineCode(ast).code).toEqual('<button bindtap="_e0" bindchange="_e1" />');
+    });
+
+    it('should not transform events in rax components in alibaba miniapp', () => {
+      const ast = parseExpression(`
+        <custom-comp
+          onClick={onClick}
+          onChange={onChange}
+        />
+      `);
+      ast.openingElement.name.isCustom = true;
+      _transform({
+        templateAST: ast
+      }, adapter);
+      expect(genInlineCode(ast).code).toEqual('<custom-comp onClick="_e0" onChange="_e1" />');
+    });
+
+    it('should not transform normal events in rax components in wechat miniprogram', () => {
+      const ast = parseExpression(`
+        <custom-comp
+          onClick={onClick}
+          onChange={onChange}
+        />
+      `);
+      ast.openingElement.name.isCustom = true;
+      _transform({
+        templateAST: ast
+      }, wxAdapter);
+      expect(genInlineCode(ast).code).toEqual('<custom-comp onClick="_e0" onChange="_e1" />');
     });
   });
 
@@ -375,3 +463,13 @@ describe('Transform JSXElement', () => {
     });
   });
 });
+
+// TODO: test case
+// 1. rax base components
+// 2. rax base components that will be compiled
+// 3. native components
+
+// each should be tested with the following aspect:
+// 1. wechat alipay
+// 2. onClick etc. that in componentCommonProps
+// 3. other events in wechat

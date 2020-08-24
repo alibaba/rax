@@ -19,9 +19,9 @@ module.exports = function(attrPath, childExpression, refName, adapter, loopIndex
   };
   const attributes = attrPath.parent.attributes;
   const componentNameNode = attrPath.parent.name;
-  const isNative = isNativeComponent(attrPath, adapter.platform);
+  const isNative = isNativeComponent(componentNameNode, adapter.platform);
   if (t.isJSXIdentifier(componentNameNode)) {
-    if (componentNameNode.isCustom && !isNative) {
+    if (!isNative) {
       refInfo.type = t.stringLiteral('component');
       insertBindComRef(
         attributes,
