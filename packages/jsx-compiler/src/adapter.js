@@ -42,7 +42,7 @@ const parserAdapters = {
     compatibleText: false,
     // Need transform style & class keyword
     styleKeyword: false,
-    // Need transform onClick -> bindonclick
+    // No need to transform onClick -> bindonclick
     needTransformEvent: false,
     slotScope: true,
     // Need transform key
