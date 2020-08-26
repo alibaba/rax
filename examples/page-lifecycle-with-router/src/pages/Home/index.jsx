@@ -1,5 +1,5 @@
 import { createElement } from 'rax';
-import { registerNativeEventListeners, addNativeEventListener, removeNativeEventListener } from 'rax-app';
+import { registerNativeEventListeners, addNativeEventListener, removeNativeEventListener, usePageShow, usePageHide } from 'rax-app';
 import View from 'rax-view';
 import Text from 'rax-text';
 
@@ -29,6 +29,13 @@ function Home(props) {
   let unlisten = props.history.listen(( action, location ) => {
     console.log('in home page action', action);
     console.log('in home page location', location);
+  });
+
+  usePageShow(() => {
+    console.log('home page show -- from usePageShow');
+  });
+  usePageHide(() => {
+    console.log('home page hide -- from usePageHide');
   });
   return (
     <View className="home">
