@@ -463,13 +463,3 @@ describe('Transform JSXElement', () => {
     });
   });
 });
-
-// TODO: test case
-// 1. rax base components
-// 2. rax base components that will be compiled
-// 3. native components
-
-// each should be tested with the following aspect:
-// 1. wechat alipay
-// 2. onClick etc. that in componentCommonProps
-// 3. other events in wechat
