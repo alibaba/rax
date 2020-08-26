@@ -39,7 +39,7 @@ class Window extends EventTarget {
   }
 
   addEventListener(eventName, handler, options) {
-    if (this.__sharedEventNames.indexOf(eventName) > 0) {
+    if (this.__sharedEventNames.indexOf(eventName) > -1) {
       this.__sharedHandlers.push({
         eventName,
         handler
@@ -87,7 +87,7 @@ class Window extends EventTarget {
       }
     }
 
-    if (this.__sharedEventNames.indexOf(eventName) > 0) {
+    if (this.__sharedEventNames.indexOf(eventName) > -1) {
       this.__sharedHandlers
         .filter((handlerInfo) => handlerInfo.eventName === eventName)
         .forEach(({ handler }) => {

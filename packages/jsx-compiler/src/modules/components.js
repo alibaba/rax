@@ -370,7 +370,7 @@ function getComponentPath(alias, options) {
 
     // Use specific path to import native miniapp component
     if (pkgName !== alias.from) {
-      return normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, alias.from.replace(pkgName, realPkgName)))));
+      return disableCopyNpm ? alias.from : normalizeFileName(addRelativePathPrefix(normalizeOutputFilePath(join(npmRelativePath, alias.from.replace(pkgName, realPkgName)))));
     }
     // Use miniappConfig in package.json to import native miniapp component
     const pkg = getComponentConfig(alias.from, options.resourcePath);
