@@ -42,6 +42,8 @@ const parserAdapters = {
     compatibleText: false,
     // Need transform style & class keyword
     styleKeyword: false,
+    // No need to transform onClick -> bindonclick
+    needTransformEvent: false,
     slotScope: true,
     // Need transform key
     needTransformKey: false,
@@ -71,6 +73,8 @@ const parserAdapters = {
     },
     styleKeyword: true,
     slotScope: false,
+    // Need transform onClick -> bindonclick
+    needTransformEvent: true,
     needTransformKey: true,
     triggerRef: true,
     processSlider: true,
@@ -97,10 +101,13 @@ const parserAdapters = {
     },
     styleKeyword: true,
     slotScope: false,
+    // Need transform onClick -> bindonclick
+    needTransformEvent: true,
     needTransformKey: true,
     triggerRef: true,
     needRegisterProps: true,
   },
+  componentCommonProps
 };
 
 module.exports = parserAdapters;

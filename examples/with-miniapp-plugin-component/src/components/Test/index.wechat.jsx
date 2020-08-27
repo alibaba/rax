@@ -1,6 +1,7 @@
 import { createElement, useState } from 'rax';
 import View from 'rax-view';
 import Text from 'rax-text';
+// eslint-disable-next-line
 import Plugin from 'plugin://myPlugin/hello-component';
 
 export default function Home() {
