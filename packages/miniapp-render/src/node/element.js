@@ -6,6 +6,7 @@ import Attribute from './attribute';
 import cache from '../utils/cache';
 import tool from '../utils/tool';
 import parser from '../tree/parser';
+import simplify from '../utils/simplify';
 
 class Element extends Node {
   static $$create(options, tree) {
@@ -563,7 +564,7 @@ class Element extends Node {
       path: `${this._path}.children`,
       start: this.$_children.length - 1,
       deleteCount: 0,
-      item: node
+      item: simplify(node)
     };
     this._triggerUpdate(payload);
 
@@ -609,7 +610,7 @@ class Element extends Node {
       type: 'children',
       path: `${this._path}.children`,
       deleteCount: 0,
-      item: node
+      item: simplify(node)
     };
     if (insertIndex === -1) {
       // Insert to the end
@@ -659,7 +660,7 @@ class Element extends Node {
       path: `${this._path}.children`,
       start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
       deleteCount: replaceIndex === -1 ? 0 : 1,
-      item: node
+      item: simplify(node)
     };
     this._triggerUpdate(payload);
 

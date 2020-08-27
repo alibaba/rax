@@ -1,61 +1,7 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp } from 'universal-env';
 import Element from './element';
 import cache from '../utils/cache';
 import perf from '../utils/perf';
 import getProperty from '../utils/getProperty';
-import { propsMap } from '../builtInComponents';
-
-function simplify(node) {
-  const domInfo = node.$$domInfo;
-  const simpleNode = {};
-  for (let attr in domInfo) {
-    simpleNode[attr] = domInfo[attr];
-  }
-
-  let componentType;
-  if (node._behavior) {
-    componentType = simpleNode.behavior = node._behavior;
-  } else {
-    componentType = node.tagName;
-  }
-
-  // Get specific props
-  const specificProps = propsMap[componentType] || [];
-  specificProps.forEach(prop => {
-    simpleNode[prop.name] = prop.get(node);
-  });
-
-  return simpleNode;
-}
-
-function traverseTree(node, action) {
-  if (!node) {
-    return;
-  }
-  let copiedNode;
-  let queue = [];
-  queue.push(node);
-  while (queue.length) {
-    let curNode = queue.shift();
-    const result = action(curNode);
-    if (!copiedNode) {
-      copiedNode = result;
-      copiedNode.children = [];
-    } else {
-      curNode.__parent.children = curNode.__parent.children || [];
-      curNode.__parent.children.push(result);
-    }
-    if (curNode.$_children && curNode.$_children.length) {
-      curNode.$_children.forEach(n => n.__parent = result);
-      queue = queue.concat(curNode.$_children);
-    }
-    if (!result.children) {
-      result.children = [];
-    }
-  }
-  return copiedNode;
-}
 
 class RootElement extends Element {
   $$init(options, tree) {
@@ -102,11 +48,8 @@ class RootElement extends Element {
       const renderTask = this.renderStacks[i];
       const path = renderTask.path;
       const taskInfo = getProperty(internal.data, path, pathCache);
-      if (!taskInfo.parentRendered || internal.firstRender && path !== 'root.children') break;
+      if (!taskInfo.parentRendered) continue;
       if (renderTask.type === 'children') {
-        const ElementNode = renderTask.item;
-        const simplifiedNode = traverseTree(ElementNode, simplify);
-        renderTask.item = simplifiedNode;
         // path cache should save lastest taskInfo value
         pathCache.push({
           path: renderTask.path,
@@ -117,7 +60,9 @@ class RootElement extends Element {
       if (!internal.$batchedUpdates) {
         // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
         if (renderTask.type === 'children') {
-          renderObject[path] = renderObject[path] || taskInfo.value || [];
+          if (!renderObject[path]) {
+            renderObject[path] = taskInfo.value ? [...taskInfo.value] : [];
+          }
           if (renderTask.item) {
             renderObject[path].splice(renderTask.start, renderTask.deleteCount, renderTask.item);
           } else {

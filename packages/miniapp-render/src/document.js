@@ -126,7 +126,7 @@ class Document extends EventTarget {
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
       return CustomComponent.$$create(options, tree);
-    } if (!tool.isTagNameSupport(tagName)) {
+    } else if (!tool.isTagNameSupport(tagName)) {
       throw new Error(`${tagName} is not supported.`);
     } else {
       return Element.$$create(options, tree);
