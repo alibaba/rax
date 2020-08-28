@@ -1,18 +1,17 @@
 import EventTarget from '../event/event-target';
-import cache from '../utils/cache';
 
 class Node extends EventTarget {
   /**
    * Override parent class $$init method
    */
-  $$init(options, tree) {
+  $$init(options) {
     super.$$init();
 
     this.$_nodeId = options.nodeId; // unique
     this.$_type = options.type;
     this.$_parentNode = null;
-    this.$_tree = tree;
-    this.__pageId = tree.pageId;
+    this.ownerDocument = options.document;
+    this.__pageId = this.ownerDocument.__pageId;
   }
 
   /**
@@ -24,7 +23,6 @@ class Node extends EventTarget {
     this.$_nodeId = null;
     this.$_type = null;
     this.$_parentNode = null;
-    this.$_tree = null;
     this.__pageId = null;
   }
 
@@ -58,6 +56,10 @@ class Node extends EventTarget {
     }
 
     return null;
+  }
+
+  _isRendered() {
+    return this.parentNode ? this.parentNode._isRendered() : this.__rendered;
   }
 
   get parentNode() {
@@ -114,10 +116,6 @@ class Node extends EventTarget {
     }
 
     return null;
-  }
-
-  get ownerDocument() {
-    return cache.getDocument(this.__pageId) || null;
   }
 
   hasChildNodes() {

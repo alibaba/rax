@@ -1,5 +1,4 @@
 import EventTarget from './event/event-target';
-import Tree from './tree/tree';
 import Node from './node/node';
 import Element from './node/element';
 import TextNode from './node/text-node';
@@ -12,6 +11,7 @@ import Textarea from './node/element/textarea';
 import Video from './node/element/video';
 import BuiltInComponent from './node/element/builtin-component';
 import CustomComponent from './node/element/custom-component';
+import RootElement from './node/root';
 
 const CONSTRUCTOR_MAP = {
   IMG: Image,
@@ -41,39 +41,23 @@ function checkIsBuiltInComponent(tagName) {
 }
 
 class Document extends EventTarget {
-  constructor(pageId, nodeIdMap) {
+  constructor(pageId) {
     super();
 
     const { usingComponents = {}, usingPlugins = {} } = cache.getConfig();
     this.usingComponents = usingComponents;
     this.usingPlugins = usingPlugins;
-    this.__pageId = pageId;
 
-    // Used to encapsulate special tag and corresponding constructors
-    const that = this;
-    this.$_imageConstructor = function HTMLImageElement(width, height) {
-      return Image.$$create({
-        tagName: 'img',
-        nodeId: `b-${tool.getId()}`,
-        attrs: {},
-        width,
-        height,
-      }, that.$_tree);
-    };
-
+    this.__nodeIdMap = {};
+    this.__idMap = {};
+    this.__classMap = {};
+    this.__tagMap = {};
     this.__pageId = pageId;
-    this.$_tree = new Tree(pageId, {
-      type: 'element',
-      tagName: 'body',
-      attrs: {},
-      unary: false,
-      nodeId: 'e-body',
-      children: [],
-    }, nodeIdMap, this);
     this.$_config = null;
 
     // documentElement
     this.$_node = this.$$createElement({
+      document: this,
       tagName: 'html',
       attrs: {},
       nodeId: `a-${tool.getId()}`,
@@ -83,16 +67,18 @@ class Document extends EventTarget {
     this.$_node.$$updateParent(this);
     this.$_node.scrollTop = 0;
 
-    // head
-    this.$_head = this.createElement('head');
+    this.__root = new RootElement({
+      type: 'element',
+      tagName: 'body',
+      attrs: {},
+      unary: false,
+      nodeId: 'e-body',
+      children: [],
+      document: this,
+    });
 
     // update body's parentNode
-    this.$_tree.root.$$updateParent(this.$_node);
-  }
-
-  // Image constructor
-  get $$imageConstructor() {
-    return this.$_imageConstructor;
+    this.__root.$$updateParent(this.$_node);
   }
 
   // Event trigger
@@ -100,47 +86,50 @@ class Document extends EventTarget {
     this.documentElement.$$trigger(eventName, options);
   }
 
-  $$createElement(options, tree) {
+  _isRendered() {
+    return true;
+  }
+
+  $$createElement(options) {
     const originTagName = options.tagName;
     const tagName = originTagName.toUpperCase();
     const componentName = checkIsBuiltInComponent(originTagName) ? originTagName : null;
-    tree = tree || this.$_tree;
 
     const constructorClass = CONSTRUCTOR_MAP[tagName];
     if (constructorClass) {
-      return constructorClass.$$create(options, tree);
+      return constructorClass.$$create(options);
     } else if (componentName) {
       // Transform to builtin-component
       options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
       options.attrs._behavior = componentName;
-      return BuiltInComponent.$$create(options, tree);
+      return BuiltInComponent.$$create(options);
     } else if (this.usingComponents[originTagName]) {
       // Transform to custom-component
       options.tagName = 'custom-component';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
-      return CustomComponent.$$create(options, tree);
+      return CustomComponent.$$create(options);
     } else if (this.usingPlugins[originTagName]) {
       options.tagName = 'miniapp-plugin';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
-      return CustomComponent.$$create(options, tree);
+      return CustomComponent.$$create(options);
     } else if (!tool.isTagNameSupport(tagName)) {
       throw new Error(`${tagName} is not supported.`);
     } else {
-      return Element.$$create(options, tree);
+      return Element.$$create(options);
     }
   }
 
   // Create text node
-  $$createTextNode(options, tree) {
-    return TextNode.$$create(options, tree || this.$_tree);
+  $$createTextNode(options) {
+    return TextNode.$$create(options);
   }
 
   // Create comment node
-  $$createComment(options, tree) {
-    return Comment.$$create(options, tree || this.$_tree);
+  $$createComment(options) {
+    return Comment.$$create(options);
   }
 
   // Node type
@@ -153,15 +142,11 @@ class Document extends EventTarget {
   }
 
   get body() {
-    return this.$_tree.root;
+    return this.__root;
   }
 
   get nodeName() {
     return '#document';
-  }
-
-  get head() {
-    return this.$_head;
   }
 
   get defaultView() {
@@ -171,31 +156,31 @@ class Document extends EventTarget {
   getElementById(id) {
     if (typeof id !== 'string') return;
 
-    return this.$_tree.getById(id) || null;
+    return this.__idMap[id] || null;
   }
 
   getElementsByTagName(tagName) {
     if (typeof tagName !== 'string') return [];
 
-    return this.$_tree.getByTagName(tagName);
+    return this.__tagMap[tagName] || [];
   }
 
   getElementsByClassName(className) {
     if (typeof className !== 'string') return [];
 
-    return this.$_tree.getByClassName(className);
+    return this.__classMap[className] || [];
   }
 
   querySelector(selector) {
     if (typeof selector !== 'string') return;
-
-    return this.$_tree.query(selector)[0] || null;
+    // Todo
+    return null;
   }
 
   querySelectorAll(selector) {
     if (typeof selector !== 'string') return [];
-
-    return this.$_tree.query(selector);
+    // Todo
+    return null;
   }
 
   createElement(tagName) {
@@ -205,6 +190,7 @@ class Document extends EventTarget {
     if (!tagName) return;
 
     return this.$$createElement({
+      document: this,
       tagName,
       nodeId: `b-${tool.getId()}`,
     });
@@ -221,6 +207,7 @@ class Document extends EventTarget {
     return this.$$createTextNode({
       content,
       nodeId: `b-${tool.getId()}`,
+      document: this
     });
   }
 
@@ -228,6 +215,7 @@ class Document extends EventTarget {
     // Ignore the incoming comment content
     return this.$$createComment({
       nodeId: `b-${tool.getId()}`,
+      document: this
     });
   }
 
@@ -236,7 +224,7 @@ class Document extends EventTarget {
       tagName: 'documentfragment',
       nodeId: `b-${tool.getId()}`,
       nodeType: Node.DOCUMENT_FRAGMENT_NODE,
-    }, this.$_tree);
+    });
   }
 
   createEvent() {
@@ -259,12 +247,10 @@ class Document extends EventTarget {
 }
 
 export default function createDocument(pageId) {
-  const nodeIdMap = {};
-  const document = new Document(pageId, nodeIdMap);
+  const document = new Document(pageId);
 
   cache.init(pageId, {
-    document,
-    nodeIdMap
+    document
   });
 
   return document;

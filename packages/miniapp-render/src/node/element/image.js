@@ -4,19 +4,19 @@ import Event from '../../event/event';
 
 class Image extends Element {
   // Create instance
-  static $$create(options, tree) {
-    return new Image(options, tree);
+  static $$create(options) {
+    return new Image(options);
   }
 
   // Override the parent class's $$init instance method
-  $$init(options, tree) {
+  $$init(options) {
     const width = options.width;
     const height = options.height;
 
     if (typeof width === 'number' && width >= 0) options.attrs.width = width;
     if (typeof height === 'number' && height >= 0) options.attrs.height = height;
 
-    super.$$init(options, tree);
+    super.$$init(options);
 
     this.$_naturalWidth = 0;
     this.$_naturalHeight = 0;

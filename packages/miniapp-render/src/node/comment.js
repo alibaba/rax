@@ -2,14 +2,14 @@ import tool from '../utils/tool';
 import Node from './node';
 
 class Comment extends Node {
-  static $$create(options, tree) {
-    return new Comment(options, tree);
+  static $$create(options) {
+    return new Comment(options);
   }
 
-  $$init(options, tree) {
+  $$init(options) {
     options.type = 'comment';
 
-    super.$$init(options, tree);
+    super.$$init(options);
   }
 
   $$recycle() {
@@ -35,6 +35,7 @@ class Comment extends Node {
   cloneNode() {
     return this.ownerDocument.$$createComment({
       nodeId: `b-${tool.getId()}`,
+      document: this.ownerDocument
     });
   }
 }

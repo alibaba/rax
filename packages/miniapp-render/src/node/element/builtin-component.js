@@ -1,10 +1,9 @@
 import Element from '../element';
-import cache from '../../utils/cache';
 
 class BuiltInComponent extends Element {
   // Create instance
-  static $$create(options, tree) {
-    return new BuiltInComponent(options, tree);
+  static $$create(options) {
+    return new BuiltInComponent(options);
   }
 
   // Override the parent class's recovery instance method

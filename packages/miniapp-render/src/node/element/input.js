@@ -2,8 +2,8 @@ import Element from '../element';
 
 class HTMLInputElement extends Element {
   // Create instance
-  static $$create(options, tree) {
-    return new HTMLInputElement(options, tree);
+  static $$create(options) {
+    return new HTMLInputElement(options);
   }
 
   // Override parent class recycle method

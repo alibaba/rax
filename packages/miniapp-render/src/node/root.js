@@ -4,8 +4,8 @@ import perf from '../utils/perf';
 import getProperty from '../utils/getProperty';
 
 class RootElement extends Element {
-  $$init(options, tree) {
-    super.$$init(options, tree);
+  $$init(options) {
+    super.$$init(options);
     this.allowRender = true;
     this.renderStacks = [];
   }
@@ -47,19 +47,16 @@ class RootElement extends Element {
     for (let i = 0, j = this.renderStacks.length; i < j; i++) {
       const renderTask = this.renderStacks[i];
       const path = renderTask.path;
-      const taskInfo = getProperty(internal.data, path, pathCache);
-      if (!taskInfo.parentRendered) continue;
-      if (renderTask.type === 'children') {
-        // path cache should save lastest taskInfo value
-        pathCache.push({
-          path: renderTask.path,
-          value: taskInfo.value
-        });
-      }
-
       if (!internal.$batchedUpdates) {
         // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
         if (renderTask.type === 'children') {
+          const taskInfo = getProperty(internal.data, path, pathCache);
+          // path cache should save lastest taskInfo value
+          pathCache.push({
+            path: renderTask.path,
+            value: taskInfo.value
+          });
+
           if (!renderObject[path]) {
             renderObject[path] = taskInfo.value ? [...taskInfo.value] : [];
           }

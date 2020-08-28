@@ -9,24 +9,27 @@ import parser from '../tree/parser';
 import simplify from '../utils/simplify';
 
 class Element extends Node {
-  static $$create(options, tree) {
-    return new Element(options, tree);
+  static $$create(options) {
+    return new Element(options);
   }
 
   // Override the $$init method of the parent class
-  $$init(options, tree) {
+  $$init(options) {
     options.type = 'element';
 
-    super.$$init(options, tree);
+    super.$$init(options);
 
     this.$_tagName = options.tagName || '';
     this.$_children = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
-    this.$_unary = !!parser.voidMap[this.$_tagName.toLowerCase()];
     this.$_dataset = null;
     this.$_classList = null;
     this.$_style = null;
     this.$_attrs = null;
+    cache.setNode(this.__pageId, this.$$nodeId, this);
+    if (this.id) {
+      this.ownerDocument.__idMap[this.id] = this;
+    }
 
     this.$_initAttrs(options.attrs);
 
@@ -42,7 +45,10 @@ class Element extends Node {
   // Override the $$destroy method of the parent class
   $$destroy() {
     super.$$destroy();
-
+    cache.setNode(this.__pageId, this.$$nodeId, null);
+    if (this.id) {
+      this.ownerDocument.__idMap[this.id] = null;
+    }
     this.$_tagName = '';
     this.$_children.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
@@ -74,8 +80,7 @@ class Element extends Node {
   }
 
   get $_classList() {
-    if (!this.$__classList) this.$__classList = ClassList.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
-    return this.$__classList;
+    return new ClassList(this.className, this);
   }
 
   set $_style(value) {
@@ -155,9 +160,9 @@ class Element extends Node {
     // Update id - dom map
     if (id) {
       if (isRemove) {
-        this.$_tree.updateIdMap(id, null);
+        this.ownerDocument.__idMap[id] = null;
       } else {
-        this.$_tree.updateIdMap(id, node);
+        this.ownerDocument.__idMap[id] = node;
       }
     }
   }
@@ -260,6 +265,7 @@ class Element extends Node {
       style: this.$__style ? this.style.cssText : '',
       animation: this.$__attrs ? this.$__attrs.get('animation') : {},
       slot: this.$__attrs ? this.$__attrs.get('slot') : null,
+      behavior: this._behavior,
     };
   }
 
@@ -306,8 +312,10 @@ class Element extends Node {
     if (id === oldId) return;
 
     // update tree
-    if (this.$_tree.getById(oldId) === this) this.$_tree.updateIdMap(oldId, null);
-    if (id) this.$_tree.updateIdMap(id, this);
+    if (id) {
+      this.ownerDocument.__idMap[oldId] = null;
+      this.ownerDocument.__idMap[id] = this;
+    };
     const payload = {
       path: `${this._path}.id`,
       value: id
@@ -328,7 +336,13 @@ class Element extends Node {
   set className(className) {
     if (typeof className !== 'string') return;
 
-    this.$_classList.$$parse(className);
+    if (this._isRendered()) {
+      const payload = {
+        path: `${this.$_element._path}.className`,
+        value: this.classList.value
+      };
+      this.$_onClassOrStyleUpdate(payload);
+    }
   }
 
   get classList() {
@@ -386,9 +400,6 @@ class Element extends Node {
     // Delete all child nodes
     this.$_children.forEach(node => {
       node.$$updateParent(null);
-
-      // Update the mapping table
-      this._traverseNodeMap(node, true);
     });
     this.$_children.length = 0;
 
@@ -422,7 +433,6 @@ class Element extends Node {
         node.$$updateParent(null);
 
         // Update the mapping table
-        this._traverseNodeMap(node, true);
       });
       this.$_children.length = 0;
 
@@ -464,7 +474,6 @@ class Element extends Node {
       node.$$updateParent(null);
 
       // Update mapping table
-      this._traverseNodeMap(node, true);
     });
 
     // An empty string does not add a textNode node
@@ -481,7 +490,7 @@ class Element extends Node {
       this.$_children.length = 0;
       // Generated at run time, using the b- prefix
       const nodeId = `b-${tool.getId()}`;
-      const child = this.ownerDocument.$$createTextNode({content: text, nodeId});
+      const child = this.ownerDocument.$$createTextNode({content: text, nodeId, document: this.ownerDocument});
 
       this.appendChild(child);
     }
@@ -555,18 +564,17 @@ class Element extends Node {
     // Set parentNode
     node.$$updateParent(this);
 
-    // Update map
-    this._traverseNodeMap(node);
-
-    // Trigger update
-    const payload = {
-      type: 'children',
-      path: `${this._path}.children`,
-      start: this.$_children.length - 1,
-      deleteCount: 0,
-      item: simplify(node)
-    };
-    this._triggerUpdate(payload);
+    if (this._isRendered()) {
+      // Trigger update
+      const payload = {
+        type: 'children',
+        path: `${this._path}.children`,
+        start: this.$_children.length - 1,
+        deleteCount: 0,
+        item: simplify(node)
+      };
+      this._triggerUpdate(payload);
+    }
 
     return this;
   }
@@ -582,17 +590,16 @@ class Element extends Node {
 
       node.$$updateParent(null);
 
-      // Update map
-      this._traverseNodeMap(node, true);
-
-      // Trigger update
-      const payload = {
-        type: 'children',
-        path: `${this._path}.children`,
-        start: index,
-        deleteCount: 1
-      };
-      this._triggerUpdate(payload);
+      if (this._isRendered()) {
+        // Trigger update
+        const payload = {
+          type: 'children',
+          path: `${this._path}.children`,
+          start: index,
+          deleteCount: 1
+        };
+        this._triggerUpdate(payload);
+      }
     }
 
     return node;
@@ -624,10 +631,10 @@ class Element extends Node {
     // Set parentNode
     node.$$updateParent(this);
 
-    // Update the mapping table
-    this._traverseNodeMap(node);
-    // Trigger update
-    this._triggerUpdate(payload);
+    if (this._isRendered()) {
+      // Trigger update
+      this._triggerUpdate(payload);
+    }
 
     return node;
   }
@@ -651,18 +658,18 @@ class Element extends Node {
     // Set parentNode
     node.$$updateParent(this);
     // Update the mapping table
-    this._traverseNodeMap(node);
-    this._traverseNodeMap(old, true);
 
-    // Trigger update
-    const payload = {
-      type: 'children',
-      path: `${this._path}.children`,
-      start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
-      deleteCount: replaceIndex === -1 ? 0 : 1,
-      item: simplify(node)
-    };
-    this._triggerUpdate(payload);
+    if (this._isRendered()) {
+      // Trigger update
+      const payload = {
+        type: 'children',
+        path: `${this._path}.children`,
+        start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
+        deleteCount: replaceIndex === -1 ? 0 : 1,
+        item: simplify(node)
+      };
+      this._triggerUpdate(payload);
+    }
 
     return old;
   }
@@ -673,26 +680,26 @@ class Element extends Node {
 
   getElementsByTagName(tagName) {
     if (typeof tagName !== 'string') return [];
-
-    return this.$_tree.getByTagName(tagName, this);
+    // Todo
+    return this.ownerDocument.getElementsByTagName(tagName);
   }
 
   getElementsByClassName(className) {
     if (typeof className !== 'string') return [];
-
-    return this.$_tree.getByClassName(className, this);
+    // Todo
+    return this.ownerDocument.getElementsByTagName(className);
   }
 
   querySelector(selector) {
     if (typeof selector !== 'string') return;
-
-    return this.$_tree.query(selector, this)[0] || null;
+    // Todo
+    return this.ownerDocument.querySelector(selector);
   }
 
   querySelectorAll(selector) {
     if (typeof selector !== 'string') return [];
-
-    return this.$_tree.query(selector, this);
+    // Todo
+    return this.ownerDocument.querySelectorAll(selector);
   }
 
   setAttribute(name, value, immediate = true) {

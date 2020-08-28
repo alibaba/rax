@@ -5,8 +5,8 @@ class HTMLTextAreaElement extends Element {
   /**
    * Create instance
    */
-  static $$create(options, tree) {
-    return new HTMLTextAreaElement(options, tree);
+  static $$create(options) {
+    return new HTMLTextAreaElement(options);
   }
 
   // Override the parent class's recovery instance method

@@ -1,127 +1,38 @@
-function ClassList(element, onUpdate) {
-  this.$$init(element, onUpdate);
-}
+export default class ClassList extends Set {
+  constructor(className, element) {
+    super();
+    className.trim().split(/\s+/).forEach(super.add.bind(this));
+    this.__element = element;
+  }
 
-ClassList.$$create = function(element, onUpdate) {
-  return new ClassList(element, onUpdate);
-};
+  get value() {
+    return [...this].join(' ');
+  }
 
-ClassList.prototype = Object.assign([], {
-  $$init(element, onUpdate) {
-    this.$_element = element;
-    this.$_doUpdate = onUpdate;
-  },
+  add(s) {
+    super.add(s);
+    this._update();
 
-  $$destroy() {
-    this.$_element = null;
-    this.$_doUpdate = null;
-    this.length = 0;
-  },
+    return this;
+  }
 
-  $$recycle() {
-    this.$$destroy();
-  },
+  remove(s) {
+    super.delete(s);
+    this._update();
+  }
 
-  $$parse(className = '') {
-    this.length = 0;
+  replace(s1, s2) {
+    super.delete(s1);
+    super.add(s2);
 
-    className = className.trim();
-    className = className ? className.split(/\s+/) : [];
-
-    for (const item of className) {
-      this.push(item);
-    }
-
-    const payload = {
-      path: `${this.$_element._path}.className`,
-      value: this.slice().join(' ')
-    };
-
-    this.$_doUpdate(payload);
-  },
-
-  item(index) {
-    return this[index];
-  },
-
-  contains(className) {
-    if (typeof className !== 'string') return false;
-
-    return this.indexOf(className) !== -1;
-  },
-
-  add(...args) {
-    let isUpdate = false;
-
-    for (let className of args) {
-      if (typeof className !== 'string') continue;
-
-      className = className.trim();
-
-      if (className && this.indexOf(className) === -1) {
-        this.push(className);
-        isUpdate = true;
-      }
-    }
-
-    if (isUpdate) {
-      const payload = {
-        path: `${this.$_element._path}.className`,
-        value: this.slice().join(' ')
-      };
-      this.$_doUpdate(payload);
-    }
-  },
-
-  remove(...args) {
-    let isUpdate = false;
-
-    for (let className of args) {
-      if (typeof className !== 'string') continue;
-
-      className = className.trim();
-
-      if (!className) continue;
-
-      const index = this.indexOf(className);
-      if (index >= 0) {
-        this.splice(index, 1);
-        isUpdate = true;
-      }
-    }
-
-    if (isUpdate) {
-      const payload = {
-        path: `${this.$_element._path}.className`,
-        value: this.slice().join(' ')
-      };
-      this.$_doUpdate(payload);
-    }
-  },
-
-  toggle(className, force) {
-    if (typeof className !== 'string') return false;
-
-    className = className.trim();
-
-    if (!className) return false;
-
-    const isNotContain = this.indexOf(className) === -1;
-    let action = isNotContain ? 'add' : 'remove';
-    action = force === true ? 'add' : force === false ? 'remove' : action;
-
-    if (action === 'add') {
-      this.add(className);
-    } else {
-      this.remove(className);
-    }
-
-    return force === true || force === false ? force : isNotContain;
-  },
+    this._update();
+  }
 
   toString() {
-    return this.join(' ');
-  },
-});
+    return this.value;
+  }
 
-export default ClassList;
+  _update() {
+    this.__element.className = this.value;
+  }
+}

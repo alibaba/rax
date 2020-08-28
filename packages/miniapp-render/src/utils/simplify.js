@@ -4,16 +4,13 @@ import Node from '../node/node';
 export default function simplify(node) {
   const domInfo = node.$$domInfo;
   if (node.nodeType === Node.TEXT_NODE) {
+    node.__simpleNode = domInfo;
     return domInfo;
-  }
-  const simpleNode = {};
-  for (let attr in domInfo) {
-    simpleNode[attr] = domInfo[attr];
   }
 
   let componentType;
   if (node._behavior) {
-    componentType = simpleNode.behavior = node._behavior;
+    componentType = node._behavior;
   } else {
     componentType = node.tagName;
   }
@@ -21,14 +18,14 @@ export default function simplify(node) {
   // Get specific props
   const specificProps = propsMap[componentType] || [];
   specificProps.forEach(prop => {
-    simpleNode[prop.name] = prop.get(node);
+    domInfo[prop.name] = prop.get(node);
   });
 
   if (node.childNodes && node.childNodes.length > 0) {
-    simpleNode.children = node.childNodes.map(simplify);
+    domInfo.children = node.childNodes.map(simplify);
   } else {
-    simpleNode.children = [];
+    domInfo.children = [];
   }
 
-  return simpleNode;
+  return domInfo;
 }

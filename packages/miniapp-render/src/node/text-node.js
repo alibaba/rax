@@ -2,14 +2,14 @@ import tool from '../utils/tool';
 import Node from '../node/node';
 
 class TextNode extends Node {
-  static $$create(options, tree) {
-    return new TextNode(options, tree);
+  static $$create(options) {
+    return new TextNode(options);
   }
 
-  $$init(options, tree) {
+  $$init(options) {
     options.type = 'text';
 
-    super.$$init(options, tree);
+    super.$$init(options);
 
     this.$_content = options.content || '';
   }
@@ -61,11 +61,13 @@ class TextNode extends Node {
     value += '';
 
     this.$_content = value;
-    const payload = {
-      path: `${this._path}.content`,
-      value
-    };
-    this._triggerUpdate(payload);
+    if (this._isRendered()) {
+      const payload = {
+        path: `${this._path}.content`,
+        value
+      };
+      this._triggerUpdate(payload);
+    }
   }
 
   get data() {

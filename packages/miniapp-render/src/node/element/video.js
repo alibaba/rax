@@ -1,18 +1,18 @@
 import Element from '../element';
 
 class HTMLVideoElement extends Element {
-  static $$create(options, tree) {
-    return new HTMLVideoElement(options, tree);
+  static $$create(options) {
+    return new HTMLVideoElement(options);
   }
 
-  $$init(options, tree) {
+  $$init(options) {
     const width = options.width;
     const height = options.height;
 
     if (typeof width === 'number' && width >= 0) options.attrs.width = width;
     if (typeof height === 'number' && height >= 0) options.attrs.height = height;
 
-    super.$$init(options, tree);
+    super.$$init(options);
 
     this.$_initRect();
   }

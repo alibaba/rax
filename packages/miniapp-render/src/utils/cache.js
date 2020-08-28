@@ -5,13 +5,11 @@ let window;
 
 const elementsCache = [];
 const elementMethodsCache = new Map();
+let updatingNodes = [];
 
 // Init
 function init(pageId, options) {
-  pageMap[pageId] = {
-    document: options.document,
-    nodeIdMap: options.nodeIdMap,
-  };
+  pageMap[pageId] = options.document;
 }
 
 // Destroy
@@ -23,7 +21,7 @@ function destroy(pageId) {
  * Get document
  */
 function getDocument(pageId) {
-  return pageMap[pageId] && pageMap[pageId].document;
+  return pageMap[pageId];
 }
 
 // Set window
@@ -42,24 +40,18 @@ function getWindow() {
  * Save domNode map
  */
 function setNode(pageId, nodeId, domNode = null) {
-  const document = pageMap[pageId] && pageMap[pageId].document;
+  const document = pageMap[pageId];
 
   // Call before run, do nothing
   if (!document) return;
-  if (!domNode) return pageMap[pageId].nodeIdMap[nodeId] = domNode;
+  if (!domNode) return pageMap[pageId].__nodeIdMap[nodeId] = domNode;
 
-  let parentNode = domNode.parentNode;
-
-  while (parentNode && parentNode !== document.body) {
-    parentNode = parentNode.parentNode;
-  }
-
-  pageMap[pageId].nodeIdMap[nodeId] = parentNode === document.body ? domNode : null;
+  pageMap[pageId].__nodeIdMap[nodeId] = domNode;
 }
 
 // Get the domNode by nodeId
 function getNode(pageId, nodeId) {
-  return pageMap[pageId] && pageMap[pageId].nodeIdMap[nodeId];
+  return pageMap[pageId] && pageMap[pageId].__nodeIdMap[nodeId];
 }
 
 // Store global config
