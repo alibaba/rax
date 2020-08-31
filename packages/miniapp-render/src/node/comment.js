@@ -2,18 +2,9 @@ import tool from '../utils/tool';
 import Node from './node';
 
 class Comment extends Node {
-  static $$create(options) {
-    return new Comment(options);
-  }
-
-  $$init(options) {
+  constructor(options) {
     options.type = 'comment';
-
-    super.$$init(options);
-  }
-
-  $$recycle() {
-    this.$$destroy();
+    super(options);
   }
 
   get $$domInfo() {

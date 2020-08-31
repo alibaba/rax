@@ -1,11 +1,8 @@
 import EventTarget from '../event/event-target';
 
 class Node extends EventTarget {
-  /**
-   * Override parent class $$init method
-   */
-  $$init(options) {
-    super.$$init();
+  constructor(options) {
+    super();
 
     this.$_nodeId = options.nodeId; // unique
     this.$_type = options.type;

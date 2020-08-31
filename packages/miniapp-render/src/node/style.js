@@ -29,15 +29,6 @@ function parse(styleText) {
 class Style {
   constructor(element, onUpdate) {
     this.__settedStyle = {};
-    this.$$init(element, onUpdate);
-  }
-
-  static $$create(element, onUpdate) {
-    return new Style(element, onUpdate);
-  }
-
-  // Init instance
-  $$init(element, onUpdate) {
     this.$_element = element;
     this.$_doUpdate = onUpdate || (() => {});
     // Whether checking for updates is disabled
@@ -52,10 +43,6 @@ class Style {
     styleList.forEach(name => {
       this.__settedStyle[name] = undefined;
     });
-  }
-
-  $$recycle() {
-    this.$$destroy();
   }
 
   $_checkUpdate() {

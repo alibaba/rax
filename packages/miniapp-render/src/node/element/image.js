@@ -3,20 +3,14 @@ import Element from '../element';
 import Event from '../../event/event';
 
 class Image extends Element {
-  // Create instance
-  static $$create(options) {
-    return new Image(options);
-  }
-
-  // Override the parent class's $$init instance method
-  $$init(options) {
+  constructor(options) {
     const width = options.width;
     const height = options.height;
 
     if (typeof width === 'number' && width >= 0) options.attrs.width = width;
     if (typeof height === 'number' && height >= 0) options.attrs.height = height;
 
-    super.$$init(options);
+    super(options);
 
     this.$_naturalWidth = 0;
     this.$_naturalHeight = 0;
@@ -30,11 +24,6 @@ class Image extends Element {
 
     this.$_naturalWidth = null;
     this.$_naturalHeight = null;
-  }
-
-  // Override the parent class's recovery instance method
-  $$recycle() {
-    this.$$destroy();
   }
 
   // Update parent

@@ -1,24 +1,16 @@
 import Element from '../element';
 
 class HTMLVideoElement extends Element {
-  static $$create(options) {
-    return new HTMLVideoElement(options);
-  }
-
-  $$init(options) {
+  constructor(options) {
     const width = options.width;
     const height = options.height;
 
     if (typeof width === 'number' && width >= 0) options.attrs.width = width;
     if (typeof height === 'number' && height >= 0) options.attrs.height = height;
 
-    super.$$init(options);
+    super(options);
 
     this.$_initRect();
-  }
-
-  $$recycle() {
-    this.$$destroy();
   }
 
   $_triggerParentUpdate(payload) {

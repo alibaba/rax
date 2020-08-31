@@ -5,19 +5,13 @@ import Style from './style';
 import Attribute from './attribute';
 import cache from '../utils/cache';
 import tool from '../utils/tool';
-import parser from '../tree/parser';
 import simplify from '../utils/simplify';
 
 class Element extends Node {
-  static $$create(options) {
-    return new Element(options);
-  }
-
-  // Override the $$init method of the parent class
-  $$init(options) {
+  constructor(options) {
     options.type = 'element';
 
-    super.$$init(options);
+    super(options);
 
     this.$_tagName = options.tagName || '';
     this.$_children = [];
@@ -44,11 +38,12 @@ class Element extends Node {
 
   // Override the $$destroy method of the parent class
   $$destroy() {
-    super.$$destroy();
+    this.$_children.forEach(child => child.$$recycle());
     cache.setNode(this.__pageId, this.$$nodeId, null);
     if (this.id) {
       this.ownerDocument.__idMap[this.id] = null;
     }
+    super.$$destroy();
     this.$_tagName = '';
     this.$_children.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
@@ -57,12 +52,6 @@ class Element extends Node {
     this.$_classList = null;
     this.$_style = null;
     this.$_attrs = null;
-  }
-
-  // Recycling instance
-  $$recycle() {
-    this.$_children.forEach(child => child.$$recycle());
-    this.$$destroy();
   }
 
   set $_dataset(value) {
@@ -89,7 +78,7 @@ class Element extends Node {
   }
 
   get $_style() {
-    if (!this.$__style) this.$__style = Style.$$create(this, this.$_onClassOrStyleUpdate.bind(this));
+    if (!this.$__style) this.$__style = new Style(this, this.$_onClassOrStyleUpdate.bind(this));
     return this.$__style;
   }
 
@@ -99,7 +88,7 @@ class Element extends Node {
   }
 
   get $_attrs() {
-    if (!this.$__attrs) this.$__attrs = Attribute.$$create(this, this._triggerUpdate.bind(this));
+    if (!this.$__attrs) this.$__attrs = new Attribute(this, this._triggerUpdate.bind(this));
     return this.$__attrs;
   }
 
@@ -371,86 +360,6 @@ class Element extends Node {
 
   get lastChild() {
     return this.$_children[this.$_children.length - 1];
-  }
-
-  get innerHTML() {
-    return this.$_children.map(child => this.$_generateHtml(child)).join('');
-  }
-
-  set innerHTML(html) {
-    if (typeof html !== 'string') return;
-
-    // parse to ast
-    let ast = null;
-    try {
-      ast = parser.parse(html);
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (!ast) return;
-
-    // Generate dom tree
-    const newChildNodes = [];
-    ast.forEach(item => {
-      const node = this.$_generateDomTree(item);
-      if (node) newChildNodes.push(node);
-    });
-
-    // Delete all child nodes
-    this.$_children.forEach(node => {
-      node.$$updateParent(null);
-    });
-    this.$_children.length = 0;
-
-    // Append the new child nodes
-    for (let i = 0, j = newChildNodes.length; i < j; i++) {
-      this.appendChild(newChildNodes[i]);
-    }
-  }
-
-  get outerHTML() {
-    return this.$_generateHtml(this);
-  }
-
-  set outerHTML(html) {
-    if (typeof html !== 'string') return;
-
-    // Resolve to ast, taking only the first as the current node
-    let ast = null;
-    try {
-      ast = parser.parse(html)[0];
-    } catch (err) {
-      console.error(err);
-    }
-
-    if (ast) {
-      // Generate dom tree
-      const node = this.$_generateDomTree(ast);
-
-      // Delete all child nodes
-      this.$_children.forEach(node => {
-        node.$$updateParent(null);
-
-        // Update the mapping table
-      });
-      this.$_children.length = 0;
-
-      // Append new child nodes
-      const children = [].concat(node.childNodes);
-      for (const child of children) {
-        this.appendChild(child);
-      }
-
-      this.$_tagName = node.tagName.toLowerCase();
-      this.id = node.id || '';
-      this.className = node.className || '';
-      this.style.cssText = node.style.cssText || '';
-      this.src = node.src || '';
-      this.$_dataset = Object.assign({}, node.dataset);
-
-      this.$$dealWithAttrsForOuterHTML(node);
-    }
   }
 
   get innerText() {

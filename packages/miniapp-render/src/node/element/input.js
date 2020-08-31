@@ -1,14 +1,8 @@
 import Element from '../element';
 
 class HTMLInputElement extends Element {
-  // Create instance
-  static $$create(options) {
-    return new HTMLInputElement(options);
-  }
-
-  // Override parent class recycle method
-  $$recycle() {
-    this.$$destroy();
+  constructor(options) {
+    super(options);
   }
 
   // $_generateHtml handle other attributes

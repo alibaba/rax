@@ -2,14 +2,6 @@ import tool from '../utils/tool';
 
 class Attribute {
   constructor(element, onUpdate) {
-    this.$$init(element, onUpdate);
-  }
-
-  static $$create(element, onUpdate) {
-    return new Attribute(element, onUpdate);
-  }
-
-  $$init(element, onUpdate) {
     this.$_element = element;
     this.$_doUpdate = onUpdate;
     this.$_map = {};
@@ -23,10 +15,6 @@ class Attribute {
     this.$_doUpdate = null;
     this.$_map = null;
     this.$_list = null;
-  }
-
-  $$recycle() {
-    this.$$destroy();
   }
 
   get list() {

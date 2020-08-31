@@ -2,14 +2,10 @@ import tool from '../utils/tool';
 import Node from '../node/node';
 
 class TextNode extends Node {
-  static $$create(options) {
-    return new TextNode(options);
-  }
-
-  $$init(options) {
+  constructor(options) {
     options.type = 'text';
 
-    super.$$init(options);
+    super(options);
 
     this.$_content = options.content || '';
   }
@@ -18,10 +14,6 @@ class TextNode extends Node {
     super.$$destroy();
 
     this.$_content = '';
-  }
-
-  $$recycle() {
-    this.$$destroy();
   }
 
   _triggerUpdate(payload) {

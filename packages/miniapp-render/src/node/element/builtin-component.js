@@ -2,13 +2,8 @@ import Element from '../element';
 
 class BuiltInComponent extends Element {
   // Create instance
-  static $$create(options) {
-    return new BuiltInComponent(options);
-  }
-
-  // Override the parent class's recovery instance method
-  $$recycle() {
-    this.$$destroy();
+  constructor(options) {
+    super(options);
   }
 
   get _behavior() {

@@ -71,10 +71,6 @@ function compareEventInWechat(last, now) {
 
 class EventTarget {
   constructor(...args) {
-    this.$$init(...args);
-  }
-
-  $$init() {
     // Supplement the instance's properties for the 'XXX' in XXX judgment
     this.ontouchstart = null;
     this.ontouchmove = null;

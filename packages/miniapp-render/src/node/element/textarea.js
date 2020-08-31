@@ -2,18 +2,9 @@ import Element from '../element';
 import cache from '../../utils/cache';
 
 class HTMLTextAreaElement extends Element {
-  /**
-   * Create instance
-   */
-  static $$create(options) {
-    return new HTMLTextAreaElement(options);
+  constructor(options) {
+    super(options);
   }
-
-  // Override the parent class's recovery instance method
-  $$recycle() {
-    this.$$destroy();
-  }
-
   /**
    * $_generateHtml handle other attributes
    */

@@ -4,8 +4,8 @@ import perf from '../utils/perf';
 import getProperty from '../utils/getProperty';
 
 class RootElement extends Element {
-  $$init(options) {
-    super.$$init(options);
+  constructor(options) {
+    super(options);
     this.allowRender = true;
     this.renderStacks = [];
   }

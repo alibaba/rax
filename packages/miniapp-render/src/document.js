@@ -95,41 +95,41 @@ class Document extends EventTarget {
     const tagName = originTagName.toUpperCase();
     const componentName = checkIsBuiltInComponent(originTagName) ? originTagName : null;
 
-    const constructorClass = CONSTRUCTOR_MAP[tagName];
-    if (constructorClass) {
-      return constructorClass.$$create(options);
+    const ConstructorClass = CONSTRUCTOR_MAP[tagName];
+    if (ConstructorClass) {
+      return new ConstructorClass(options);
     } else if (componentName) {
       // Transform to builtin-component
       options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
       options.attrs._behavior = componentName;
-      return BuiltInComponent.$$create(options);
+      return new BuiltInComponent(options);
     } else if (this.usingComponents[originTagName]) {
       // Transform to custom-component
       options.tagName = 'custom-component';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
-      return CustomComponent.$$create(options);
+      return new CustomComponent(options);
     } else if (this.usingPlugins[originTagName]) {
       options.tagName = 'miniapp-plugin';
       options.attrs = options.attrs || {};
       options.componentName = originTagName;
-      return CustomComponent.$$create(options);
+      return new CustomComponent(options);
     } else if (!tool.isTagNameSupport(tagName)) {
       throw new Error(`${tagName} is not supported.`);
     } else {
-      return Element.$$create(options);
+      return new Element(options);
     }
   }
 
   // Create text node
   $$createTextNode(options) {
-    return TextNode.$$create(options);
+    return new TextNode(options);
   }
 
   // Create comment node
   $$createComment(options) {
-    return Comment.$$create(options);
+    return new Comment(options);
   }
 
   // Node type
@@ -220,10 +220,11 @@ class Document extends EventTarget {
   }
 
   createDocumentFragment() {
-    return Element.$$create({
+    return new Element({
       tagName: 'documentfragment',
       nodeId: `b-${tool.getId()}`,
       nodeType: Node.DOCUMENT_FRAGMENT_NODE,
+      document: this
     });
   }
 

@@ -3,12 +3,7 @@ import cache from '../../utils/cache';
 import tool from '../../utils/tool';
 
 class CustomComponent extends Element {
-  // Create instance
-  static $$create(options) {
-    return new CustomComponent(options);
-  }
-
-  $$init(options) {
+  constructor(options) {
     this.__behavior = options.componentName;
     this.__nativeType = options.tagName === 'custom-component' ? 'customComponent' : 'miniappPlugin';
     super.$$init(options);
