@@ -6,7 +6,7 @@ class Node extends EventTarget {
 
     this.$_nodeId = options.nodeId; // unique
     this.$_type = options.type;
-    this.$_parentNode = null;
+    this.parentNode = null;
     this.ownerDocument = options.document;
     this.__pageId = this.ownerDocument.__pageId;
   }
@@ -19,7 +19,7 @@ class Node extends EventTarget {
 
     this.$_nodeId = null;
     this.$_type = null;
-    this.$_parentNode = null;
+    this.parentNode = null;
     this.__pageId = null;
   }
 
@@ -30,16 +30,9 @@ class Node extends EventTarget {
     return this.$_nodeId;
   }
 
-  /**
-   * update parent node
-   */
-  $$updateParent(parentNode = null) {
-    this.$_parentNode = parentNode;
-  }
-
   get _path() {
-    if (this.$_parentNode !== null) {
-      const index = '[' + this.$_parentNode.childNodes.indexOf(this) + ']';
+    if (this.parentNode !== null) {
+      const index = '[' + this.parentNode.childNodes.indexOf(this) + ']';
 
       return `${this.parentNode._path}.children.${index}`;
     }
@@ -48,8 +41,8 @@ class Node extends EventTarget {
   }
 
   get _root() {
-    if (this.$_parentNode !== null) {
-      return this.$_parentNode._root;
+    if (this.parentNode !== null) {
+      return this.parentNode._root;
     }
 
     return null;
@@ -57,10 +50,6 @@ class Node extends EventTarget {
 
   _isRendered() {
     return this.parentNode ? this.parentNode._isRendered() : this.__rendered;
-  }
-
-  get parentNode() {
-    return this.$_parentNode;
   }
 
   get nodeValue() {

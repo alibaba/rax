@@ -17,7 +17,6 @@ class Element extends Node {
     this.$_children = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.$_dataset = null;
-    this.$_classList = null;
     this.$_style = null;
     this.$_attrs = null;
     cache.setNode(this.__pageId, this.$$nodeId, this);
@@ -38,7 +37,7 @@ class Element extends Node {
 
   // Override the $$destroy method of the parent class
   $$destroy() {
-    this.$_children.forEach(child => child.$$recycle());
+    this.$_children.forEach(child => child.$$destroy());
     cache.setNode(this.__pageId, this.$$nodeId, null);
     if (this.id) {
       this.ownerDocument.__idMap[this.id] = null;
@@ -49,7 +48,6 @@ class Element extends Node {
     this.$_nodeType = Node.ELEMENT_NODE;
     this.$_unary = null;
     this.$_dataset = null;
-    this.$_classList = null;
     this.$_style = null;
     this.$_attrs = null;
   }
@@ -63,27 +61,18 @@ class Element extends Node {
     return this.$__dataset;
   }
 
-  set $_classList(value) {
-    if (!value && this.$__classList) this.$__classList.$$recycle();
-    this.$__classList = value;
-  }
-
-  get $_classList() {
-    return new ClassList(this.className, this);
-  }
-
   set $_style(value) {
-    if (!value && this.$__style) this.$__style.$$recycle();
+    if (!value && this.$__style) this.$__style.$$destroy();
     this.$__style = value;
   }
 
   get $_style() {
-    if (!this.$__style) this.$__style = new Style(this, this.$_onClassOrStyleUpdate.bind(this));
+    if (!this.$__style) this.$__style = new Style(this);
     return this.$__style;
   }
 
   set $_attrs(value) {
-    if (!value && this.$__attrs) this.$__attrs.$$recycle();
+    if (!value && this.$__attrs) this.$__attrs.$$destroy();
     this.$__attrs = value;
   }
 
@@ -111,8 +100,7 @@ class Element extends Node {
   }
 
   // Listen for class or style attribute values to change
-  $_onClassOrStyleUpdate(payload) {
-    if (this.$__attrs) this.$_attrs.triggerUpdate();
+  _onClassOrStyleUpdate(payload) {
     this._triggerUpdate(payload);
   }
 
@@ -156,92 +144,6 @@ class Element extends Node {
     }
   }
 
-  // Traverse the dom tree to generate the HTML
-  $_generateHtml(node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      // Text node
-      return node.textContent;
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      // Element
-      const tagName = node.tagName.toLowerCase();
-      let html = `<${tagName}`;
-
-      // Attribute
-      if (node.id) html += ` id="${node.id}"`;
-      if (node.className) html += ` class="${node.className}"`;
-
-      const styleText = node.style.cssText;
-      if (styleText) html += ` style="${styleText}"`;
-
-      const src = node.src;
-      if (src) html += ` src=${src}`;
-
-      const animation = node.animation;
-      if (node.animation) html += `animation=${animation}`;
-
-      const dataset = node.dataset;
-      Object.keys(dataset).forEach(name => {
-        html += ` data-${tool.toDash(name)}="${dataset[name]}"`;
-      });
-
-      html = this.$$dealWithAttrsForGenerateHtml(html, node);
-
-      if (node.$$isUnary) {
-        // Empty tag
-        return `${html} />`;
-      } else {
-        const childrenHtml = node.childNodes.map(child => this.$_generateHtml(child)).join('');
-        return `${html}>${childrenHtml}</${tagName}>`;
-      }
-    }
-  }
-
-  // Traverse the ast to generate the dom tree
-  $_generateDomTree(node) {
-    const {
-      type,
-      tagName = '',
-      attrs = [],
-      children = [],
-      content = '',
-    } = node;
-
-    // generated at runtime, using the b- prefix
-    const nodeId = `b-${tool.getId()}`;
-
-    if (type === 'element') {
-      // Element
-      const attrsMap = {};
-
-      // The property list is converted to a map
-      for (const attr of attrs) {
-        const name = attr.name;
-        let value = attr.value;
-
-        if (name === 'style') value = value && value.replace('"', '\'') || '';
-
-        attrsMap[name] = value;
-      }
-
-      const element = this.ownerDocument.$$createElement({
-        tagName, attrs: attrsMap, nodeId
-      });
-
-      for (let child of children) {
-        child = this.$_generateDomTree(child);
-
-        if (child) element.appendChild(child);
-      }
-
-      return element;
-    } else if (type === 'text') {
-      // Text node
-      return this.ownerDocument.$$createTextNode({
-        content: tool.decodeContent(content), nodeId
-      });
-    }
-  }
-
   // Dom info
   get $$domInfo() {
     return {
@@ -251,26 +153,10 @@ class Element extends Node {
       tagName: this.$_tagName,
       id: this.id,
       className: this.className,
-      style: this.$__style ? this.style.cssText : '',
+      style: this.style.cssText,
       animation: this.$__attrs ? this.$__attrs.get('animation') : {},
-      slot: this.$__attrs ? this.$__attrs.get('slot') : null,
-      behavior: this._behavior,
+      slot: this.$__attrs ? this.$__attrs.get('slot') : null
     };
-  }
-
-  // Check Empty tag
-  get $$isUnary() {
-    return this.$_unary;
-  }
-
-  // The $_generateHtml interface is called to handle additional attributes
-  $$dealWithAttrsForGenerateHtml(html) {
-    // The concrete implementation logic is implemented by subclasses
-    return html;
-  }
-
-  // The setter for outerHTML is called to handle the extra properties
-  $$dealWithAttrsForOuterHTML() {
   }
 
   // The cloneNode interface is called to process additional properties
@@ -300,7 +186,6 @@ class Element extends Node {
 
     if (id === oldId) return;
 
-    // update tree
     if (id) {
       this.ownerDocument.__idMap[oldId] = null;
       this.ownerDocument.__idMap[id] = this;
@@ -317,25 +202,15 @@ class Element extends Node {
   }
 
   get className() {
-    if (!this.$__classList) return '';
-
-    return this.$_classList.toString();
+    return this.getAttribute('class') || '';
   }
 
   set className(className) {
-    if (typeof className !== 'string') return;
-
-    if (this._isRendered()) {
-      const payload = {
-        path: `${this.$_element._path}.className`,
-        value: this.classList.value
-      };
-      this.$_onClassOrStyleUpdate(payload);
-    }
+    this.setAttribute('class', className);
   }
 
   get classList() {
-    return this.$_classList;
+    return new ClassList(this.className, this);
   }
 
   get nodeName() {
@@ -378,13 +253,6 @@ class Element extends Node {
   set textContent(text) {
     text = '' + text;
 
-    // Delete all child nodes
-    this.$_children.forEach(node => {
-      node.$$updateParent(null);
-
-      // Update mapping table
-    });
-
     // An empty string does not add a textNode node
     if (!text) {
       const payload = {
@@ -418,7 +286,7 @@ class Element extends Node {
   }
 
   get attributes() {
-    return this.$_attrs.list;
+    return this.$_attrs;
   }
 
   get src() {
@@ -471,7 +339,7 @@ class Element extends Node {
 
     this.$_children.push(node);
     // Set parentNode
-    node.$$updateParent(this);
+    node.parentNode = this;
 
     if (this._isRendered()) {
       // Trigger update
@@ -496,8 +364,7 @@ class Element extends Node {
     if (index >= 0) {
       // Inserted, need to delete
       this.$_children.splice(index, 1);
-
-      node.$$updateParent(null);
+      node.parentNode = null;
 
       if (this._isRendered()) {
         // Trigger update
@@ -521,26 +388,26 @@ class Element extends Node {
     if (node === this) return;
     if (node.parentNode) node.parentNode.removeChild(node);
 
-    const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
-    const payload = {
-      type: 'children',
-      path: `${this._path}.children`,
-      deleteCount: 0,
-      item: simplify(node)
-    };
-    if (insertIndex === -1) {
-      // Insert to the end
-      this.$_children.push(node);
-      payload.start = this.$_children.length - 1;
-    } else {
-      // Inserted before ref
-      this.$_children.splice(insertIndex, 0, node);
-      payload.start = insertIndex;
-    }
     // Set parentNode
-    node.$$updateParent(this);
+    node.parentNode = this;
 
     if (this._isRendered()) {
+      const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
+      const payload = {
+        type: 'children',
+        path: `${this._path}.children`,
+        deleteCount: 0,
+        item: simplify(node)
+      };
+      if (insertIndex === -1) {
+        // Insert to the end
+        this.$_children.push(node);
+        payload.start = this.$_children.length - 1;
+      } else {
+        // Inserted before ref
+        this.$_children.splice(insertIndex, 0, node);
+        payload.start = insertIndex;
+      }
       // Trigger update
       this._triggerUpdate(payload);
     }
@@ -565,8 +432,7 @@ class Element extends Node {
       this.$_children.splice(replaceIndex, 0, node);
     }
     // Set parentNode
-    node.$$updateParent(this);
-    // Update the mapping table
+    node.parentNode = this;
 
     if (this._isRendered()) {
       // Trigger update
@@ -628,14 +494,12 @@ class Element extends Node {
 
   getAttribute(name) {
     if (typeof name !== 'string') return '';
-    if (!this.$__attrs) return name === 'id' || name === 'style' || name === 'class' ? '' : undefined;
 
     return this.$_attrs.get(name);
   }
 
   hasAttribute(name) {
     if (typeof name !== 'string') return false;
-    if (!this.$__attrs) return false;
 
     return this.$_attrs.has(name);
   }

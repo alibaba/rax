@@ -8,15 +8,8 @@ export default function simplify(node) {
     return domInfo;
   }
 
-  let componentType;
-  if (node._behavior) {
-    componentType = node._behavior;
-  } else {
-    componentType = node.tagName;
-  }
-
   // Get specific props
-  const specificProps = propsMap[componentType] || [];
+  const specificProps = propsMap[node.tagName] || [];
   specificProps.forEach(prop => {
     domInfo[prop.name] = prop.get(node);
   });

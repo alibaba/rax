@@ -4,7 +4,7 @@ import tool from '../../utils/tool';
 
 class CustomComponent extends Element {
   constructor(options) {
-    this.__behavior = options.componentName;
+    this.__behavior = options.tagName;
     this.__nativeType = options.tagName === 'custom-component' ? 'customComponent' : 'miniappPlugin';
     super.$$init(options);
   }
@@ -13,10 +13,6 @@ class CustomComponent extends Element {
     super.$$destroy();
 
     this.__behavior = null;
-  }
-
-  $$recycle() {
-    this.$$destroy();
   }
 
   get _behavior() {

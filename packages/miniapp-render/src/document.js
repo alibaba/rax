@@ -13,14 +13,9 @@ import BuiltInComponent from './node/element/builtin-component';
 import CustomComponent from './node/element/custom-component';
 import RootElement from './node/root';
 
-const CONSTRUCTOR_MAP = {
-  IMG: Image,
-  INPUT: Input,
-  TEXTAREA: Textarea,
-  VIDEO: Video,
-  'BUILTIN-COMPONENT': BuiltInComponent,
-};
-const BUILTIN_COMPONENT_LIST = [
+const CONSTRUCTOR_MAP = new Map([['img', Image], ['input', Input], ['textarea', Textarea], ['video', Video]]);
+
+const BUILTIN_COMPONENT_LIST = new Set([
   'movable-view', 'cover-image', 'cover-view', 'movable-area', 'scroll-view', 'swiper', 'swiper-item', 'view',
   'icon', 'progress', 'rich-text', 'text',
   'button', 'checkbox', 'checkbox-group', 'editor', 'form', 'input', 'label', 'picker', 'picker-view', 'picker-view-column', 'radio', 'radio-group', 'slider', 'switch', 'textarea',
@@ -29,16 +24,7 @@ const BUILTIN_COMPONENT_LIST = [
   'map',
   'canvas',
   'ad', 'official-account', 'open-data', 'web-view'
-];
-
-/**
- * Check this component is builtIn component
- * @param {string} tagName - component tag name
- * @return {boolean}
- */
-function checkIsBuiltInComponent(tagName) {
-  return BUILTIN_COMPONENT_LIST.indexOf(tagName) > -1;
-}
+]);
 
 class Document extends EventTarget {
   constructor(pageId) {
@@ -64,7 +50,7 @@ class Document extends EventTarget {
       type: Node.DOCUMENT_NODE,
     });
     // documentElement's parentNode is document
-    this.$_node.$$updateParent(this);
+    this.$_node.parentNode = this;
     this.$_node.scrollTop = 0;
 
     this.__root = new RootElement({
@@ -78,7 +64,7 @@ class Document extends EventTarget {
     });
 
     // update body's parentNode
-    this.__root.$$updateParent(this.$_node);
+    this.__root.parentNode = this.$_node;
   }
 
   // Event trigger
@@ -91,32 +77,24 @@ class Document extends EventTarget {
   }
 
   $$createElement(options) {
-    const originTagName = options.tagName;
-    const tagName = originTagName.toUpperCase();
-    const componentName = checkIsBuiltInComponent(originTagName) ? originTagName : null;
-
-    const ConstructorClass = CONSTRUCTOR_MAP[tagName];
+    const ConstructorClass = CONSTRUCTOR_MAP.get(options.tagName);
     if (ConstructorClass) {
       return new ConstructorClass(options);
-    } else if (componentName) {
+    }
+
+    if (BUILTIN_COMPONENT_LIST.has(options.tagName)) {
       // Transform to builtin-component
-      options.tagName = 'builtin-component';
       options.attrs = options.attrs || {};
-      options.attrs._behavior = componentName;
       return new BuiltInComponent(options);
-    } else if (this.usingComponents[originTagName]) {
+    } else if (this.usingComponents[options.tagName]) {
       // Transform to custom-component
       options.tagName = 'custom-component';
       options.attrs = options.attrs || {};
-      options.componentName = originTagName;
       return new CustomComponent(options);
-    } else if (this.usingPlugins[originTagName]) {
+    } else if (this.usingPlugins[options.tagName]) {
       options.tagName = 'miniapp-plugin';
       options.attrs = options.attrs || {};
-      options.componentName = originTagName;
       return new CustomComponent(options);
-    } else if (!tool.isTagNameSupport(tagName)) {
-      throw new Error(`${tagName} is not supported.`);
     } else {
       return new Element(options);
     }
@@ -184,10 +162,7 @@ class Document extends EventTarget {
   }
 
   createElement(tagName) {
-    if (typeof tagName !== 'string') return;
-
-    tagName = tagName.trim();
-    if (!tagName) return;
+    if (typeof tagName !== 'string' || !tagName) return;
 
     return this.$$createElement({
       document: this,
