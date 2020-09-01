@@ -584,7 +584,7 @@ function addRegisterRefs(refs, renderFunctionPath) {
  */
 function ensureIndexInPath(value, resourcePath) {
   const target = resolveModule.sync(resolve(dirname(resourcePath), value), {
-    extensions: ['.js', '.ts']
+    extensions: ['.js', '.ts', 'jsx', 'tsx']
   });
   const result = relative(dirname(resourcePath), target);
   return removeJSExtension(addRelativePathPrefix(normalizeOutputFilePath(result)));
