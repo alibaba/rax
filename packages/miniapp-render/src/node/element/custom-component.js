@@ -62,7 +62,9 @@ class CustomComponent extends Element {
 
     if (name === 'id') {
       // id to be handled here in advance
+      this.ownerDocument.__nodeIdMap.delete(this.id)
       this.id = value;
+      this.ownerDocument.__nodeIdMap.set(this.id, this);
     } else {
       this.$_attrs.set(name, value, immediate);
     }
