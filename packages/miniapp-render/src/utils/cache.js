@@ -1,27 +1,26 @@
-const pageMap = {};
-const routeMap = {};
+const pageMap = new Map();
+const routeMap = new Map();
 let config = {};
 let window;
 
 const elementsCache = [];
 const elementMethodsCache = new Map();
-let updatingNodes = [];
 
 // Init
 function init(pageId, options) {
-  pageMap[pageId] = options.document;
+  pageMap.set(pageId, options.document);
 }
 
 // Destroy
 function destroy(pageId) {
-  delete pageMap[pageId];
+  pageMap.delete(pageId);
 }
 
 /**
  * Get document
  */
 function getDocument(pageId) {
-  return pageMap[pageId];
+  return pageMap.get(pageId);
 }
 
 // Set window
@@ -40,18 +39,18 @@ function getWindow() {
  * Save domNode map
  */
 function setNode(pageId, nodeId, domNode = null) {
-  const document = pageMap[pageId];
+  const document = pageMap.get(pageId);
 
   // Call before run, do nothing
   if (!document) return;
-  if (!domNode) return pageMap[pageId].__nodeIdMap[nodeId] = domNode;
+  if (!domNode) return pageMap.get(pageId).__nodeIdMap[nodeId] = domNode;
 
-  pageMap[pageId].__nodeIdMap[nodeId] = domNode;
+  pageMap.get(pageId).__nodeIdMap[nodeId] = domNode;
 }
 
 // Get the domNode by nodeId
 function getNode(pageId, nodeId) {
-  return pageMap[pageId] && pageMap[pageId].__nodeIdMap[nodeId];
+  return pageMap.get(pageId) && pageMap.get(pageId).__nodeIdMap[nodeId];
 }
 
 // Store global config
@@ -65,11 +64,9 @@ function getConfig() {
 }
 
 function getRouteId(route) {
-  if (!routeMap[route]) {
-    return routeMap[route] = 1;
-  } else {
-    return ++routeMap[route];
-  }
+  const routeId = routeMap.get(route) || 0;
+  routeMap.set(route, routeId + 1);
+  return routeId + 1;
 }
 
 function setElementInstance(instance) {
