@@ -4,7 +4,7 @@ import tool from '../utils/tool';
 class Style {
   constructor(element) {
     this.__settedStyle = new Set();
-    this.__value = {};
+    this.__value = new Map();
     this.__element = element;
   }
 
@@ -13,8 +13,7 @@ class Style {
     if (val) {
       this.__settedStyle.add(styleKey);
     }
-
-    this.__value[styleKey] = val;
+    this.__value.set(styleKey, val);
     if (old !== val) {
       const payload = {
         path: `${this.__element._path}.style`,
@@ -64,7 +63,7 @@ class Style {
       enumerable: true,
       configurable: true,
       get: () => {
-        return this.__value[styleKey] || '';
+        return this.__value.get(styleKey) || '';
       },
       set: (val) => {
         this.setStyle(val, styleKey);
@@ -116,7 +115,7 @@ const properties = {};
 styleList.forEach(name => {
   properties[name] = {
     get() {
-      return this.__value[name] || '';
+      return this.__value.get(name) || '';
     },
     set(value) {
       this.setStyle(value, name);
