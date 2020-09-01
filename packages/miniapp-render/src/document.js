@@ -34,10 +34,7 @@ class Document extends EventTarget {
     this.usingComponents = usingComponents;
     this.usingPlugins = usingPlugins;
 
-    this.__nodeIdMap = {};
-    this.__idMap = {};
-    this.__classMap = {};
-    this.__tagMap = {};
+    this.__nodeIdMap = new Map(); // TODO: should only save nodes that has been mounted
     this.__pageId = pageId;
     this.$_config = null;
 
@@ -134,30 +131,64 @@ class Document extends EventTarget {
   getElementById(id) {
     if (typeof id !== 'string') return;
 
-    return this.__idMap[id] || null;
+    const element = this.__nodeIdMap.get(id);
+    if (element && element._isRendered()) {
+      return element;
+    }
+    return null;
   }
 
   getElementsByTagName(tagName) {
     if (typeof tagName !== 'string') return [];
 
-    return this.__tagMap[tagName] || [];
+    const elements = [];
+    this.__nodeIdMap.forEach((element, nodeId) => {
+      if (element && element.$_tagName === tagName && element._isRendered()) {
+        elements.push(element);
+      }
+    })
+    return elements;
   }
 
   getElementsByClassName(className) {
     if (typeof className !== 'string') return [];
 
-    return this.__classMap[className] || [];
+    const elements = [];
+    this.__nodeIdMap.forEach((element, nodeId) => {
+      const classNames = className.trim().split(/\s+/);
+      if (element && classNames.every(c => element.classList.has(c))) {
+        elements.push(element);
+      }
+    })
+    return elements;
   }
 
   querySelector(selector) {
     if (typeof selector !== 'string') return;
-    // Todo
+
+    if (selector[0] === '.') {
+      const elements = this.getElementsByClassName(selector.slice(1));
+      return elements.length > 0 ? elements[0] : null;
+    } else if (selector[0] === '#') {
+      return this.getElementById(selector.slice(1));
+    } else if (/^[a-zA-Z]/.test(selector)) {
+      const elements = this.getElementsByTagName(selector);
+      return elements.length > 0 ? elements[0] : null;
+    }
     return null;
   }
 
   querySelectorAll(selector) {
     if (typeof selector !== 'string') return [];
-    // Todo
+
+    if (selector[0] === '.') {
+      return this.getElementsByClassName(selector.slice(1));
+    } else if (selector[0] === '#') {
+      const element = this.getElementById(selector.slice(1));
+      return element ? [element] : [];
+    } else if (/^[a-zA-Z]/.test(selector)) {
+      return this.getElementsByTagName(selector);
+    }
     return null;
   }
 
