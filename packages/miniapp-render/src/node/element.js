@@ -5,7 +5,7 @@ import Style from './style';
 import Attribute from './attribute';
 import cache from '../utils/cache';
 import tool from '../utils/tool';
-import simplify from '../utils/simplify';
+import { simplifyDomTree, traverse } from '../utils/tree';
 
 class Element extends Node {
   constructor(options) {
@@ -20,9 +20,7 @@ class Element extends Node {
     this.__attrs = new Attribute(this);
     cache.setNode(this.__pageId, this.$$nodeId, this);
     this.dataset = new Map();
-    if (this.id) {
-      this.ownerDocument.__idMap[this.id] = this;
-    }
+    this.ownerDocument.__nodeIdMap.set(this.id || this.$$nodeId, this);
 
     this._initAttributes(options.attrs);
 
@@ -39,9 +37,7 @@ class Element extends Node {
   $$destroy() {
     this.$_children.forEach(child => child.$$destroy());
     cache.setNode(this.__pageId, this.$$nodeId, null);
-    if (this.id) {
-      this.ownerDocument.__idMap[this.id] = null;
-    }
+    this.ownerDocument.__nodeIdMap.set(this.id || this.$$nodeId, null);
     super.$$destroy();
     this.$_tagName = '';
     this.$_children.length = 0;
@@ -235,7 +231,7 @@ class Element extends Node {
         path: `${this._path}.children`,
         start: this.$_children.length - 1,
         deleteCount: 0,
-        item: simplify(node)
+        item: simplifyDomTree(node)
       };
       this._triggerUpdate(payload);
     }
@@ -287,7 +283,7 @@ class Element extends Node {
         type: 'children',
         path: `${this._path}.children`,
         deleteCount: 0,
-        item: simplify(node)
+        item: simplifyDomTree(node)
       };
       if (insertIndex === -1) {
         // Insert to the end
@@ -332,7 +328,7 @@ class Element extends Node {
         path: `${this._path}.children`,
         start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
         deleteCount: replaceIndex === -1 ? 0 : 1,
-        item: simplify(node)
+        item: simplifyDomTree(node)
       };
       this._triggerUpdate(payload);
     }
@@ -346,29 +342,61 @@ class Element extends Node {
 
   getElementsByTagName(tagName) {
     if (typeof tagName !== 'string') return [];
-    // Todo
-    return this.ownerDocument.getElementsByTagName(tagName);
+    const elements = [];
+    traverse(this, element => {
+      if (element && element.$_tagName === tagName) {
+        elements.push(element);
+      }
+      return {};
+    });
+    return elements;
   }
 
   getElementsByClassName(className) {
     if (typeof className !== 'string') return [];
-    // Todo
-    return this.ownerDocument.getElementsByTagName(className);
+    const elements = [];
+    traverse(this, element => {
+      const classNames = className.trim().split(/\s+/);
+      if (element && classNames.every(c => element.classList.has(c))) {
+        elements.push(element);
+      }
+      return {};
+    });
+    return elements;
   }
 
   querySelector(selector) {
-    if (typeof selector !== 'string') return;
-    // Todo
-    return this.ownerDocument.querySelector(selector);
+    if (selector[0] === '.') {
+      const elements = this.getElementsByClassName(selector.slice(1));
+      return elements.length > 0 ? elements[0] : null;
+    } else if (selector[0] === '#') {
+      return this.getElementById(selector.slice(1));
+    } else if (/^[a-zA-Z]/.test(selector)) {
+      const elements = this.getElementsByTagName(selector);
+      return elements.length > 0 ? elements[0] : null;
+    }
+    return null;
   }
 
   querySelectorAll(selector) {
     if (typeof selector !== 'string') return [];
-    // Todo
-    return this.ownerDocument.querySelectorAll(selector);
+
+    if (selector[0] === '.') {
+      return this.getElementsByClassName(selector.slice(1));
+    } else if (selector[0] === '#') {
+      const element = this.getElementById(selector.slice(1));
+      return element ? [element] : [];
+    } else if (/^[a-zA-Z]/.test(selector)) {
+      return this.getElementsByTagName(selector);
+    }
+    return null;
   }
 
   setAttribute(name, value, immediate = true) {
+    if (name === 'id') {
+      this.ownerDocument.__nodeIdMap.delete(this.id || this.$$nodeId);
+      this.ownerDocument.__nodeIdMap.set(this.id, this);
+    }
     this.__attrs.set(name, value, immediate);
   }
 
