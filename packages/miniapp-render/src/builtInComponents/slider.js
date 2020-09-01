@@ -84,7 +84,7 @@ export default {
       name: 'onSliderChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.__setAttributeWithoutUpdate('value', evt.detail.value);
+        domNode._setAttributeWithOutUpdate('value', evt.detail.value);
         domNode.__oldValues = domNode.__oldValues || {};
         domNode.__oldValues.value = evt.detail.value;
       }

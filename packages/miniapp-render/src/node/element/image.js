@@ -34,11 +34,11 @@ class Image extends Element {
 
   // Init length
   $_initRect() {
-    const width = parseInt(this.$_attrs.get('width'), 10);
-    const height = parseInt(this.$_attrs.get('height'), 10);
+    const width = parseInt(this.__attrs.get('width'), 10);
+    const height = parseInt(this.__attrs.get('height'), 10);
 
-    if (typeof width === 'number' && width >= 0) this.$_style.width = `${width}px`;
-    if (typeof height === 'number' && height >= 0) this.$_style.height = `${height}px`;
+    if (typeof width === 'number' && width >= 0) this.style.width = `${width}px`;
+    if (typeof height === 'number' && height >= 0) this.style.height = `${height}px`;
   }
 
   // Reset width & height
@@ -50,13 +50,13 @@ class Image extends Element {
   }
 
   get src() {
-    return this.$_attrs.get('src') || '';
+    return this.__attrs.get('src') || '';
   }
 
   set src(value) {
     if (!value || typeof value !== 'string') return;
 
-    this.$_attrs.set('src', value);
+    this.__attrs.set('src', value);
 
     setTimeout(() => {
       if (this.src.indexOf('data:image') !== 0) {
@@ -96,24 +96,24 @@ class Image extends Element {
   }
 
   get width() {
-    return +this.$_attrs.get('width') || 0;
+    return +this.__attrs.get('width') || 0;
   }
 
   set width(value) {
     if (typeof value !== 'number' || !isFinite(value) || value < 0) return;
 
-    this.$_attrs.set('width', value);
+    this.__attrs.set('width', value);
     this.$_initRect();
   }
 
   get height() {
-    return +this.$_attrs.get('height') || 0;
+    return +this.__attrs.get('height') || 0;
   }
 
   set height(value) {
     if (typeof value !== 'number' || !isFinite(value) || value < 0) return;
 
-    this.$_attrs.set('height', value);
+    this.__attrs.set('height', value);
     this.$_initRect();
   }
 

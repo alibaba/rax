@@ -82,18 +82,17 @@ class Document extends EventTarget {
       return new ConstructorClass(options);
     }
 
+    options.attrs = options.attrs || {};
+
     if (BUILTIN_COMPONENT_LIST.has(options.tagName)) {
       // Transform to builtin-component
-      options.attrs = options.attrs || {};
       return new BuiltInComponent(options);
     } else if (this.usingComponents[options.tagName]) {
       // Transform to custom-component
       options.tagName = 'custom-component';
-      options.attrs = options.attrs || {};
       return new CustomComponent(options);
     } else if (this.usingPlugins[options.tagName]) {
       options.tagName = 'miniapp-plugin';
-      options.attrs = options.attrs || {};
       return new CustomComponent(options);
     } else {
       return new Element(options);

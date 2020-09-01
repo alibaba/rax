@@ -47,7 +47,7 @@ export default {
       name: 'onPickerViewChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.__setAttributeWithoutUpdate('value', evt.detail.value);
+        domNode._setAttributeWithOutUpdate('value', evt.detail.value);
       }
     }
   ]

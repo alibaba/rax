@@ -10,8 +10,10 @@ export default class ClassList extends Set {
   }
 
   add(s) {
-    super.add(s);
-    this._update();
+    if (typeof s === 'string') {
+      super.add(s);
+      this._update();
+    }
 
     return this;
   }

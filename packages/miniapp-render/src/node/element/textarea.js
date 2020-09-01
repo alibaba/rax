@@ -58,28 +58,28 @@ class HTMLTextAreaElement extends Element {
 
   // Attribute
   get name() {
-    return this.$_attrs.get('name');
+    return this.__attrs.get('name');
   }
 
   set name(value) {
     value = '' + value;
-    this.$_attrs.set('name', value);
+    this.__attrs.set('name', value);
   }
 
   // Attribute
   get type() {
-    return this.$_attrs.get('type') || 'textarea';
+    return this.__attrs.get('type') || 'textarea';
   }
 
   set type(value) {
     value = '' + value;
-    this.$_attrs.set('type', value);
+    this.__attrs.set('type', value);
   }
 
   get value() {
-    let value = this.$_attrs.get('value');
+    let value = this.__attrs.get('value');
     if (!value && !this.changed) {
-      value = this.$_attrs.get('defaultValue');
+      value = this.__attrs.get('defaultValue');
     }
     return value || '';
   }
@@ -87,81 +87,81 @@ class HTMLTextAreaElement extends Element {
   set value(value) {
     this.changed = true;
     value = '' + value;
-    this.$_attrs.set('value', value);
+    this.__attrs.set('value', value);
   }
 
   get readOnly() {
-    return !!this.$_attrs.get('readOnly');
+    return !!this.__attrs.get('readOnly');
   }
 
   set readOnly(value) {
-    this.$_attrs.set('readOnly', !!value);
+    this.__attrs.set('readOnly', !!value);
   }
 
   get disabled() {
-    return !!this.$_attrs.get('disabled');
+    return !!this.__attrs.get('disabled');
   }
 
   set disabled(value) {
     value = !!value;
-    this.$_attrs.set('disabled', value);
+    this.__attrs.set('disabled', value);
   }
 
   get maxlength() {
-    return this.$_attrs.get('maxlength');
+    return this.__attrs.get('maxlength');
   }
 
   set maxlength(value) {
-    this.$_attrs.set('maxlength', value);
+    this.__attrs.set('maxlength', value);
   }
 
   get placeholder() {
-    return this.$_attrs.get('placeholder') || '';
+    return this.__attrs.get('placeholder') || '';
   }
 
   set placeholder(value) {
     value = '' + value;
-    this.$_attrs.set('placeholder', value);
+    this.__attrs.set('placeholder', value);
   }
 
   get autofocus() {
-    return !!this.$_attrs.get('autofocus');
+    return !!this.__attrs.get('autofocus');
   }
 
   set autofocus(value) {
     value = !!value;
-    this.$_attrs.set('autofocus', value);
+    this.__attrs.set('autofocus', value);
   }
 
   get selectionStart() {
-    const value = +this.$_attrs.get('selection-start');
+    const value = +this.__attrs.get('selection-start');
     return value !== undefined ? value : -1;
   }
 
   set selectionStart(value) {
-    this.$_attrs.set('selection-start', value);
+    this.__attrs.set('selection-start', value);
   }
 
   get selectionEnd() {
-    const value = +this.$_attrs.get('selection-end');
+    const value = +this.__attrs.get('selection-end');
     return value !== undefined ? value : -1;
   }
 
   set selectionEnd(value) {
-    this.$_attrs.set('selection-end', value);
+    this.__attrs.set('selection-end', value);
   }
 
   get focus() {
-    return !!this.$_attrs.get('focus');
+    return !!this.__attrs.get('focus');
   }
 
   set focus(value) {
     value = !!value;
-    this.$_attrs.set('focus', value);
+    this.__attrs.set('focus', value);
   }
 
   blur() {
-    this.$_attrs.set('focus', false);
+    this.__attrs.set('focus', false);
   }
 }
 

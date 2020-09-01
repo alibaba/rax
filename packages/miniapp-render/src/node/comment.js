@@ -7,7 +7,7 @@ class Comment extends Node {
     super(options);
   }
 
-  get $$domInfo() {
+  get _renderInfo() {
     return {
       nodeId: this.$_nodeId,
       pageId: this.__pageId,

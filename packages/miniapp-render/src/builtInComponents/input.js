@@ -124,7 +124,7 @@ const input = {
     eventName: 'input',
     middleware(evt, domNode, pageId, nodeId) {
       const value = '' + evt.detail.value;
-      domNode.__setAttributeWithoutUpdate('value', value);
+      domNode._setAttributeWithOutUpdate('value', value);
 
       this.callEvent('input', evt, null, pageId, nodeId);
     }
@@ -134,7 +134,7 @@ const input = {
     eventName: 'focus',
     middleware(evt, domNode, pageId, nodeId) {
       domNode.__inputOldValue = domNode.value || '';
-      domNode.__setAttributeWithoutUpdate('focus-state', true);
+      domNode._setAttributeWithOutUpdate('focus-state', true);
 
       this.callSimpleEvent('focus', evt, domNode);
     }
@@ -143,7 +143,7 @@ const input = {
     name: 'onInputBlur',
     eventName: 'blur',
     middleware(evt, domNode, pageId, nodeId) {
-      domNode.__setAttributeWithoutUpdate('focus-state', false);
+      domNode._setAttributeWithOutUpdate('focus-state', false);
 
       if (domNode.__inputOldValue !== undefined && domNode.value !== domNode.__inputOldValue) {
         domNode.__inputOldValue = undefined;

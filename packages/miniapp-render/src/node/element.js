@@ -16,15 +16,15 @@ class Element extends Node {
     this.$_tagName = options.tagName || '';
     this.$_children = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
-    this.$_dataset = null;
-    this.$_style = null;
-    this.$_attrs = null;
+    this.style = new Style(this);
+    this.__attrs = new Attribute(this);
     cache.setNode(this.__pageId, this.$$nodeId, this);
+    this.dataset = new Map();
     if (this.id) {
       this.ownerDocument.__idMap[this.id] = this;
     }
 
-    this.$_initAttrs(options.attrs);
+    this._initAttributes(options.attrs);
 
     this.onclick = null;
     this.ontouchstart = null;
@@ -47,115 +47,33 @@ class Element extends Node {
     this.$_children.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
     this.$_unary = null;
-    this.$_dataset = null;
-    this.$_style = null;
-    this.$_attrs = null;
-  }
-
-  set $_dataset(value) {
-    this.$__dataset = value;
-  }
-
-  get $_dataset() {
-    if (!this.$__dataset) this.$__dataset = Object.create(null);
-    return this.$__dataset;
-  }
-
-  set $_style(value) {
-    if (!value && this.$__style) this.$__style.$$destroy();
-    this.$__style = value;
-  }
-
-  get $_style() {
-    if (!this.$__style) this.$__style = new Style(this);
-    return this.$__style;
-  }
-
-  set $_attrs(value) {
-    if (!value && this.$__attrs) this.$__attrs.$$destroy();
-    this.$__attrs = value;
-  }
-
-  get $_attrs() {
-    if (!this.$__attrs) this.$__attrs = new Attribute(this, this._triggerUpdate.bind(this));
-    return this.$__attrs;
+    this.__attrs = null;
   }
 
   // Init attribute
-  $_initAttrs(attrs = {}) {
-    // Avoid create $_attrs when component init
-    const attrKeys = Object.keys(attrs);
-    if (!attrKeys.length) return;
-
-    attrKeys.forEach(name => {
-      if (name.indexOf('data-') === 0) {
-        // dataset
-        const datasetName = tool.toCamel(name.substr(5));
-        this.$_dataset[datasetName] = attrs[name];
-      } else {
-        // Other attributes
-        this.__setAttributeWithoutUpdate(name, attrs[name]);
-      }
+  _initAttributes(attrs = {}) {
+    Object.keys(attrs).forEach(name => {
+      this._setAttributeWithOutUpdate(name, attrs[name]);
     });
   }
 
-  // Listen for class or style attribute values to change
-  _onClassOrStyleUpdate(payload) {
-    this._triggerUpdate(payload);
-  }
-
   _triggerUpdate(payload, immediate = true) {
-    if (!this.__notTriggerUpdate) {
+    const root = this._root;
+    if (!root) return;
+    if (immediate) {
       this.enqueueRender(payload);
-    } else if (!immediate && this._root) {
+    } else {
       this._root.renderStacks.push(payload);
     }
   }
 
-  _traverseNodeMap(node, isRemove) {
-    let queue = [];
-    queue.push(node);
-    while (queue.length) {
-      let curNode = queue.shift();
-      this._updateNodeMap(curNode, isRemove);
-      if (curNode.childNodes && curNode.childNodes.length) {
-        queue = queue.concat(curNode.childNodes);
-      }
-    }
-  }
-  // Changes to the mapping table caused by changes to update child nodes
-  _updateNodeMap(node, isRemove) {
-    const id = node.id;
-
-    // Update nodeId - dom map
-    if (isRemove) {
-      cache.setNode(this.__pageId, node.$$nodeId, null);
-    } else {
-      cache.setNode(this.__pageId, node.$$nodeId, node);
-    }
-
-    // Update id - dom map
-    if (id) {
-      if (isRemove) {
-        this.ownerDocument.__idMap[id] = null;
-      } else {
-        this.ownerDocument.__idMap[id] = node;
-      }
-    }
-  }
-
-  // Dom info
-  get $$domInfo() {
+  get _renderInfo() {
     return {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
       nodeType: this.$_type,
       tagName: this.$_tagName,
-      id: this.id,
-      className: this.className,
-      style: this.style.cssText,
-      animation: this.$__attrs ? this.$__attrs.get('animation') : {},
-      slot: this.$__attrs ? this.$__attrs.get('slot') : null
+      style: this.style.cssText
     };
   }
 
@@ -165,36 +83,16 @@ class Element extends Node {
   }
 
   // Sets properties, but does not trigger updates
-  __setAttributeWithoutUpdate(name, value) {
-    this.__notTriggerUpdate = true;
-    this.setAttribute(name, value, false);
-    this.__notTriggerUpdate = false;
+  _setAttributeWithOutUpdate(name, value) {
+    this.__attrs._setWithOutUpdate(name, value);
   }
 
   get id() {
-    if (!this.$__attrs) return '';
-
-    return this.$_attrs.get('id');
+    return this.__attrs.get('id');
   }
 
   set id(id) {
-    if (typeof id !== 'string') return;
-
-    id = id.trim();
-    const oldId = this.$_attrs.get('id');
-    this.$_attrs.set('id', id);
-
-    if (id === oldId) return;
-
-    if (id) {
-      this.ownerDocument.__idMap[oldId] = null;
-      this.ownerDocument.__idMap[id] = this;
-    };
-    const payload = {
-      path: `${this._path}.id`,
-      value: id
-    };
-    this._triggerUpdate(payload);
+    this.setAttribute('id', id);
   }
 
   get tagName() {
@@ -273,37 +171,25 @@ class Element extends Node {
     }
   }
 
-  get style() {
-    return this.$_style;
-  }
-
-  set style(value) {
-    this.$_style.cssText = value;
-  }
-
-  get dataset() {
-    return this.$_dataset;
-  }
-
   get attributes() {
-    return this.$_attrs;
+    return this.__attrs;
   }
 
   get src() {
-    if (!this.$__attrs) return '';
+    if (!this.__attrs) return '';
 
-    return this.$_attrs.get('src');
+    return this.__attrs.get('src');
   }
 
   set src(value) {
     value = '' + value;
-    this.$_attrs.set('src', value);
+    this.__attrs.set('src', value);
   }
 
   cloneNode(deep) {
-    const dataset = {};
-    Object.keys(this.$_dataset).forEach(name => {
-      dataset[`data-${tool.toDash(name)}`] = this.$_dataset[name];
+    const dataset = new Map();
+    this.dataset.forEach((value, name) => {
+      dataset.set(`data-${tool.toDash(name)}`, value);
     });
 
     const newNode = this.ownerDocument.$$createElement({
@@ -342,6 +228,7 @@ class Element extends Node {
     node.parentNode = this;
 
     if (this._isRendered()) {
+      node.__rendered = true;
       // Trigger update
       const payload = {
         type: 'children',
@@ -365,8 +252,10 @@ class Element extends Node {
       // Inserted, need to delete
       this.$_children.splice(index, 1);
       node.parentNode = null;
+      node.__rendered = false;
 
       if (this._isRendered()) {
+        node.__rendered = false;
         // Trigger update
         const payload = {
           type: 'children',
@@ -392,6 +281,7 @@ class Element extends Node {
     node.parentNode = this;
 
     if (this._isRendered()) {
+      node.__rendered = true;
       const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
       const payload = {
         type: 'children',
@@ -435,6 +325,7 @@ class Element extends Node {
     node.parentNode = this;
 
     if (this._isRendered()) {
+      node.__rendered = true;
       // Trigger update
       const payload = {
         type: 'children',
@@ -478,36 +369,19 @@ class Element extends Node {
   }
 
   setAttribute(name, value, immediate = true) {
-    if (typeof name !== 'string') return;
-
-    // preserve the original contents of the object/Array/boolean/undefined to facilitate the use of the built-in components of miniapp
-    const valueType = typeof value;
-    if (valueType !== 'object' && valueType !== 'boolean' && value !== undefined && !Array.isArray(value)) value = '' + value;
-
-    if (name === 'id') {
-      // id to be handled here in advance
-      this.id = value;
-    } else {
-      this.$_attrs.set(name, value, immediate);
-    }
+    this.__attrs.set(name, value, immediate);
   }
 
   getAttribute(name) {
-    if (typeof name !== 'string') return '';
-
-    return this.$_attrs.get(name);
+    return this.__attrs.get(name);
   }
 
   hasAttribute(name) {
-    if (typeof name !== 'string') return false;
-
-    return this.$_attrs.has(name);
+    return this.__attrs.has(name);
   }
 
   removeAttribute(name) {
-    if (typeof name !== 'string') return false;
-
-    return this.$_attrs.remove(name);
+    return this.__attrs.remove(name);
   }
 
   contains(otherElement) {

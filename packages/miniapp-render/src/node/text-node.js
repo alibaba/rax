@@ -20,7 +20,7 @@ class TextNode extends Node {
     this._root && this._root.enqueueRender(payload);
   }
 
-  get $$domInfo() {
+  get _renderInfo() {
     return {
       nodeId: this.$_nodeId,
       pageId: this.__pageId,

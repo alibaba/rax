@@ -8,24 +8,19 @@ class Style {
     this.__element = element;
   }
 
-  $$destroy() {
-    this.__element = null;
-    this.__settedStyle = null;
-  }
-
   setStyle(val, styleKey) {
     const old = this[styleKey];
     if (val) {
       this.__settedStyle.add(styleKey);
     }
 
+    this.__value[styleKey] = val;
     if (old !== val) {
-      this.__value[styleKey] = val;
       const payload = {
         path: `${this.__element._path}.style`,
         value: this.cssText
       };
-      this.__element._onClassOrStyleUpdate(payload);
+      this.__element._triggerUpdate(payload);
     }
   }
 

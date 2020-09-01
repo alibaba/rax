@@ -21,6 +21,7 @@ class Node extends EventTarget {
     this.$_type = null;
     this.parentNode = null;
     this.__pageId = null;
+    this.__rendered = false;
   }
 
   /**
@@ -49,7 +50,11 @@ class Node extends EventTarget {
   }
 
   _isRendered() {
-    return this.parentNode ? this.parentNode._isRendered() : this.__rendered;
+    if (this.__rendered) return true;
+    if (this.parentNode) {
+      this.__rendered = this.parentNode._isRendered();
+    }
+    return this.__rendered;
   }
 
   get nodeValue() {

@@ -91,7 +91,7 @@ const swiper = {
       name: 'onSwiperChange',
       eventName: 'change',
       middleware(evt, domNode) {
-        domNode.__setAttributeWithoutUpdate('current', evt.detail.current);
+        domNode._setAttributeWithOutUpdate('current', evt.detail.current);
       }
     }
   ]
