@@ -25,4 +25,4 @@ npm run build
 * app-lifecycle: 使用 app 生命周期
 * page-lifecycle-with-router: 使用 page 生命周期 + 路由跳转
 * event-handler: 事件绑定（编译时小程序）
-
+* get-element: document/element getElementXXX 相关 API
