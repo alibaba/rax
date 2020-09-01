@@ -1,5 +1,4 @@
 import styleList from './style-list';
-import tool from '../utils/tool';
 
 class Style {
   constructor(element) {
@@ -29,7 +28,7 @@ class Style {
     this.__settedStyle.forEach(key => {
       const val = this[key];
       if (!val) return;
-      cssText += `${tool.toDash(key)}: ${val};`;
+      cssText += `${styleMap.get(key)}: ${val};`;
     });
     return cssText;
   }
@@ -76,7 +75,7 @@ class Style {
     if (name[0] === '-') {
       this.setCssVariables(name);
     } else {
-      name = tool.toCamelCase(name);
+      name = styleMap.get(name);
     }
     if (typeof value === undefined) {
       return;
@@ -90,7 +89,7 @@ class Style {
   }
 
   removeProperty(name) {
-    name = tool.toCamelCase(name);
+    name = styleMap.get(name);
     if (!this.__settedStyle.has(name)) {
       return '';
     }
@@ -104,7 +103,7 @@ class Style {
   getPropertyValue(name) {
     if (typeof name !== 'string') return '';
 
-    name = tool.toCamel(name);
+    name = styleMap.get(name);
     return this[name] || '';
   }
 }
@@ -113,7 +112,10 @@ class Style {
  * Set the getters and setters for each property
  */
 const properties = {};
-styleList.forEach(name => {
+const styleMap = new Map();
+Object.keys(styleList).forEach(name => {
+  styleMap.set(name, styleList[name]);
+  styleMap.set(styleList[name], name);
   properties[name] = {
     get() {
       return this.__value[name] || '';
@@ -123,6 +125,7 @@ styleList.forEach(name => {
     },
   };
 });
+
 Object.defineProperties(Style.prototype, properties);
 
 export default Style;
