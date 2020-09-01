@@ -82,8 +82,6 @@ const handlesMap = {
 
 components.forEach(
   ({
-    name,
-    props,
     simpleEvents,
     singleEvents,
     functionalSingleEvents,

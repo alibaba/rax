@@ -1,10 +1,4 @@
 function simplify(node) {
-  if (node.childNodes && node.childNodes.length > 0) {
-    node._renderInfo.children = node.childNodes.map(simplify);
-  } else {
-    node._renderInfo.children = [];
-  }
-
   return node._renderInfo;
 }
 
@@ -25,9 +19,9 @@ export function traverse(node, action) {
       curNode.__parent.children = curNode.__parent.children || [];
       curNode.__parent.children.push(result);
     }
-    if (curNode.$_children && curNode.$_children.length) {
-      curNode.$_children.forEach(n => n.__parent = result);
-      queue = queue.concat(curNode.$_children);
+    if (curNode.childNodes && curNode.childNodes.length) {
+      curNode.childNodes.forEach(n => n.__parent = result);
+      queue = queue.concat(curNode.childNodes);
     }
     if (!result.children) {
       result.children = [];

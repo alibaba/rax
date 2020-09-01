@@ -14,7 +14,7 @@ class Element extends Node {
     super(options);
 
     this.$_tagName = options.tagName || '';
-    this.$_children = [];
+    this.childNodes = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.style = new Style(this);
     this.__attrs = new Attribute(this);
@@ -35,12 +35,12 @@ class Element extends Node {
 
   // Override the $$destroy method of the parent class
   $$destroy() {
-    this.$_children.forEach(child => child.$$destroy());
+    this.childNodes.forEach(child => child.$$destroy());
     cache.setNode(this.__pageId, this.$$nodeId, null);
     this.ownerDocument.__nodeIdMap.set(this.id || this.$$nodeId, null);
     super.$$destroy();
     this.$_tagName = '';
-    this.$_children.length = 0;
+    this.childNodes.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
     this.$_unary = null;
     this.__attrs = null;
@@ -115,20 +115,16 @@ class Element extends Node {
     return this.$_nodeType;
   }
 
-  get childNodes() {
-    return this.$_children;
-  }
-
   get children() {
-    return this.$_children.filter(child => child.nodeType === Node.ELEMENT_NODE);
+    return this.childNodes.filter(child => child.nodeType === Node.ELEMENT_NODE);
   }
 
   get firstChild() {
-    return this.$_children[0];
+    return this.childNodes[0];
   }
 
   get lastChild() {
-    return this.$_children[this.$_children.length - 1];
+    return this.childNodes[this.childNodes.length - 1];
   }
 
   get innerText() {
@@ -141,7 +137,7 @@ class Element extends Node {
   }
 
   get textContent() {
-    return this.$_children.map(child => child.textContent).join('');
+    return this.childNodes.map(child => child.textContent).join('');
   }
 
   set textContent(text) {
@@ -153,12 +149,12 @@ class Element extends Node {
         type: 'children',
         path: `${this._path}.children`,
         start: 0,
-        deleteCount: this.$_children.length
+        deleteCount: this.childNodes.length
       };
-      this.$_children.length = 0;
+      this.childNodes.length = 0;
       this._triggerUpdate(payload);
     } else {
-      this.$_children.length = 0;
+      this.childNodes.length = 0;
       // Generated at run time, using the b- prefix
       const nodeId = `b-${tool.getId()}`;
       const child = this.ownerDocument.$$createTextNode({content: text, nodeId, document: this.ownerDocument});
@@ -205,7 +201,7 @@ class Element extends Node {
 
     if (deep) {
       // Deep clone
-      for (const child of this.$_children) {
+      for (const child of this.childNodes) {
         newNode.appendChild(child.cloneNode(deep));
       }
     }
@@ -214,12 +210,10 @@ class Element extends Node {
   }
 
   appendChild(node) {
-    if (!(node instanceof Node)) return;
-
     if (node === this) return;
     if (node.parentNode) node.parentNode.removeChild(node);
 
-    this.$_children.push(node);
+    this.childNodes.push(node);
     // Set parentNode
     node.parentNode = this;
 
@@ -229,7 +223,7 @@ class Element extends Node {
       const payload = {
         type: 'children',
         path: `${this._path}.children`,
-        start: this.$_children.length - 1,
+        start: this.childNodes.length - 1,
         deleteCount: 0,
         item: simplifyDomTree(node)
       };
@@ -242,11 +236,11 @@ class Element extends Node {
   removeChild(node) {
     if (!(node instanceof Node)) return;
 
-    const index = this.$_children.indexOf(node);
+    const index = this.childNodes.indexOf(node);
 
     if (index >= 0) {
       // Inserted, need to delete
-      this.$_children.splice(index, 1);
+      this.childNodes.splice(index, 1);
       node.parentNode = null;
       node.__rendered = false;
 
@@ -278,7 +272,7 @@ class Element extends Node {
 
     if (this._isRendered()) {
       node.__rendered = true;
-      const insertIndex = ref ? this.$_children.indexOf(ref) : -1;
+      const insertIndex = ref ? this.childNodes.indexOf(ref) : -1;
       const payload = {
         type: 'children',
         path: `${this._path}.children`,
@@ -287,11 +281,11 @@ class Element extends Node {
       };
       if (insertIndex === -1) {
         // Insert to the end
-        this.$_children.push(node);
-        payload.start = this.$_children.length - 1;
+        this.childNodes.push(node);
+        payload.start = this.childNodes.length - 1;
       } else {
         // Inserted before ref
-        this.$_children.splice(insertIndex, 0, node);
+        this.childNodes.splice(insertIndex, 0, node);
         payload.start = insertIndex;
       }
       // Trigger update
@@ -304,18 +298,18 @@ class Element extends Node {
   replaceChild(node, old) {
     if (!(node instanceof Node) || !(old instanceof Node)) return;
 
-    const replaceIndex = this.$_children.indexOf(old);
-    if (replaceIndex !== -1) this.$_children.splice(replaceIndex, 1);
+    const replaceIndex = this.childNodes.indexOf(old);
+    if (replaceIndex !== -1) this.childNodes.splice(replaceIndex, 1);
 
     if (node === this) return;
     if (node.parentNode) node.parentNode.removeChild(node);
 
     if (replaceIndex === -1) {
       // Insert to the end
-      this.$_children.push(node);
+      this.childNodes.push(node);
     } else {
       // Replace to old
-      this.$_children.splice(replaceIndex, 0, node);
+      this.childNodes.splice(replaceIndex, 0, node);
     }
     // Set parentNode
     node.parentNode = this;
@@ -326,7 +320,7 @@ class Element extends Node {
       const payload = {
         type: 'children',
         path: `${this._path}.children`,
-        start: replaceIndex === -1 ? this.$_children.length - 1 : replaceIndex,
+        start: replaceIndex === -1 ? this.childNodes.length - 1 : replaceIndex,
         deleteCount: replaceIndex === -1 ? 0 : 1,
         item: simplifyDomTree(node)
       };
@@ -337,7 +331,7 @@ class Element extends Node {
   }
 
   hasChildNodes() {
-    return this.$_children.length > 0;
+    return this.childNodes.length > 0;
   }
 
   getElementsByTagName(tagName) {
