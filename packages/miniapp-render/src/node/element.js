@@ -338,7 +338,7 @@ class Element extends Node {
     if (typeof tagName !== 'string') return [];
     const elements = [];
     traverse(this, element => {
-      if (element && element.$_tagName === tagName) {
+      if (element !== this && element && element.$_tagName === tagName) {
         elements.push(element);
       }
       return {};
@@ -351,7 +351,7 @@ class Element extends Node {
     const elements = [];
     traverse(this, element => {
       const classNames = className.trim().split(/\s+/);
-      if (element && classNames.every(c => element.classList.has(c))) {
+      if (element !== this && element && classNames.every(c => element.classList.has(c))) {
         elements.push(element);
       }
       return {};
