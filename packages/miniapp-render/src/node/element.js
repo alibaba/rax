@@ -5,7 +5,7 @@ import Style from './style';
 import Attribute from './attribute';
 import cache from '../utils/cache';
 import tool from '../utils/tool';
-import { simplifyDomTree, traverse }  from '../utils/tree';
+import { simplifyDomTree, traverse } from '../utils/tree';
 
 class Element extends Node {
   constructor(options) {
@@ -478,7 +478,7 @@ class Element extends Node {
 
     if (name === 'id') {
       // id to be handled here in advance
-      this.ownerDocument.__nodeIdMap.delete(this.id || this.$$nodeId)
+      this.ownerDocument.__nodeIdMap.delete(this.id || this.$$nodeId);
       this.id = value;
       this.ownerDocument.__nodeIdMap.set(this.id, this);
     } else {

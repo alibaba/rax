@@ -146,7 +146,7 @@ class Document extends EventTarget {
       if (element && element.$_tagName === tagName && element._isRendered()) {
         elements.push(element);
       }
-    })
+    });
     return elements;
   }
 
@@ -159,7 +159,7 @@ class Document extends EventTarget {
       if (element && classNames.every(c => element.classList.has(c))) {
         elements.push(element);
       }
-    })
+    });
     return elements;
   }
 
