@@ -43,14 +43,14 @@ function setNode(pageId, nodeId, domNode = null) {
 
   // Call before run, do nothing
   if (!document) return;
-  if (!domNode) return pageMap.get(pageId).__nodeIdMap[nodeId] = domNode;
 
-  pageMap.get(pageId).__nodeIdMap[nodeId] = domNode;
+  document.__nodeIdMap.set(nodeId, domNode);
 }
 
 // Get the domNode by nodeId
 function getNode(pageId, nodeId) {
-  return pageMap.get(pageId) && pageMap.get(pageId).__nodeIdMap[nodeId];
+  const document = pageMap.get(pageId);
+  return document && document.__nodeIdMap.get(nodeId);
 }
 
 // Store global config

@@ -20,7 +20,10 @@ class Element extends Node {
     this.__attrs = new Attribute(this);
     cache.setNode(this.__pageId, this.$$nodeId, this);
     this.dataset = new Map();
-    this.ownerDocument.__nodeIdMap.set(this.id || this.$$nodeId, this);
+    this.ownerDocument.__nodeIdMap.set(this.$$nodeId, this);
+    if (this.id) {
+      this.ownerDocument.__idMap.set(this.id, this);
+    }
 
     this._initAttributes(options.attrs);
 
@@ -37,7 +40,8 @@ class Element extends Node {
   $$destroy() {
     this.childNodes.forEach(child => child.$$destroy());
     cache.setNode(this.__pageId, this.$$nodeId, null);
-    this.ownerDocument.__nodeIdMap.set(this.id || this.$$nodeId, null);
+    this.ownerDocument.__nodeIdMap.set(this.$$nodeId, null);
+    this.ownerDocument.__idMap.set(this.id, null);
     super.$$destroy();
     this.$_tagName = '';
     this.childNodes.length = 0;
@@ -387,9 +391,9 @@ class Element extends Node {
   }
 
   setAttribute(name, value, immediate = true) {
-    if (name === 'id') {
-      this.ownerDocument.__nodeIdMap.delete(this.id || this.$$nodeId);
-      this.ownerDocument.__nodeIdMap.set(this.id, this);
+    if (name === 'id' && value !== this.id) {
+      this.ownerDocument.__idMap.delete(this.id);
+      this.ownerDocument.__idMap.set(value, this);
     }
     this.__attrs.set(name, value, immediate);
   }

@@ -34,7 +34,8 @@ class Document extends EventTarget {
     this.usingComponents = usingComponents;
     this.usingPlugins = usingPlugins;
 
-    this.__nodeIdMap = new Map(); // TODO: should only save nodes that has been mounted
+    this.__nodeIdMap = new Map();
+    this.__idMap = new Map();
     this.__pageId = pageId;
     this.$_config = null;
 
@@ -130,7 +131,7 @@ class Document extends EventTarget {
   getElementById(id) {
     if (typeof id !== 'string') return;
 
-    const element = this.__nodeIdMap.get(id);
+    const element = this.__idMap.get(id);
     if (element && element._isRendered()) {
       return element;
     }
