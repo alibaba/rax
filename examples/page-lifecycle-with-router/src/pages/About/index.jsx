@@ -1,5 +1,5 @@
 import { createElement } from 'rax';
-import { registerNativeEventListeners, addNativeEventListener, removeNativeEventListener } from 'rax-app';
+import { registerNativeEventListeners, addNativeEventListener, removeNativeEventListener, usePageShow, usePageHide } from 'rax-app';
 import View from 'rax-view';
 import Text from 'rax-text';
 
@@ -29,6 +29,13 @@ function About(props) {
   let unlisten = props.history.listen(( action, location ) => {
     console.log('in about page action', action);
     console.log('in about page location', location);
+  });
+
+  usePageShow(() => {
+    console.log('about page show -- from usePageShow');
+  });
+  usePageHide(() => {
+    console.log('about page hide -- from usePageHide');
   });
 
   return (

@@ -35,6 +35,7 @@ describe('Transform JSX Attribute', () => {
   it('should not transform wechat custom component className', () => {
     const code = '<Custom className="box">test</Custom>';
     const ast = parseExpression(code);
+    ast.openingElement.name.isCustom = true;
     _transformAttribute(ast, code, wxAdapter);
     expect(genCode(ast).code).toEqual('<Custom className="box">test</Custom>');
   });
@@ -49,6 +50,7 @@ describe('Transform JSX Attribute', () => {
   it('should transform wechat custom component style into styleSheet', () => {
     const code = "<Custom style={{width: '100rpx'}}>test</Custom>";
     const ast = parseExpression(code);
+    ast.openingElement.name.isCustom = true;
     _transformAttribute(ast, code, wxAdapter);
     expect(genCode(ast).code).toEqual(`<Custom styleSheet={{
   width: '100rpx'
@@ -57,6 +59,7 @@ describe('Transform JSX Attribute', () => {
   it('should transform wechat custom component id', () => {
     const code = '<Custom id="box">test</Custom>';
     const ast = parseExpression(code);
+    ast.openingElement.name.isCustom = true;
     _transformAttribute(ast, code, wxAdapter);
     expect(genCode(ast).code).toEqual('<Custom id="box" componentId="box">test</Custom>');
   });
