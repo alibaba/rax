@@ -13,6 +13,7 @@ class CustomComponent extends Element {
     super.$$destroy();
 
     this.__behavior = null;
+    this.__nativeType = null;
   }
 
   get _behavior() {

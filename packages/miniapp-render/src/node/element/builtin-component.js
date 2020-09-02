@@ -18,9 +18,6 @@ class BuiltInComponent extends Element {
   get _renderInfo() {
     return {
       nodeId: this.$$nodeId,
-      pageId: this.__pageId,
-      nodeType: this.$_type,
-      tagName: this.$_tagName,
       style: this.style.cssText,
       ...this.__attrs.__value
     };

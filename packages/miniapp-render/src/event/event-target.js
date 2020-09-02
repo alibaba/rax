@@ -115,11 +115,6 @@ class EventTarget {
     const path = [target];
     let parentNode = target.parentNode;
 
-    while (parentNode && parentNode.tagName !== 'HTML') {
-      path.push(parentNode);
-      parentNode = parentNode.parentNode;
-    }
-
     if (path[path.length - 1].tagName === 'BODY') {
       // If the last node is document.body, the document.documentelement is appended
       path.push(parentNode);

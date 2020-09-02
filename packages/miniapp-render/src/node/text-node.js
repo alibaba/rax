@@ -22,8 +22,6 @@ class TextNode extends Node {
 
   get _renderInfo() {
     return {
-      nodeId: this.$_nodeId,
-      pageId: this.__pageId,
       nodeType: this.$_type,
       content: this.$_content,
     };
@@ -71,10 +69,7 @@ class TextNode extends Node {
   }
 
   cloneNode() {
-    return this.ownerDocument.$$createTextNode({
-      content: this.$_content,
-      nodeId: `b-${tool.getId()}`,
-    });
+    return this.ownerDocument.createTextNode(this.$_content);
   }
 }
 

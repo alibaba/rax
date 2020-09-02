@@ -26,14 +26,6 @@ class Element extends Node {
     }
 
     this._initAttributes(options.attrs);
-
-    this.onclick = null;
-    this.ontouchstart = null;
-    this.ontouchmove = null;
-    this.ontouchend = null;
-    this.ontouchcancel = null;
-    this.onload = null;
-    this.onerror = null;
   }
 
   // Override the $$destroy method of the parent class
@@ -46,7 +38,6 @@ class Element extends Node {
     this.$_tagName = '';
     this.childNodes.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
-    this.$_unary = null;
     this.__attrs = null;
   }
 
@@ -58,11 +49,9 @@ class Element extends Node {
   }
 
   _triggerUpdate(payload, immediate = true) {
-    const root = this._root;
-    if (!root) return;
     if (immediate) {
       this.enqueueRender(payload);
-    } else {
+    } else if (this._root) {
       this._root.renderStacks.push(payload);
     }
   }
@@ -71,7 +60,6 @@ class Element extends Node {
     return {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
-      nodeType: this.$_type,
       tagName: this.$_tagName,
       style: this.style.cssText
     };
@@ -159,9 +147,7 @@ class Element extends Node {
       this._triggerUpdate(payload);
     } else {
       this.childNodes.length = 0;
-      // Generated at run time, using the b- prefix
-      const nodeId = `b-${tool.getId()}`;
-      const child = this.ownerDocument.$$createTextNode({content: text, nodeId, document: this.ownerDocument});
+      const child = this.ownerDocument.createTextNode(text);
 
       this.appendChild(child);
     }

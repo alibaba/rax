@@ -37,19 +37,6 @@ class Document extends EventTarget {
     this.__nodeIdMap = new Map();
     this.__idMap = new Map();
     this.__pageId = pageId;
-    this.$_config = null;
-
-    // documentElement
-    this.$_node = this.$$createElement({
-      document: this,
-      tagName: 'html',
-      attrs: {},
-      nodeId: `a-${tool.getId()}`,
-      type: Node.DOCUMENT_NODE,
-    });
-    // documentElement's parentNode is document
-    this.$_node.parentNode = this;
-    this.$_node.scrollTop = 0;
 
     this.__root = new RootElement({
       type: 'element',
@@ -62,7 +49,7 @@ class Document extends EventTarget {
     });
 
     // update body's parentNode
-    this.__root.parentNode = this.$_node;
+    this.__root.parentNode = this;
   }
 
   // Event trigger
@@ -97,23 +84,13 @@ class Document extends EventTarget {
     }
   }
 
-  // Create text node
-  $$createTextNode(options) {
-    return new TextNode(options);
-  }
-
-  // Create comment node
-  $$createComment(options) {
-    return new Comment(options);
-  }
-
   // Node type
   get nodeType() {
     return Node.DOCUMENT_NODE;
   }
 
   get documentElement() {
-    return this.$_node;
+    return this;
   }
 
   get body() {
@@ -210,7 +187,7 @@ class Document extends EventTarget {
   createTextNode(content) {
     content = '' + content;
 
-    return this.$$createTextNode({
+    return new TextNode({
       content,
       nodeId: `b-${tool.getId()}`,
       document: this
@@ -218,8 +195,7 @@ class Document extends EventTarget {
   }
 
   createComment() {
-    // Ignore the incoming comment content
-    return this.$$createComment({
+    return new Comment({
       nodeId: `b-${tool.getId()}`,
       document: this
     });

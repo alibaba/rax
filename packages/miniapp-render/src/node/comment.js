@@ -1,4 +1,3 @@
-import tool from '../utils/tool';
 import Node from './node';
 
 class Comment extends Node {
@@ -9,8 +8,6 @@ class Comment extends Node {
 
   get _renderInfo() {
     return {
-      nodeId: this.$_nodeId,
-      pageId: this.__pageId,
       nodeType: this.$_type,
     };
   }
@@ -24,10 +21,7 @@ class Comment extends Node {
   }
 
   cloneNode() {
-    return this.ownerDocument.$$createComment({
-      nodeId: `b-${tool.getId()}`,
-      document: this.ownerDocument
-    });
+    return this.ownerDocument.createComment();
   }
 }
 
