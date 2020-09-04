@@ -13,17 +13,23 @@ class HTMLVideoElement extends Element {
     this.$_initRect();
   }
 
-  $_triggerParentUpdate(payload) {
-    this.$_initRect();
-    super.$_triggerParentUpdate(payload);
-  }
-
   $_initRect() {
     const width = parseInt(this.__attrs.get('width'), 10);
     const height = parseInt(this.__attrs.get('height'), 10);
 
     if (typeof width === 'number' && width >= 0) this.$_style.width = `${width}px`;
     if (typeof height === 'number' && height >= 0) this.$_style.height = `${height}px`;
+  }
+
+  get _renderInfo() {
+    return {
+      nodeId: this.$$nodeId,
+      pageId: this.__pageId,
+      nodeType: 'video',
+      ...this.__attrs.__value,
+      style: this.style.cssText,
+      class: 'h5-video ' + this.className,
+    };
   }
 
   get src() {

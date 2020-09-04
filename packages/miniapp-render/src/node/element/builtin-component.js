@@ -1,25 +1,14 @@
 import Element from '../element';
 
 class BuiltInComponent extends Element {
-  // Create instance
-  constructor(options) {
-    super(options);
-    this._behavior = options.tagName;
-  }
-
-  get _behavior() {
-    return this.__attrs.get('_behavior');
-  }
-
-  set _behavior(value) {
-    this.__attrs.set('_behavior', value);
-  }
 
   get _renderInfo() {
     return {
       nodeId: this.$$nodeId,
+      nodeType: this.$_tagName,
+      ...this.__attrs.__value,
       style: this.style.cssText,
-      ...this.__attrs.__value
+      class: this.className,
     };
   }
 }

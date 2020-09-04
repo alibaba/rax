@@ -15,7 +15,7 @@ function toCamel(str) {
 /**
  * Get unique id
  */
-let seed = +new Date();
+let seed = 0;
 function getId() {
   return seed++;
 }

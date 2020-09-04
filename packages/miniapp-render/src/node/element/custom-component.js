@@ -24,19 +24,17 @@ class CustomComponent extends Element {
     const renderInfo = {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
-      nodeType: this.$_type,
-      tagName: this.$_tagName,
+      nodeType: this.__behavior,
       style: this.style.cssText,
+      class: this.className,
       ...this.__attrs.__value
     };
 
     const config = cache.getConfig();
     let nativeInfo = null;
     if (this.__nativeType === 'customComponent') {
-      renderInfo.customComponentName = this.__behavior;
       nativeInfo = config.usingComponents[this.__behavior];
     } else if (this.__nativeType === 'miniappPlugin') {
-      renderInfo.miniappPluginName = this.__behavior;
       nativeInfo = config.usingPlugins[this.__behavior];
     }
     if (nativeInfo) {

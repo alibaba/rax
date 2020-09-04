@@ -5,39 +5,6 @@ class HTMLInputElement extends Element {
     super(options);
   }
 
-  // $_generateHtml handle other attributes
-  $$dealWithAttrsForGenerateHtml(html, node) {
-    const type = node.type;
-    if (type) html += ` type="${type}"`;
-
-    const value = node.value;
-    if (value) html += ` value="${value}"`;
-
-    const disabled = node.disabled;
-    if (disabled) html += ' disabled';
-
-    const maxlength = node.maxlength;
-    if (maxlength) html += ` maxlength="${maxlength}"`;
-
-    const placeholder = node.placeholder;
-    if (placeholder)
-      html += ` placeholder="${placeholder.replace(/"/g, '\\"')}"`;
-
-    return html;
-  }
-
-  // outerHtml
-  $$dealWithAttrsForOuterHTML(node) {
-    this.type = node.type || '';
-    this.value = node.value || '';
-    this.disabled = node.disabled || '';
-    this.maxlength = node.maxlength;
-    this.placeholder = node.placeholder || '';
-
-    // Special attr
-    this.mpplaceholderclass = node.mpplaceholderclass || '';
-  }
-
   /**
    * The cloneNode interface is invoked to handle additional properties
    */
@@ -51,6 +18,17 @@ class HTMLInputElement extends Element {
 
       // Special field
       mpplaceholderclass: this.mpplaceholderclass
+    };
+  }
+
+  get _renderInfo() {
+    return {
+      nodeId: this.$$nodeId,
+      pageId: this.__pageId,
+      nodeType: 'input',
+      ...this.__attrs.__value,
+      style: this.style.cssText,
+      class: 'h5-input ' + this.className,
     };
   }
 

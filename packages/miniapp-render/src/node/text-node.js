@@ -22,7 +22,7 @@ class TextNode extends Node {
 
   get _renderInfo() {
     return {
-      nodeType: this.$_type,
+      nodeType: `h-${this.$_type}`,
       content: this.$_content,
     };
   }

@@ -6,6 +6,7 @@ import Attribute from './attribute';
 import cache from '../utils/cache';
 import tool from '../utils/tool';
 import { simplifyDomTree, traverse } from '../utils/tree';
+import { BUILTIN_COMPONENT_LIST } from '../constants';
 
 class Element extends Node {
   constructor(options) {
@@ -14,6 +15,7 @@ class Element extends Node {
     super(options);
 
     this.$_tagName = options.tagName || '';
+    this.isBuiltinComponent = BUILTIN_COMPONENT_LIST.has(this.$_tagName);
     this.childNodes = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.style = new Style(this);
@@ -60,8 +62,10 @@ class Element extends Node {
     return {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
-      tagName: this.$_tagName,
-      style: this.style.cssText
+      nodeType:  this.isBuiltinComponent ? this.$_tagName : 'h-element',
+      ...this.__attrs.__value,
+      style: this.style.cssText,
+      class: this.isBuiltinComponent ? `h5-${this.$_tagName} ${this.className}` : this.className,
     };
   }
 

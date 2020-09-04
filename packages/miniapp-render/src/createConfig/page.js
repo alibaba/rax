@@ -125,6 +125,8 @@ export default function(route, lifeCycles = []) {
     firstRender: true,
     data: {
       root: {
+        nodeId: 'e-body',
+        nodeType: 'h-element',
         children: []
       }
     },

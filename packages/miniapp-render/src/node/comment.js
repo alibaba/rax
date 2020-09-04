@@ -8,7 +8,7 @@ class Comment extends Node {
 
   get _renderInfo() {
     return {
-      nodeType: this.$_type,
+      nodeType: 'h-' + this.$_type,
     };
   }
 

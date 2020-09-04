@@ -9,22 +9,10 @@ import Image from './node/element/image';
 import Input from './node/element/input';
 import Textarea from './node/element/textarea';
 import Video from './node/element/video';
-import BuiltInComponent from './node/element/builtin-component';
 import CustomComponent from './node/element/custom-component';
 import RootElement from './node/root';
 
 const CONSTRUCTOR_MAP = new Map([['img', Image], ['input', Input], ['textarea', Textarea], ['video', Video]]);
-
-const BUILTIN_COMPONENT_LIST = new Set([
-  'movable-view', 'cover-image', 'cover-view', 'movable-area', 'scroll-view', 'swiper', 'swiper-item', 'view',
-  'icon', 'progress', 'rich-text', 'text',
-  'button', 'checkbox', 'checkbox-group', 'editor', 'form', 'input', 'label', 'picker', 'picker-view', 'picker-view-column', 'radio', 'radio-group', 'slider', 'switch', 'textarea',
-  'functional-page-navigator', 'navigator',
-  'audio', 'camera', 'image', 'live-player', 'live-pusher', 'video',
-  'map',
-  'canvas',
-  'ad', 'official-account', 'open-data', 'web-view'
-]);
 
 class Document extends EventTarget {
   constructor(pageId) {
@@ -69,10 +57,7 @@ class Document extends EventTarget {
 
     options.attrs = options.attrs || {};
 
-    if (BUILTIN_COMPONENT_LIST.has(options.tagName)) {
-      // Transform to builtin-component
-      return new BuiltInComponent(options);
-    } else if (this.usingComponents[options.tagName]) {
+    if (this.usingComponents[options.tagName]) {
       // Transform to custom-component
       options.tagName = 'custom-component';
       return new CustomComponent(options);

@@ -26,12 +26,6 @@ class Image extends Element {
     this.$_naturalHeight = null;
   }
 
-  // Update parent
-  $_triggerParentUpdate(payload) {
-    this.$_initRect();
-    super.$_triggerParentUpdate(payload);
-  }
-
   // Init length
   $_initRect() {
     const width = parseInt(this.__attrs.get('width'), 10);
@@ -47,6 +41,17 @@ class Image extends Element {
     this.$_naturalHeight = rect.height || 0;
 
     this.$_initRect();
+  }
+
+  get _renderInfo() {
+    return {
+      nodeId: this.$$nodeId,
+      pageId: this.__pageId,
+      nodeType: 'image',
+      ...this.__attrs.__value,
+      style: this.style.cssText,
+      class: 'h5-img ' + this.className,
+    };
   }
 
   get src() {

@@ -26,7 +26,8 @@ export default function() {
         }
       },
       options: {
-        styleIsolation: 'shared'
+        styleIsolation: 'shared',
+        virtualHost: true
       },
       methods: createEventProxy(),
       ...getComponentLifeCycle({
