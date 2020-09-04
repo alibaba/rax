@@ -72,6 +72,7 @@ export function updateChildProps(trigger, instanceId, nextUpdateProps) {
       /**
        * updateChildProps may execute  before setComponentInstance
        */
+      nextPropsMap[instanceId] = nextUpdateProps;
       updateChildPropsCallbacks[instanceId] = updateChildProps.bind(
         null,
         trigger,
