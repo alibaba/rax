@@ -59,7 +59,7 @@ and extension not works in `producation` mode.
 
 #### VS Code Extensions
 
-You can use [Rax VS Code Extensions](https://github.com/raxjs/rax-vscode-extensions) to get better development experience.
+You can use [Iceworks VS Code Extensions](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) to get better development experience.
 
 ### Awesome Things 📝
 
