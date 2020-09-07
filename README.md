@@ -57,9 +57,9 @@ and extension not works in `producation` mode.
 1. Install the Chrome [Rax Developer Tools](https://chrome.google.com/webstore/detail/rax-developer-tools/anpeoinhjjligmgoiepbnigjhmijblff) extension
 2. Reload and go to the 'Rax' tab in the browser's development tools
 
-#### VS Code Extensions
+#### VS Code Extension
 
-You can use [Iceworks VS Code Extensions](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) to get better development experience.
+You can use [Iceworks VS Code Extension](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) to get better development experience.
 
 ### Awesome Things 📝
 
