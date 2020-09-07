@@ -44,9 +44,9 @@ $ npm run start
 
 #### Start from [VS Code](https://code.visualstudio.com/)
 
-You need to install the [Rax extension](https://marketplace.visualstudio.com/items?itemName=Rax.vscode-rax) and invoke the `rax` command from the VS Code command palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on Mac):
+You need to install the [Iceworks extension](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) and invoke the `Iceworks: create Application` command from the VS Code command palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on Mac):
 
-![vscode](https://user-images.githubusercontent.com/677114/72176350-2488e700-3419-11ea-9f51-b640c51256db.gif)
+![vscode](https://user-images.githubusercontent.com/56879942/88181928-1e927f00-cc62-11ea-94fb-06d12dab77d1.gif)
 
 ### Developer Tools 🛠
 
