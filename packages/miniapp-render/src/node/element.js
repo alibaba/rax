@@ -14,8 +14,9 @@ class Element extends Node {
 
     super(options);
 
-    this.$_tagName = options.tagName || '';
-    this.isBuiltinComponent = BUILTIN_COMPONENT_LIST.has(this.$_tagName);
+    this.__tagName = options.tagName || '';
+    this.__isBuiltinComponent = BUILTIN_COMPONENT_LIST.has(this.__tagName);
+    this.__tmplName = this.__isBuiltinComponent ? this.__tagName : 'h-element';
     this.childNodes = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.style = new Style(this);
@@ -37,7 +38,7 @@ class Element extends Node {
     this.ownerDocument.__nodeIdMap.set(this.$$nodeId, null);
     this.ownerDocument.__idMap.set(this.id, null);
     super.$$destroy();
-    this.$_tagName = '';
+    this.__tagName = '';
     this.childNodes.length = 0;
     this.$_nodeType = Node.ELEMENT_NODE;
     this.__attrs = null;
@@ -62,10 +63,10 @@ class Element extends Node {
     return {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
-      nodeType:  this.isBuiltinComponent ? this.$_tagName : 'h-element',
+      nodeType: this.__tmplName,
       ...this.__attrs.__value,
       style: this.style.cssText,
-      class: this.isBuiltinComponent ? `h5-${this.$_tagName} ${this.className}` : this.className,
+      class: this.__isBuiltinComponent ? `h5-${this.__tagName} ${this.className}` : this.className,
     };
   }
 
@@ -88,7 +89,7 @@ class Element extends Node {
   }
 
   get tagName() {
-    return this.$_tagName.toUpperCase();
+    return this.__tagName.toUpperCase();
   }
 
   get className() {
@@ -178,8 +179,8 @@ class Element extends Node {
       dataset.set(`data-${tool.toDash(name)}`, value);
     });
 
-    const newNode = this.ownerDocument.$$createElement({
-      tagName: this.$_tagName,
+    const newNode = this.ownerDocument._createElement({
+      tagName: this.__tagName,
       attrs: {
         id: this.id,
         class: this.className,
@@ -189,8 +190,7 @@ class Element extends Node {
         ...dataset,
         ...this.$$dealWithAttrsForCloneNode(),
       },
-      nodeType: this.$_nodeType,
-      nodeId: `b-${tool.getId()}`,
+      nodeType: this.$_nodeType
     });
 
     if (deep) {
@@ -332,7 +332,7 @@ class Element extends Node {
     if (typeof tagName !== 'string') return [];
     const elements = [];
     traverse(this, element => {
-      if (element !== this && element && element.$_tagName === tagName) {
+      if (element !== this && element && element.__tagName === tagName) {
         elements.push(element);
       }
       return {};

@@ -108,7 +108,7 @@ export function getBaseLifeCycles(route) {
       this.window.$$trigger('pageunload');
 
       this.document.__unmount && this.document.__unmount(); // Manually unmount component instance
-      this.document.body.$$destroy(); // Recycle DOM node
+      this.document.body.$$destroy();
 
       cache.destroy(this.pageId);
 

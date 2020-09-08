@@ -1,10 +1,12 @@
 import EventTarget from '../event/event-target';
+import tool from '../utils/tool';
 
 class Node extends EventTarget {
   constructor(options) {
     super();
 
-    this.$_nodeId = options.nodeId; // unique
+    // unique node id
+    this.$_nodeId = `n_${tool.getId()}`;
     this.$_type = options.type;
     this.parentNode = null;
     this.ownerDocument = options.document;
