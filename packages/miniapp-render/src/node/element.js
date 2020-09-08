@@ -15,7 +15,8 @@ class Element extends Node {
     super(options);
 
     this.$_tagName = options.tagName || '';
-    this.isBuiltinComponent = BUILTIN_COMPONENT_LIST.has(this.$_tagName);
+    this.__isBuiltinComponent = BUILTIN_COMPONENT_LIST.has(this.$_tagName);
+    this.__tmplName = this.__isBuiltinComponent ? this.$_tagName : 'h-element';
     this.childNodes = [];
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.style = new Style(this);
@@ -62,10 +63,10 @@ class Element extends Node {
     return {
       nodeId: this.$$nodeId,
       pageId: this.__pageId,
-      nodeType:  this.isBuiltinComponent ? this.$_tagName : 'h-element',
+      nodeType: this.__tmplName,
       ...this.__attrs.__value,
       style: this.style.cssText,
-      class: this.isBuiltinComponent ? `h5-${this.$_tagName} ${this.className}` : this.className,
+      class: this.__isBuiltinComponent ? `h5-${this.$_tagName} ${this.className}` : this.className,
     };
   }
 
@@ -178,7 +179,7 @@ class Element extends Node {
       dataset.set(`data-${tool.toDash(name)}`, value);
     });
 
-    const newNode = this.ownerDocument.$$createElement({
+    const newNode = this.ownerDocument._createElement({
       tagName: this.$_tagName,
       attrs: {
         id: this.id,
@@ -189,8 +190,7 @@ class Element extends Node {
         ...dataset,
         ...this.$$dealWithAttrsForCloneNode(),
       },
-      nodeType: this.$_nodeType,
-      nodeId: `b-${tool.getId()}`,
+      nodeType: this.$_nodeType
     });
 
     if (deep) {
@@ -384,6 +384,9 @@ class Element extends Node {
     if (name === 'id' && value !== this.id) {
       this.ownerDocument.__idMap.delete(this.id);
       this.ownerDocument.__idMap.set(value, this);
+    } else if (name === '__tagName') {
+      this.__tmplName = value;
+      return;
     }
     this.__attrs.set(name, value, immediate);
   }

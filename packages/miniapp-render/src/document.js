@@ -49,7 +49,7 @@ class Document extends EventTarget {
     return true;
   }
 
-  $$createElement(options) {
+  _createElement(options) {
     const ConstructorClass = CONSTRUCTOR_MAP.get(options.tagName);
     if (ConstructorClass) {
       return new ConstructorClass(options);
@@ -57,13 +57,15 @@ class Document extends EventTarget {
 
     options.attrs = options.attrs || {};
 
-    if (this.usingComponents[options.tagName]) {
-      // Transform to custom-component
-      options.tagName = 'custom-component';
-      return new CustomComponent(options);
-    } else if (this.usingPlugins[options.tagName]) {
-      options.tagName = 'miniapp-plugin';
-      return new CustomComponent(options);
+    if (options.attrs.__native) {
+      if (this.usingComponents[options.tagName]) {
+        // Transform to custom-component
+        options.tagName = 'custom-component';
+        return new CustomComponent(options);
+      } else if (this.usingPlugins[options.tagName]) {
+        options.tagName = 'miniapp-plugin';
+        return new CustomComponent(options);
+      }
     } else {
       return new Element(options);
     }
@@ -155,12 +157,9 @@ class Document extends EventTarget {
   }
 
   createElement(tagName) {
-    if (typeof tagName !== 'string' || !tagName) return;
-
-    return this.$$createElement({
+    return this._createElement({
       document: this,
-      tagName,
-      nodeId: `b-${tool.getId()}`,
+      tagName
     });
   }
 
@@ -174,14 +173,12 @@ class Document extends EventTarget {
 
     return new TextNode({
       content,
-      nodeId: `b-${tool.getId()}`,
       document: this
     });
   }
 
   createComment() {
     return new Comment({
-      nodeId: `b-${tool.getId()}`,
       document: this
     });
   }
@@ -189,7 +186,6 @@ class Document extends EventTarget {
   createDocumentFragment() {
     return new Element({
       tagName: 'documentfragment',
-      nodeId: `b-${tool.getId()}`,
       nodeType: Node.DOCUMENT_FRAGMENT_NODE,
       document: this
     });
