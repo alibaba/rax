@@ -107,7 +107,7 @@ class Document extends EventTarget {
 
     const elements = [];
     this.__nodeIdMap.forEach((element, nodeId) => {
-      if (element && element.$_tagName === tagName && element._isRendered()) {
+      if (element && element.__tagName === tagName && element._isRendered()) {
         elements.push(element);
       }
     });
