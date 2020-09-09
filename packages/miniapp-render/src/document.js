@@ -10,6 +10,7 @@ import Textarea from './node/element/textarea';
 import Video from './node/element/video';
 import CustomComponent from './node/element/custom-component';
 import RootElement from './node/root';
+import { BODY_NODE_ID } from './constants';
 
 const CONSTRUCTOR_MAP = new Map([['img', Image], ['input', Input], ['textarea', Textarea], ['video', Video]]);
 
@@ -33,7 +34,7 @@ class Document extends EventTarget {
       document: this,
     });
 
-    this.__nodeIdMap.set('e-body', this.__root);
+    this.__nodeIdMap.set(BODY_NODE_ID, this.__root);
 
     // update body's parentNode
     this.__root.parentNode = this;
