@@ -23,7 +23,7 @@ class HTMLVideoElement extends Element {
 
   get _renderInfo() {
     return {
-      nodeId: this.$$nodeId,
+      nodeId: this.__nodeId,
       pageId: this.__pageId,
       nodeType: 'video',
       ...this.__attrs.__value,

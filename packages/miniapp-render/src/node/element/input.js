@@ -23,7 +23,7 @@ class HTMLInputElement extends Element {
 
   get _renderInfo() {
     return {
-      nodeId: this.$$nodeId,
+      nodeId: this.__nodeId,
       pageId: this.__pageId,
       nodeType: 'input',
       ...this.__attrs.__value,

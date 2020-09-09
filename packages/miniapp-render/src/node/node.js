@@ -6,7 +6,7 @@ class Node extends EventTarget {
     super();
 
     // unique node id
-    this.$_nodeId = `n_${tool.getId()}`;
+    this.__nodeId = `n_${tool.getId()}`;
     this.$_type = options.type;
     this.parentNode = null;
     this.ownerDocument = options.document;
@@ -19,18 +19,11 @@ class Node extends EventTarget {
   $$destroy() {
     super.$$destroy();
 
-    this.$_nodeId = null;
+    this.__nodeId = null;
     this.$_type = null;
     this.parentNode = null;
     this.__pageId = null;
     this.__rendered = false;
-  }
-
-  /**
-   * private nodeId
-   */
-  get $$nodeId() {
-    return this.$_nodeId;
   }
 
   get _path() {

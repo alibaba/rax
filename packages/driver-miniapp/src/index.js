@@ -53,6 +53,9 @@ export default Object.assign({}, DriverDOM, {
             handler: value
           });
         } else {
+          if (prop === 'className') {
+            prop = 'class';
+          }
           attrs[prop] = value;
         }
       }

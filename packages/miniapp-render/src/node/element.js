@@ -21,9 +21,9 @@ class Element extends Node {
     this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.style = new Style(this);
     this.__attrs = new Attribute(this);
-    cache.setNode(this.__pageId, this.$$nodeId, this);
+    cache.setNode(this.__pageId, this.__nodeId, this);
     this.dataset = new Map();
-    this.ownerDocument.__nodeIdMap.set(this.$$nodeId, this);
+    this.ownerDocument.__nodeIdMap.set(this.__nodeId, this);
     if (this.id) {
       this.ownerDocument.__idMap.set(this.id, this);
     }
@@ -34,8 +34,8 @@ class Element extends Node {
   // Override the $$destroy method of the parent class
   $$destroy() {
     this.childNodes.forEach(child => child.$$destroy());
-    cache.setNode(this.__pageId, this.$$nodeId, null);
-    this.ownerDocument.__nodeIdMap.set(this.$$nodeId, null);
+    cache.setNode(this.__pageId, this.__nodeId, null);
+    this.ownerDocument.__nodeIdMap.set(this.__nodeId, null);
     this.ownerDocument.__idMap.set(this.id, null);
     super.$$destroy();
     this.__tagName = '';
@@ -61,12 +61,12 @@ class Element extends Node {
 
   get _renderInfo() {
     return {
-      nodeId: this.$$nodeId,
+      nodeId: this.__nodeId,
       pageId: this.__pageId,
       nodeType: this.__tmplName,
       ...this.__attrs.__value,
       style: this.style.cssText,
-      class: this.__isBuiltinComponent ? `h5-${this.__tagName} ${this.className}` : this.className,
+      class: this.__isBuiltinComponent ? this.className : `h5-${this.__tagName} ${this.className}`,
     };
   }
 

@@ -21,3 +21,5 @@ export const BUILTIN_COMPONENT_LIST = new Set([
   'canvas',
   'ad', 'official-account', 'open-data', 'web-view'
 ]);
+
+export const BODY_NODE_ID = 'e-body';
