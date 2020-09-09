@@ -24,7 +24,7 @@ class HTMLTextAreaElement extends Element {
 
   get _renderInfo() {
     return {
-      nodeId: this.$$nodeId,
+      nodeId: this.__nodeId,
       pageId: this.__pageId,
       nodeType: 'textarea',
       ...this.__attrs.__value,

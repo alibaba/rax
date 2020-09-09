@@ -33,6 +33,9 @@ export default function() {
       ...getComponentLifeCycle({
         mount() {
           cache.setElementInstance(this);
+          const window = cache.getWindow();
+          const node = cache.getNode(window.__pageId, this.properties.r.nodeId);
+          node._internal = this;
         }
       })
     };

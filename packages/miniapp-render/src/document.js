@@ -3,7 +3,6 @@ import Node from './node/node';
 import Element from './node/element';
 import TextNode from './node/text-node';
 import Comment from './node/comment';
-import tool from './utils/tool';
 import cache from './utils/cache';
 import Image from './node/element/image';
 import Input from './node/element/input';
@@ -30,11 +29,11 @@ class Document extends EventTarget {
       type: 'element',
       tagName: 'body',
       attrs: {},
-      unary: false,
-      nodeId: 'e-body',
       children: [],
       document: this,
     });
+
+    this.__nodeIdMap.set('e-body', this.__root);
 
     // update body's parentNode
     this.__root.parentNode = this;
@@ -60,10 +59,10 @@ class Document extends EventTarget {
     if (options.attrs.__native) {
       if (this.usingComponents[options.tagName]) {
         // Transform to custom-component
-        options.tagName = 'custom-component';
+        options.nativeType = 'customComponent';
         return new CustomComponent(options);
       } else if (this.usingPlugins[options.tagName]) {
-        options.tagName = 'miniapp-plugin';
+        options.nativeType = 'miniappPlugin';
         return new CustomComponent(options);
       }
     } else {
