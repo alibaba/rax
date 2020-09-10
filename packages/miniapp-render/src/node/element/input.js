@@ -21,6 +21,22 @@ class HTMLInputElement extends Element {
     };
   }
 
+  setAttribute(name, value, immediate = true) {
+    if (name === 'focus' || name === 'autofocus' || name === 'autoFocus') {
+      // autoFocus is passed by rax-textinput
+      name = 'focus-state';
+    }
+    super.setAttribute(name, value, immediate);
+  }
+
+  getAttribute(name) {
+    if (name === 'focus' || name === 'autofocus' || name === 'autoFocus') {
+      // autoFocus is passed by rax-textinput
+      name = 'focus-state';
+    }
+    return this.__attrs.get(name);
+  }
+
   get _renderInfo() {
     return {
       nodeId: this.__nodeId,
@@ -100,15 +116,6 @@ class HTMLInputElement extends Element {
     this.__attrs.set('placeholder', value);
   }
 
-  get autofocus() {
-    return !!this.__attrs.get('autofocus');
-  }
-
-  set autofocus(value) {
-    value = !!value;
-    this.__attrs.set('autofocus', value);
-  }
-
   set checked(value) {
     this.__attrs.set('checked', value);
   }
@@ -118,11 +125,11 @@ class HTMLInputElement extends Element {
   }
 
   blur() {
-    this.__attrs.set('focus', false);
+    this.setAttribute('focus', false);
   }
 
   focus() {
-    this.__attrs.set('autofocus', true);
+    this.setAttribute('focus', true);
   }
 }
 

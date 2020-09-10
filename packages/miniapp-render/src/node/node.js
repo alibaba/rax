@@ -1,5 +1,7 @@
 import EventTarget from '../event/event-target';
 import tool from '../utils/tool';
+import cache from '../utils/cache';
+import { BODY_NODE_ID } from '../constants';
 
 class Node extends EventTarget {
   constructor(options) {
@@ -37,11 +39,7 @@ class Node extends EventTarget {
   }
 
   get _root() {
-    if (this.parentNode !== null) {
-      return this.parentNode._root;
-    }
-
-    return null;
+    return cache.getNode(this.__pageId, BODY_NODE_ID);
   }
 
   _isRendered() {

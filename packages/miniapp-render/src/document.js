@@ -77,7 +77,7 @@ class Document extends EventTarget {
   }
 
   get documentElement() {
-    return this;
+    return this.body;
   }
 
   get body() {

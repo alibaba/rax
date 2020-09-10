@@ -54,7 +54,7 @@ class Element extends Node {
   _triggerUpdate(payload, immediate = true) {
     if (immediate) {
       this.enqueueRender(payload);
-    } else if (this._root) {
+    } else {
       this._root.renderStacks.push(payload);
     }
   }
@@ -417,9 +417,6 @@ class Element extends Node {
   }
 
   enqueueRender(payload) {
-    if (this._root === null) {
-      return;
-    }
     this._root.enqueueRender(payload);
   }
 

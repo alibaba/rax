@@ -22,6 +22,22 @@ class HTMLTextAreaElement extends Element {
     };
   }
 
+  setAttribute(name, value, immediate = true) {
+    if (name === 'focus' || name === 'autofocus' || name === 'autoFocus') {
+      // autoFocus is passed by rax-textinput
+      name = 'focus-state';
+    }
+    super.setAttribute(name, value, immediate);
+  }
+
+  getAttribute(name) {
+    if (name === 'focus' || name === 'autofocus' || name === 'autoFocus') {
+      // autoFocus is passed by rax-textinput
+      name = 'focus-state';
+    }
+    return this.__attrs.get(name);
+  }
+
   get _renderInfo() {
     return {
       nodeId: this.__nodeId,
@@ -101,15 +117,6 @@ class HTMLTextAreaElement extends Element {
     this.__attrs.set('placeholder', value);
   }
 
-  get autofocus() {
-    return !!this.__attrs.get('autofocus');
-  }
-
-  set autofocus(value) {
-    value = !!value;
-    this.__attrs.set('autofocus', value);
-  }
-
   get selectionStart() {
     const value = +this.__attrs.get('selection-start');
     return value !== undefined ? value : -1;
@@ -128,17 +135,12 @@ class HTMLTextAreaElement extends Element {
     this.__attrs.set('selection-end', value);
   }
 
-  get focus() {
-    return !!this.__attrs.get('focus');
-  }
-
-  set focus(value) {
-    value = !!value;
-    this.__attrs.set('focus', value);
-  }
-
   blur() {
-    this.__attrs.set('focus', false);
+    this.setAttribute('focus', false);
+  }
+
+  focus() {
+    this.setAttribute('focus', true);
   }
 }
 
