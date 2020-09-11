@@ -1,6 +1,6 @@
 {
   "name": "rax-app",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "Rax application framework for univesal app.",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -18,7 +18,7 @@
     "miniapp-renderer": "^0.1.0",
     "rax-app-renderer": "^0.1.0",
     "driver-universal": "^3.1.0",
-    "rax-pwa": "^2.0.0",
+    "create-app-container": "^0.1.1",
     "rax-use-router": "^3.0.0",
     "universal-env": "^3.0.0"
   },
