@@ -39,15 +39,15 @@ test('element: className/classList', () => {
 
   node2.className = 'header1 header2';
   expect(node2.className).toBe('header1 header2');
-  expect(node2.classList.has('header1')).toBe(true);
-  expect(node2.classList.has('header2')).toBe(true);
+  expect(node2.classList.contains('header1')).toBe(true);
+  expect(node2.classList.contains('header2')).toBe(true);
   expect(document.querySelector('.header1').className).toBe('header1 header2');
   expect(document.querySelector('.header2').className).toBe('header1 header2');
 
   node2.className = '';
   expect(node2.className).toBe('');
-  expect(node2.classList.has('header1')).toBe(false);
-  expect(node2.classList.has('header2')).toBe(false);
+  expect(node2.classList.contains('header1')).toBe(false);
+  expect(node2.classList.contains('header2')).toBe(false);
   expect(document.querySelector('.header1')).toBe(null);
   expect(document.querySelector('.header2')).toBe(null);
 
