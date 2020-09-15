@@ -4,6 +4,7 @@ class Comment extends Node {
   constructor(options) {
     options.type = 'comment';
     super(options);
+    this.data = options.data;
   }
 
   get _renderInfo() {
@@ -21,7 +22,9 @@ class Comment extends Node {
   }
 
   cloneNode() {
-    return this.ownerDocument.createComment();
+    return this.ownerDocument.createComment({
+      data: this.data
+    });
   }
 }
 

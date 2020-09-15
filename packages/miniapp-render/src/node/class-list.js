@@ -1,16 +1,19 @@
 export default class ClassList extends Set {
-  constructor(className, element) {
-    super();
-    className.trim().split(/\s+/).forEach(super.add.bind(this));
-    this.__element = element;
+  static _create(className, element) {
+    const instance = new Set();
+    instance['__proto__'] = ClassList.prototype;
+    instance.__element = element;
+    className.trim().split(/\s+/).forEach((s) => s !== '' && instance.add(s));
+    return instance;
   }
 
   get value() {
-    return [...this].join(' ');
+    const classArray = [];
+    this.forEach(item => classArray.push(item));
+    return classArray.join(' ');
   }
-
   add(s) {
-    if (typeof s === 'string') {
+    if (typeof s === 'string' && s !== '') {
       super.add(s);
       this._update();
     }
@@ -28,6 +31,36 @@ export default class ClassList extends Set {
     super.add(s2);
 
     this._update();
+  }
+
+  contains(s) {
+    return this.has(s);
+  }
+
+  item(index) {
+    let count = 0;
+    for (let i of this) {
+      if (count === index) {
+        return i;
+      }
+      count ++;
+    }
+    return undefined;
+  }
+
+  toggle(token, force) {
+    if (force !== undefined) {
+      force === true ? this.add(token) : this.remove(token);
+      return force;
+    }
+
+    if (this.has(token)) {
+      this.remove(token);
+      return false;
+    } else {
+      this.add(token);
+      return true;
+    }
   }
 
   toString() {

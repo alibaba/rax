@@ -9,7 +9,7 @@ class HTMLTextAreaElement extends Element {
   /**
    * The cloneNode interface is invoked to handle additional properties
    */
-  $$dealWithAttrsForCloneNode() {
+  _dealWithAttrsForCloneNode() {
     return {
       type: this.type,
       value: this.value,

@@ -30,24 +30,24 @@ test('element: id/tagName', () => {
 test('element: className/classList', () => {
   const node1 = document.querySelector('#bb');
   expect(node1.className).toBe('bb');
-  expect(node1.classList).toBeInstanceOf(Array);
+  expect(node1.classList).toBeInstanceOf(Set);
 
   const node2 = document.querySelector('header');
   expect(node2.tagName).toBe('HEADER');
   expect(node2.className).toBe('');
-  expect(node2.classList).toBeInstanceOf(Array);
+  expect(node2.classList).toBeInstanceOf(Set);
 
   node2.className = 'header1 header2';
   expect(node2.className).toBe('header1 header2');
-  expect(node2.classList.contains('header1')).toBe(true);
-  expect(node2.classList.contains('header2')).toBe(true);
+  expect(node2.classList.has('header1')).toBe(true);
+  expect(node2.classList.has('header2')).toBe(true);
   expect(document.querySelector('.header1').className).toBe('header1 header2');
   expect(document.querySelector('.header2').className).toBe('header1 header2');
 
   node2.className = '';
   expect(node2.className).toBe('');
-  expect(node2.classList.contains('header1')).toBe(false);
-  expect(node2.classList.contains('header2')).toBe(false);
+  expect(node2.classList.has('header1')).toBe(false);
+  expect(node2.classList.has('header2')).toBe(false);
   expect(document.querySelector('.header1')).toBe(null);
   expect(document.querySelector('.header2')).toBe(null);
 
@@ -72,7 +72,7 @@ test('element: nodeName/nodeType', () => {
   expect(parent.nodeName).toBe('HEADER');
   expect(document.nodeName).toBe('#document');
   expect(node.childNodes[0].nodeName).toBe('#text');
-  expect(document.documentElement.nodeName).toBe('HTML');
+  expect(document.documentElement.nodeName).toBe('BODY'); // Hack in miniapp, not be consistent with W3C
 });
 
 test('element: childNodes/children/firstChild/lastChild', () => {
@@ -122,72 +122,20 @@ test('element: innerHTML/outerHTML', () => {
   node3.style.left = '20px';
   expect(node1.tagName).toBe('ARTICLE');
   expect(node1.id).toBe('outer');
-  expect(node1.innerHTML).toBe('<span id="abc"></span><div id="cc" class="a b c" style="position:absolute;top:10px;left:20px;">123<span id="cba">555</span>321</div><br />');
-  expect(node1.outerHTML).toBe('<article id="outer"><span id="abc"></span><div id="cc" class="a b c" style="position:absolute;top:10px;left:20px;">123<span id="cba">555</span>321</div><br /></article>');
-
-  node1.innerHTML = '<div id="a">321<span id="inner" b="inner">765</span>123</div><div id="c">555</div><p style="color: green; text-align: center;">I am content</p>';
-  expect(node1.childNodes.length).toBe(3);
-  expect(node1.childNodes[0].id).toBe('a');
-  expect(node1.childNodes[0].childNodes.length).toBe(3);
-  expect(node1.childNodes[0].childNodes[0].textContent).toBe('321');
-  expect(node1.childNodes[0].childNodes[1].id).toBe('inner');
-  expect(node1.childNodes[0].childNodes[1].tagName).toBe('SPAN');
-  expect(node1.childNodes[0].childNodes[1].childNodes.length).toBe(1);
-  expect(node1.childNodes[0].childNodes[1].childNodes[0].textContent).toBe('765');
-  expect(node1.childNodes[0].childNodes[2].textContent).toBe('123');
-  expect(node1.childNodes[1].id).toBe('c');
-  expect(node1.childNodes[1].childNodes.length).toBe(1);
-  expect(node1.childNodes[1].childNodes[0].textContent).toBe('555');
-  expect(node1.childNodes[2].tagName).toBe('P');
-  expect(node1.childNodes[2].style.color).toBe('green');
-  expect(node1.childNodes[2].style.textAlign).toBe('center');
-  expect(node1.childNodes[2].childNodes.length).toBe(1);
-  expect(node1.childNodes[2].childNodes[0].textContent).toBe('I am content');
-
-  node1.outerHTML = '<header id="outer2"><div id="a">321<span id="inner" b="inner">765</span>123</div><div id="c">555</div><p style="color: green; text-align: center;">I am content</p></header>';
-  expect(node1.tagName).toBe('HEADER');
-  expect(node1.id).toBe('outer2');
-  expect(node1.childNodes.length).toBe(3);
-  expect(node1.childNodes[0].id).toBe('a');
-  expect(node1.childNodes[0].childNodes.length).toBe(3);
-  expect(node1.childNodes[0].childNodes[0].textContent).toBe('321');
-  expect(node1.childNodes[0].childNodes[1].id).toBe('inner');
-  expect(node1.childNodes[0].childNodes[1].tagName).toBe('SPAN');
-  expect(node1.childNodes[0].childNodes[1].childNodes.length).toBe(1);
-  expect(node1.childNodes[0].childNodes[1].childNodes[0].textContent).toBe('765');
-  expect(node1.childNodes[0].childNodes[2].textContent).toBe('123');
-  expect(node1.childNodes[1].id).toBe('c');
-  expect(node1.childNodes[1].childNodes.length).toBe(1);
-  expect(node1.childNodes[1].childNodes[0].textContent).toBe('555');
-  expect(node1.childNodes[2].tagName).toBe('P');
-  expect(node1.childNodes[2].style.color).toBe('green');
-  expect(node1.childNodes[2].style.textAlign).toBe('center');
-  expect(node1.childNodes[2].childNodes.length).toBe(1);
-  expect(node1.childNodes[2].childNodes[0].textContent).toBe('I am content');
 
   document.body.removeChild(node1);
 });
 
 test('element: innerText/textContent', () => {
   const node1 = document.createElement('div');
-  node1.innerHTML = 'a<div>bc<span>de</span>f<div><span>g</span>h</div>ij</div>k';
-  document.body.appendChild(node1);
-
-  expect(node1.innerText).toBe('abcdefghijk');
-  expect(node1.textContent).toBe('abcdefghijk');
-
   node1.innerText = '<div>123</div>';
   expect(node1.childNodes.length).toBe(1);
-  expect(node1.innerHTML).toBe('<div>123</div>');
   expect(node1.textContent).toBe('<div>123</div>');
 
   node1.textContent = '<span>321</span>';
   expect(node1.childNodes.length).toBe(1);
-  expect(node1.innerHTML).toBe('<span>321</span>');
   expect(node1.innerText).toBe('<span>321</span>');
 
-  node1.innerHTML = '<span>321</span>';
-  expect(node1.childNodes.length).toBe(1);
   node1.textContent = '';
   expect(node1.childNodes.length).toBe(0);
 
@@ -196,50 +144,43 @@ test('element: innerText/textContent', () => {
 
 test('element: dataset', () => {
   const node1 = document.createElement('div');
-  node1.innerHTML = '<div data-a="abc" data-bc-d-efg="efg" data-hi-j=123></div>';
+  const child = document.createElement('div');
+  child.setAttribute('data-a', 'abc');
+  child.setAttribute('data-bc-d-efg', 'efg');
+  child.setAttribute('data-hi-j', '123');
+  node1.appendChild(child);
 
   const node2 = node1.childNodes[0];
 
-  expect(node2.dataset).toEqual({
-    a: 'abc',
-    bcDEfg: 'efg',
-    hiJ: '123',
-  });
+  expect(node2.dataset.a).toEqual('abc');
+  expect(node2.dataset.bcDEfg).toEqual('efg');
+  expect(node2.dataset.hiJ).toEqual('123');
 
   node2.dataset.bcDEfg = 'hij';
   node2.dataset.kLmNOpQr = 'klm';
 
-  expect(node2.dataset).toEqual({
-    a: 'abc',
-    bcDEfg: 'hij',
-    hiJ: '123',
-    kLmNOpQr: 'klm'
-  });
-  expect(node1.innerHTML).toEqual('<div data-a="abc" data-bc-d-efg="hij" data-hi-j="123" data-k-lm-n-op-qr="klm"></div>');
-  expect(node2.outerHTML).toEqual('<div data-a="abc" data-bc-d-efg="hij" data-hi-j="123" data-k-lm-n-op-qr="klm"></div>');
+  expect(node2.dataset.a).toEqual('abc');
+  expect(node2.dataset.bcDEfg).toEqual('hij');
+  expect(node2.dataset.hiJ).toEqual('123');
+  expect(node2.dataset.kLmNOpQr).toEqual('klm');
 
   const node3 = node2.cloneNode();
   node3.dataset.hiJ = '321';
-  expect(node3.dataset).toEqual({
-    a: 'abc',
-    bcDEfg: 'hij',
-    hiJ: '321',
-    kLmNOpQr: 'klm'
-  });
-  expect(node3.outerHTML).toEqual('<div data-a="abc" data-bc-d-efg="hij" data-hi-j="321" data-k-lm-n-op-qr="klm"></div>');
+  expect(node3.dataset.a).toEqual('abc');
+  expect(node3.dataset.bcDEfg).toEqual('hij');
+  expect(node3.dataset.hiJ).toEqual('321');
+  expect(node3.dataset.kLmNOpQr).toEqual('klm');
 
   const node4 = document.createElement('div');
   node4.setAttribute('data-a', 'abc');
   node4.setAttribute('data-bc-d-efg', 'hij');
   node4.setAttribute('data-hi-j', '321');
   node4.setAttribute('data-k-lm-n-op-qr', 'klm');
-  expect(node4.dataset).toEqual({
-    a: 'abc',
-    bcDEfg: 'hij',
-    hiJ: '321',
-    kLmNOpQr: 'klm'
-  });
-  expect(node4.outerHTML).toEqual('<div data-a="abc" data-bc-d-efg="hij" data-hi-j="321" data-k-lm-n-op-qr="klm"></div>');
+  expect(node4.dataset.a).toEqual('abc');
+  expect(node4.dataset.bcDEfg).toEqual('hij');
+  expect(node4.dataset.hiJ).toEqual('321');
+  expect(node4.dataset.kLmNOpQr).toEqual('klm');
+
   node4.dataset.bcDEfg = 'haha';
   expect(node4.getAttribute('data-bc-d-efg')).toBe('haha');
   expect(node4.hasAttribute('data-bc-d-efg')).toBe(true);
@@ -249,14 +190,10 @@ test('element: dataset', () => {
   expect(node4.hasAttribute('data-bc-d-efg')).toBe(false);
 });
 
-test('element: attributes', () => {
-  const node = document.createElement('div');
-  expect(node.attributes).toBeInstanceOf(Array);
-});
 
 test('element: src', () => {
   const node = document.createElement('div');
-  expect(node.src).toBe('');
+  expect(node.src).toBe(undefined);
 
   node.src = 'https://aa.bb.cc';
   expect(node.src).toBe('https://aa.bb.cc');
@@ -285,7 +222,7 @@ test('element: cloneNode', () => {
 
   const node7 = node1.cloneNode();
   expect(node7).not.toBe(node1);
-  expect(node7.$$nodeId).not.toBe(node1.$$nodeId);
+  expect(node7.__nodeId).not.toBe(node1.__nodeId);
   expect(node7.__pageId).toBe(node1.__pageId);
   expect(node7.id).toBe(node1.id);
   expect(node7.className).toBe(node1.className);
@@ -294,7 +231,7 @@ test('element: cloneNode', () => {
 
   const node8 = node1.cloneNode(true);
   expect(node8).not.toBe(node1);
-  expect(node7.$$nodeId).not.toBe(node1.$$nodeId);
+  expect(node7.__nodeId).not.toBe(node1.__nodeId);
   expect(node7.__pageId).toBe(node1.__pageId);
   expect(node8.id).toBe(node1.id);
   expect(node8.className).toBe(node1.className);
@@ -367,23 +304,7 @@ test('node: querySelector', () => {
   expect(node2.tagName).toBe('DIV');
   expect(node2.id).toBe('bb');
 
-  const node3 = node1.querySelector('#bb .bb4');
-  expect(node3.tagName).toBe('SPAN');
-  expect(node3.id).toBe('bb4');
-
   expect(node1.querySelector('#aa')).toBe(null);
-});
-
-test('node: querySelectorAll', () => {
-  const node = document.querySelector('.aa');
-  const nodes = node.querySelectorAll('#bb .bb4');
-  expect(nodes.length).toBe(3);
-  expect(nodes[0].tagName).toBe('SPAN');
-  expect(nodes[0].id).toBe('bb4');
-  expect(nodes[1].tagName).toBe('SPAN');
-  expect(nodes[2].tagName).toBe('SPAN');
-
-  expect(node.querySelectorAll('#aa').length).toBe(0);
 });
 
 test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
@@ -391,15 +312,14 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   document.body.appendChild(node);
   const attributes = node.attributes;
 
-  expect(node.getAttribute('id')).toBe('');
-  expect(node.getAttribute('class')).toBe('');
-  expect(node.getAttribute('style')).toBe('');
-  expect(node.getAttribute('src')).toBe(undefined);
+  expect(node.getAttribute('id')).toBe(null);
+  expect(node.getAttribute('class')).toBe(null);
+  expect(node.getAttribute('style')).toBe(null);
+  expect(node.getAttribute('src')).toBe(null);
   expect(node.hasAttribute('id')).toBe(false);
   expect(node.hasAttribute('class')).toBe(false);
   expect(node.hasAttribute('style')).toBe(false);
   expect(node.hasAttribute('src')).toBe(false);
-  expect(attributes).toEqual([]);
   expect(attributes.id).toBe(undefined);
   expect(attributes.class).toBe(undefined);
   expect(attributes.style).toBe(undefined);
@@ -412,23 +332,18 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   node.src = 'javascript: void(0);';
   expect(node.getAttribute('id')).toBe('abc');
   expect(node.getAttribute('class')).toBe('a b');
-  expect(node.getAttribute('style')).toBe('display:block;');
+  expect(node.getAttribute('style')).toBe('display: block;');
   // eslint-disable-next-line no-script-url
   expect(node.getAttribute('src')).toBe('javascript: void(0);');
   expect(node.hasAttribute('id')).toBe(true);
   expect(node.hasAttribute('class')).toBe(true);
   expect(node.hasAttribute('style')).toBe(true);
   expect(node.hasAttribute('src')).toBe(true);
-  expect(attributes.length).toBe(4);
-  expect(attributes.id).toBe(attributes[1]);
-  expect(attributes.id).toEqual({name: 'id', value: 'abc'});
-  expect(attributes.class).toBe(attributes[2]);
-  expect(attributes.class).toEqual({name: 'class', value: 'a b'});
-  expect(attributes.style).toBe(attributes[3]);
-  expect(attributes.style).toEqual({name: 'style', value: 'display:block;'});
-  expect(attributes.src).toBe(attributes[0]);
+  expect(attributes.id).toEqual('abc');
+  expect(attributes.class).toEqual('a b');
+  expect(attributes.style).toEqual('display: block;');
   // eslint-disable-next-line no-script-url
-  expect(attributes.src).toEqual({name: 'src', value: 'javascript: void(0);'});
+  expect(attributes.src).toEqual('javascript: void(0);');
 
   node.setAttribute('id', 'cba');
   node.setAttribute('class', 'c b a');
@@ -436,21 +351,16 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   node.setAttribute('src', 'moc.haha.www');
   expect(node.id).toBe('cba');
   expect(node.className).toBe('c b a');
-  expect(node.style.cssText).toBe('display:inline;');
+  expect(node.style.cssText).toBe('display: inline;');
   expect(node.src).toBe('moc.haha.www');
   expect(node.hasAttribute('id')).toBe(true);
   expect(node.hasAttribute('class')).toBe(true);
   expect(node.hasAttribute('style')).toBe(true);
   expect(node.hasAttribute('src')).toBe(true);
-  expect(attributes.length).toEqual(4);
-  expect(attributes.id).toBe(attributes[1]);
-  expect(attributes.id).toEqual({name: 'id', value: 'cba'});
-  expect(attributes.class).toBe(attributes[2]);
-  expect(attributes.class).toEqual({name: 'class', value: 'c b a'});
-  expect(attributes.style).toBe(attributes[3]);
-  expect(attributes.style).toEqual({name: 'style', value: 'display:inline;'});
-  expect(attributes.src).toBe(attributes[0]);
-  expect(attributes.src).toEqual({name: 'src', value: 'moc.haha.www'});
+  expect(attributes.id).toEqual('cba');
+  expect(attributes.class).toEqual('c b a');
+  expect(attributes.style).toEqual('display: inline;');
+  expect(attributes.src).toEqual('moc.haha.www');
 
   node.removeAttribute('id');
   node.removeAttribute('class');
@@ -460,15 +370,14 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   expect(node.className).toBe('');
   expect(node.style.cssText).toBe('');
   expect(node.src).toBe(undefined);
-  expect(node.getAttribute('id')).toBe('');
-  expect(node.getAttribute('class')).toBe('');
-  expect(node.getAttribute('style')).toBe('');
-  expect(node.getAttribute('src')).toBe(undefined);
+  expect(node.getAttribute('id')).toBe(null);
+  expect(node.getAttribute('class')).toBe(null);
+  expect(node.getAttribute('style')).toBe(null);
+  expect(node.getAttribute('src')).toBe(null);
   expect(node.hasAttribute('id')).toBe(false);
   expect(node.hasAttribute('class')).toBe(false);
   expect(node.hasAttribute('style')).toBe(false);
   expect(node.hasAttribute('src')).toBe(false);
-  expect(attributes).toEqual([]);
   expect(attributes.id).toBe(undefined);
   expect(attributes.class).toBe(undefined);
   expect(attributes.style).toBe(undefined);
@@ -478,11 +387,9 @@ test('element: setAttribute/getAttribute/hasAttribute/removeAttribute', () => {
   const obj = {a: 123, b: {c: 321, d: [1, 2, 3]}};
   node.setAttribute('object-attr', obj);
   expect(node.getAttribute('object-attr')).toBe(obj);
-  expect(attributes.length).toEqual(1);
   const arr = [{a: obj}, 123, null, 'haha'];
   node.setAttribute('array-attr', arr);
   expect(node.getAttribute('array-attr')).toBe(arr);
-  expect(attributes.length).toEqual(2);
 
   document.body.removeChild(node);
 });

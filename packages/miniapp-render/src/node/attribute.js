@@ -8,10 +8,11 @@ class Attribute {
 
   _setWithOutUpdate(name, value) {
     this.__value[name] = value;
-    if (name.indexOf('data-') === 0) {
-      const element = this.__element;
+    if (name === 'style') {
+      this.__element.style.cssText = value;
+    } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      element.dataset.set(datasetName, value);
+      this.__element.dataset[datasetName] = value;
     }
   }
 
@@ -23,7 +24,7 @@ class Attribute {
       element.style.cssText = value;
     } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      element.dataset.set(datasetName, value);
+      element.dataset[datasetName] = value;
     } else {
       const payload = {
         path: `${element._path}.${name}`,
@@ -34,7 +35,30 @@ class Attribute {
   }
 
   get(name) {
-    return this.__value[name];
+    const element = this.__element;
+    if (name === 'style') {
+      return element.style.cssText || null;
+    } else if (name.indexOf('data-') === 0) {
+      const datasetName = tool.toCamel(name.substr(5));
+      return element.dataset[datasetName];
+    }
+    return this.__value[name] || null;
+  }
+
+  get style() {
+    return this.__element.style.cssText || undefined;
+  }
+
+  get class() {
+    return this.__value.class || undefined;
+  }
+
+  get id() {
+    return this.__value.id || undefined;
+  }
+
+  get src() {
+    return this.__value.src || undefined;
   }
 
   has(name) {
@@ -44,13 +68,16 @@ class Attribute {
   remove(name) {
     const element = this.__element;
     delete this.__value[name];
+    delete this[name];
 
-    if (name === 'id') {
+    if (name === 'style') {
+      element.style.cssText = '';
+    } else if (name === 'id') {
       element.id = '';
     } else {
       if (name.indexOf('data-') === 0) {
         const datasetName = tool.toCamel(name.substr(5));
-        element.dataset.delete(datasetName);
+        delete element.dataset[datasetName];
       } else {
         const payload = {
           path: `${element._path}.${name}`,
