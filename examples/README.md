@@ -24,3 +24,5 @@ npm run build
 * use-rax-compiled-component-in-runtime-miniapp: Rax 小程序运行时项目使用 Rax 编译时组件
 * app-lifecycle: 使用 app 生命周期
 * page-lifecycle-with-router: 使用 page 生命周期 + 路由跳转
+* event-handler: 事件绑定（编译时小程序）
+
