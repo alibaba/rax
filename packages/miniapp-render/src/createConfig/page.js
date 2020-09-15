@@ -5,6 +5,7 @@ import perf from '../utils/perf';
 import createDocument from '../document';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { isMiniApp } from 'universal-env';
+import { BODY_NODE_ID } from '../constants';
 
 export function getBaseLifeCycles(route) {
   return {
@@ -44,43 +45,6 @@ export function getBaseLifeCycles(route) {
       }
       this.renderInfo.setDocument(this.document);
       this.renderInfo.render();
-      // Handle update of body
-      this.document.body.addEventListener('render', (...tasks) => {
-        if (tasks.length > 0) {
-          if (this.$batchedUpdates) {
-            let callback;
-            this.$batchedUpdates(() => {
-              tasks.forEach((task, index) => {
-                if (index === tasks.length - 1) {
-                  callback = () => {
-                    if (process.env.NODE_ENV === 'development') {
-                      perf.stop('setData');
-                    }
-                  };
-                  this.firstRenderCallback();
-                }
-                if (task.type === 'children') {
-                  const spliceArgs = [task.start, task.deleteCount];
-                  this.$spliceData({
-                    [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
-                  }, callback);
-                } else {
-                  this.setData({
-                    [task.path]: task.value
-                  }, callback);
-                }
-              });
-            });
-          } else {
-            this.firstRenderCallback(tasks[0]);
-            this.setData(tasks[0], () => {
-              if (process.env.NODE_ENV === 'development') {
-                perf.stop('setData');
-              }
-            });
-          }
-        }
-      });
 
       this.window.$$trigger('DOMContentLoaded');
     },
@@ -108,7 +72,7 @@ export function getBaseLifeCycles(route) {
       this.window.$$trigger('pageunload');
 
       this.document.__unmount && this.document.__unmount(); // Manually unmount component instance
-      this.document.body.$$recycle(); // Recycle DOM node
+      this.document.body.$$destroy();
 
       cache.destroy(this.pageId);
 
@@ -125,6 +89,8 @@ export default function(route, lifeCycles = []) {
     firstRender: true,
     data: {
       root: {
+        nodeId: BODY_NODE_ID,
+        nodeType: 'h-element',
         children: []
       }
     },

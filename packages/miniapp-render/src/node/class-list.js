@@ -1,127 +1,73 @@
-function ClassList(element, onUpdate) {
-  this.$$init(element, onUpdate);
-}
+export default class ClassList extends Set {
+  static _create(className, element) {
+    const instance = new Set();
+    instance.__proto__ = ClassList.prototype;
+    instance.__element = element;
+    className.trim().split(/\s+/).forEach((s) => s !== '' && instance.add(s));
+    return instance;
+  }
 
-ClassList.$$create = function(element, onUpdate) {
-  return new ClassList(element, onUpdate);
-};
-
-ClassList.prototype = Object.assign([], {
-  $$init(element, onUpdate) {
-    this.$_element = element;
-    this.$_doUpdate = onUpdate;
-  },
-
-  $$destroy() {
-    this.$_element = null;
-    this.$_doUpdate = null;
-    this.length = 0;
-  },
-
-  $$recycle() {
-    this.$$destroy();
-  },
-
-  $$parse(className = '') {
-    this.length = 0;
-
-    className = className.trim();
-    className = className ? className.split(/\s+/) : [];
-
-    for (const item of className) {
-      this.push(item);
+  get value() {
+    const classArray = [];
+    this.forEach(item => classArray.push(item));
+    return classArray.join(' ');
+  }
+  add(s) {
+    if (typeof s === 'string' && s !== '') {
+      super.add(s);
+      this._update();
     }
 
-    const payload = {
-      path: `${this.$_element._path}.className`,
-      value: this.slice().join(' ')
-    };
+    return this;
+  }
 
-    this.$_doUpdate(payload);
-  },
+  remove(s) {
+    super.delete(s);
+    this._update();
+  }
+
+  replace(s1, s2) {
+    super.delete(s1);
+    super.add(s2);
+
+    this._update();
+  }
+
+  contains(s) {
+    return this.has(s);
+  }
 
   item(index) {
-    return this[index];
-  },
-
-  contains(className) {
-    if (typeof className !== 'string') return false;
-
-    return this.indexOf(className) !== -1;
-  },
-
-  add(...args) {
-    let isUpdate = false;
-
-    for (let className of args) {
-      if (typeof className !== 'string') continue;
-
-      className = className.trim();
-
-      if (className && this.indexOf(className) === -1) {
-        this.push(className);
-        isUpdate = true;
+    let count = 0;
+    for (let i of this) {
+      if (count === index) {
+        return i;
       }
+      count ++;
+    }
+    return undefined;
+  }
+
+  toggle(token, force) {
+    if (force !== undefined) {
+      force === true ? this.add(token) : this.remove(token);
+      return force;
     }
 
-    if (isUpdate) {
-      const payload = {
-        path: `${this.$_element._path}.className`,
-        value: this.slice().join(' ')
-      };
-      this.$_doUpdate(payload);
-    }
-  },
-
-  remove(...args) {
-    let isUpdate = false;
-
-    for (let className of args) {
-      if (typeof className !== 'string') continue;
-
-      className = className.trim();
-
-      if (!className) continue;
-
-      const index = this.indexOf(className);
-      if (index >= 0) {
-        this.splice(index, 1);
-        isUpdate = true;
-      }
-    }
-
-    if (isUpdate) {
-      const payload = {
-        path: `${this.$_element._path}.className`,
-        value: this.slice().join(' ')
-      };
-      this.$_doUpdate(payload);
-    }
-  },
-
-  toggle(className, force) {
-    if (typeof className !== 'string') return false;
-
-    className = className.trim();
-
-    if (!className) return false;
-
-    const isNotContain = this.indexOf(className) === -1;
-    let action = isNotContain ? 'add' : 'remove';
-    action = force === true ? 'add' : force === false ? 'remove' : action;
-
-    if (action === 'add') {
-      this.add(className);
+    if (this.has(token)) {
+      this.remove(token);
+      return false;
     } else {
-      this.remove(className);
+      this.add(token);
+      return true;
     }
-
-    return force === true || force === false ? force : isNotContain;
-  },
+  }
 
   toString() {
-    return this.join(' ');
-  },
-});
+    return this.value;
+  }
 
-export default ClassList;
+  _update() {
+    this.__element.className = this.value;
+  }
+}

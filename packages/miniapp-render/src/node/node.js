@@ -1,18 +1,18 @@
 import EventTarget from '../event/event-target';
+import tool from '../utils/tool';
 import cache from '../utils/cache';
+import { BODY_NODE_ID } from '../constants';
 
 class Node extends EventTarget {
-  /**
-   * Override parent class $$init method
-   */
-  $$init(options, tree) {
-    super.$$init();
+  constructor(options) {
+    super();
 
-    this.$_nodeId = options.nodeId; // unique
+    // unique node id
+    this.__nodeId = `n_${tool.getId()}`;
     this.$_type = options.type;
-    this.$_parentNode = null;
-    this.$_tree = tree;
-    this.__pageId = tree.pageId;
+    this.parentNode = null;
+    this.ownerDocument = options.document;
+    this.__pageId = this.ownerDocument.__pageId;
   }
 
   /**
@@ -21,30 +21,16 @@ class Node extends EventTarget {
   $$destroy() {
     super.$$destroy();
 
-    this.$_nodeId = null;
+    this.__nodeId = null;
     this.$_type = null;
-    this.$_parentNode = null;
-    this.$_tree = null;
+    this.parentNode = null;
     this.__pageId = null;
-  }
-
-  /**
-   * private nodeId
-   */
-  get $$nodeId() {
-    return this.$_nodeId;
-  }
-
-  /**
-   * update parent node
-   */
-  $$updateParent(parentNode = null) {
-    this.$_parentNode = parentNode;
+    this.__rendered = false;
   }
 
   get _path() {
-    if (this.$_parentNode !== null) {
-      const index = '[' + this.$_parentNode.childNodes.indexOf(this) + ']';
+    if (this.parentNode !== null) {
+      const index = '[' + this.parentNode.childNodes.indexOf(this) + ']';
 
       return `${this.parentNode._path}.children.${index}`;
     }
@@ -53,15 +39,15 @@ class Node extends EventTarget {
   }
 
   get _root() {
-    if (this.$_parentNode !== null) {
-      return this.$_parentNode._root;
-    }
-
-    return null;
+    return cache.getNode(this.__pageId, BODY_NODE_ID);
   }
 
-  get parentNode() {
-    return this.$_parentNode;
+  _isRendered() {
+    if (this.__rendered) return true;
+    if (this.parentNode) {
+      this.__rendered = this.parentNode._isRendered();
+    }
+    return this.__rendered;
   }
 
   get nodeValue() {
@@ -114,10 +100,6 @@ class Node extends EventTarget {
     }
 
     return null;
-  }
-
-  get ownerDocument() {
-    return cache.getDocument(this.__pageId) || null;
   }
 
   hasChildNodes() {

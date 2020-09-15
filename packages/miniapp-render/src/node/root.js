@@ -1,67 +1,16 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { isMiniApp } from 'universal-env';
 import Element from './element';
 import cache from '../utils/cache';
 import perf from '../utils/perf';
 import getProperty from '../utils/getProperty';
-import { propsMap } from '../builtInComponents';
-
-function simplify(node) {
-  const domInfo = node.$$domInfo;
-  const simpleNode = {};
-  for (let attr in domInfo) {
-    simpleNode[attr] = domInfo[attr];
-  }
-
-  let componentType;
-  if (node._behavior) {
-    componentType = simpleNode.behavior = node._behavior;
-  } else {
-    componentType = node.tagName;
-  }
-
-  // Get specific props
-  const specificProps = propsMap[componentType] || [];
-  specificProps.forEach(prop => {
-    simpleNode[prop.name] = prop.get(node);
-  });
-
-  return simpleNode;
-}
-
-function traverseTree(node, action) {
-  if (!node) {
-    return;
-  }
-  let copiedNode;
-  let queue = [];
-  queue.push(node);
-  while (queue.length) {
-    let curNode = queue.shift();
-    const result = action(curNode);
-    if (!copiedNode) {
-      copiedNode = result;
-      copiedNode.children = [];
-    } else {
-      curNode.__parent.children = curNode.__parent.children || [];
-      curNode.__parent.children.push(result);
-    }
-    if (curNode.$_children && curNode.$_children.length) {
-      curNode.$_children.forEach(n => n.__parent = result);
-      queue = queue.concat(curNode.$_children);
-    }
-    if (!result.children) {
-      result.children = [];
-    }
-  }
-  return copiedNode;
-}
+import { BODY_NODE_ID } from '../constants';
 
 class RootElement extends Element {
-  $$init(options, tree) {
-    super.$$init(options, tree);
+  constructor(options) {
+    super(options);
+    this.__nodeId = BODY_NODE_ID;
     this.allowRender = true;
     this.renderStacks = [];
+    this.__renderCallbacks = [];
   }
 
   $$destroy() {
@@ -94,44 +43,75 @@ class RootElement extends Element {
     }
     // type 1: { path, start, deleteCount, item? } => need to simplify item
     // type 2: { path, value }
-    const renderObject = {};
-    const renderStacks = [];
-    const pathCache = [];
-    const internal = cache.getDocument(this.__pageId)._internal;
-    for (let i = 0, j = this.renderStacks.length; i < j; i++) {
-      const renderTask = this.renderStacks[i];
-      const path = renderTask.path;
-      const taskInfo = getProperty(internal.data, path, pathCache);
-      if (!taskInfo.parentRendered || internal.firstRender && path !== 'root.children') break;
-      if (renderTask.type === 'children') {
-        const ElementNode = renderTask.item;
-        const simplifiedNode = traverseTree(ElementNode, simplify);
-        renderTask.item = simplifiedNode;
-        // path cache should save lastest taskInfo value
-        pathCache.push({
-          path: renderTask.path,
-          value: taskInfo.value
-        });
-      }
 
-      if (!internal.$batchedUpdates) {
-        // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
-        if (renderTask.type === 'children') {
-          renderObject[path] = renderObject[path] || taskInfo.value || [];
-          if (renderTask.item) {
-            renderObject[path].splice(renderTask.start, renderTask.deleteCount, renderTask.item);
+    const internal = cache.getDocument(this.__pageId)._internal;
+
+    if (internal.$batchedUpdates) {
+      let callback;
+      internal.$batchedUpdates(() => {
+        this.renderStacks.forEach((task, index) => {
+          if (index === this.renderStacks.length - 1) {
+            callback = () => {
+              if (process.env.NODE_ENV === 'development') {
+                perf.stop('setData');
+              }
+              let fn;
+              while (fn = this.__renderCallbacks.pop()) {
+                fn();
+              }
+            };
+            internal.firstRenderCallback();
+          }
+          if (task.type === 'children') {
+            const spliceArgs = [task.start, task.deleteCount];
+            internal.$spliceData({
+              [task.path]: task.item ? spliceArgs.concat(task.item) : spliceArgs
+            }, callback);
           } else {
-            renderObject[path].splice(renderTask.start, renderTask.deleteCount);
+            internal.setData({
+              [task.path]: task.value
+            }, callback);
+          }
+        });
+      });
+    } else {
+      const renderObject = {};
+      const pathCache = [];
+      this.renderStacks.forEach(task => {
+        const path = task.path;
+        // there is no need to aggregate arrays if $batchedUpdate and $spliceData exist
+        if (task.type === 'children') {
+          const taskInfo = getProperty(internal.data, path, pathCache);
+          // path cache should save lastest taskInfo value
+          pathCache.push({
+            path: task.path,
+            value: taskInfo.value
+          });
+
+          if (!renderObject[path]) {
+            renderObject[path] = taskInfo.value ? [...taskInfo.value] : [];
+          }
+          if (task.item) {
+            renderObject[path].splice(task.start, task.deleteCount, task.item);
+          } else {
+            renderObject[path].splice(task.start, task.deleteCount);
           }
         } else {
-          renderObject[path] = renderTask.value;
+          renderObject[path] = task.value;
         }
-      } else {
-        renderStacks.push(renderTask);
-      }
+      });
+      internal.firstRenderCallback(renderObject);
+      internal.setData(renderObject, () => {
+        let fn;
+        while (fn = this.__renderCallbacks.pop()) {
+          fn();
+        }
+        if (process.env.NODE_ENV === 'development') {
+          perf.stop('setData');
+        }
+      });
     }
 
-    this.$$trigger('render', { args: internal.$batchedUpdates ? renderStacks : renderObject });
     this.renderStacks = [];
   }
 }

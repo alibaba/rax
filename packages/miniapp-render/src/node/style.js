@@ -1,103 +1,108 @@
 import styleList from './style-list';
-import tool from '../utils/tool';
-
-/**
- * Parse style string
- */
-function parse(styleText) {
-  const rules = {};
-
-  if (styleText) {
-    styleText = tool.decodeContent(styleText);
-    // deal with the semicolon in the value first
-    styleText = styleText.replace(/url\([^)]+\)/ig, all => all.replace(/;/ig, ':#||#:'));
-    styleText.split(';').forEach(rule => {
-      rule = rule.trim();
-      if (!rule) return;
-
-      const split = rule.indexOf(':');
-      if (split === -1) return;
-
-      const name = tool.toCamel(rule.substr(0, split).trim());
-      rules[name] = rule.substr(split + 1).replace(/:#\|\|#:/ig, ';').trim();
-    });
-  }
-
-  return rules;
-}
 
 class Style {
-  constructor(element, onUpdate) {
-    this.__settedStyle = {};
-    this.$$init(element, onUpdate);
+  constructor(element) {
+    this.__settedStyle = new Set();
+    this.__value = new Map();
+    this.__element = element;
   }
 
-  static $$create(element, onUpdate) {
-    return new Style(element, onUpdate);
-  }
-
-  // Init instance
-  $$init(element, onUpdate) {
-    this.$_element = element;
-    this.$_doUpdate = onUpdate || (() => {});
-    // Whether checking for updates is disabled
-    this.$_disableCheckUpdate = false;
-  }
-
-  $$destroy() {
-    this.$_element = null;
-    this.$_doUpdate = null;
-    this.$_disableCheckUpdate = false;
-
-    styleList.forEach(name => {
-      this.__settedStyle[name] = undefined;
-    });
-  }
-
-  $$recycle() {
-    this.$$destroy();
-  }
-
-  $_checkUpdate() {
-    if (!this.$_disableCheckUpdate) {
+  setStyle(val, styleKey) {
+    const old = this[styleKey];
+    if (val) {
+      this.__settedStyle.add(styleKey);
+    }
+    this.__value.set(styleKey, val);
+    if (old !== val) {
       const payload = {
-        path: `${this.$_element._path}.style`,
+        path: `${this.__element._path}.style`,
         value: this.cssText
       };
-      this.$_doUpdate(payload);
+      this.__element._triggerUpdate(payload);
     }
   }
 
   get cssText() {
-    return Object.keys(this.__settedStyle).reduce((cssText, name) => {
-      if (this.__settedStyle[name]) {
-        return cssText + `${tool.toDash(name)}:${this.__settedStyle[name].trim()};`;
-      }
-      return cssText;
-    }, '');
+    let cssText = '';
+    this.__settedStyle.forEach(key => {
+      const val = this[key];
+      if (!val) return;
+      cssText += `${styleMap.get(key)}: ${val};`;
+    });
+    return cssText;
   }
 
-  set cssText(styleText) {
-    if (typeof styleText !== 'string') return;
+  set cssText(styleText = '') {
+    this.__settedStyle.forEach(prop => {
+      this.removeProperty(prop);
+    });
 
-    styleText = styleText.replace(/"/g, '\'');
-
-    // Parse style
-    const rules = parse(styleText);
-
-    // Merge the Settings for each rule into an update
-    this.$_disableCheckUpdate = true;
-    for (const name of styleList) {
-      this[name] = rules[name];
+    if (styleText === '') {
+      return;
     }
-    this.$_disableCheckUpdate = false;
-    // this.$_checkUpdate();
+
+    const rules = styleText.split(';');
+
+    for (let i = 0; i < rules.length; i++) {
+      const rule = rules[i].trim();
+      if (rule === '') {
+        continue;
+      }
+
+      const [propName, val] = rule.split(':');
+      if (typeof val === undefined) {
+        continue;
+      }
+      this.setProperty(propName.trim(), val.trim());
+    }
+  }
+
+  setCssVariables(styleKey) {
+    this.hasOwnProperty(styleKey) || Object.defineProperty(this, styleKey, {
+      enumerable: true,
+      configurable: true,
+      get: () => {
+        return this.__value.get(styleKey) || '';
+      },
+      set: (val) => {
+        this.setStyle(val, styleKey);
+      }
+    });
+  }
+
+  setProperty(name, value) {
+    if (name[0] === '-') {
+      this.setCssVariables(name);
+    } else {
+      name = styleMap.get(name);
+    }
+    if (typeof value === undefined) {
+      return;
+    }
+
+    if (!value) {
+      this.removeProperty(name);
+    } else {
+      this[name] = value;
+    }
+  }
+
+  removeProperty(name) {
+    name = styleMap.get(name);
+    if (!this.__settedStyle.has(name)) {
+      return '';
+    }
+
+    const value = this[name];
+    this[name] = '';
+    this.__settedStyle.delete(name);
+    return value;
   }
 
   getPropertyValue(name) {
     if (typeof name !== 'string') return '';
 
-    name = tool.toCamel(name);
+    name = styleMap.get(name);
     return this[name] || '';
   }
 }
@@ -106,22 +111,20 @@ class Style {
  * Set the getters and setters for each property
  */
 const properties = {};
-styleList.forEach(name => {
+const styleMap = new Map();
+Object.keys(styleList).forEach(name => {
+  styleMap.set(name, styleList[name]);
+  styleMap.set(styleList[name], name);
   properties[name] = {
     get() {
-      return this.__settedStyle[name] || '';
+      return this.__value.get(name) || '';
     },
     set(value) {
-      const oldValue = this.__settedStyle[name];
-      value = value !== undefined ? '' + value : undefined;
-
-      this.__settedStyle[name] = value;
-      if (oldValue !== value) {
-        this.$_checkUpdate();
-      }
+      this.setStyle(value, name);
     },
   };
 });
+
 Object.defineProperties(Style.prototype, properties);
 
 export default Style;

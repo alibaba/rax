@@ -15,7 +15,7 @@ test('document: nodeType', () => {
 });
 
 test('document: documentElement', () => {
-  expect(document.documentElement.tagName).toBe('HTML');
+  expect(document.documentElement.tagName).toBe('BODY'); // Hack in miniapp, not be consistent with W3C
   expect(document.documentElement.parentNode).toBe(document);
 });
 
@@ -25,10 +25,6 @@ test('document: body', () => {
 
 test('document: nodeName', () => {
   expect(document.nodeName).toBe('#document');
-});
-
-test('document: head', () => {
-  expect(document.head.tagName).toBe('HEAD');
 });
 
 test('document: defaultView', () => {
@@ -67,22 +63,19 @@ test('document: querySelector', () => {
   const node1 = document.querySelector('#bb');
   expect(node1.tagName).toBe('DIV');
   expect(node1.id).toBe('bb');
-
-  const node2 = document.querySelector('#bb .bb4');
+  const node2 = document.querySelector('.bb4');
   expect(node2.tagName).toBe('SPAN');
   expect(node2.id).toBe('bb4');
-
   expect(document.querySelector('#aa')).toBe(null);
 });
 
 test('document: querySelectorAll', () => {
-  const nodes = document.querySelectorAll('#bb .bb4');
+  const nodes = document.querySelectorAll('.bb4');
   expect(nodes.length).toBe(3);
   expect(nodes[0].tagName).toBe('SPAN');
   expect(nodes[0].id).toBe('bb4');
   expect(nodes[1].tagName).toBe('SPAN');
   expect(nodes[2].tagName).toBe('SPAN');
-
   expect(document.querySelectorAll('#aa').length).toBe(0);
 });
 

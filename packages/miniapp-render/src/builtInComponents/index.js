@@ -73,7 +73,6 @@ const components = [
   pickerViewColumn,
 ];
 
-const propsMap = {};
 const handlesMap = {
   simpleEvents: [],
   singleEvents: [],
@@ -83,14 +82,11 @@ const handlesMap = {
 
 components.forEach(
   ({
-    name,
-    props,
     simpleEvents,
     singleEvents,
     functionalSingleEvents,
     complexEvents,
   }) => {
-    propsMap[name] = props;
     if (simpleEvents) {
       handlesMap.simpleEvents = handlesMap.simpleEvents.concat(simpleEvents);
     }
@@ -108,15 +104,4 @@ components.forEach(
   }
 );
 
-// Tags below will be mapped to miniapp builtinComponent, others will be mapped to view
-const WEB_TAG_MAP = {
-  IMG: 'image',
-  INPUT: 'input',
-  TEXTAREA: 'textarea',
-  VIDEO: 'video'
-};
-Object.keys(WEB_TAG_MAP).forEach(TAG_NAME => {
-  propsMap[TAG_NAME] = propsMap[WEB_TAG_MAP[TAG_NAME]];
-});
-
-export { propsMap, handlesMap };
+export { handlesMap };

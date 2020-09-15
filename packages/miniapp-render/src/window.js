@@ -14,9 +14,6 @@ class Window extends EventTarget {
 
     const timeOrigin = +new Date();
 
-    this.$_elementConstructor = function HTMLElement(...args) {
-      return Element.$$create(...args);
-    };
     this.$_customEventConstructor = class CustomEvent extends OriginalCustomEvent {
       constructor(name = '', options = {}) {
         options.timeStamp = +new Date() - timeOrigin;
@@ -134,7 +131,9 @@ class Window extends EventTarget {
   }
 
   get HTMLElement() {
-    return this.$_elementConstructor;
+    return function(...args) {
+      return new Element(...args);
+    };
   }
 
   get Element() {

@@ -1,98 +1,43 @@
 import EventTarget from './event/event-target';
-import Tree from './tree/tree';
 import Node from './node/node';
 import Element from './node/element';
 import TextNode from './node/text-node';
 import Comment from './node/comment';
-import tool from './utils/tool';
 import cache from './utils/cache';
 import Image from './node/element/image';
 import Input from './node/element/input';
 import Textarea from './node/element/textarea';
 import Video from './node/element/video';
-import BuiltInComponent from './node/element/builtin-component';
 import CustomComponent from './node/element/custom-component';
+import RootElement from './node/root';
+import { BODY_NODE_ID } from './constants';
 
-const CONSTRUCTOR_MAP = {
-  IMG: Image,
-  INPUT: Input,
-  TEXTAREA: Textarea,
-  VIDEO: Video,
-  'BUILTIN-COMPONENT': BuiltInComponent,
-};
-const BUILTIN_COMPONENT_LIST = [
-  'movable-view', 'cover-image', 'cover-view', 'movable-area', 'scroll-view', 'swiper', 'swiper-item', 'view',
-  'icon', 'progress', 'rich-text', 'text',
-  'button', 'checkbox', 'checkbox-group', 'editor', 'form', 'input', 'label', 'picker', 'picker-view', 'picker-view-column', 'radio', 'radio-group', 'slider', 'switch', 'textarea',
-  'functional-page-navigator', 'navigator',
-  'audio', 'camera', 'image', 'live-player', 'live-pusher', 'video',
-  'map',
-  'canvas',
-  'ad', 'official-account', 'open-data', 'web-view'
-];
-
-/**
- * Check this component is builtIn component
- * @param {string} tagName - component tag name
- * @return {boolean}
- */
-function checkIsBuiltInComponent(tagName) {
-  return BUILTIN_COMPONENT_LIST.indexOf(tagName) > -1;
-}
+const CONSTRUCTOR_MAP = new Map([['img', Image], ['input', Input], ['textarea', Textarea], ['video', Video]]);
 
 class Document extends EventTarget {
-  constructor(pageId, nodeIdMap) {
+  constructor(pageId) {
     super();
 
     const { usingComponents = {}, usingPlugins = {} } = cache.getConfig();
     this.usingComponents = usingComponents;
     this.usingPlugins = usingPlugins;
+
+    this.__nodeIdMap = new Map();
+    this.__idMap = new Map();
     this.__pageId = pageId;
 
-    // Used to encapsulate special tag and corresponding constructors
-    const that = this;
-    this.$_imageConstructor = function HTMLImageElement(width, height) {
-      return Image.$$create({
-        tagName: 'img',
-        nodeId: `b-${tool.getId()}`,
-        attrs: {},
-        width,
-        height,
-      }, that.$_tree);
-    };
-
-    this.__pageId = pageId;
-    this.$_tree = new Tree(pageId, {
+    this.__root = new RootElement({
       type: 'element',
       tagName: 'body',
       attrs: {},
-      unary: false,
-      nodeId: 'e-body',
       children: [],
-    }, nodeIdMap, this);
-    this.$_config = null;
-
-    // documentElement
-    this.$_node = this.$$createElement({
-      tagName: 'html',
-      attrs: {},
-      nodeId: `a-${tool.getId()}`,
-      type: Node.DOCUMENT_NODE,
+      document: this,
     });
-    // documentElement's parentNode is document
-    this.$_node.$$updateParent(this);
-    this.$_node.scrollTop = 0;
 
-    // head
-    this.$_head = this.createElement('head');
+    this.__nodeIdMap.set(BODY_NODE_ID, this.__root);
 
     // update body's parentNode
-    this.$_tree.root.$$updateParent(this.$_node);
-  }
-
-  // Image constructor
-  get $$imageConstructor() {
-    return this.$_imageConstructor;
+    this.__root.parentNode = this;
   }
 
   // Event trigger
@@ -100,47 +45,30 @@ class Document extends EventTarget {
     this.documentElement.$$trigger(eventName, options);
   }
 
-  $$createElement(options, tree) {
-    const originTagName = options.tagName;
-    const tagName = originTagName.toUpperCase();
-    const componentName = checkIsBuiltInComponent(originTagName) ? originTagName : null;
-    tree = tree || this.$_tree;
+  _isRendered() {
+    return true;
+  }
 
-    const constructorClass = CONSTRUCTOR_MAP[tagName];
-    if (constructorClass) {
-      return constructorClass.$$create(options, tree);
-    } else if (componentName) {
-      // Transform to builtin-component
-      options.tagName = 'builtin-component';
-      options.attrs = options.attrs || {};
-      options.attrs._behavior = componentName;
-      return BuiltInComponent.$$create(options, tree);
-    } else if (this.usingComponents[originTagName]) {
-      // Transform to custom-component
-      options.tagName = 'custom-component';
-      options.attrs = options.attrs || {};
-      options.componentName = originTagName;
-      return CustomComponent.$$create(options, tree);
-    } else if (this.usingPlugins[originTagName]) {
-      options.tagName = 'miniapp-plugin';
-      options.attrs = options.attrs || {};
-      options.componentName = originTagName;
-      return CustomComponent.$$create(options, tree);
-    } if (!tool.isTagNameSupport(tagName)) {
-      throw new Error(`${tagName} is not supported.`);
-    } else {
-      return Element.$$create(options, tree);
+  _createElement(options) {
+    const ConstructorClass = CONSTRUCTOR_MAP.get(options.tagName);
+    if (ConstructorClass) {
+      return new ConstructorClass(options);
     }
-  }
 
-  // Create text node
-  $$createTextNode(options, tree) {
-    return TextNode.$$create(options, tree || this.$_tree);
-  }
+    options.attrs = options.attrs || {};
 
-  // Create comment node
-  $$createComment(options, tree) {
-    return Comment.$$create(options, tree || this.$_tree);
+    if (options.attrs.__native) {
+      if (this.usingComponents[options.tagName]) {
+        // Transform to custom-component
+        options.nativeType = 'customComponent';
+        return new CustomComponent(options);
+      } else if (this.usingPlugins[options.tagName]) {
+        options.nativeType = 'miniappPlugin';
+        return new CustomComponent(options);
+      }
+    } else {
+      return new Element(options);
+    }
   }
 
   // Node type
@@ -149,19 +77,15 @@ class Document extends EventTarget {
   }
 
   get documentElement() {
-    return this.$_node;
+    return this.body;
   }
 
   get body() {
-    return this.$_tree.root;
+    return this.__root;
   }
 
   get nodeName() {
     return '#document';
-  }
-
-  get head() {
-    return this.$_head;
   }
 
   get defaultView() {
@@ -171,42 +95,71 @@ class Document extends EventTarget {
   getElementById(id) {
     if (typeof id !== 'string') return;
 
-    return this.$_tree.getById(id) || null;
+    const element = this.__idMap.get(id);
+    if (element && element._isRendered()) {
+      return element;
+    }
+    return null;
   }
 
   getElementsByTagName(tagName) {
     if (typeof tagName !== 'string') return [];
 
-    return this.$_tree.getByTagName(tagName);
+    const elements = [];
+    this.__nodeIdMap.forEach((element, nodeId) => {
+      if (element && element.__tagName === tagName && element._isRendered()) {
+        elements.push(element);
+      }
+    });
+    return elements;
   }
 
   getElementsByClassName(className) {
     if (typeof className !== 'string') return [];
 
-    return this.$_tree.getByClassName(className);
+    const elements = [];
+    this.__nodeIdMap.forEach((element, nodeId) => {
+      const classNames = className.trim().split(/\s+/);
+      if (element && classNames.every(c => element.classList && element.classList.contains(c))) {
+        elements.push(element);
+      }
+    });
+    return elements;
   }
 
   querySelector(selector) {
     if (typeof selector !== 'string') return;
 
-    return this.$_tree.query(selector)[0] || null;
+    if (selector[0] === '.') {
+      const elements = this.getElementsByClassName(selector.slice(1));
+      return elements.length > 0 ? elements[0] : null;
+    } else if (selector[0] === '#') {
+      return this.getElementById(selector.slice(1));
+    } else if (/^[a-zA-Z]/.test(selector)) {
+      const elements = this.getElementsByTagName(selector);
+      return elements.length > 0 ? elements[0] : null;
+    }
+    return null;
   }
 
   querySelectorAll(selector) {
     if (typeof selector !== 'string') return [];
 
-    return this.$_tree.query(selector);
+    if (selector[0] === '.') {
+      return this.getElementsByClassName(selector.slice(1));
+    } else if (selector[0] === '#') {
+      const element = this.getElementById(selector.slice(1));
+      return element ? [element] : [];
+    } else if (/^[a-zA-Z]/.test(selector)) {
+      return this.getElementsByTagName(selector);
+    }
+    return null;
   }
 
   createElement(tagName) {
-    if (typeof tagName !== 'string') return;
-
-    tagName = tagName.trim();
-    if (!tagName) return;
-
-    return this.$$createElement({
-      tagName,
-      nodeId: `b-${tool.getId()}`,
+    return this._createElement({
+      document: this,
+      tagName
     });
   }
 
@@ -218,25 +171,25 @@ class Document extends EventTarget {
   createTextNode(content) {
     content = '' + content;
 
-    return this.$$createTextNode({
+    return new TextNode({
       content,
-      nodeId: `b-${tool.getId()}`,
+      document: this
     });
   }
 
-  createComment() {
-    // Ignore the incoming comment content
-    return this.$$createComment({
-      nodeId: `b-${tool.getId()}`,
+  createComment(data) {
+    return new Comment({
+      document: this,
+      data
     });
   }
 
   createDocumentFragment() {
-    return Element.$$create({
+    return new Element({
       tagName: 'documentfragment',
-      nodeId: `b-${tool.getId()}`,
       nodeType: Node.DOCUMENT_FRAGMENT_NODE,
-    }, this.$_tree);
+      document: this
+    });
   }
 
   createEvent() {
@@ -259,12 +212,10 @@ class Document extends EventTarget {
 }
 
 export default function createDocument(pageId) {
-  const nodeIdMap = {};
-  const document = new Document(pageId, nodeIdMap);
+  const document = new Document(pageId);
 
   cache.init(pageId, {
-    document,
-    nodeIdMap
+    document
   });
 
   return document;
