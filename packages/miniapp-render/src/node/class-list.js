@@ -46,6 +46,21 @@ export default class ClassList extends Set {
     return undefined;
   }
 
+  toggle(token, force) {
+    if (force !== undefined) {
+      force === true ? this.add(token) : this.remove(token);
+      return force;
+    }
+
+    if (this.has(token)) {
+      this.remove(token);
+      return false;
+    } else {
+      this.add(token);
+      return true;
+    }
+  }
+
   toString() {
     return this.value;
   }
