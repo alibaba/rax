@@ -39,7 +39,7 @@ class Attribute {
     if (name === 'style') {
       return element.style.cssText || null;
     } else if (name.indexOf('data-') === 0) {
-      const datasetName = tool.toCamel(name.substr(5));
+      const datasetName = tool.toCamel(name.substr(5));
       return element.dataset[datasetName];
     }
     return this.__value[name] || null;
@@ -55,7 +55,6 @@ class Attribute {
 
   get id() {
     return this.__value.id || undefined;
-
   }
 
   get src() {

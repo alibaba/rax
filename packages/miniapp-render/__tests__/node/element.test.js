@@ -152,34 +152,34 @@ test('element: dataset', () => {
 
   const node2 = node1.childNodes[0];
 
-  expect(node2.dataset['a']).toEqual('abc');
-  expect(node2.dataset['bcDEfg']).toEqual('efg');
-  expect(node2.dataset['hiJ']).toEqual('123');
+  expect(node2.dataset.a).toEqual('abc');
+  expect(node2.dataset.bcDEfg).toEqual('efg');
+  expect(node2.dataset.hiJ).toEqual('123');
 
   node2.dataset.bcDEfg = 'hij';
   node2.dataset.kLmNOpQr = 'klm';
 
-  expect(node2.dataset['a']).toEqual('abc');
-  expect(node2.dataset['bcDEfg']).toEqual('hij');
-  expect(node2.dataset['hiJ']).toEqual('123');
-  expect(node2.dataset['kLmNOpQr']).toEqual('klm');
+  expect(node2.dataset.a).toEqual('abc');
+  expect(node2.dataset.bcDEfg).toEqual('hij');
+  expect(node2.dataset.hiJ).toEqual('123');
+  expect(node2.dataset.kLmNOpQr).toEqual('klm');
 
   const node3 = node2.cloneNode();
   node3.dataset.hiJ = '321';
-  expect(node3.dataset['a']).toEqual('abc');
-  expect(node3.dataset['bcDEfg']).toEqual('hij');
-  expect(node3.dataset['hiJ']).toEqual('321');
-  expect(node3.dataset['kLmNOpQr']).toEqual('klm');
+  expect(node3.dataset.a).toEqual('abc');
+  expect(node3.dataset.bcDEfg).toEqual('hij');
+  expect(node3.dataset.hiJ).toEqual('321');
+  expect(node3.dataset.kLmNOpQr).toEqual('klm');
 
   const node4 = document.createElement('div');
   node4.setAttribute('data-a', 'abc');
   node4.setAttribute('data-bc-d-efg', 'hij');
   node4.setAttribute('data-hi-j', '321');
   node4.setAttribute('data-k-lm-n-op-qr', 'klm');
-  expect(node4.dataset['a']).toEqual('abc');
-  expect(node4.dataset['bcDEfg']).toEqual('hij');
-  expect(node4.dataset['hiJ']).toEqual('321');
-  expect(node4.dataset['kLmNOpQr']).toEqual('klm');
+  expect(node4.dataset.a).toEqual('abc');
+  expect(node4.dataset.bcDEfg).toEqual('hij');
+  expect(node4.dataset.hiJ).toEqual('321');
+  expect(node4.dataset.kLmNOpQr).toEqual('klm');
 
   node4.dataset.bcDEfg = 'haha';
   expect(node4.getAttribute('data-bc-d-efg')).toBe('haha');

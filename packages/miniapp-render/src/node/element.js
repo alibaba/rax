@@ -392,7 +392,7 @@ class Element extends Node {
   }
 
   hasAttribute(name) {
-    if (name === 'style'  || name === 'id') {
+    if (name === 'style' || name === 'id') {
       return !!this.getAttribute(name);
     }
     return this.__attrs.has(name);
