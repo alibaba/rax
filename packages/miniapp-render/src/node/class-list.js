@@ -1,16 +1,18 @@
 export default class ClassList extends Set {
   constructor(className, element) {
     super();
-    className.trim().split(/\s+/).forEach(super.add.bind(this));
+    className.trim().split(/\s+/).forEach((s) => s !== '' && super.add(s));
     this.__element = element;
   }
 
   get value() {
-    return [...this].join(' ');
+    const classArray = [];
+    this.forEach(item => classArray.push(item));
+    return classArray.join(' ');
   }
 
   add(s) {
-    if (typeof s === 'string') {
+    if (typeof s === 'string' && s !== '') {
       super.add(s);
       this._update();
     }
@@ -28,6 +30,10 @@ export default class ClassList extends Set {
     super.add(s2);
 
     this._update();
+  }
+
+  contains(s) {
+    return this.has(s);
   }
 
   toString() {

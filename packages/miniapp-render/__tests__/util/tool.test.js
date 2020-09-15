@@ -12,9 +12,9 @@ test('tool: toCamel', () => {
 });
 
 test('tool: getId', () => {
-  expect(tool.getId().toString()).toEqual(expect.stringMatching(/^\d{13}$/));
-  expect(tool.getId().toString()).toEqual(expect.stringMatching(/^\d{13}$/));
-  expect(tool.getId().toString()).toEqual(expect.stringMatching(/^\d{13}$/));
+  expect(tool.getId().toString()).toEqual('0');
+  expect(tool.getId().toString()).toEqual('1');
+  expect(tool.getId().toString()).toEqual('2');
 });
 
 test('tool: throttle/flushThrottleCache', async() => {
@@ -32,14 +32,4 @@ test('tool: throttle/flushThrottleCache', async() => {
   expect(count).toBe(2);
   await mock.sleep(10);
   expect(count).toBe(2);
-});
-
-test('tool: decodeContent', () => {
-  expect(tool.decodeContent('asdc&nbsp;s &ensp;d &emsp; weq&lt;&gt;s sw&quot;wwee&quot;w&apos;w&amp;')).toBe('asdc\u00A0s \u2002d \u2003 weq<>s sw"wwee"w\'w&');
-});
-
-test('tool: isTagNameSupport', () => {
-  expect(tool.isTagNameSupport('DIV')).toBe(true);
-  expect(tool.isTagNameSupport('IFRAME')).toBe(false);
-  expect(tool.isTagNameSupport('SPAN')).toBe(true);
 });

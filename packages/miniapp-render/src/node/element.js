@@ -18,7 +18,7 @@ class Element extends Node {
     this.__isBuiltinComponent = BUILTIN_COMPONENT_LIST.has(this.__tagName);
     this.__tmplName = this.__isBuiltinComponent ? this.__tagName : 'h-element';
     this.childNodes = [];
-    this.$_nodeType = options.nodeType || Node.ELEMENT_NODE;
+    this.__nodeType = options.nodeType || Node.ELEMENT_NODE;
     this.style = new Style(this);
     this.__attrs = new Attribute(this);
     cache.setNode(this.__pageId, this.__nodeId, this);
@@ -40,7 +40,7 @@ class Element extends Node {
     super.$$destroy();
     this.__tagName = '';
     this.childNodes.length = 0;
-    this.$_nodeType = Node.ELEMENT_NODE;
+    this.__nodeType = Node.ELEMENT_NODE;
     this.__attrs = null;
   }
 
@@ -71,7 +71,7 @@ class Element extends Node {
   }
 
   // The cloneNode interface is called to process additional properties
-  $$dealWithAttrsForCloneNode() {
+  _dealWithAttrsForCloneNode() {
     return {};
   }
 
@@ -81,7 +81,7 @@ class Element extends Node {
   }
 
   get id() {
-    return this.__attrs.get('id');
+    return this.__attrs.get('id') || '';
   }
 
   set id(id) {
@@ -109,7 +109,7 @@ class Element extends Node {
   }
 
   get nodeType() {
-    return this.$_nodeType;
+    return this.__nodeType;
   }
 
   get children() {
@@ -165,7 +165,7 @@ class Element extends Node {
   get src() {
     if (!this.__attrs) return '';
 
-    return this.__attrs.get('src');
+    return this.__attrs.get('src') || undefined;
   }
 
   set src(value) {
@@ -178,7 +178,6 @@ class Element extends Node {
     this.dataset.forEach((value, name) => {
       dataset.set(`data-${tool.toDash(name)}`, value);
     });
-
     const newNode = this.ownerDocument._createElement({
       tagName: this.__tagName,
       attrs: {
@@ -188,9 +187,10 @@ class Element extends Node {
         src: this.src,
 
         ...dataset,
-        ...this.$$dealWithAttrsForCloneNode(),
+        ...this._dealWithAttrsForCloneNode(),
       },
-      nodeType: this.$_nodeType
+      document: this.ownerDocument,
+      nodeType: this.__nodeType
     });
 
     if (deep) {
@@ -263,25 +263,24 @@ class Element extends Node {
 
     // Set parentNode
     node.parentNode = this;
-
+    const insertIndex = ref ? this.childNodes.indexOf(ref) : -1;
+    if (insertIndex === -1) {
+      // Insert to the end
+      this.childNodes.push(node);
+    } else {
+      // Inserted before ref
+      this.childNodes.splice(insertIndex, 0, node);
+    }
     if (this._isRendered()) {
       node.__rendered = true;
-      const insertIndex = ref ? this.childNodes.indexOf(ref) : -1;
       const payload = {
         type: 'children',
         path: `${this._path}.children`,
         deleteCount: 0,
-        item: simplifyDomTree(node)
+        item: simplifyDomTree(node),
+        start: insertIndex === -1 ? this.childNodes.length - 1 : insertIndex
       };
-      if (insertIndex === -1) {
-        // Insert to the end
-        this.childNodes.push(node);
-        payload.start = this.childNodes.length - 1;
-      } else {
-        // Inserted before ref
-        this.childNodes.splice(insertIndex, 0, node);
-        payload.start = insertIndex;
-      }
+
       // Trigger update
       this._triggerUpdate(payload);
     }
@@ -345,7 +344,7 @@ class Element extends Node {
     const elements = [];
     traverse(this, element => {
       const classNames = className.trim().split(/\s+/);
-      if (element !== this && element && classNames.every(c => element.classList.has(c))) {
+      if (element !== this && element && classNames.every(c => element.classList && element.classList.contains(c))) {
         elements.push(element);
       }
       return {};
@@ -358,7 +357,7 @@ class Element extends Node {
       const elements = this.getElementsByClassName(selector.slice(1));
       return elements.length > 0 ? elements[0] : null;
     } else if (selector[0] === '#') {
-      return this.getElementById(selector.slice(1));
+      return this.ownerDocument.getElementById(selector.slice(1));
     } else if (/^[a-zA-Z]/.test(selector)) {
       const elements = this.getElementsByTagName(selector);
       return elements.length > 0 ? elements[0] : null;
@@ -372,7 +371,7 @@ class Element extends Node {
     if (selector[0] === '.') {
       return this.getElementsByClassName(selector.slice(1));
     } else if (selector[0] === '#') {
-      const element = this.getElementById(selector.slice(1));
+      const element = this.ownerDocument.getElementById(selector.slice(1));
       return element ? [element] : [];
     } else if (/^[a-zA-Z]/.test(selector)) {
       return this.getElementsByTagName(selector);
@@ -393,6 +392,9 @@ class Element extends Node {
   }
 
   hasAttribute(name) {
+    if (name === 'style'  || name === 'id') {
+      return !!this.getAttribute(name);
+    }
     return this.__attrs.has(name);
   }
 

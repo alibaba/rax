@@ -120,7 +120,7 @@ class Document extends EventTarget {
     const elements = [];
     this.__nodeIdMap.forEach((element, nodeId) => {
       const classNames = className.trim().split(/\s+/);
-      if (element && classNames.every(c => element.classList.has(c))) {
+      if (element && classNames.every(c => element.classList && element.classList.contains(c))) {
         elements.push(element);
       }
     });
@@ -177,9 +177,10 @@ class Document extends EventTarget {
     });
   }
 
-  createComment() {
+  createComment(data) {
     return new Comment({
-      document: this
+      document: this,
+      data
     });
   }
 

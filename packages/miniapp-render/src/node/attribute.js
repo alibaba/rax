@@ -8,10 +8,11 @@ class Attribute {
 
   _setWithOutUpdate(name, value) {
     this.__value[name] = value;
-    if (name.indexOf('data-') === 0) {
-      const element = this.__element;
+    if (name === 'style') {
+      this.__element.style.cssText = value;
+    } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      element.dataset.set(datasetName, value);
+      this.__element.dataset.set(datasetName, value);
     }
   }
 
@@ -34,7 +35,27 @@ class Attribute {
   }
 
   get(name) {
-    return this.__value[name];
+    if (name === 'style') {
+      return this.__element.style.cssText || null;
+    }
+    return this.__value[name] || null;
+  }
+
+  get style() {
+    return this.__element.style.cssText || undefined;
+  }
+
+  get class() {
+    return this.__value.class || undefined;
+  }
+
+  get id() {
+    return this.__value.id || undefined;
+
+  }
+
+  get src() {
+    return this.__value.src || undefined;
   }
 
   has(name) {
@@ -44,8 +65,11 @@ class Attribute {
   remove(name) {
     const element = this.__element;
     delete this.__value[name];
+    delete this[name];
 
-    if (name === 'id') {
+    if (name === 'style') {
+      element.style.cssText = '';
+    } else if (name === 'id') {
       element.id = '';
     } else {
       if (name.indexOf('data-') === 0) {
