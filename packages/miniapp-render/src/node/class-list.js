@@ -10,7 +10,6 @@ export default class ClassList extends Set {
     this.forEach(item => classArray.push(item));
     return classArray.join(' ');
   }
-
   add(s) {
     if (typeof s === 'string' && s !== '') {
       super.add(s);
@@ -34,6 +33,17 @@ export default class ClassList extends Set {
 
   contains(s) {
     return this.has(s);
+  }
+
+  item(index) {
+    let count = 0;
+    for (let i of this) {
+      if (count === index) {
+        return i;
+      }
+      count ++;
+    }
+    return undefined;
   }
 
   toString() {

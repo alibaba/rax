@@ -12,7 +12,7 @@ class Attribute {
       this.__element.style.cssText = value;
     } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      this.__element.dataset.set(datasetName, value);
+      this.__element.dataset[datasetName] = value;
     }
   }
 
@@ -24,7 +24,7 @@ class Attribute {
       element.style.cssText = value;
     } else if (name.indexOf('data-') === 0) {
       const datasetName = tool.toCamel(name.substr(5));
-      element.dataset.set(datasetName, value);
+      element.dataset[datasetName] = value;
     } else {
       const payload = {
         path: `${element._path}.${name}`,
@@ -35,8 +35,12 @@ class Attribute {
   }
 
   get(name) {
+    const element = this.__element;
     if (name === 'style') {
-      return this.__element.style.cssText || null;
+      return element.style.cssText || null;
+    } else if (name.indexOf('data-') === 0) {
+      const datasetName = tool.toCamel(name.substr(5));
+      return element.dataset[datasetName];
     }
     return this.__value[name] || null;
   }
@@ -74,7 +78,7 @@ class Attribute {
     } else {
       if (name.indexOf('data-') === 0) {
         const datasetName = tool.toCamel(name.substr(5));
-        element.dataset.delete(datasetName);
+        delete element.dataset[datasetName];
       } else {
         const payload = {
           path: `${element._path}.${name}`,

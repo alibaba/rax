@@ -22,7 +22,7 @@ class Element extends Node {
     this.style = new Style(this);
     this.__attrs = new Attribute(this);
     cache.setNode(this.__pageId, this.__nodeId, this);
-    this.dataset = new Map();
+    this.dataset = {};
     this.ownerDocument.__nodeIdMap.set(this.__nodeId, this);
     if (this.id) {
       this.ownerDocument.__idMap.set(this.id, this);
@@ -174,9 +174,9 @@ class Element extends Node {
   }
 
   cloneNode(deep) {
-    const dataset = new Map();
-    this.dataset.forEach((value, name) => {
-      dataset.set(`data-${tool.toDash(name)}`, value);
+    const dataset = {};
+    Object.keys(this.dataset).forEach(name => {
+      dataset[`data-${tool.toDash(name)}`] = this.dataset[name];
     });
     const newNode = this.ownerDocument._createElement({
       tagName: this.__tagName,

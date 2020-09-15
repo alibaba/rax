@@ -142,6 +142,55 @@ test('element: innerText/textContent', () => {
   document.body.removeChild(node1);
 });
 
+test('element: dataset', () => {
+  const node1 = document.createElement('div');
+  const child = document.createElement('div');
+  child.setAttribute('data-a', 'abc');
+  child.setAttribute('data-bc-d-efg', 'efg');
+  child.setAttribute('data-hi-j', '123');
+  node1.appendChild(child);
+
+  const node2 = node1.childNodes[0];
+
+  expect(node2.dataset['a']).toEqual('abc');
+  expect(node2.dataset['bcDEfg']).toEqual('efg');
+  expect(node2.dataset['hiJ']).toEqual('123');
+
+  node2.dataset.bcDEfg = 'hij';
+  node2.dataset.kLmNOpQr = 'klm';
+
+  expect(node2.dataset['a']).toEqual('abc');
+  expect(node2.dataset['bcDEfg']).toEqual('hij');
+  expect(node2.dataset['hiJ']).toEqual('123');
+  expect(node2.dataset['kLmNOpQr']).toEqual('klm');
+
+  const node3 = node2.cloneNode();
+  node3.dataset.hiJ = '321';
+  expect(node3.dataset['a']).toEqual('abc');
+  expect(node3.dataset['bcDEfg']).toEqual('hij');
+  expect(node3.dataset['hiJ']).toEqual('321');
+  expect(node3.dataset['kLmNOpQr']).toEqual('klm');
+
+  const node4 = document.createElement('div');
+  node4.setAttribute('data-a', 'abc');
+  node4.setAttribute('data-bc-d-efg', 'hij');
+  node4.setAttribute('data-hi-j', '321');
+  node4.setAttribute('data-k-lm-n-op-qr', 'klm');
+  expect(node4.dataset['a']).toEqual('abc');
+  expect(node4.dataset['bcDEfg']).toEqual('hij');
+  expect(node4.dataset['hiJ']).toEqual('321');
+  expect(node4.dataset['kLmNOpQr']).toEqual('klm');
+
+  node4.dataset.bcDEfg = 'haha';
+  expect(node4.getAttribute('data-bc-d-efg')).toBe('haha');
+  expect(node4.hasAttribute('data-bc-d-efg')).toBe(true);
+  expect(node4.hasAttribute('data-bc-d-efgh')).toBe(false);
+  node4.removeAttribute('data-bc-d-efg');
+  expect(node4.getAttribute('data-bc-d-efg')).toBe(undefined);
+  expect(node4.hasAttribute('data-bc-d-efg')).toBe(false);
+});
+
+
 test('element: src', () => {
   const node = document.createElement('div');
   expect(node.src).toBe(undefined);

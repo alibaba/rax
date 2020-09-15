@@ -13,6 +13,12 @@ test('class-list', () => {
   element.setAttribute('class', 'a b c');
   const classList = element.classList;
 
+  // item
+  expect(classList.item(0)).toBe('a');
+  expect(classList.item(1)).toBe('b');
+  expect(classList.item(2)).toBe('c');
+  expect(classList.item(3)).toBe(undefined);
+
   // contains
   expect(classList.contains('a')).toBe(true);
   expect(classList.contains('b')).toBe(true);
