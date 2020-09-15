@@ -17,7 +17,7 @@ function mount(appInstance, rootEl) {
 }
 
 function unmount() {
-  app._internal.unmountComponent.bind(app._internal);
+  return app._internal.unmountComponent.bind(app._internal);
 }
 
 const {
