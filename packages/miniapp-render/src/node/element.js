@@ -101,7 +101,7 @@ class Element extends Node {
   }
 
   get classList() {
-    return new ClassList(this.className, this);
+    return ClassList._create(this.className, this);
   }
 
   get nodeName() {

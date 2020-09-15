@@ -1,8 +1,10 @@
 export default class ClassList extends Set {
-  constructor(className, element) {
-    super();
-    className.trim().split(/\s+/).forEach((s) => s !== '' && super.add(s));
-    this.__element = element;
+  static _create(className, element) {
+    const instance = new Set();
+    instance['__proto__'] = ClassList.prototype;
+    instance.__element = element;
+    className.trim().split(/\s+/).forEach((s) => s !== '' && instance.add(s));
+    return instance;
   }
 
   get value() {
