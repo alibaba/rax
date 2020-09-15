@@ -63,11 +63,19 @@ test('document: querySelector', () => {
   const node1 = document.querySelector('#bb');
   expect(node1.tagName).toBe('DIV');
   expect(node1.id).toBe('bb');
-
+  const node2 = document.querySelector('.bb4');
+  expect(node2.tagName).toBe('SPAN');
+  expect(node2.id).toBe('bb4');
   expect(document.querySelector('#aa')).toBe(null);
 });
 
 test('document: querySelectorAll', () => {
+  const nodes = document.querySelectorAll('.bb4');
+  expect(nodes.length).toBe(3);
+  expect(nodes[0].tagName).toBe('SPAN');
+  expect(nodes[0].id).toBe('bb4');
+  expect(nodes[1].tagName).toBe('SPAN');
+  expect(nodes[2].tagName).toBe('SPAN');
   expect(document.querySelectorAll('#aa').length).toBe(0);
 });
 

@@ -10,7 +10,8 @@ beforeAll(() => {
 
 test('class-list', () => {
   const element = document.createElement('div');
-  const classList = new ClassList('a b c', element);
+  element.setAttribute('class', 'a b c');
+  const classList = element.classList;
 
   // contains
   expect(classList.contains('a')).toBe(true);

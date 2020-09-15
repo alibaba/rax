@@ -115,7 +115,7 @@ class EventTarget {
     const path = [target];
     let parentNode = target.parentNode;
 
-    while (parentNode) {
+    while (parentNode && parentNode.ownerDocument) {
       path.push(parentNode);
       parentNode = parentNode.parentNode;
     }
