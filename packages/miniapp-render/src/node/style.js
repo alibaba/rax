@@ -13,7 +13,7 @@ class Style {
       this.__settedStyle.add(styleKey);
     }
     this.__value.set(styleKey, val);
-    if (old !== val) {
+    if (old !== val && this.__element._isRendered()) {
       const payload = {
         path: `${this.__element._path}.style`,
         value: this.cssText
