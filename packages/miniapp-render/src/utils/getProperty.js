@@ -16,7 +16,6 @@ export default function(obj, path, cache) {
     return false;
   });
 
-
   let value = obj;
   let parentRendered = true;
 

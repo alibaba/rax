@@ -71,10 +71,6 @@ function compareEventInWechat(last, now) {
 
 class EventTarget {
   constructor(...args) {
-    this.$$init(...args);
-  }
-
-  $$init() {
     // Supplement the instance's properties for the 'XXX' in XXX judgment
     this.ontouchstart = null;
     this.ontouchmove = null;
@@ -87,7 +83,7 @@ class EventTarget {
 
     // Logs the triggered miniapp events
     this.$_miniappEvent = null;
-    this.$_eventHandlerMap = null;
+    this.__eventHandlerMap = new Map();
   }
 
   // Destroy instance
@@ -101,16 +97,7 @@ class EventTarget {
     });
 
     this.$_miniappEvent = null;
-    this.$_eventHandlerMap = null;
-  }
-
-  set $_eventHandlerMap(value) {
-    this.$__eventHandlerMap = value;
-  }
-
-  get $_eventHandlerMap() {
-    if (!this.$__eventHandlerMap) this.$__eventHandlerMap = Object.create(null);
-    return this.$__eventHandlerMap;
+    this.__eventHandlerMap = null;
   }
 
   // Trigger event capture, bubble flow
@@ -128,14 +115,9 @@ class EventTarget {
     const path = [target];
     let parentNode = target.parentNode;
 
-    while (parentNode && parentNode.tagName !== 'HTML') {
+    while (parentNode && parentNode.ownerDocument) {
       path.push(parentNode);
       parentNode = parentNode.parentNode;
-    }
-
-    if (path[path.length - 1].tagName === 'BODY') {
-      // If the last node is document.body, the document.documentelement is appended
-      path.push(parentNode);
     }
 
     if (!event) {
@@ -216,20 +198,22 @@ class EventTarget {
 
   // Get handlers
   __getHandles(eventName, isCapture, isInit) {
-    const handlerMap = this.$_eventHandlerMap;
     const pageId = this.__pageId || 'app';
-    if (!handlerMap[pageId]) {
-      handlerMap[pageId] = {};
+    if (!this.__eventHandlerMap.get(pageId)) {
+      this.__eventHandlerMap.set(pageId, new Map());
     }
     if (isInit) {
-      const handlerObj = handlerMap[pageId][eventName] = handlerMap[pageId][eventName] || {};
+      let handlerObj = this.__eventHandlerMap.get(pageId).get(eventName);
+      if (!handlerObj) {
+        this.__eventHandlerMap.get(pageId).set(eventName, handlerObj = {});
+      }
 
       handlerObj.capture = handlerObj.capture || [];
       handlerObj.bubble = handlerObj.bubble || [];
 
       return isCapture ? handlerObj.capture : handlerObj.bubble;
     } else {
-      const handlerObj = handlerMap[pageId][eventName];
+      const handlerObj = this.__eventHandlerMap.get(pageId).get(eventName);
 
       if (!handlerObj) return null;
 

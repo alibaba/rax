@@ -2,14 +2,10 @@ import tool from '../utils/tool';
 import Node from '../node/node';
 
 class TextNode extends Node {
-  static $$create(options, tree) {
-    return new TextNode(options, tree);
-  }
-
-  $$init(options, tree) {
+  constructor(options) {
     options.type = 'text';
 
-    super.$$init(options, tree);
+    super(options);
 
     this.$_content = options.content || '';
   }
@@ -20,19 +16,13 @@ class TextNode extends Node {
     this.$_content = '';
   }
 
-  $$recycle() {
-    this.$$destroy();
-  }
-
   _triggerUpdate(payload) {
-    this._root && this._root.enqueueRender(payload);
+    this._root.enqueueRender(payload);
   }
 
-  get $$domInfo() {
+  get _renderInfo() {
     return {
-      nodeId: this.$_nodeId,
-      pageId: this.__pageId,
-      nodeType: this.$_type,
+      nodeType: `h-${this.$_type}`,
       content: this.$_content,
     };
   }
@@ -61,11 +51,13 @@ class TextNode extends Node {
     value += '';
 
     this.$_content = value;
-    const payload = {
-      path: `${this._path}.content`,
-      value
-    };
-    this._triggerUpdate(payload);
+    if (this._isRendered()) {
+      const payload = {
+        path: `${this._path}.content`,
+        value
+      };
+      this._triggerUpdate(payload);
+    }
   }
 
   get data() {
@@ -77,10 +69,7 @@ class TextNode extends Node {
   }
 
   cloneNode() {
-    return this.ownerDocument.$$createTextNode({
-      content: this.$_content,
-      nodeId: `b-${tool.getId()}`,
-    });
+    return this.ownerDocument.createTextNode(this.$_content);
   }
 }
 

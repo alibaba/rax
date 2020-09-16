@@ -14,9 +14,6 @@ class Window extends EventTarget {
 
     const timeOrigin = +new Date();
 
-    this.$_elementConstructor = function HTMLElement(...args) {
-      return Element.$$create(...args);
-    };
     this.$_customEventConstructor = class CustomEvent extends OriginalCustomEvent {
       constructor(name = '', options = {}) {
         options.timeStamp = +new Date() - timeOrigin;
@@ -39,7 +36,7 @@ class Window extends EventTarget {
   }
 
   addEventListener(eventName, handler, options) {
-    if (this.__sharedEventNames.indexOf(eventName) > 0) {
+    if (this.__sharedEventNames.indexOf(eventName) > -1) {
       this.__sharedHandlers.push({
         eventName,
         handler
@@ -87,7 +84,7 @@ class Window extends EventTarget {
       }
     }
 
-    if (this.__sharedEventNames.indexOf(eventName) > 0) {
+    if (this.__sharedEventNames.indexOf(eventName) > -1) {
       this.__sharedHandlers
         .filter((handlerInfo) => handlerInfo.eventName === eventName)
         .forEach(({ handler }) => {
@@ -134,7 +131,9 @@ class Window extends EventTarget {
   }
 
   get HTMLElement() {
-    return this.$_elementConstructor;
+    return function(...args) {
+      return new Element(...args);
+    };
   }
 
   get Element() {

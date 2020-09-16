@@ -1,5 +1,5 @@
-const pageMap = {};
-const routeMap = {};
+const pageMap = new Map();
+const routeMap = new Map();
 let config = {};
 let window;
 
@@ -8,22 +8,19 @@ const elementMethodsCache = new Map();
 
 // Init
 function init(pageId, options) {
-  pageMap[pageId] = {
-    document: options.document,
-    nodeIdMap: options.nodeIdMap,
-  };
+  pageMap.set(pageId, options.document);
 }
 
 // Destroy
 function destroy(pageId) {
-  delete pageMap[pageId];
+  pageMap.delete(pageId);
 }
 
 /**
  * Get document
  */
 function getDocument(pageId) {
-  return pageMap[pageId] && pageMap[pageId].document;
+  return pageMap.get(pageId);
 }
 
 // Set window
@@ -42,24 +39,18 @@ function getWindow() {
  * Save domNode map
  */
 function setNode(pageId, nodeId, domNode = null) {
-  const document = pageMap[pageId] && pageMap[pageId].document;
+  const document = pageMap.get(pageId);
 
   // Call before run, do nothing
   if (!document) return;
-  if (!domNode) return pageMap[pageId].nodeIdMap[nodeId] = domNode;
 
-  let parentNode = domNode.parentNode;
-
-  while (parentNode && parentNode !== document.body) {
-    parentNode = parentNode.parentNode;
-  }
-
-  pageMap[pageId].nodeIdMap[nodeId] = parentNode === document.body ? domNode : null;
+  document.__nodeIdMap.set(nodeId, domNode);
 }
 
 // Get the domNode by nodeId
 function getNode(pageId, nodeId) {
-  return pageMap[pageId] && pageMap[pageId].nodeIdMap[nodeId];
+  const document = pageMap.get(pageId);
+  return document && document.__nodeIdMap.get(nodeId);
 }
 
 // Store global config
@@ -73,11 +64,9 @@ function getConfig() {
 }
 
 function getRouteId(route) {
-  if (!routeMap[route]) {
-    return routeMap[route] = 1;
-  } else {
-    return ++routeMap[route];
-  }
+  const routeId = routeMap.get(route) || 0;
+  routeMap.set(route, routeId + 1);
+  return routeId + 1;
 }
 
 function setElementInstance(instance) {

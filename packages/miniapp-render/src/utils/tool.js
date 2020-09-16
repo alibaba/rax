@@ -15,7 +15,7 @@ function toCamel(str) {
 /**
  * Get unique id
  */
-let seed = +new Date();
+let seed = 0;
 function getId() {
   return seed++;
 }
@@ -49,35 +49,10 @@ function flushThrottleCache() {
   waitFuncSet.clear();
 }
 
-/**
- * Encode special character
- */
-function decodeContent(content) {
-  return content
-    .replace(/&nbsp;/g, '\u00A0')
-    .replace(/&ensp;/g, '\u2002')
-    .replace(/&emsp;/g, '\u2003')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, '\'')
-    .replace(/&amp;/g, '&');
-}
-
-/**
- * Check tag wheather supported
- */
-const NOT_SUPPORT_TAG_NAME_LIST = ['IFRAME', 'A'];
-function isTagNameSupport(tagName) {
-  return NOT_SUPPORT_TAG_NAME_LIST.indexOf(tagName) === -1;
-}
-
 export default {
   toDash,
   toCamel,
   getId,
   throttle,
   flushThrottleCache,
-  decodeContent,
-  isTagNameSupport,
 };

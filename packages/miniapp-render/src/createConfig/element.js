@@ -26,12 +26,16 @@ export default function() {
         }
       },
       options: {
-        styleIsolation: 'shared'
+        styleIsolation: 'shared',
+        virtualHost: true
       },
       methods: createEventProxy(),
       ...getComponentLifeCycle({
         mount() {
           cache.setElementInstance(this);
+          const window = cache.getWindow();
+          const node = cache.getNode(window.__pageId, this.properties.r.nodeId);
+          node._internal = this;
         }
       })
     };
