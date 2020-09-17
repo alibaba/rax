@@ -20,7 +20,7 @@ class CustomComponent extends Element {
       pageId: this.__pageId,
       nodeType: this.__tagName,
       style: this.style.cssText,
-      class: this.className,
+      className: this.className,
       ...this.__attrs.__value
     };
 
