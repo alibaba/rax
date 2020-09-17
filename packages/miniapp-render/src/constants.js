@@ -19,7 +19,7 @@ export const BUILTIN_COMPONENT_LIST = new Set([
   'audio', 'camera', 'image', 'live-player', 'live-pusher', 'video',
   'map',
   'canvas',
-  'ad', 'official-account', 'open-data', 'web-view'
+  'ad', 'official-account', 'open-data', 'web-view', 'open-avatar'
 ]);
 
 export const BODY_NODE_ID = 'e-body';
