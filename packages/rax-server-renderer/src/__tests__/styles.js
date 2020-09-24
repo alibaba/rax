@@ -186,7 +186,7 @@ describe('inline styles', () => {
 
     it('render transform value with rpx', () => {
       const style = {
-        transform: `translate3d(-200rpx, 0, 0)`
+        transform: 'translate3d(-200rpx, 0, 0)'
       };
 
       const str = renderToString(<div style={style} />);
