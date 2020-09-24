@@ -64,6 +64,7 @@ const DEFAULT_STYLE_OPTIONS = {
 };
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
+const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
 const CSSPropCache = {};
 
 function styleToCSS(style, options = {}) {
@@ -76,28 +77,27 @@ function styleToCSS(style, options = {}) {
   // Use var avoid v8 warns "Unsupported phi use of const or let variable"
   for (var prop in style) {
     let val = style[prop];
-    let unit = '';
 
     if (val == null) {
       continue;
     }
 
-    const type = typeof val;
-
     // Handle unit for all numerical property, such as fontWeight: 600 / fontWeight: '600'
+    const type = typeof val;
     if (type === 'number' || type === 'string' && NUMBER_REGEXP.test(val)) {
       if (!UNITLESS_NUMBER_PROPS[prop]) {
-        unit = options.defaultUnit;
+        val = val + options.defaultUnit;
       }
     }
 
-    if (type === 'string' && val.indexOf('rpx') > -1 || unit === 'rpx') {
-      val = rpx2vw(val, options);
-      unit = val === 0 ? '' : 'vw';
+    if (typeof val === 'string' && val.indexOf('rpx') > -1) {
+      val = val.replace(RPX_REG, (rpx) => {
+        return rpx2vw(rpx, options);
+      });
     }
 
     prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();
-    css = css + `${prop}:${val}${unit};`;
+    css = css + `${prop}:${val};`;
   }
 
   return css;
@@ -178,12 +178,12 @@ function propsToString(props, options) {
   return html;
 }
 
-function rpx2vw(val, opts) {
-  const pixels = parseFloat(val);
+function rpx2vw(rpx, opts) {
+  const pixels = parseFloat(rpx);
   const vw = pixels / opts.viewportWidth * 100;
   const parsedVal = parseFloat(vw.toFixed(opts.unitPrecision));
 
-  return parsedVal;
+  return parsedVal + 'vw';
 }
 
 function checkContext(element) {

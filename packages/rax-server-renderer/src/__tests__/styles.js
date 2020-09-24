@@ -183,6 +183,15 @@ describe('inline styles', () => {
       });
       expect(str).toBe('<div style="line-height:1;"><p style="font-size:10vw;">Hello</p></div>');
     });
+
+    it('render transform value with rpx', () => {
+      const style = {
+        transform: 'translate3d(-200rpx, 0, 0)'
+      };
+
+      const str = renderToString(<div style={style} />);
+      expect(str).toBe('<div style="transform:translate3d(-26.66667vw, 0, 0);"></div>');
+    });
   });
 
   it('render style with array value', () => {
