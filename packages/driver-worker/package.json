@@ -1,6 +1,6 @@
 {
   "name": "driver-worker",
-  "version": "0.7.9",
+  "version": "0.7.10",
   "description": "Worker driver for Rax",
   "license": "BSD-3-Clause",
   "main": "dist/driver-worker.min.js",
@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "style-unit": "^2.0.0"
+    "style-unit": "^3.0.0"
   },
   "devDependencies": {
     "rax": "^0.6.7"

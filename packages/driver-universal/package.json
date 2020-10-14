@@ -1,6 +1,6 @@
 {
   "name": "driver-universal",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "Driver for Universal App.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -22,7 +22,7 @@
     "driver-kraken": "^0.2.0",
     "driver-miniapp": "^0.1.0",
     "driver-weex": "^2.0.0",
-    "style-unit": "^2.0.0",
+    "style-unit": "^3.0.0",
     "universal-env": "^3.0.0"
   }
 }
