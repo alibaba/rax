@@ -1,6 +1,6 @@
 {
   "name": "rax-set-native-props",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Rax setNativeProps",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,6 +20,6 @@
   },
   "dependencies": {
     "universal-env": "^3.0.0",
-    "style-unit": "^2.0.0"
+    "style-unit": "^3.0.0"
   }
 }
