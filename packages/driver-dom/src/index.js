@@ -1,7 +1,7 @@
 /**
  * Driver for Web DOM
  **/
-import { 
+import {
   warnForReplacedHydratebleElement,
   warnForDeletedHydratableElement,
   warnForInsertedHydratedElement
