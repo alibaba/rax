@@ -1,11 +1,11 @@
 /**
  * Driver for Web DOM
  **/
-const {
+import {
   warnForReplacedHydratebleElement,
   warnForDeletedHydratableElement,
   warnForInsertedHydratedElement
-} = require('./warning');
+} from './warning';
 
 const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
 

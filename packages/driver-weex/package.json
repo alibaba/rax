@@ -1,6 +1,6 @@
 {
   "name": "driver-weex",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Weex driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -14,6 +14,6 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "style-unit": "^2.0.0"
+    "style-unit": "^3.0.0"
   }
 }
