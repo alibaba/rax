@@ -123,6 +123,7 @@ function runApp(staticConfig, dynamicConfig = {}) {
         appConfig,
       };
     },
+    setAppConfig: () => {},
     createHistory,
     staticConfig,
     appConfig,
