@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "author": "Rax Team",
+  "npmTag": "stable",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
