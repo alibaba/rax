@@ -31,6 +31,10 @@ describe('Web style-unit', () => {
       expect(convertUnit('375rpx', 'width')).toEqual('100vw');
     });
 
+    it('should not transform rpx to vw with url()', () => {
+      expect(convertUnit('url("abc2rpx")', 'background-image')).toEqual('url("abc2rpx")');
+    });
+
     it('should recognize vh', () => {
       expect(convertUnit('500vh', 'width')).toEqual('500vh');
     });

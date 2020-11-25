@@ -1,6 +1,6 @@
 import { isWeb, isWeex } from 'universal-env';
 
-const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
+const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 const GLOBAL_RPX_COEFFICIENT = '__rpx_coefficient__';
 const GLOBAL_VIEWPORT_WIDTH = '__viewport_width__';
 const global =
@@ -21,10 +21,10 @@ const toFixed = (number, precision) => {
 };
 
 // Dedault decimal px transformer.
-let decimalPixelTransformer = (rpx) => parseFloat(rpx) * getRpx() + 'px';
+let decimalPixelTransformer = (rpx, $1) => $1 ? parseFloat(rpx) * getRpx() + 'px' : rpx;
 
 // Default decimal vw transformer.
-const decimalVWTransformer = (rpx) => toFixed(parseFloat(rpx) / (getViewportWidth() / 100), unitPrecision) + 'vw';
+const decimalVWTransformer = (rpx, $1) => $1 ? toFixed(parseFloat(rpx) / (getViewportWidth() / 100), unitPrecision) + 'vw' : rpx;
 
 // Default 1 rpx to 1 px
 if (getRpx() === undefined) {

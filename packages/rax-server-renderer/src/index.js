@@ -64,7 +64,7 @@ const DEFAULT_STYLE_OPTIONS = {
 };
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
-const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
+const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 const CSSPropCache = {};
 
 function styleToCSS(style, options = {}) {
@@ -91,7 +91,8 @@ function styleToCSS(style, options = {}) {
     }
 
     if (typeof val === 'string' && val.indexOf('rpx') > -1) {
-      val = val.replace(RPX_REG, (rpx) => {
+      val = val.replace(RPX_REG, (rpx, $1) => {
+        if (!$1) return rpx;
         return rpx2vw(rpx, options);
       });
     }

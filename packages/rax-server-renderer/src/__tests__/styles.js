@@ -192,6 +192,15 @@ describe('inline styles', () => {
       const str = renderToString(<div style={style} />);
       expect(str).toBe('<div style="transform:translate3d(-26.66667vw, 0, 0);"></div>');
     });
+
+    it('render url() with rpx', () => {
+      const style = {
+        backgroundImage: 'url("abc2rpx")'
+      };
+
+      const str = renderToString(<div style={style} />);
+      expect(str).toBe('<div style="background-image:url(\"abc2rpx\");"></div>');
+    });
   });
 
   it('render style with array value', () => {

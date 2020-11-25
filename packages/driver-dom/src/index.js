@@ -7,7 +7,8 @@ import {
   warnForInsertedHydratedElement
 } from './warning';
 
-const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
+// !singlequotes|!doublequotes|!url()|pixelunit
+const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 
 // opacity -> opa
 // fontWeight -> ntw
@@ -53,7 +54,7 @@ let isSVGMode = false;
 let isHydrating = false;
 let viewportWidth = 750;
 let unitPrecision = 4;
-let decimalPixelTransformer = (value) => value;
+let decimalPixelTransformer = unitTransformer;
 
 /**
  * Set viewport width.
@@ -80,7 +81,8 @@ export function setDecimalPixelTransformer(transformer) {
   decimalPixelTransformer = transformer;
 }
 
-function unitTransformer(n) {
+function unitTransformer(n, $1) {
+  if (!$1) return n;
   return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
 }
 
@@ -101,7 +103,7 @@ function cached(fn) {
 }
 
 function calcRpxToVw(value) {
-  return value.replace(RPX_REG, unitTransformer);
+  return value.replace(RPX_REG, decimalPixelTransformer);
 }
 
 function isRpx(str) {

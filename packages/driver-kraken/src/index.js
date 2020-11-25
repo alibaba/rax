@@ -2,7 +2,7 @@
  * Driver for Kraken
  **/
 
-const RPX_REG = /[-+]?\d*\.?\d+(rpx)/g;
+const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 const NON_DIMENSIONAL_REG = /opa|ntw|ne[ch]|ex(?:s|g|n|p|$)|^ord|zoo|grid|orp|ows|mnc|^columns$|bs|erim|onit/i;
 const EVENT_PREFIX_REG = /^on[A-Z]/;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
@@ -155,7 +155,8 @@ function toFixed(number, precision) {
   return Math.round(wholeNumber / 10) * 10 / multiplier;
 }
 
-function unitTransformer(n) {
+function unitTransformer(n, $1) {
+  if (!$1) return n;
   return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
 }
 
