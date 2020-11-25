@@ -33,7 +33,7 @@ describe('Hydrate', () => {
     expect(container.childNodes[0].childNodes[2].data).toBe('Rax');
   });
 
-  it('should not affected by render in useEffect', () => {
+  it('should not be affected by render in useEffect', () => {
     const childContaner = document.createElement('div');
     (document.body || document.documentElement).appendChild(childContaner);
 
@@ -63,7 +63,7 @@ describe('Hydrate', () => {
     expect(container.childNodes[0].childNodes[1].nodeType).toBe(8); // comment;
   });
 
-  it('should warn for nested render when hydrating', () => {
+  it('should throw error for nested render when hydrating', () => {
     const childContaner = document.createElement('div');
     (document.body || document.documentElement).appendChild(childContaner);
 
