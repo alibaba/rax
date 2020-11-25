@@ -1,6 +1,6 @@
 {
   "name": "rax-create-portal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rax createPortal",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -24,6 +24,7 @@
   "devDependencies": {
     "rax": "^1.0.0",
     "driver-server": "^1.0.0",
+    "driver-dom": "^2.1.3",
     "rax-proptypes": "^1.0.0"
   }
 }
