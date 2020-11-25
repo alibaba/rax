@@ -431,6 +431,7 @@ export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldConv
 }
 
 export function beforeRender({ hydrate }) {
+  // Nested render will reset `isHydrating`, `recolectHydrationChild` will not work correctly after render.
   if (isHydrating) {
     if (__DEV__) {
       throw new Error(
