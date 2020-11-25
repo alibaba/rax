@@ -439,7 +439,7 @@ export function beforeRender({ hydrate }) {
         'If necessary, trigger render in useEffect.'
       );
     } else {
-      throw new Error('Nested render found.')
+      throw new Error('Nested render found.');
     }
   }
 

@@ -12,7 +12,7 @@ function Portal(props) {
   useEffect(() => {
     return () => {
       unmountComponentAtNode(props.container);
-    }
+    };
   }, [props.container]);
 
   return null;

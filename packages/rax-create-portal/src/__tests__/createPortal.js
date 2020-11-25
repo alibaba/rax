@@ -243,7 +243,7 @@ describe('createPortal', () => {
     const container = document.createElement('div');
     container.innerHTML = '<div class="container"><div>About Rax</div><div>Docs</div></div>';
     (document.body || document.documentElement).appendChild(container);
-    
+
     const portalContainer = document.createElement('div');
     (document.body || document.documentElement).appendChild(portalContainer);
 
