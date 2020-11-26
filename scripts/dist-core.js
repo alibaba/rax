@@ -1,12 +1,12 @@
 const { green } = require('chalk');
 const { basename } = require('path');
 const rollup = require('rollup');
-const memory = require('rollup-plugin-memory');
-const resolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
-const babel = require('rollup-plugin-babel');
+const virtual = require('@rollup/plugin-virtual');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const commonjs = require('@rollup/plugin-commonjs');
+const { babel } = require('@rollup/plugin-babel');
 const { terser } = require('rollup-plugin-terser');
-const replace = require('rollup-plugin-replace');
+const replace = require('@rollup/plugin-replace');
 const gzipSize = require('gzip-size');
 const babelMerge = require('babel-merge');
 
@@ -18,9 +18,8 @@ const ESM = 'esm';
 const CJS = 'cjs';
 
 function transformBundleFormat({ input, name, format, entry, shouldExportDefault }) {
-  return format === IIFE ? memory({
-    path: input,
-    contents: `
+  return format === IIFE ? virtual({
+    entry: `
     import ${shouldExportDefault ? name : `* as ${name}`} from './${basename(entry)}';
     if (typeof module !== 'undefined') module.exports = ${name};
     else self.${name} = ${name};
@@ -73,13 +72,14 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
     input,
     plugins: [
       transformBundleFormat({ input, name, format, entry, shouldExportDefault }),
-      resolve(),
+      nodeResolve(),
       commonjs({
         // style-unit for build while packages linked
         // use /pakacges/ would get error and it seemed to be a rollup-plugin-commonjs bug
-        include: /(node_modules|style-unit)/,
+        include: /node_modules|style-unit/
       }),
       babel(babelMerge(babelOptions, {
+        babelHelpers: 'bundled',
         exclude: 'node_modules/**', // only transpile our source code
         presets: [
           ['@babel/preset-env', {
