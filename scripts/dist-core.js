@@ -5,7 +5,7 @@ const memory = require('rollup-plugin-memory');
 const resolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
-const { uglify } = require('rollup-plugin-uglify');
+const { terser } = require('rollup-plugin-terser');
 const replace = require('rollup-plugin-replace');
 const gzipSize = require('gzip-size');
 const babelMerge = require('babel-merge');
@@ -50,7 +50,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
     strict: false,
   };
 
-  const uglifyOptions = {
+  const terserOptions = {
     compress: {
       loops: false,
       keep_fargs: false,
@@ -61,7 +61,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
 
   if (shouldMinify) {
     // Apply mangle rules.
-    uglifyOptions.mangle = {
+    terserOptions.mangle = {
       properties: {
         regex: /^__/,
       },
@@ -94,7 +94,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
       replace({
         'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),
       }),
-      shouldMinify ? uglify(uglifyOptions) : null,
+      shouldMinify ? terser(terserOptions) : null,
     ]
   });
 
