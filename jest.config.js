@@ -10,7 +10,7 @@ module.exports = {
     './scripts/jest/setupEnvironment.js',
     'jest-localstorage-mock'
   ],
-  'setupTestFrameworkScriptFile': './scripts/jest/setupTests.js',
+  'setupFilesAfterEnv': ['./scripts/jest/setupTests.js'],
   'moduleNameMapper': {
     // https://jestjs.io/docs/en/webpack#handling-static-assets
     // For CSS Modules
