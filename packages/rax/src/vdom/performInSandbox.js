@@ -24,6 +24,11 @@ export function handleError(instance, error) {
       if (boundaryInternal) {
         performInSandbox(() => {
           boundary.componentDidCatch(error);
+
+          if (boundary.constructor.getDerivedStateFromError) {
+            const state = boundary.constructor.getDerivedStateFromError();
+            boundary.setState(state);
+          }
         }, boundaryInternal.__parentInstance);
       }
     });

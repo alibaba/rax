@@ -357,8 +357,11 @@ class ServerRenderer {
     const type = element.type;
 
     if (type) {
+      const isClassComponent = type.prototype && type.prototype.render;
+      const isFunctionComponent = typeof type === 'function';
+
       // class component || function component
-      if (type.prototype && type.prototype.render || typeof type === 'function') {
+      if (isClassComponent || isFunctionComponent) {
         const instance = createInstance(element, context);
 
         const currentComponent = {
@@ -399,7 +402,18 @@ class ServerRenderer {
         // Reset owner after render, or it will casue memory leak.
         shared.Host.owner = null;
 
-        return this.renderElementToString(renderedElement, currentContext);
+        if (isClassComponent && type.prototype.componentDidCatch) {
+          try {
+            return this.renderElementToString(renderedElement, currentContext)
+          } catch(e) {
+            type.prototype.componentDidCatch(e);
+            return '<!-- ERROR -->';
+          }
+        } else {
+          return this.renderElementToString(renderedElement, currentContext);
+        }
+
+        // return this.renderElementToString(renderedElement, currentContext);
       } else if (typeof type === 'string') {
         // shoud set the identifier to false before render child
         this.previousWasTextNode = false;
