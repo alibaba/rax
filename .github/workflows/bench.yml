@@ -18,6 +18,7 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - uses: nanasess/setup-chromedriver@master
+      - run: npm install
       - run: npm run setup
       - run: |
           export DISPLAY=:99
