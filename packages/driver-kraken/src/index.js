@@ -1,8 +1,8 @@
 /**
  * Driver for Kraken
  **/
+import { convertUnit, cached } from 'style-unit';
 
-const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 const NON_DIMENSIONAL_REG = /opa|ntw|ne[ch]|ex(?:s|g|n|p|$)|^ord|zoo|grid|orp|ows|mnc|^columns$|bs|erim|onit/i;
 const EVENT_PREFIX_REG = /^on[A-Z]/;
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
@@ -17,19 +17,6 @@ const CREATE_TEXT_NODE = 'createTextNode';
 const SET_ATTRIBUTE = 'setAttribute';
 const REMOVE_ATTRIBUTE = 'removeAttribute';
 const EMPTY = '';
-
-let viewportWidth = 750;
-let unitPrecision = 4;
-
-/**
- * Create a cached version of a pure function.
- */
-function cached(fn) {
-  const cache = Object.create(null);
-  return function cachedFn(str) {
-    return cache[str] || (cache[str] = fn(str));
-  };
-}
 
 const isEventProp = cached(prop => EVENT_PREFIX_REG.test(prop));
 
@@ -49,7 +36,7 @@ export function updateText(node, text) {
   node[TEXT_CONTENT_ATTR] = text;
 }
 
-export function createElement(type, props, component, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
+export function createElement(type, props, component, __shouldConvertUnitlessToRpx) {
   const node = document[CREATE_ELEMENT](type);
 
   for (let prop in props) {
@@ -58,7 +45,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyle(node, value, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw);
+        setStyle(node, value, __shouldConvertUnitlessToRpx);
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
@@ -149,44 +136,22 @@ export function setAttribute(node, propKey, propValue) {
   }
 }
 
-function toFixed(number, precision) {
-  const multiplier = Math.pow(10, precision + 1);
-  const wholeNumber = Math.floor(number * multiplier);
-  return Math.round(wholeNumber / 10) * 10 / multiplier;
-}
-
-function unitTransformer(n, $1) {
-  if (!$1) return n;
-  return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
-}
-
-function isRpx(str) {
-  return RPX_REG.test(str);
-}
-
-function calcRpxToVw(value) {
-  return value.replace(RPX_REG, unitTransformer);
-}
-
 const isDimensionalProp = cached(prop => !NON_DIMENSIONAL_REG.test(prop));
-const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
 
-export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
+export function setStyle(node, style, __shouldConvertUnitlessToRpx) {
   for (let prop in style) {
     const value = style[prop];
     let convertedValue;
     if (typeof value === 'number' && isDimensionalProp(prop)) {
       if (__shouldConvertUnitlessToRpx) {
         convertedValue = value + 'rpx';
-        if (__shouldConvertRpxToVw) {
-          // Transfrom rpx to vw
-          convertedValue = convertUnit(convertedValue);
-        }
+        // Transfrom rpx to vw
+        convertedValue = convertUnit(convertedValue, prop);
       } else {
         convertedValue = value + 'px';
       }
     } else {
-      convertedValue = __shouldConvertRpxToVw ? convertUnit(value) : value;
+      convertedValue = convertUnit(value, prop);
     }
 
     // Support CSS custom properties (variables) like { --main-color: "black" }

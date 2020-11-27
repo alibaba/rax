@@ -15,6 +15,9 @@
   "peerDependencies": {
     "rax": "^1.0.0"
   },
+  "dependencies": {
+    "style-unit": "^3.0.0"
+  },
   "devDependencies": {
     "prop-types": "^15.7.2",
     "rax": "^1.0.0"

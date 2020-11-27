@@ -1,4 +1,5 @@
 import { shared } from 'rax';
+import { convertUnit, setViewportWidth, setUnitPrecision } from 'style-unit';
 import { BOOLEAN, BOOLEANISH_STRING, OVERLOADED_BOOLEAN, shouldRemoveAttribute, getPropertyInfo } from './attribute';
 import { UNITLESS_NUMBER_PROPS } from './CSSProperty';
 
@@ -60,7 +61,7 @@ function merge(target) {
 const DEFAULT_STYLE_OPTIONS = {
   defaultUnit: 'px',
   viewportWidth: 750,
-  unitPrecision: 5
+  unitPrecision: 4
 };
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
@@ -91,10 +92,7 @@ function styleToCSS(style, options = {}) {
     }
 
     if (typeof val === 'string' && val.indexOf('rpx') > -1) {
-      val = val.replace(RPX_REG, (rpx, $1) => {
-        if (!$1) return rpx;
-        return rpx2vw(rpx, options);
-      });
+      val = convertUnit(val, prop, 'web');
     }
 
     prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();
@@ -177,14 +175,6 @@ function propsToString(props, options) {
   }
 
   return html;
-}
-
-function rpx2vw(rpx, opts) {
-  const pixels = parseFloat(rpx);
-  const vw = pixels / opts.viewportWidth * 100;
-  const parsedVal = parseFloat(vw.toFixed(opts.unitPrecision));
-
-  return parsedVal + 'vw';
 }
 
 function checkContext(element) {
@@ -305,6 +295,8 @@ class ServerRenderer {
   constructor(options) {
     this.options = options;
     this.previousWasTextNode = false;
+    setViewportWidth(options.viewportWidth);
+    setUnitPrecision(options.unitPrecision);
   }
 
   renderElementToString(element, context) {

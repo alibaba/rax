@@ -1,14 +1,12 @@
 /**
  * Driver for Web DOM
  **/
+import { convertUnit, setViewportWidth, setUnitPrecision, cached } from 'style-unit';
 import {
   warnForReplacedHydratebleElement,
   warnForDeletedHydratableElement,
   warnForInsertedHydratedElement
 } from './warning';
-
-// !singlequotes|!doublequotes|!url()|pixelunit
-const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 
 // opacity -> opa
 // fontWeight -> ntw
@@ -52,66 +50,6 @@ let tagNamePrefix = EMPTY;
 // Flag indicating if the diff is currently within an SVG
 let isSVGMode = false;
 let isHydrating = false;
-let viewportWidth = 750;
-let unitPrecision = 4;
-let decimalPixelTransformer = unitTransformer;
-
-/**
- * Set viewport width.
- * @param viewport {Number} Viewport width, default to 750.
- */
-export function setViewportWidth(viewport) {
-  viewportWidth = viewport;
-}
-
-/**
- * Set unit precision.
- * @param n {Number} Unit precision, default to 4.
- */
-export function setUnitPrecision(n) {
-  unitPrecision = n;
-}
-
-/**
- * Set a function to transform unit of pixel,
- * default to passthrough.
- * @param {Function} transformer function
- */
-export function setDecimalPixelTransformer(transformer) {
-  decimalPixelTransformer = transformer;
-}
-
-function unitTransformer(n, $1) {
-  if (!$1) return n;
-  return toFixed(parseFloat(n) / (viewportWidth / 100), unitPrecision) + 'vw';
-}
-
-function toFixed(number, precision) {
-  const multiplier = Math.pow(10, precision + 1);
-  const wholeNumber = Math.floor(number * multiplier);
-  return Math.round(wholeNumber / 10) * 10 / multiplier;
-}
-
-/**
- * Create a cached version of a pure function.
- */
-function cached(fn) {
-  const cache = Object.create(null);
-  return function cachedFn(str) {
-    return cache[str] || (cache[str] = fn(str));
-  };
-}
-
-function calcRpxToVw(value) {
-  return value.replace(RPX_REG, decimalPixelTransformer);
-}
-
-function isRpx(str) {
-  return RPX_REG.test(str);
-}
-
-// Cache the convert fn.
-const convertUnit = cached(value => isRpx(value) ? calcRpxToVw(value) : value);
 
 /**
  * Camelize CSS property.
@@ -217,9 +155,8 @@ function findHydrationChild(parent) {
  * @param {object} props elemement properties
  * @param {object} component component instance
  * @param {boolean} __shouldConvertUnitlessToRpx should add unit when missing
- * @param {boolean} __shouldConvertRpxToVw should transfrom rpx to vw
  */
-export function createElement(type, props, component, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
+export function createElement(type, props, component, __shouldConvertUnitlessToRpx) {
   const parent = component._parent;
   isSVGMode = type === 'svg' || parent && parent.namespaceURI === SVG_NS;
   let node;
@@ -297,7 +234,7 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
 
     if (value != null) {
       if (prop === STYLE) {
-        setStyle(node, value, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw);
+        setStyle(node, value, __shouldConvertUnitlessToRpx);
       } else if (isEventProp(prop)) {
         addEventListener(node, prop.slice(2).toLowerCase(), value, component);
       } else {
@@ -401,24 +338,21 @@ export function setAttribute(node, propKey, propValue, isSvg) {
  * @param {object} node target node
  * @param {object} style target node style value
  * @param {boolean} __shouldConvertUnitlessToRpx
- * @param {boolean} __shouldConvertRpxToVw should transfrom rpx to vw
  */
-export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldConvertRpxToVw = true) {
+export function setStyle(node, style, __shouldConvertUnitlessToRpx) {
   for (let prop in style) {
     const value = style[prop];
     let convertedValue;
     if (typeof value === 'number' && isDimensionalProp(prop)) {
       if (__shouldConvertUnitlessToRpx) {
         convertedValue = value + 'rpx';
-        if (__shouldConvertRpxToVw) {
-          // Transfrom rpx to vw
-          convertedValue = convertUnit(convertedValue);
-        }
+        // Transfrom rpx to vw
+        convertedValue = convertUnit(convertedValue, prop);
       } else {
         convertedValue = value + 'px';
       }
     } else {
-      convertedValue = __shouldConvertRpxToVw ? convertUnit(value) : value;
+      convertedValue = convertUnit(value, prop);
     }
 
     // Support CSS custom properties (variables) like { --main-color: "black" }
@@ -473,3 +407,16 @@ export function afterRender({ container }) {
 export function removeChildren(node) {
   node.textContent = EMPTY;
 }
+
+export {
+  /**
+   * Set viewport width.
+   * @param viewport {Number} Viewport width, default to 750.
+  */
+  setViewportWidth,
+  /**
+   * Set unit precision.
+   * @param n {Number} Unit precision, default to 4.
+   */
+  setUnitPrecision
+};

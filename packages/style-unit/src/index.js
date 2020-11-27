@@ -13,7 +13,8 @@ const global =
 let targetPlatform = isWeb ? 'web' : isWeex ? 'weex' : '';
 
 // Init toFixed method
-const unitPrecision = 4;
+let unitPrecision = 4;
+
 const toFixed = (number, precision) => {
   const multiplier = Math.pow(10, precision + 1);
   const wholeNumber = Math.floor(number * multiplier);
@@ -92,7 +93,26 @@ export function setDecimalPixelTransformer(transformer) {
   decimalPixelTransformer = transformer;
 }
 
-const cache = Object.create(null);
+/**
+ * Set unit precision.
+ * @param n {Number} Unit precision, default to 4.
+ */
+export function setUnitPrecision(n) {
+  unitPrecision = n;
+}
+
+/**
+ * Create a cached version of a pure function.
+ */
+export function cached(fn) {
+  const cache = Object.create(null);
+  return function cachedFn(...args) {
+    const key = args.reduceRight((prev, curr) => `${prev}-${curr}`);
+    if (!cache[key]) cache[key] = fn(...args);
+    return cache[key];
+  };
+}
+
 /**
  * Convert rpx.
  * @param value
@@ -100,17 +120,13 @@ const cache = Object.create(null);
  * @param platform
  * @return {String} Transformed value.
  */
-export function convertUnit(value, prop, platform) {
-  let cacheKey = `${prop}-${value}`;
-  const hit = cache[cacheKey];
+export const convertUnit = cached((value, prop, platform) => {
   if (platform) {
-    cacheKey += `-${platform}`;
     targetPlatform = platform;
   }
-  if (hit) {
-    return hit;
-  } else {
+  // if lineHeight value is number, it shouldn't be transformed to string
+  if (prop !== 'lineHeight') {
     value = value + '';
-    return cache[cacheKey] = isRpx(value) ? calcRpx(value) : value;
   }
-}
+  return isRpx(value) ? calcRpx(value) : value;
+});

@@ -70,7 +70,7 @@
     "build:compile:packages": "node ./scripts/compile-packages.js",
     "build:dist": "npm run clean:dist && node ./scripts/dist-core.js",
     "build": "npm run build:compile && npm run build:dist",
-    "watch:compile": "node ./scripts/compile-packages.js --watch",
+    "watch": "node ./scripts/compile-packages.js --watch",
     "test": "npm run test:core",
     "test:core": "jest --logHeapUsage --detectOpenHandles",
     "lint": "eslint --cache --ext .js,.jsx ./",
