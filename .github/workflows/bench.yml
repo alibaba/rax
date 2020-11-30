@@ -21,9 +21,12 @@ jobs:
         with:
           # Optional: do not specify to match Chrome's version
           chromedriver-version: '87.0.4280.20'
+      - name: Start XVFB
+        run: Xvfb :99 &
       - run: npm install
       - run: npm run setup
       - run: npm run bench
         env:
+          DISPLAY: :99
           ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
           ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
