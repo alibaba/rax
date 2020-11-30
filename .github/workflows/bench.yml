@@ -17,10 +17,8 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
-      - uses: nanasess/setup-chromedriver@master
-        with:
-          # Optional: do not specify to match Chrome's version
-          chromedriver-version: '87.0.4280.20'
+      - name: Setup Chrome and chromedriver
+        uses: ./.github/actions/setup-chrome
       - name: Start XVFB
         run: Xvfb :99 &
       - run: npm install
