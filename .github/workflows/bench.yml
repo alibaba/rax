@@ -21,10 +21,6 @@ jobs:
         with:
           # Optional: do not specify to match Chrome's version
           chromedriver-version: '87.0.4280.20'
-      - run: |
-          export DISPLAY=:99
-          chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
       - run: npm install
       - run: npm run setup
       - run: npm run bench
