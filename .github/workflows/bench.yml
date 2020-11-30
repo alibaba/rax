@@ -1,0 +1,30 @@
+name: Bench
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    brenches:
+      - '^bench'
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - name: Setup Chrome and chromedriver
+        uses: ./.github/actions/setup-chrome
+      - name: Start XVFB
+        run: Xvfb :99 &
+      - run: npm install
+      - run: npm run setup
+      - run: npm run bench
+        env:
+          DISPLAY: :99
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
