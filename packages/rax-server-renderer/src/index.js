@@ -22,6 +22,7 @@ const VOID_ELEMENTS = {
 };
 
 const TEXT_SPLIT_COMMENT = '<!--|-->';
+const ERROR_COMMENT = '<!--ERROR-->';
 
 const ESCAPE_LOOKUP = {
   '&': '&amp;',
@@ -404,10 +405,10 @@ class ServerRenderer {
 
         if (isClassComponent && type.prototype.componentDidCatch) {
           try {
-            return this.renderElementToString(renderedElement, currentContext)
+            return this.renderElementToString(renderedElement, currentContext);
           } catch(e) {
             type.prototype.componentDidCatch(e);
-            return '<!-- ERROR -->';
+            return ERROR_COMMENT;
           }
         } else {
           return this.renderElementToString(renderedElement, currentContext);
