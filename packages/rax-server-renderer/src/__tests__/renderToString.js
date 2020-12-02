@@ -386,4 +386,39 @@ describe('renderToString', () => {
     const str = renderToString(<App />);
     expect(str).toBe('<div><!--ERROR--></div>');
   });
+
+  it('should call componentDidCatch when catch error', function() {
+    const mockFn = jest.fn();
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+      }
+    
+      componentDidCatch(error, errorInfo) {
+        mockFn();
+      }
+    
+      render() {
+        return this.props.children; 
+      }
+    }
+    
+    function MyWidget() {
+      throw new Error('widget error');
+    }
+
+    function App() {
+      return (
+        <div>
+          <ErrorBoundary>
+            <MyWidget />
+          </ErrorBoundary>
+        </div>
+      );
+    };
+
+    const str = renderToString(<App />);
+    expect(mockFn).toHaveBeenCalled();
+    expect(str).toBe('<div><!--ERROR--></div>');
+  });
 });
