@@ -25,6 +25,7 @@ export function handleError(instance, error) {
         performInSandbox(() => {
           boundary.componentDidCatch(error);
 
+          // Update state so the next render to show the fallback UI.
           if (boundary.constructor.getDerivedStateFromError) {
             const state = boundary.constructor.getDerivedStateFromError();
             boundary.setState(state);
