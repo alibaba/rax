@@ -343,6 +343,7 @@ export function setStyle(node, style, __shouldConvertUnitlessToRpx) {
   for (let prop in style) {
     const value = style[prop];
     let convertedValue;
+
     if (typeof value === 'number' && isDimensionalProp(prop)) {
       if (__shouldConvertUnitlessToRpx) {
         convertedValue = value + 'rpx';

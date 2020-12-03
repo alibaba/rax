@@ -1,7 +1,9 @@
 import { shared } from 'rax';
-import { convertUnit, setViewportWidth, setUnitPrecision } from 'style-unit';
+import { convertUnit, setViewportWidth, setUnitPrecision, setTargetPlatform } from 'style-unit';
 import { BOOLEAN, BOOLEANISH_STRING, OVERLOADED_BOOLEAN, shouldRemoveAttribute, getPropertyInfo } from './attribute';
 import { UNITLESS_NUMBER_PROPS } from './CSSProperty';
+
+setTargetPlatform('web');
 
 const EMPTY_OBJECT = {};
 
@@ -92,7 +94,7 @@ function styleToCSS(style, options = {}) {
     }
 
     if (typeof val === 'string' && val.indexOf('rpx') > -1) {
-      val = convertUnit(val, prop, 'web');
+      val = convertUnit(val, prop);
     }
 
     prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();

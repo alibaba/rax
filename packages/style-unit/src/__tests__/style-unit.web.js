@@ -11,8 +11,8 @@ jest.mock('universal-env', () => {
 describe('Web style-unit', () => {
   describe('convertUnit', () => {
     setViewportWidth(375);
-    it('should recognize number', () => {
-      expect(convertUnit(500, 'width')).toEqual('500');
+    it('should not recognize number', () => {
+      expect(convertUnit(500, 'width')).toEqual(500);
     });
 
     it('should recognize number string', () => {
@@ -41,7 +41,7 @@ describe('Web style-unit', () => {
 
     it('should recognize 0', () => {
       expect(convertUnit('0', 'width')).toEqual('0');
-      expect(convertUnit(0, 'width')).toEqual('0');
+      expect(convertUnit(0, 'width')).toEqual(0);
     });
 
     it('should recognize transform', () => {

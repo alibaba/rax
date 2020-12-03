@@ -3,12 +3,8 @@ import { isWeb, isWeex } from 'universal-env';
 const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 const GLOBAL_RPX_COEFFICIENT = '__rpx_coefficient__';
 const GLOBAL_VIEWPORT_WIDTH = '__viewport_width__';
-const global =
-  typeof window === 'object'
-    ? window
-    : typeof global === 'object'
-      ? global
-      : {};
+const settings = {};
+
 // convertUnit method targetPlatform
 let targetPlatform = isWeb ? 'web' : isWeex ? 'weex' : '';
 
@@ -69,19 +65,19 @@ export function calcRpx(str) {
 }
 
 export function getRpx() {
-  return global[GLOBAL_RPX_COEFFICIENT];
+  return settings[GLOBAL_RPX_COEFFICIENT];
 }
 
 export function setRpx(rpx) {
-  global[GLOBAL_RPX_COEFFICIENT] = rpx;
+  settings[GLOBAL_RPX_COEFFICIENT] = rpx;
 }
 
 export function getViewportWidth() {
-  return global[GLOBAL_VIEWPORT_WIDTH];
+  return settings[GLOBAL_VIEWPORT_WIDTH];
 }
 
 export function setViewportWidth(viewport) {
-  global[GLOBAL_VIEWPORT_WIDTH] = viewport;
+  settings[GLOBAL_VIEWPORT_WIDTH] = viewport;
 }
 
 /**
@@ -103,14 +99,19 @@ export function setUnitPrecision(n) {
 
 /**
  * Create a cached version of a pure function.
+ * Use the first params as cache key.
  */
 export function cached(fn) {
-  const cache = Object.create(null);
+  const cache = new Map();
   return function cachedFn(...args) {
-    const key = args.reduceRight((prev, curr) => `${prev}-${curr}`);
-    if (!cache[key]) cache[key] = fn(...args);
-    return cache[key];
+    const key = args[0];
+    if (!cache.has(key)) cache.set(key, fn(...args));
+    return cache.get(key);
   };
+}
+
+export function setTargetPlatform(platform) {
+  targetPlatform = platform;
 }
 
 /**
@@ -122,11 +123,7 @@ export function cached(fn) {
  */
 export const convertUnit = cached((value, prop, platform) => {
   if (platform) {
-    targetPlatform = platform;
-  }
-  // if lineHeight value is number, it shouldn't be transformed to string
-  if (prop !== 'lineHeight') {
-    value = value + '';
+    setTargetPlatform(platform);
   }
   return isRpx(value) ? calcRpx(value) : value;
 });
