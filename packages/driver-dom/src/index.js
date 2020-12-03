@@ -348,12 +348,12 @@ export function setStyle(node, style, __shouldConvertUnitlessToRpx) {
       if (__shouldConvertUnitlessToRpx) {
         convertedValue = value + 'rpx';
         // Transfrom rpx to vw
-        convertedValue = convertUnit(convertedValue, prop);
+        convertedValue = convertUnit(convertedValue);
       } else {
         convertedValue = value + 'px';
       }
     } else {
-      convertedValue = convertUnit(value, prop);
+      convertedValue = convertUnit(value);
     }
 
     // Support CSS custom properties (variables) like { --main-color: "black" }

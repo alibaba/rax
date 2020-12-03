@@ -67,7 +67,6 @@ const DEFAULT_STYLE_OPTIONS = {
 };
 const UPPERCASE_REGEXP = /[A-Z]/g;
 const NUMBER_REGEXP = /^[0-9]*$/;
-const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 const CSSPropCache = {};
 
 function styleToCSS(style, options = {}) {
@@ -94,7 +93,7 @@ function styleToCSS(style, options = {}) {
     }
 
     if (typeof val === 'string' && val.indexOf('rpx') > -1) {
-      val = convertUnit(val, prop);
+      val = convertUnit(val);
     }
 
     prop = CSSPropCache[prop] ? CSSPropCache[prop] : CSSPropCache[prop] = prop.replace(UPPERCASE_REGEXP, '-$&').toLowerCase();

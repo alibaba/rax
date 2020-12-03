@@ -1,9 +1,8 @@
 import { isWeb, isWeex } from 'universal-env';
 
 const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
-const GLOBAL_RPX_COEFFICIENT = '__rpx_coefficient__';
-const GLOBAL_VIEWPORT_WIDTH = '__viewport_width__';
-const settings = {};
+let __rpx_coefficient__;
+let __viewport_width__;
 
 // convertUnit method targetPlatform
 let targetPlatform = isWeb ? 'web' : isWeex ? 'weex' : '';
@@ -65,19 +64,19 @@ export function calcRpx(str) {
 }
 
 export function getRpx() {
-  return settings[GLOBAL_RPX_COEFFICIENT];
+  return __rpx_coefficient__;
 }
 
 export function setRpx(rpx) {
-  settings[GLOBAL_RPX_COEFFICIENT] = rpx;
+  __rpx_coefficient__ = rpx;
 }
 
 export function getViewportWidth() {
-  return settings[GLOBAL_VIEWPORT_WIDTH];
+  return __viewport_width__;
 }
 
 export function setViewportWidth(viewport) {
-  settings[GLOBAL_VIEWPORT_WIDTH] = viewport;
+  __viewport_width__ = viewport;
 }
 
 /**
