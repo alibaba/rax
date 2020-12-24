@@ -3,6 +3,7 @@
 import PropTypes from 'rax-proptypes';
 import { Component, createElement, render, shared, createContext, useContext, useState } from 'rax';
 import ServerDriver from 'driver-server';
+import * as DriverDOM from 'driver-dom';
 import unmountComponentAtNode from 'rax-unmount-component-at-node';
 import createPortal from '../';
 
@@ -236,5 +237,32 @@ describe('createPortal', () => {
     changeValue(2);
     jest.runAllTimers();
     expect(portalTarget.childNodes[0].childNodes[0].data).toBe('2');
+  });
+
+  it('should not affect the result of hydrate', () => {
+    const container = document.createElement('div');
+    container.innerHTML = '<div class="container"><div>About Rax</div><div>Docs</div></div>';
+    (document.body || document.documentElement).appendChild(container);
+
+    const portalContainer = document.createElement('div');
+    (document.body || document.documentElement).appendChild(portalContainer);
+
+    const App = () => {
+      return (
+        <div class="container">
+          <div>About Rax</div>
+          {createPortal(<div>portal</div>, portalContainer)}
+        </div>
+      );
+    };
+
+    jest.useFakeTimers();
+
+    render(<App />, container, { driver: DriverDOM, hydrate: true });
+
+    jest.runAllTimers();
+
+    expect(container.childNodes[0].childNodes[1].nodeType).toBe(8); // comment;
+    expect(portalContainer.childNodes[0].childNodes[0].data).toBe('portal');
   });
 });

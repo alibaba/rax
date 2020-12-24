@@ -1,4 +1,4 @@
-import { createElement, render } from 'rax';
+import { createElement, render, useEffect } from 'rax';
 
 describe('Hydrate', () => {
   let DriverDOM;
@@ -31,6 +31,65 @@ describe('Hydrate', () => {
     expect(container.childNodes[0].childNodes[0].data).toBe('About:');
     expect(container.childNodes[0].childNodes[1].nodeType).toBe(8); // comment
     expect(container.childNodes[0].childNodes[2].data).toBe('Rax');
+  });
+
+  it('should not be affected by render in useEffect', () => {
+    const childContainer = document.createElement('div');
+    (document.body || document.documentElement).appendChild(childContainer);
+
+    const Child = () => {
+      useEffect(() => {
+        render(<span>child content</span>, childContainer);
+      });
+
+      return null;
+    };
+
+    const Component = () => {
+      return (
+        <div class="container">
+          <div>About Rax</div>
+          <Child />
+        </div>
+      );
+    };
+
+    jest.useFakeTimers();
+
+    render(<Component />, container, { driver: DriverDOM, hydrate: true });
+
+    jest.runAllTimers();
+
+    expect(container.childNodes[0].childNodes[1].nodeType).toBe(8); // comment;
+  });
+
+  it('should throw error for nested render when hydrating', () => {
+    const childContainer = document.createElement('div');
+    (document.body || document.documentElement).appendChild(childContainer);
+
+    const Child = () => {
+      render(<span>child content</span>, childContainer);
+      return null;
+    };
+
+    const Component = () => {
+      return (
+        <div class="container">
+          <div>About Rax</div>
+          <Child />
+        </div>
+      );
+    };
+
+    expect(() => {
+      jest.useFakeTimers();
+
+      render(<Component />, container, { driver: DriverDOM, hydrate: true });
+
+      jest.runAllTimers();
+    }).toThrowError('Nested render is not allowed when hydrating. If necessary, trigger render in useEffect.', {
+      withoutStack: true,
+    });
   });
 
   it('should warn for replaced hydratable element', () => {
