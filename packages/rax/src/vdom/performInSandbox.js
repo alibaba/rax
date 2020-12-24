@@ -24,7 +24,7 @@ export default function performInSandbox(fn, instance, callback) {
  */
 export function handleError(instance, error) {
   let boundary = getNearestParent(instance, parent => {
-    return parent.componentDidCatch || parent.constructor.getDerivedStateFromError;
+    return parent.componentDidCatch || (parent.constructor && parent.constructor.getDerivedStateFromError);
   });
 
   if (boundary) {
@@ -38,7 +38,7 @@ export function handleError(instance, error) {
           }
           
           // Update state to the next render to show the fallback UI.
-          if (boundary.constructor.getDerivedStateFromError) {
+          if (boundary.constructor && boundary.constructor.getDerivedStateFromError) {
             const state = boundary.constructor.getDerivedStateFromError();
             boundary.setState(state);
           }
