@@ -403,18 +403,16 @@ class ServerRenderer {
         // Reset owner after render, or it will casue memory leak.
         shared.Host.owner = null;
 
-        if (isClassComponent && type.prototype.componentDidCatch) {
+        if (isClassComponent && instance.componentDidCatch) {
           try {
             return this.renderElementToString(renderedElement, currentContext);
           } catch(e) {
-            type.prototype.componentDidCatch(e);
+            instance.componentDidCatch(e);
             return ERROR_COMMENT;
           }
         } else {
           return this.renderElementToString(renderedElement, currentContext);
         }
-
-        // return this.renderElementToString(renderedElement, currentContext);
       } else if (typeof type === 'string') {
         // shoud set the identifier to false before render child
         this.previousWasTextNode = false;
