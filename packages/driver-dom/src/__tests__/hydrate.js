@@ -34,12 +34,12 @@ describe('Hydrate', () => {
   });
 
   it('should not be affected by render in useEffect', () => {
-    const childContaner = document.createElement('div');
-    (document.body || document.documentElement).appendChild(childContaner);
+    const childContainer = document.createElement('div');
+    (document.body || document.documentElement).appendChild(childContainer);
 
     const Child = () => {
       useEffect(() => {
-        render(<span>child content</span>, childContaner);
+        render(<span>child content</span>, childContainer);
       });
 
       return null;
