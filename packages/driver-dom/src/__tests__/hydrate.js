@@ -64,11 +64,11 @@ describe('Hydrate', () => {
   });
 
   it('should throw error for nested render when hydrating', () => {
-    const childContaner = document.createElement('div');
-    (document.body || document.documentElement).appendChild(childContaner);
+    const childContainer = document.createElement('div');
+    (document.body || document.documentElement).appendChild(childContainer);
 
     const Child = () => {
-      render(<span>child content</span>, childContaner);
+      render(<span>child content</span>, childContainer);
       return null;
     };
 
