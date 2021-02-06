@@ -690,6 +690,78 @@ describe('CompositeComponent', function() {
     expect(container.childNodes[0].childNodes[0].data).toBe('Caught an error: Hello.');
   });
 
+  it('should update state to the next render when catch error.', () => {
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+      }
+    
+      static getDerivedStateFromError(error) {
+        return { hasError: true };
+      }
+    
+      componentDidCatch(error, errorInfo) {
+        // log
+      }
+    
+      render() {
+        if (this.state.hasError) {
+          return <h1>Something went wrong.</h1>;
+        }
+    
+        return this.props.children; 
+      }
+    }
+
+    function BrokenRender(props) {
+      throw new Error('Hello');
+    }
+
+    render(
+      <ErrorBoundary>
+        <BrokenRender />
+      </ErrorBoundary>, container);
+
+    jest.runAllTimers();
+    expect(container.childNodes[0].childNodes[0].data).toBe('Something went wrong.');
+  });
+
+  it('should catch error only with getDerivedStateFromError.', () => {
+    let container = createNodeElement('div');
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+      }
+    
+      static getDerivedStateFromError(error) {
+        return { hasError: true };
+      }
+    
+      render() {
+        if (this.state.hasError) {
+          return <h1>Something went wrong.</h1>;
+        }
+    
+        return this.props.children; 
+      }
+    }
+
+    function BrokenRender(props) {
+      throw new Error('Hello');
+    }
+
+    render(
+      <ErrorBoundary>
+        <BrokenRender />
+      </ErrorBoundary>, container);
+
+    jest.runAllTimers();
+    expect(container.childNodes[0].childNodes[0].data).toBe('Something went wrong.');
+  });
+
   it('should render correct when prevRenderedComponent did not generate nodes', () => {
     let container = createNodeElement('div');
     class Frag extends Component {

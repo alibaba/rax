@@ -25,6 +25,7 @@ const VOID_ELEMENTS = {
 };
 
 const TEXT_SPLIT_COMMENT = '<!--|-->';
+const ERROR_COMMENT = '<!--ERROR-->';
 
 const ESCAPE_LOOKUP = {
   '&': '&amp;',
@@ -351,8 +352,11 @@ class ServerRenderer {
     const type = element.type;
 
     if (type) {
+      const isClassComponent = type.prototype && type.prototype.render;
+      const isFunctionComponent = typeof type === 'function';
+
       // class component || function component
-      if (type.prototype && type.prototype.render || typeof type === 'function') {
+      if (isClassComponent || isFunctionComponent) {
         const instance = createInstance(element, context);
 
         const currentComponent = {
@@ -393,7 +397,16 @@ class ServerRenderer {
         // Reset owner after render, or it will casue memory leak.
         shared.Host.owner = null;
 
-        return this.renderElementToString(renderedElement, currentContext);
+        if (isClassComponent && instance.componentDidCatch) {
+          try {
+            return this.renderElementToString(renderedElement, currentContext);
+          } catch(e) {
+            instance.componentDidCatch(e);
+            return ERROR_COMMENT;
+          }
+        } else {
+          return this.renderElementToString(renderedElement, currentContext);
+        }
       } else if (typeof type === 'string') {
         // shoud set the identifier to false before render child
         this.previousWasTextNode = false;
