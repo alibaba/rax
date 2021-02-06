@@ -431,6 +431,18 @@ export function setStyle(node, style, __shouldConvertUnitlessToRpx, __shouldConv
 }
 
 export function beforeRender({ hydrate }) {
+  // Nested render may reset `isHydrating`, `recolectHydrationChild` will not work correctly after render.
+  if (isHydrating && !hydrate) {
+    if (__DEV__) {
+      throw new Error(
+        'Nested render is not allowed when hydrating. ' +
+        'If necessary, trigger render in useEffect.'
+      );
+    } else {
+      throw new Error('Nested render found.');
+    }
+  }
+
   isHydrating = hydrate;
 }
 

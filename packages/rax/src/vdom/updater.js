@@ -92,7 +92,7 @@ function scheduleUpdate(component, shouldAsyncUpdate) {
   }
 
   if (shouldAsyncUpdate) {
-    // If have been scheduled before, don't not need schedule again
+    // If have been scheduled before, do not need schedule again
     if (dirtyComponents.length > 1) {
       return;
     }

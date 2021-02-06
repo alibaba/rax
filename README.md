@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-Rax is a progressive React framework for building universal application.
+Rax is a progressive React framework for building universal applications.
 
 <p align="center">
   <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/rax.svg"></a>
@@ -21,7 +21,7 @@ Rax is a progressive React framework for building universal application.
 
 ⏱ **Fast:** use better performance and tinier size(📦~6KB) alternative to [React](http://reactjs.org/) with the same API.
 
-📤 **Easy:** quick start with zero configuration, all features like `Progressive Web App(PWA)`, `Server-Side Rendering(SSR)` and `Function as a service(FaaS)` can be used out of the box.
+📤 **Easy:** quick start with zero configuration, all features like `Progressive Web App (PWA)`, `Server-Side Rendering (SSR)` and `Function as a service (FaaS)` can be used out of the box.
 
 ### Quick Start 🥢🍚
 
@@ -52,7 +52,7 @@ You need to install the [Iceworks extension](https://marketplace.visualstudio.co
 
 You can inspect and modify the state of your Rax components at runtime using the
 [Rax Developer Tools](https://github.com/raxjs/rax-devtools) browser extension,
-and extension not works in `producation` mode.
+and extension not works in `production` mode.
 
 1. Install the Chrome [Rax Developer Tools](https://chrome.google.com/webstore/detail/rax-developer-tools/anpeoinhjjligmgoiepbnigjhmijblff) extension
 2. Reload and go to the 'Rax' tab in the browser's development tools
@@ -63,7 +63,7 @@ You can use [Iceworks VS Code Extension](https://marketplace.visualstudio.com/it
 
 ### Awesome Things 📝
 
-You can find some awesome things in the [awesome-rax](https://github.com/raxjs/awesome-rax).
+You can find some awesome things in [awesome-rax](https://github.com/raxjs/awesome-rax).
 
 ### Contributing 🧼
 

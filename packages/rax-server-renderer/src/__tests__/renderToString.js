@@ -1,6 +1,6 @@
 /* @jsx createElement */
 
-import {createElement, useState, useEffect, createContext, useContext, useReducer} from 'rax';
+import {createElement, Component, useState, useEffect, createContext, useContext, useReducer} from 'rax';
 import {renderToString} from '../index';
 
 describe('renderToString', () => {
@@ -352,5 +352,73 @@ describe('renderToString', () => {
 
     const str = renderToString(<App />);
     expect(str).toBe('<!-- _ --><div>light</div>');
+  });
+
+  it('should catch error with componentDidCatch', function() {
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+      }
+    
+      componentDidCatch(error, errorInfo) {
+        // log error
+      }
+    
+      render() {
+        return this.props.children; 
+      }
+    }
+    
+    function MyWidget() {
+      throw new Error('widget error');
+    }
+
+    function App() {
+      return (
+        <div>
+          <ErrorBoundary>
+            <MyWidget />
+          </ErrorBoundary>
+        </div>
+      );
+    };
+
+    const str = renderToString(<App />);
+    expect(str).toBe('<div><!--ERROR--></div>');
+  });
+
+  it('should call componentDidCatch when catch error', function() {
+    const mockFn = jest.fn();
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+      }
+    
+      componentDidCatch(error, errorInfo) {
+        mockFn();
+      }
+    
+      render() {
+        return this.props.children; 
+      }
+    }
+    
+    function MyWidget() {
+      throw new Error('widget error');
+    }
+
+    function App() {
+      return (
+        <div>
+          <ErrorBoundary>
+            <MyWidget />
+          </ErrorBoundary>
+        </div>
+      );
+    };
+
+    const str = renderToString(<App />);
+    expect(mockFn).toHaveBeenCalled();
+    expect(str).toBe('<div><!--ERROR--></div>');
   });
 });
