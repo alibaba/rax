@@ -359,16 +359,16 @@ describe('renderToString', () => {
       constructor(props) {
         super(props);
       }
-    
+
       componentDidCatch(error, errorInfo) {
         // log error
       }
-    
+
       render() {
-        return this.props.children; 
+        return this.props.children;
       }
     }
-    
+
     function MyWidget() {
       throw new Error('widget error');
     }
@@ -393,16 +393,16 @@ describe('renderToString', () => {
       constructor(props) {
         super(props);
       }
-    
+
       componentDidCatch(error, errorInfo) {
         mockFn();
       }
-    
+
       render() {
-        return this.props.children; 
+        return this.props.children;
       }
     }
-    
+
     function MyWidget() {
       throw new Error('widget error');
     }

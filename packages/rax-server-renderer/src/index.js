@@ -400,7 +400,7 @@ class ServerRenderer {
         if (isClassComponent && instance.componentDidCatch) {
           try {
             return this.renderElementToString(renderedElement, currentContext);
-          } catch(e) {
+          } catch (e) {
             instance.componentDidCatch(e);
             return ERROR_COMMENT;
           }
