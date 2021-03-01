@@ -3,8 +3,6 @@ import { convertUnit, setViewportWidth, setUnitPrecision, setTargetPlatform } fr
 import { BOOLEAN, BOOLEANISH_STRING, OVERLOADED_BOOLEAN, shouldRemoveAttribute, getPropertyInfo } from './attribute';
 import { UNITLESS_NUMBER_PROPS } from './CSSProperty';
 
-setTargetPlatform('web');
-
 const EMPTY_OBJECT = {};
 
 const VOID_ELEMENTS = {
@@ -297,6 +295,7 @@ class ServerRenderer {
   constructor(options) {
     this.options = options;
     this.previousWasTextNode = false;
+    setTargetPlatform('web');
     setViewportWidth(options.viewportWidth);
     setUnitPrecision(options.unitPrecision);
   }
