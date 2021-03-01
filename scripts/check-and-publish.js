@@ -39,7 +39,7 @@ function checkVersion(folder, callback) {
                 name: packageInfo.name,
                 workDir: join(folder, packageFolderName),
                 local: packageInfo.version,
-                tag: packageInfo.npmTag
+                tag: packageInfo.npmTag || (isPrerelease(packageInfo.version) ? 'beta' : 'latest')
               });
             }
             finish();
@@ -103,8 +103,7 @@ function checkVersionAndPublish() {
     }
 
     for (let i = 0; i < ret.length; i++) {
-      const { name, workDir, local } = ret[i];
-      const tag = ret[i].tag || isPrerelease(local) ? 'beta' : 'latest';
+      const { local, tag } = ret[i];
       console.log(`--- ${name}@${local} current tag: ${tag} ---`);
     }
 
