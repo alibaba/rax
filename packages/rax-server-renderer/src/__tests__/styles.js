@@ -157,7 +157,7 @@ describe('inline styles', () => {
       };
 
       const str = renderToString(<div style={style} />);
-      expect(str).toBe('<div style="flex:1;font-size:2.13333vw;width:100%;"></div>');
+      expect(str).toBe('<div style="flex:1;font-size:2.1333vw;width:100%;"></div>');
     });
 
     it('set default unit as rpx', () => {
@@ -190,7 +190,16 @@ describe('inline styles', () => {
       };
 
       const str = renderToString(<div style={style} />);
-      expect(str).toBe('<div style="transform:translate3d(-26.66667vw, 0, 0);"></div>');
+      expect(str).toBe('<div style="transform:translate3d(-26.6667vw, 0, 0);"></div>');
+    });
+
+    it('render url() with rpx', () => {
+      const style = {
+        backgroundImage: 'url("abc2rpx")'
+      };
+
+      const str = renderToString(<div style={style} />);
+      expect(str).toBe('<div style="background-image:url(\"abc2rpx\");"></div>');
     });
   });
 

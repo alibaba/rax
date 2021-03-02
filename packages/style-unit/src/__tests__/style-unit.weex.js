@@ -13,7 +13,7 @@ describe('Weex style-unit', () => {
     setRpx(414 / 750);
 
     it('should recognize number', () => {
-      expect(convertUnit(500, 'width')).toEqual('500');
+      expect(convertUnit(500, 'width')).toEqual(500);
     });
 
     it('should recognize number string', () => {
@@ -38,11 +38,11 @@ describe('Weex style-unit', () => {
 
     it('should recognize 0', () => {
       expect(convertUnit('0', 'width')).toEqual('0');
-      expect(convertUnit(0, 'width')).toEqual('0');
+      expect(convertUnit(0, 'width')).toEqual(0);
     });
 
     it('should ignore unitless prop', () => {
-      expect(convertUnit(1, 'flex')).toEqual('1');
+      expect(convertUnit(1, 'flex')).toEqual(1);
     });
 
     it('should recognize transform', () => {

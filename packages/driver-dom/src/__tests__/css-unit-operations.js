@@ -65,4 +65,16 @@ describe('CSSPropertyOperations', () => {
       'flex-direction': 'row'
     }));
   });
+
+  it('should not translate `rpx` to the `vw` with url()', () => {
+    const styles = {
+      width: '375rpx',
+      height: '150rpx',
+      backgroundImage: 'url("abc2rpx")'
+    };
+    render(<div style={styles} />, container, { driver: DriverDOM });
+
+    const targetNode = container.children[0];
+    expect(targetNode.style._values).toMatchObject({ 'width': '50vw', 'height': '20vw', 'background-image': 'url(abc2rpx)' });
+  });
 });

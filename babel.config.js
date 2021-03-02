@@ -7,6 +7,9 @@ module.exports = function(api) {
       '@babel/preset-flow',
       ['@babel/preset-env', {
         'loose': true,
+        'targets': {
+          'esmodules': true
+        }
       }],
       ['@babel/preset-react', {
         'pragma': 'createElement'
