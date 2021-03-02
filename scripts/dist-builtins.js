@@ -4,7 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const uppercamelcase = require('uppercamelcase');
 const RaxPlugin = require('rax-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const fs = require('fs');
 
 // build packages
@@ -73,7 +73,7 @@ function creatBuildinModules(packageName, dirpath, dirname) {
   });
 }
 
-function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool, buildService) {
+function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devtool = 'source-map', buildService) {
   // Webpack need an absolute path
   output.path = path.resolve(__dirname, '..', output.path);
 
@@ -117,14 +117,21 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
   }
 })`;
     };
+    devtool = '';
   }
 
   return {
     mode: 'production',
     target: target || 'node',
-    devtool: buildService ? '' : devtool || 'source-map',
+    devtool,
     optimization: {
-      minimize: false
+      minimize: false,
+      minimizer: [
+        new TerserPlugin({
+          include: /\.min\.js$/,
+          sourceMap: buildService ? false : true
+        }),
+      ]
     },
     stats: {
       optimizationBailout: true,
@@ -138,10 +145,6 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
       new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
       new webpack.optimize.ModuleConcatenationPlugin(),
-      new UglifyJSPlugin({
-        include: /\.min\.js$/,
-        sourceMap: buildService ? false : true
-      })
     ],
     module: {
       rules: [{

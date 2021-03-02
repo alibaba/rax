@@ -15,16 +15,16 @@ export default function performInSandbox(fn, instance, callback) {
 }
 
 /**
- * A class component becomes an error boundary if 
+ * A class component becomes an error boundary if
  * it defines either (or both) of the lifecycle methods static getDerivedStateFromError() or componentDidCatch().
  * Use static getDerivedStateFromError() to render a fallback UI after an error has been thrown.
  * Use componentDidCatch() to log error information.
- * @param {*} instance 
- * @param {*} error 
+ * @param {*} instance
+ * @param {*} error
  */
 export function handleError(instance, error) {
   let boundary = getNearestParent(instance, parent => {
-    return parent.componentDidCatch || (parent.constructor && parent.constructor.getDerivedStateFromError);
+    return parent.componentDidCatch || parent.constructor && parent.constructor.getDerivedStateFromError;
   });
 
   if (boundary) {
@@ -36,7 +36,7 @@ export function handleError(instance, error) {
           if (boundary.componentDidCatch) {
             boundary.componentDidCatch(error);
           }
-          
+
           // Update state to the next render to show the fallback UI.
           if (boundary.constructor && boundary.constructor.getDerivedStateFromError) {
             const state = boundary.constructor.getDerivedStateFromError();

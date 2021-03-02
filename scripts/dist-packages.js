@@ -3,7 +3,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const RaxPlugin = require('rax-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const babelOptions = require('./config/getBabelConfig')();
 
 dist(getConfig(
@@ -85,7 +85,13 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
     target: target || 'node',
     devtool: devtool || 'source-map',
     optimization: {
-      minimize: false
+      minimize: false,
+      minimizer: [
+        new TerserPlugin({
+          include: /\.min\.js$/,
+          sourceMap: true
+        }),
+      ]
     },
     stats: {
       optimizationBailout: true,
@@ -98,11 +104,7 @@ function getConfig(entry, output, moduleOptions, babelLoaderQuery, target, devto
       }),
       new webpack.NoEmitOnErrorsPlugin(),
       new RaxPlugin(moduleOptions),
-      new webpack.optimize.ModuleConcatenationPlugin(),
-      new UglifyJSPlugin({
-        include: /\.min\.js$/,
-        sourceMap: true
-      })
+      new webpack.optimize.ModuleConcatenationPlugin()
     ],
     module: {
       rules: [{
