@@ -103,7 +103,7 @@ function checkVersionAndPublish() {
     }
 
     for (let i = 0; i < ret.length; i++) {
-      const { local, tag } = ret[i];
+      const { local, tag, name } = ret[i];
       console.log(`--- ${name}@${local} current tag: ${tag} ---`);
     }
 
