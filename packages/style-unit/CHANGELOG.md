@@ -1,6 +1,10 @@
 ## Changelog
 
-### v1.4.0
+### v3.0.2
+
+- Bump version
+
+### v3.0.1
 
 - Refactor: avoid pollute `global` variable
 - Fix: converted property cache key is invalid
