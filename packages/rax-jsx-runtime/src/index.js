@@ -12,7 +12,7 @@ function generateVNode(type, props, key, __source, __self) {
 
   // The default value of key and ref of rax element is null
   let ref = props && props.ref || null;
-  key = key ? key : null;
+  key = key || null;
 
   for (propName in props) {
     if (propName !== 'ref') {
