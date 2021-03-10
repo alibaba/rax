@@ -8,6 +8,12 @@
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
   },
+  "peerDependencies": {
+    "rax": "^1.0.0"
+  },
+  "devDependencies": {
+    "rax": "^1.0.0"
+  },
   "bugs": {
     "url": "https://github.com/alibaba/rax/issues"
   },

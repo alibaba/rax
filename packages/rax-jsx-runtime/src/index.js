@@ -37,7 +37,6 @@ function generateVNode(type, props, key, __source, __self) {
     __source,
     __self,
   };
-
 }
 
 export {
