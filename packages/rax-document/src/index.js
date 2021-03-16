@@ -5,7 +5,7 @@ function Root(props, context) {
 
   return [
     { __html: '<!--__BEFORE_ROOT__-->' },
-    <div id="root" key='root' dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />,
+    <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />,
     { __html: '<!--__AFTER_ROOT__-->' }
   ];
 }
