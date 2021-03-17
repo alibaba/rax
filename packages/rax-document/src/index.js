@@ -3,6 +3,7 @@ import { createElement } from 'rax';
 function Root(props, context) {
   const { __initialHtml } = context;
 
+  // comment node for ssr parse root node position
   return [
     { __html: '<!--__BEFORE_ROOT__-->' },
     <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />,
