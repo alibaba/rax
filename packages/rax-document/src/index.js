@@ -4,11 +4,14 @@ function Root(props, context) {
   const { __initialHtml } = context;
 
   // comment node for ssr parse root node position
-  return [
-    { __html: '<!--__BEFORE_ROOT__-->' },
-    <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />,
-    { __html: '<!--__AFTER_ROOT__-->' }
-  ];
+  if (process.env.__IS_SERVER__) {
+    return [
+      { __html: '<!--__BEFORE_ROOT__-->' },
+      <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />,
+      { __html: '<!--__AFTER_ROOT__-->' }
+    ];
+  }
+  return <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />;
 }
 
 function Manifest(props, context) {
