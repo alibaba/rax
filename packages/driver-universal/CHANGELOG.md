@@ -1,5 +1,9 @@
 ## Changelog
 
+### v3.2.0
+
+- Chore: reduce size by main resolve fields
+
 ### v3.1.7
 
 - Bump version

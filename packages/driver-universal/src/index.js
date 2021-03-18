@@ -1,20 +1,18 @@
-import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram } from 'universal-env';
-import createDOMDriver from './dom';
-import MiniAppDriver from 'driver-miniapp';
-import * as WeexDriver from 'driver-weex';
-import * as KrakenDriver from 'driver-kraken';
+import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
+import WebDriver from './web';
+import MiniAppDriver from './miniapp';
+import * as WeexDriver from './weex';
+import * as KrakenDriver from './kraken';
 
 let currentDriver;
 if (isWeex) {
   currentDriver = WeexDriver;
 } else if (isWeb) {
-  currentDriver = createDOMDriver();
+  currentDriver = WebDriver;
 } else if (isKraken) {
   currentDriver = KrakenDriver;
-} else if (isMiniApp || isWeChatMiniProgram) {
+} else if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
   currentDriver = MiniAppDriver;
-} else {
-  console.warn('Warning: Your environment was not supported by driver-universal.');
 }
 
 export default currentDriver;

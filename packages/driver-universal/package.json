@@ -1,10 +1,14 @@
 {
   "name": "driver-universal",
-  "version": "3.1.7",
+  "version": "3.2.0",
   "description": "Driver for Universal App.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "module": "es/index.js",
+  "web": "es/web.js",
+  "kraken": "es/kraken.js",
+  "weex": "es/weex.js",
+  "miniapp": "es/miniapp.js",
   "sideEffects": false,
   "repository": {
     "type": "git",
