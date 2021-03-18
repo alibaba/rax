@@ -3,11 +3,12 @@ import { createElement } from 'rax';
 function Root(props, context) {
   const { __initialHtml } = context;
 
-  if (__initialHtml) {
-    return <div id="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />;
-  }
-
-  return <div id="root" />;
+  // comment node for ssr parse root node position
+  return [
+    { __html: '<!--__BEFORE_ROOT__-->' },
+    <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />,
+    { __html: '<!--__AFTER_ROOT__-->' }
+  ];
 }
 
 function Manifest(props, context) {
