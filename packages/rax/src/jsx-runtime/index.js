@@ -1,10 +1,4 @@
-import { shared } from 'rax';
-
-const { Host } = shared;
-
-function Fragment(props) {
-  return props.children;
-}
+import Host from '../vdom/host';
 
 function generateVNode(type, props, key, __source, __self) {
   let normalizedProps = {};
@@ -39,10 +33,10 @@ function generateVNode(type, props, key, __source, __self) {
   };
 }
 
+export Fragment from '../vdom/fragment';
 export {
   generateVNode as jsx,
   generateVNode as jsxs,
   generateVNode as jsxDEV,
-  Fragment
 };
 

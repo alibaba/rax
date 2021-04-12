@@ -1,4 +1,6 @@
-import { Component, createElement, createRef } from 'rax';
+import Component from '../../vdom/component';
+import createElement from '../../createElement';
+import createRef from '../../createRef';
 import { jsx, jsxs, jsxDEV, Fragment } from '../';
 
 describe('Support JSX-Runtime', () => {
