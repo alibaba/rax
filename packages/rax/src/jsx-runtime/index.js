@@ -1,4 +1,6 @@
-import Host from '../vdom/host';
+import { shared, Fragment } from "../../index"
+
+const Host = shared.Host;
 
 function generateVNode(type, props, key, __source, __self) {
   let normalizedProps = {};
@@ -33,10 +35,11 @@ function generateVNode(type, props, key, __source, __self) {
   };
 }
 
-export Fragment from '../vdom/fragment';
+
 export {
   generateVNode as jsx,
   generateVNode as jsxs,
   generateVNode as jsxDEV,
+  Fragment,
 };
 

@@ -1,6 +1,4 @@
-import Component from '../../vdom/component';
-import createElement from '../../createElement';
-import createRef from '../../createRef';
+import { Component, createElement, createRef } from "../../../index"
 import { jsx, jsxs, jsxDEV, Fragment } from '../';
 
 describe('Support JSX-Runtime', () => {
@@ -42,7 +40,7 @@ describe('Support JSX-Runtime', () => {
     expect(vnode.props.foo).toBe('bar');
 
     vnode = jsx(Foo, {fake: 'bar2'}, null);
-    expect(vnode.props.foo1).toBe('bar2');
+    expect(vnode.props.fake).toBe('bar2');
   });
 
   it('should keep props over defaultProps', () => {
