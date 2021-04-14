@@ -1,4 +1,4 @@
-import { shared, Fragment } from "../../index"
+import { shared, Fragment } from '../../index';
 
 const Host = shared.Host;
 

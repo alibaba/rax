@@ -1,4 +1,4 @@
-import { Component, createElement, createRef } from "../../../index"
+import { Component, createElement, createRef } from '../../../index';
 import { jsx, jsxs, jsxDEV, Fragment } from '../';
 
 describe('Support JSX-Runtime', () => {
