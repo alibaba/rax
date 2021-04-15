@@ -2,7 +2,7 @@
 
 ### v3.2.0
 
-- Chore: reduce size by main resolve fields
+- Chore: reduce size by exports fields
 
 ### v3.1.7
 
