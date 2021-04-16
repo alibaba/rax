@@ -1,18 +1,18 @@
 {
   "name": "driver-universal",
-  "version": "3.2.0",
+  "version": "3.2.0-beta.2",
   "description": "Driver for Universal App.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "module": "es/index.js",
   "exports": {
-    ".": "./es/index.js",
-    "./web": "./es/web.js",
-    "./weex": "./es/weex.js",
-    "./kraken": "./es/kraken.js",
-    "./miniapp": "./es/miniapp.js",
-    "./wechat-miniprogram": "./es/miniapp.js",
-    "./bytedance-microapp": "./es/miniapp.js"
+    "web": "./es/web.js",
+    "weex": "./es/weex.js",
+    "kraken": "./es/kraken.js",
+    "miniapp": "./es/miniapp.js",
+    "wechat-miniprogram": "./es/miniapp.js",
+    "bytedance-microapp": "./es/miniapp.js",
+    "default": "./es/index.js"
   },
   "sideEffects": false,
   "repository": {
