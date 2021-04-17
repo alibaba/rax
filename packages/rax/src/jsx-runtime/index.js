@@ -1,6 +1,11 @@
 import { shared, Fragment } from '../../index';
 
 const Host = shared.Host;
+/**
+ * This module is adapted to react's jsx-runtime module.
+ * @see：[introducing-the-new-jsx-transform](https://reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.htm)
+ */
+
 
 function generateVNode(type, props, key, __source, __self) {
   let normalizedProps = {};
