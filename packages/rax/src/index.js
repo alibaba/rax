@@ -8,6 +8,7 @@ export Fragment from './fragment';
 export render from './render';
 export Component, { PureComponent } from './vdom/component';
 export version from './version';
+export { jsx, jsxs, jsxDEV } from './vdom/jsx-runtime';
 
 import Host from './vdom/host';
 import Instance from './vdom/instance';

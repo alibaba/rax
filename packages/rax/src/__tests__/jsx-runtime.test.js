@@ -1,5 +1,8 @@
-import { Component, createElement, createRef } from '../../../index';
-import { jsx, jsxs, jsxDEV, Fragment } from '../';
+import Component from '../vdom/component';
+import createElement from '../createElement';
+import createRef from '../createRef';
+import { jsx, jsxs, jsxDEV } from '../jsx-runtime';
+import Fragment from '../fragment';
 
 describe('Support JSX-Runtime', () => {
   it('should export all modules needed by importSource', () => {
@@ -61,7 +64,7 @@ describe('Support JSX-Runtime', () => {
   });
 
   it('should set __source and __self', () => {
-    const vnode = jsx('div', { class: 'foo' }, 'key', 'source', 'self');
+    const vnode = jsxDEV('div', { class: 'foo' }, 'key', 'source', 'self');
     expect(vnode.__source).toBe('source');
     expect(vnode.__self).toBe('self');
   });
@@ -72,8 +75,6 @@ describe('Support JSX-Runtime', () => {
       key: 'key'
     });
     const jsxVNode = jsx('div', { class: 'foo' }, 'key');
-    delete jsxVNode.__self;
-    delete jsxVNode.__source;
     expect(jsxVNode).toEqual(elementVNode);
   });
 

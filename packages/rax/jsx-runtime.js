@@ -1,1 +1,1 @@
-export {Fragment, jsx, jsxs} from './src/jsx-runtime';
+export {Fragment, jsx, jsxs, jsxDEV} from './index';

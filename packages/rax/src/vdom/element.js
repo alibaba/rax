@@ -1,6 +1,6 @@
 import checkPropTypes from 'prop-types/checkPropTypes';
 
-export default function Element(type, key, ref, props, owner) {
+export default function Element(type, key, ref, props, owner, __source, __self) {
   let element = {
     // Built-in properties that belong on the element
     type,
@@ -33,10 +33,24 @@ export default function Element(type, key, ref, props, owner) {
       value: false
     });
 
-    // Props is immutable
-    if (Object.freeze) {
-      Object.freeze(props);
-    }
+    Object.defineProperty(element, '__source', {
+      configurable: false,
+      enumerable: false,
+      writable: true,
+      value: __source
+    });
+
+    Object.defineProperty(element, '__self', {
+      configurable: false,
+      enumerable: false,
+      writable: true,
+      value: __self
+    });
+  }
+
+  // Props is immutable
+  if (Object.freeze) {
+    Object.freeze(props);
   }
 
   return element;
