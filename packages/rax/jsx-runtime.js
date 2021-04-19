@@ -1,1 +1,1 @@
-export {Fragment, jsx, jsxs, jsxDEV} from './index';
+export { Fragment, jsx, jsxs, jsxDEV } from './index';

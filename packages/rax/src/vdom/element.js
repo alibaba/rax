@@ -1,5 +1,14 @@
 import checkPropTypes from 'prop-types/checkPropTypes';
 
+function setBuiltInPropertyDescriptor(element, propertyName, value) {
+  Object.defineProperty(element, propertyName, {
+    configurable: false,
+    enumerable: false,
+    writable: true,
+    value: value
+  });
+}
+
 export default function Element(type, key, ref, props, owner, __source, __self) {
   let element = {
     // Built-in properties that belong on the element
@@ -26,26 +35,9 @@ export default function Element(type, key, ref, props, owner, __source, __self) 
     }
 
     // We make validation flag non-enumerable, so the test framework could ignore it
-    Object.defineProperty(element, '__validated', {
-      configurable: false,
-      enumerable: false,
-      writable: true,
-      value: false
-    });
-
-    Object.defineProperty(element, '__source', {
-      configurable: false,
-      enumerable: false,
-      writable: true,
-      value: __source
-    });
-
-    Object.defineProperty(element, '__self', {
-      configurable: false,
-      enumerable: false,
-      writable: true,
-      value: __self
-    });
+    setBuiltInPropertyDescriptor(element, '__validated', false);
+    setBuiltInPropertyDescriptor(element, '__source', __source);
+    setBuiltInPropertyDescriptor(element, '__self', __self);
   }
 
   // Props is immutable
