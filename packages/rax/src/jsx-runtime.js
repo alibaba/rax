@@ -32,7 +32,15 @@ function jsxRuntime(type, props, key, __source, __self) {
       }
   }
 
-  return Element(type, key, ref, normalizedProps, Host.owner, __source, __self);
+  return new Element(
+    type,
+    key,
+    ref,
+    normalizedProps,
+    Host.owner,
+    __source,
+    __self
+  );
 }
 
 
@@ -92,6 +100,6 @@ const jsxDEV = __DEV__ ? jsxDEVWithValidation : undefined;
 export {
   jsx,
   jsxs,
-  jsxDEV,
+  jsxDEV
 };
 
