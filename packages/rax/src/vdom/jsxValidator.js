@@ -43,12 +43,12 @@ function _jsxWithValidation(type, props, key, isStaticChildren, __source, __self
 }
 
 
-export function jsxWithValidation(type, props, key) {
+export function jsxWithValidationDynamic(type, props, key) {
   return _jsxWithValidation(type, props, key, false);
 }
-export function jsxsWithValidation(type, props, key) {
+export function jsxWithValidationStatic(type, props, key) {
   return _jsxWithValidation(type, props, key, true);
 }
-export function jsxDEVWithValidation(type, props, key, __source, __self) {
+export function jsxWithValidation(type, props, key, __source, __self) {
   return _jsxWithValidation(type, props, key, true, __source, __self);
 }
