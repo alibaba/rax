@@ -1,7 +1,9 @@
-import { throwError, throwMinifiedWarn, warning } from "../error";
-import { isArray, NOOP } from "../types";
-import validateChildKeys from "../validateChildKeys";
-import { jsxRuntime } from "./jsx";
+import { throwError, throwMinifiedWarn, warning } from '../error';
+import { isArray, NOOP } from '../types';
+import validateChildKeys from '../validateChildKeys';
+import { jsxRuntime } from './jsx';
+
+const __DEV__ = process.env.NODE_ENV !== 'production';
 
 function _jsxWithValidation(type, props, key, isStaticChildren, __source, __self) {
   const elem = jsxRuntime(type, props, key, __source, __self);

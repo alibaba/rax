@@ -1,5 +1,5 @@
-import { jsxWithValidation, jsxsWithValidation, jsxDEVWithValidation } from "./vdom/jsxValidator";
-import { jsxRuntime as jsxProd } from "./vdom/jsx"
+import { jsxWithValidation, jsxWithValidationDynamic, jsxWithValidationStatic } from './vdom/jsxValidator';
+import { jsxRuntime as jsxProd } from './vdom/jsx';
 
 /**
  * This module is adapted to react's jsx-runtime module.
@@ -7,9 +7,9 @@ import { jsxRuntime as jsxProd } from "./vdom/jsx"
  */
 const __DEV__ = process.env.NODE_ENV !== 'production';
 
-const jsx = __DEV__ ? jsxWithValidation : jsxProd;
-const jsxs = __DEV__ ? jsxsWithValidation : jsxProd;
-const jsxDEV = __DEV__ ? jsxDEVWithValidation : undefined;
+const jsx = __DEV__ ? jsxWithValidationDynamic : jsxProd;
+const jsxs = __DEV__ ? jsxWithValidationStatic : jsxProd;
+const jsxDEV = __DEV__ ? jsxWithValidation : undefined;
 
 export {
   jsx,
