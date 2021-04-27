@@ -33,15 +33,15 @@ if (getViewportWidth() === undefined) {
 }
 
 class CustomMap {
-  _store = {}
+  __store = {}
   set(key, value) {
-    this._store[`${key}_${typeof key}`] = value;
+    this.__store[`${key}_${typeof key}`] = value;
   }
   get(key) {
-    return this._store[`${key}_${typeof key}`];
+    return this.__store[`${key}_${typeof key}`];
   }
   has(key) {
-    return Object.prototype.hasOwnProperty.call(this._store, `${key}_${typeof key}`);
+    return Object.prototype.hasOwnProperty.call(this.__store, `${key}_${typeof key}`);
   }
 }
 
