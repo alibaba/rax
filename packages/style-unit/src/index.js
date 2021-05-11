@@ -32,6 +32,19 @@ if (getViewportWidth() === undefined) {
   setViewportWidth(750);
 }
 
+class CustomMap {
+  __store = {}
+  set(key, value) {
+    this.__store[`${key}_${typeof key}`] = value;
+  }
+  get(key) {
+    return this.__store[`${key}_${typeof key}`];
+  }
+  has(key) {
+    return Object.prototype.hasOwnProperty.call(this.__store, `${key}_${typeof key}`);
+  }
+}
+
 /**
  * Is string contains rpx
  * note: rpx is an alias to rpx
@@ -101,7 +114,7 @@ export function setUnitPrecision(n) {
  * Use the first params as cache key.
  */
 export function cached(fn) {
-  const cache = new Map();
+  const cache = new CustomMap();
   return function cachedFn(...args) {
     const key = args[0];
     if (!cache.has(key)) cache.set(key, fn(...args));
