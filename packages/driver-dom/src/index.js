@@ -201,9 +201,13 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
             for (let l = hydrationChild.style.length; 0 < l; l--) {
               // Prop name get from node style is hyphenated, eg: background-color
               let stylePropName = hydrationChild.style[l - 1];
-              let camelizedStyleName = camelizeStyleName(stylePropName);
-              if (propValue[camelizedStyleName] == null) {
-                hydrationChild.style[camelizedStyleName] = EMPTY;
+              // In iOS 10, when set transition-timing-function to be empty, it will also delete -webkit-transition-timing-function.
+              // So, stylePropName may be undefined.
+              if (stylePropName) {
+                let camelizedStyleName = camelizeStyleName(stylePropName);
+                if (propValue[camelizedStyleName] == null) {
+                  hydrationChild.style[camelizedStyleName] = EMPTY;
+                }
               }
             }
           }

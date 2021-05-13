@@ -1,6 +1,6 @@
 {
   "name": "driver-dom",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "DOM driver for Rax",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
