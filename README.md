@@ -44,9 +44,9 @@ $ npm run start
 
 #### Start from [VS Code](https://code.visualstudio.com/)
 
-You need to install the [Iceworks extension](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) and invoke the `Iceworks: Create Application` command from the VS Code command palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on Mac):
+You need to install the [AppWorks Pack](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) and invoke the `Create Application` command from the VS Code command palette (`Ctrl + Shift + P` or `Cmd + Shift + P` on Mac):
 
-![vscode](https://user-images.githubusercontent.com/56879942/88181928-1e927f00-cc62-11ea-94fb-06d12dab77d1.gif)
+![vscode](https://img.alicdn.com/imgextra/i4/O1CN01B2NdUc1LVH9UffWpV_!!6000000001304-1-tps-960-720.gif)
 
 ### Developer Tools 🛠
 
@@ -59,7 +59,7 @@ and extension not works in `production` mode.
 
 #### VS Code Extension
 
-You can use [Iceworks VS Code Extension](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) to get better development experience.
+You can use [AppWorks Pack](https://marketplace.visualstudio.com/items?itemName=iceworks-team.iceworks) to get better development experience.
 
 ### Awesome Things 📝
 
