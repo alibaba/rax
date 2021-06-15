@@ -6,13 +6,16 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "exports": {
-    "web": "./es/web.js",
-    "weex": "./es/weex.js",
-    "kraken": "./es/kraken.js",
-    "miniapp": "./es/miniapp.js",
-    "wechat-miniprogram": "./es/miniapp.js",
-    "bytedance-microapp": "./es/miniapp.js",
-    "default": "./es/index.js"
+    ".": {
+      "web": "./es/web.js",
+      "weex": "./es/weex.js",
+      "kraken": "./es/kraken.js",
+      "miniapp": "./es/miniapp.js",
+      "wechat-miniprogram": "./es/miniapp.js",
+      "bytedance-microapp": "./es/miniapp.js",
+      "default": "./es/index.js"
+    },
+    "./*": "./*"
   },
   "sideEffects": false,
   "repository": {
