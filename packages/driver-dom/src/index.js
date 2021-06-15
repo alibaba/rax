@@ -200,10 +200,14 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
             // Set style to empty will change the index of style, so here need to traverse style backwards
             for (let l = hydrationChild.style.length; 0 < l; l--) {
               // Prop name get from node style is hyphenated, eg: background-color
-              let stylePropName = hydrationChild.style[l - 1];
-              let camelizedStyleName = camelizeStyleName(stylePropName);
-              if (propValue[camelizedStyleName] == null) {
-                hydrationChild.style[camelizedStyleName] = EMPTY;
+              const stylePropName = hydrationChild.style[l - 1];
+              // Style with webkit prefix, will cause stylePropName be undefined in iOS 10.1 and 10.2.
+              // Eg. when set transition-timing-function to be empty, it will also delete -webkit-transition-timing-function.
+              if (stylePropName) {
+                const camelizedStyleName = camelizeStyleName(stylePropName);
+                if (propValue[camelizedStyleName] == null) {
+                  hydrationChild.style[camelizedStyleName] = EMPTY;
+                }
               }
             }
           }

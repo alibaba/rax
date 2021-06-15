@@ -4,6 +4,7 @@
   "description": "style-unit",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "files": [
     "lib"
   ],
