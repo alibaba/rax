@@ -1,4 +1,13 @@
-import { isWeex, isWeb, isKraken, isMiniApp, isWeChatMiniProgram, isByteDanceMicroApp } from 'universal-env';
+import {
+  isWeex,
+  isWeb,
+  isKraken,
+  isMiniApp,
+  isWeChatMiniProgram,
+  isByteDanceMicroApp,
+  isBaiduSmartProgram,
+  isKuaiShouMiniProgram
+} from 'universal-env';
 import WebDriver from './web';
 import MiniAppDriver from './miniapp';
 import * as WeexDriver from './weex';
@@ -11,7 +20,7 @@ if (isWeex) {
   currentDriver = WebDriver;
 } else if (isKraken) {
   currentDriver = KrakenDriver;
-} else if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp) {
+} else if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp || isBaiduSmartProgram || isKuaiShouMiniProgram) {
   currentDriver = MiniAppDriver;
 }
 
