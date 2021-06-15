@@ -13,8 +13,8 @@
       "miniapp": "./es/miniapp.js",
       "wechat-miniprogram": "./es/miniapp.js",
       "bytedance-microapp": "./es/miniapp.js",
-      "baidu-smartprogram": "./es/miniapp/index.js",
-      "kuaishou-miniprogram": "./es/miniapp/index.js",
+      "baidu-smartprogram": "./es/miniapp.js",
+      "kuaishou-miniprogram": "./es/miniapp.js",
       "default": "./es/index.js"
     },
     "./*": "./*"
