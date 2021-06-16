@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.3.1
+
+- Fix: web module import effect
+
 ## v3.3.0
 
 - Chore: reduce size by exports fields
