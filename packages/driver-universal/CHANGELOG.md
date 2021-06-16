@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.3.0
+
+- Chore: reduce size by exports fields
+
 ### v3.2.0
 
 - Support bytedance/baidu/kuaishou miniapp
