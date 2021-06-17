@@ -92,7 +92,10 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
         ],
       })),
       replace({
-        'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),
+        values: {
+          'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),
+        },
+        preventAssignment: true,
       }),
       shouldMinify ? terser(terserOptions) : null,
     ]
