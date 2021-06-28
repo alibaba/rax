@@ -1,5 +1,11 @@
 ## Changelog
 
+## v3.3.1
+
+- Chore: remove `Object.assign`
+- Chore: add @babel/helpers for project size
+- Fix: require weex module is `undefined`
+
 ## v3.3.0
 
 - Chore: reduce size by exports fields

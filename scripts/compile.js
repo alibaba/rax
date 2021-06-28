@@ -20,12 +20,11 @@ const glob = require('glob');
 const minimatch = require('minimatch');
 const parseArgs = require('minimist');
 const chokidar = require('chokidar');
+const { IGNORE_PACKAGES } = require('./constants');
 
 const SRC_DIR = 'src';
 const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/{__tests__,__mocks__}/**';
-// Won't update packages
-const IGNORE_PACKAGES = ['rax-miniapp-renderer', 'runtime-shared', 'weex-rax-framework', 'web-rax-framework', 'weex-rax-framework-api'];
 
 const args = parseArgs(process.argv);
 const customPackages = args.packages;
