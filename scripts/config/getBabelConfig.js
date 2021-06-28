@@ -1,5 +1,4 @@
 const babelMerge = require('babel-merge');
-
 const babelConfig = require('../../babel.config')();
 
 module.exports = function(ignoreModule) {
@@ -15,5 +14,8 @@ module.exports = function(ignoreModule) {
     presets: [
       ['@babel/preset-env', envOpt],
     ],
+    plugins: [
+      '@babel/transform-runtime'
+    ]
   });
 };

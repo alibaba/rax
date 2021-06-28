@@ -8,9 +8,6 @@ const { babel } = require('@rollup/plugin-babel');
 const { terser } = require('rollup-plugin-terser');
 const replace = require('@rollup/plugin-replace');
 const gzipSize = require('gzip-size');
-const babelMerge = require('babel-merge');
-
-const babelOptions = require('./config/getBabelConfig')();
 
 const IIFE = 'iife';
 const UMD = 'umd';
@@ -78,7 +75,7 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
         // use /pakacges/ would get error and it seemed to be a rollup-plugin-commonjs bug
         include: /node_modules|style-unit/
       }),
-      babel(babelMerge(babelOptions, {
+      babel({
         babelHelpers: 'bundled',
         exclude: 'node_modules/**', // only transpile our source code
         presets: [
@@ -89,8 +86,8 @@ async function build({ package: packageName, entry = 'src/index.js', name, shoul
               browsers: ['last 2 versions', 'IE >= 9']
             }
           }]
-        ],
-      })),
+        ]
+      }),
       replace({
         values: {
           'process.env.NODE_ENV': JSON.stringify(shouldMinify ? 'production' : 'development'),

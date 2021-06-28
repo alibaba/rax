@@ -2,7 +2,9 @@
 
 ## v3.3.1
 
-- Fix: web module import effect
+- Chore: remove `Object.assign`
+- Chore: add @babel/helpers for project size
+- Fix: require weex module is `undefined`
 
 ## v3.3.0
 

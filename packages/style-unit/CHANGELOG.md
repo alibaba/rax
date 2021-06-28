@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.0.3
+
+- Chore: add `@babel/runtime` as dependency
+
 ### v3.0.2
 
 - Bump version
