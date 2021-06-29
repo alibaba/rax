@@ -20,6 +20,7 @@ const glob = require('glob');
 const minimatch = require('minimatch');
 const parseArgs = require('minimist');
 const chokidar = require('chokidar');
+const { IGNORE_PACKAGES } = require('./constants');
 
 const SRC_DIR = 'src';
 const JS_FILES_PATTERN = '**/*.js';
@@ -44,9 +45,12 @@ function buildPackage(packagesDir, p, isBuildEs) {
   const srcDir = path.resolve(p, SRC_DIR);
   const pattern = path.resolve(srcDir, '**/*');
   const files = glob.sync(pattern, {nodir: true});
+  const dirName = path.basename(p);
+
+  if (IGNORE_PACKAGES.includes(dirName)) return;
 
   process.stdout.write(
-    fixedWidth(`${path.basename(p)}\n`)
+    fixedWidth(`${dirName}\n`)
   );
 
   files.forEach(file => buildFile(packagesDir, file, isBuildEs));
