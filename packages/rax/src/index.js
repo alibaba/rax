@@ -7,6 +7,7 @@ export memo from './memo';
 export Fragment from './fragment';
 export render from './render';
 export Component, { PureComponent } from './vdom/component';
+export { jsx, jsxs, jsxDEV } from './jsx-runtime';
 export version from './version';
 
 import Host from './vdom/host';
