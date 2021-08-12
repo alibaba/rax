@@ -39,7 +39,7 @@ export function handleError(instance, error) {
 
           // Update state to the next render to show the fallback UI.
           if (boundary.constructor && boundary.constructor.getDerivedStateFromError) {
-            const state = boundary.constructor.getDerivedStateFromError();
+            const state = boundary.constructor.getDerivedStateFromError(error);
             boundary.setState(state);
           }
         }, boundaryInternal.__parentInstance);
