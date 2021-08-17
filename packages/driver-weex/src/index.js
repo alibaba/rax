@@ -1,7 +1,7 @@
 import { setRpx, convertUnit } from 'style-unit';
 import * as DriverDOM from 'driver-dom';
 
-// 带有 __weex_v2__ 标记的，可以使用 driver-dom 的逻辑。
+// Use driver-dom in Weex V2
 /* global __weex_v2__ */
 const isWeexV2 = typeof __weex_v2__ === 'object';
 
