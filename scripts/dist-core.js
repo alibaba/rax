@@ -155,10 +155,25 @@ function getRaxVersion() {
 
 const raxVersion = getRaxVersion();
 
-buildCorePackages({ packageName: 'rax', name: 'Rax', replaceValues: { 'process.env.RAX_VERSION': raxVersion } });
-buildCorePackages({ packageName: 'driver-dom', name: 'DriverDom' });
-buildCorePackages({ packageName: 'driver-kraken', name: 'DriverKraken' });
-buildCorePackages({ packageName: 'driver-weex', name: 'DriverKraken' });
+buildCorePackages({
+  packageName: 'rax',
+  name: 'Rax',
+  replaceValues: {
+    'process.env.RAX_VERSION': raxVersion
+  }
+});
+buildCorePackages({
+  packageName: 'driver-dom',
+  name: 'DriverDom'
+});
+buildCorePackages({
+  packageName: 'driver-kraken',
+  name: 'DriverKraken'
+});
+buildCorePackages({
+  packageName: 'driver-weex',
+  name: 'DriverKraken'
+});
 
 // Build rax compat react version to rax/lib/compat/index.js
 build({
