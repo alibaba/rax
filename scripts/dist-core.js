@@ -38,15 +38,15 @@ function getExtension(format) {
  * @param {Object} buildOptions.replaceValues rollup replace plugin values
  */
 async function build({
-    packageName,
-    name,
-    entry = 'src/index.js',
-    outputPath,
-    shouldMinify = false,
-    format = UMD,
-    external,
-    replaceValues,
-  }) {
+  packageName,
+  name,
+  entry = 'src/index.js',
+  outputPath,
+  shouldMinify = false,
+  format = UMD,
+  external,
+  replaceValues,
+}) {
   const input = `./packages/${packageName}/${entry}`;
   const output = {
     name,
@@ -139,9 +139,9 @@ function buildCorePackages(options) {
   build(options);
   build({ ...options, shouldMinify: true });
   build({ ...options, format: CJS });
-  build({ ...options,  format: CJS, shouldMinify: true });
-  build({ ...options,  format: ESM });
-  build({ ...options,  format: ESM, shouldMinify: true });
+  build({ ...options, format: CJS, shouldMinify: true });
+  build({ ...options, format: ESM });
+  build({ ...options, format: ESM, shouldMinify: true });
 }
 
 // Get rax version
