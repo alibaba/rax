@@ -9,7 +9,6 @@ const { terser } = require('rollup-plugin-terser');
 const replace = require('@rollup/plugin-replace');
 const gzipSize = require('gzip-size');
 
-const IIFE = 'iife';
 const UMD = 'umd';
 const ESM = 'esm';
 const CJS = 'cjs';
@@ -160,9 +159,6 @@ buildCorePackages({ packageName: 'rax', name: 'Rax', replaceValues: { 'process.e
 buildCorePackages({ packageName: 'driver-dom', name: 'DriverDom' });
 buildCorePackages({ packageName: 'driver-kraken', name: 'DriverKraken' });
 buildCorePackages({ packageName: 'driver-weex', name: 'DriverKraken' });
-
-build({ packageName: 'driver-worker', name: 'DriverWorker', format: IIFE });
-build({ packageName: 'driver-worker', name: 'DriverWorker', format: IIFE, shouldMinify: true });
 
 // Build rax compat react version to rax/lib/compat/index.js
 build({

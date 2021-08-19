@@ -20,14 +20,13 @@ const glob = require('glob');
 const minimatch = require('minimatch');
 const parseArgs = require('minimist');
 const chokidar = require('chokidar');
-const { IGNORE_PACKAGES } = require('./constants');
 
 const SRC_DIR = 'src';
 const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/{__tests__,__mocks__}/**';
 
 // Don't need compile packages
-const IGNORE_COMPILE_PACKAGES = ['rax', 'driver-work'];
+const IGNORE_COMPILE_PACKAGES = ['rax'];
 
 const args = parseArgs(process.argv);
 const customPackages = args.packages;
@@ -49,8 +48,6 @@ function buildPackage(packagesDir, p, isBuildEs) {
   const pattern = path.resolve(srcDir, '**/*');
   const files = glob.sync(pattern, {nodir: true});
   const dirName = path.basename(p);
-
-  if (IGNORE_PACKAGES.includes(dirName)) return;
 
   process.stdout.write(
     fixedWidth(`${dirName}\n`)

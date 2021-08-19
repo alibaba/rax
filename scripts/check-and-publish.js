@@ -6,7 +6,6 @@ const { join } = require('path');
 const { spawnSync } = require('child_process');
 const axios = require('axios');
 const semver = require('semver');
-const { IGNORE_PACKAGES } = require('./constants');
 
 const RETRY_LIMIT = 8;
 const TIMEOUT = 5000;
@@ -111,7 +110,6 @@ function checkVersionAndPublish() {
     if (ret.length > 0) {
       for (let i = 0; i < ret.length; i++) {
         const { name, workDir, local, tag } = ret[i];
-        if (IGNORE_PACKAGES.includes(name)) continue;
         publish(name, workDir, local, tag);
       }
     }
