@@ -12,7 +12,6 @@ const gzipSize = require('gzip-size');
 const IIFE = 'iife';
 const UMD = 'umd';
 const ESM = 'esm';
-const CJS = 'cjs';
 
 function transformBundleFormat({ input, name, format, entry, shouldExportDefault }) {
   return format === IIFE ? virtual({
@@ -132,11 +131,3 @@ buildCorePackages('rax', 'Rax');
 buildCorePackages('driver-dom', 'DriverDOM');
 buildCorePackages('driver-kraken', 'DriverKraken');
 buildCorePackages('driver-weex', 'DriverWeex');
-
-build({ package: 'driver-worker', name: 'DriverWorker' });
-build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, shouldExportDefault: true });
-build({ package: 'driver-worker', name: 'DriverWorker', format: IIFE, shouldExportDefault: true, shouldMinify: true });
-build({ package: 'driver-worker', name: 'DriverWorker', format: ESM });
-
-build({ package: 'rax-miniapp-renderer', format: CJS });
-build({ package: 'rax-miniapp-renderer', format: CJS, shouldMinify: true });
