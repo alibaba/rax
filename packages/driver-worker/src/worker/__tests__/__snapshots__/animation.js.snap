@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Animation merge style 1`] = `
-Object {
-  "transform": "rotate(30deg)",
-}
-`;
