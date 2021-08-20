@@ -1,4 +1,9 @@
 import { setRpx, convertUnit } from 'style-unit';
+import * as DriverDOM from 'driver-dom';
+
+// Use driver-dom in Weex V2
+/* global __weex_v2__ */
+const isWeexV2 = typeof __weex_v2__ === 'object';
 
 const STYLE = 'style';
 const ID = 'id';
@@ -20,46 +25,65 @@ function updateWeexTextValue(node) {
 
 const nodeMaps = {};
 /* global __weex_document__ */
-const document = typeof __weex_document__ === 'object' ?
+const weexDocument = typeof __weex_document__ === 'object' ?
   __weex_document__ : typeof document === 'object' ?
     document : null;
 
 export function getElementById(id) {
+  if (isWeexV2) {
+    return document.getElementById(id);
+  }
   return nodeMaps[id];
 }
 
 export function createBody(type, props) {
-  if (document.body) {
-    return document.body;
+  if (isWeexV2) {
+    return DriverDOM.createBody();
+  }
+  if (weexDocument.body) {
+    return weexDocument.body;
   }
 
-  const documentElement = document.documentElement;
-  const body = document.createBody(type, props);
+  const documentElement = weexDocument.documentElement;
+  const body = weexDocument.createBody(type, props);
   documentElement.appendChild(body);
 
   return body;
 }
 
 export function createComment(content) {
-  return document.createComment(content);
+  return weexDocument.createComment(content);
 }
 
-export function createEmpty() {
+export function createEmpty(component) {
+  if (isWeexV2) {
+    return DriverDOM.createEmpty(component);
+  }
   return createComment(EMPTY);
 }
 
-export function createText(text) {
+export function createText(text, component) {
+  if (isWeexV2) {
+    return DriverDOM.createText(text, component);
+  }
   // Use comment node type mock text node
   return createComment(text);
 }
 
 export function updateText(node, text) {
+  if (isWeexV2) {
+    return DriverDOM.updateText(node, text);
+  }
   node.value = text;
   updateWeexTextValue(node.parentNode);
 }
 
-export function createElement(type, props = {}) {
+export function createElement(type, props, component) {
+  if (isWeexV2) {
+    return DriverDOM.createElement(type, props, component, true);
+  }
   const style = {};
+  props = props || {};
   const originStyle = props.style;
   if (originStyle) {
     for (let prop in originStyle) {
@@ -67,7 +91,7 @@ export function createElement(type, props = {}) {
     }
   }
 
-  const node = document.createElement(type, {
+  const node = weexDocument.createElement(type, {
     style
   });
 
@@ -92,6 +116,9 @@ export function createElement(type, props = {}) {
 }
 
 export function appendChild(node, parent) {
+  if (isWeexV2) {
+    return DriverDOM.appendChild(node, parent);
+  }
   parent.appendChild(node);
 
   if (parent.type === TEXT) {
@@ -100,6 +127,9 @@ export function appendChild(node, parent) {
 }
 
 export function removeChild(node, parent) {
+  if (isWeexV2) {
+    return DriverDOM.removeChild(node, parent);
+  }
   parent = parent || node.parentNode;
   let id = node.attr && node.attr[ID];
   if (id != null) {
@@ -114,6 +144,9 @@ export function removeChild(node, parent) {
 }
 
 export function replaceChild(newChild, oldChild, parent) {
+  if (isWeexV2) {
+    return DriverDOM.replaceChild(newChild, oldChild, parent);
+  }
   parent = parent || oldChild.parentNode;
   let previousSibling = oldChild.previousSibling;
   let nextSibling = oldChild.nextSibling;
@@ -129,6 +162,9 @@ export function replaceChild(newChild, oldChild, parent) {
 }
 
 export function insertAfter(node, after, parent) {
+  if (isWeexV2) {
+    return DriverDOM.insertAfter(node, after, parent);
+  }
   parent = parent || after.parentNode;
   parent.insertAfter(node, after);
 
@@ -138,6 +174,9 @@ export function insertAfter(node, after, parent) {
 }
 
 export function insertBefore(node, before, parent) {
+  if (isWeexV2) {
+    return DriverDOM.insertBefore(node, before, parent);
+  }
   parent = parent || before.parentNode;
   parent.insertBefore(node, before);
 
@@ -147,16 +186,25 @@ export function insertBefore(node, before, parent) {
 }
 
 export function addEventListener(node, eventName, eventHandler, props) {
+  if (isWeexV2) {
+    return DriverDOM.addEventListener(node, eventName, eventHandler);
+  }
   // https://github.com/apache/incubator-weex/blob/master/runtime/vdom/Element.js#L421
   let params = props[eventName + 'EventParams'];
   return node.addEvent(eventName, eventHandler, params);
 }
 
 export function removeEventListener(node, eventName, eventHandler) {
+  if (isWeexV2) {
+    return DriverDOM.removeEventListener(node, eventName, eventHandler);
+  }
   return node.removeEvent(eventName, eventHandler);
 }
 
 export function removeAttribute(node, propKey, propValue) {
+  if (isWeexV2) {
+    return DriverDOM.removeAttribute(node, propKey);
+  }
   if (propKey == ID) {
     nodeMaps[propValue] = null;
   }
@@ -164,7 +212,10 @@ export function removeAttribute(node, propKey, propValue) {
   return node.setAttr(propKey, undefined, false);
 }
 
-export function setAttribute(node, propKey, propValue) {
+export function setAttribute(node, propKey, propValue, isSvg) {
+  if (isWeexV2) {
+    return DriverDOM.setAttribute(node, propKey, propValue, isSvg);
+  }
   if (propKey == ID) {
     nodeMaps[propValue] = node;
   }
@@ -180,6 +231,9 @@ export function setAttribute(node, propKey, propValue) {
 }
 
 export function setStyle(node, style) {
+  if (isWeexV2) {
+    return DriverDOM.setStyle(node, style, true);
+  }
   for (let prop in style) {
     // Translate `rpx` to weex `px`
     style[prop] = convertUnit(style[prop], prop);
@@ -189,17 +243,17 @@ export function setStyle(node, style) {
 
 export function beforeRender() {
   // Turn off batched updates
-  document.open();
+  weexDocument.open();
 
   // Set `rpx` unit converter
   setRpx(1);
 }
 
 export function afterRender() {
-  if (document.listener && document.listener.createFinish) {
-    document.listener.createFinish();
+  if (weexDocument.listener && weexDocument.listener.createFinish) {
+    weexDocument.listener.createFinish();
   }
 
   // Turn on batched updates
-  document.close();
+  weexDocument.close();
 }
