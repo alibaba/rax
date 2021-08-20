@@ -25,6 +25,9 @@ const SRC_DIR = 'src';
 const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/{__tests__,__mocks__}/**';
 
+// Don't need compile packages
+const IGNORE_COMPILE_PACKAGES = ['rax'];
+
 const args = parseArgs(process.argv);
 const customPackages = args.packages;
 
@@ -56,6 +59,7 @@ function buildPackage(packagesDir, p, isBuildEs) {
 
 function getPackages(packagesDir, customPackages) {
   return fs.readdirSync(packagesDir)
+    .filter(file => !IGNORE_COMPILE_PACKAGES.includes(file)) // Exclude compile rax
     .map(file => path.resolve(packagesDir, file))
     .filter(f => {
       if (customPackages) {

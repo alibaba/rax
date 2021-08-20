@@ -5,7 +5,7 @@ on:
     branches:
       - master
   pull_request:
-    brenches:
+    branches:
       - '^bench'
 
 jobs:
