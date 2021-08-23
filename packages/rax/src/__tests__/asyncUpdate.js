@@ -7,7 +7,7 @@ import Host from '../vdom/host';
 import ServerDriver from 'driver-server';
 import { useState, useEffect } from '../hooks';
 
-describe('asyncUpdate', () => {
+describe('async update unmounted component', () => {
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
@@ -29,7 +29,7 @@ describe('asyncUpdate', () => {
     jest.useRealTimers();
   });
 
-  it('should no error with class component', () => {
+  it('should warn about class component', () => {
     const container = createNodeElement('div');
     let destroyChild;
 
@@ -74,7 +74,7 @@ describe('asyncUpdate', () => {
     }).toWarnDev("Warning: Can't perform a Rax state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.", { withoutStack: true });
   });
 
-  it('should no error with function component', () => {
+  it('should warn about function component', () => {
     const container = createNodeElement('div');
     let destroyChild;
 
