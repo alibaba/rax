@@ -7,7 +7,7 @@ import Host from '../vdom/host';
 import ServerDriver from 'driver-server';
 import { useState, useEffect } from '../hooks';
 
-describe('async update unmounted component', () => {
+describe('update unmounted component', () => {
   function createNodeElement(tagName) {
     return {
       nodeType: 1,
