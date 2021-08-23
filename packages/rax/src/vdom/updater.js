@@ -108,7 +108,7 @@ function requestUpdate(component, partialState, callback) {
   if (!internal) {
     if (process.env.NODE_ENV !== 'production') {
       // Block other render
-      // Host.__isUpdating = false;
+      Host.__isUpdating = false;
       console.error(
         "Warning: Can't perform a Rax state update on an unmounted component. This " +
           'is a no-op, but it indicates a memory leak in your application. To ' +
