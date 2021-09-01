@@ -106,6 +106,18 @@ function requestUpdate(component, partialState, callback) {
   let internal = component[INTERNAL];
 
   if (!internal) {
+    if (process.env.NODE_ENV !== 'production') {
+      // Block other render
+      Host.__isUpdating = false;
+      console.error(
+        "Warning: Can't perform a Rax state update on an unmounted component. This " +
+          'is a no-op, but it indicates a memory leak in your application. To ' +
+          'fix, cancel all subscriptions and asynchronous tasks in %s.',
+        component.__isReactiveComponent
+          ? 'a useEffect cleanup function'
+          : 'the componentWillUnmount method',
+      );
+    }
     return;
   }
 
@@ -117,6 +129,10 @@ function requestUpdate(component, partialState, callback) {
 
   // setState
   if (partialState) {
+    // Function Component should force update
+    if (component.__isReactiveComponent) {
+      internal.__isPendingForceUpdate = true;
+    }
     enqueueState(internal, partialState);
     // State pending when request update in componentWillMount and componentWillReceiveProps,
     // isPendingState default is false value (false or null) and set to true after componentWillReceiveProps,
