@@ -183,6 +183,6 @@ build({
   entry: 'src/compat/index.js',
   outputPath: './packages/rax/lib/compat/index.js',
   format: CJS,
-  external: ['../..index', 'rax-children', 'rax-is-valid-element', 'rax-create-factory', 'rax-clone-element'],
+  external: ['../../index', 'rax-children', 'rax-is-valid-element', 'rax-create-factory', 'rax-clone-element'],
   replaceValues: { 'process.env.RAX_VERSION': raxVersion },
 });
