@@ -1,19 +1,15 @@
 import { isWeb, isWeex } from 'universal-env';
 
-const RPX_REG = /[-+]?\d*\.?\d+rpx/g;
-const GLOBAL_RPX_COEFFICIENT = '__rpx_coefficient__';
-const GLOBAL_VIEWPORT_WIDTH = '__viewport_width__';
-const global =
-  typeof window === 'object'
-    ? window
-    : typeof global === 'object'
-      ? global
-      : {};
+const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
+let __rpx_coefficient__;
+let __viewport_width__;
+
 // convertUnit method targetPlatform
 let targetPlatform = isWeb ? 'web' : isWeex ? 'weex' : '';
 
 // Init toFixed method
-const unitPrecision = 4;
+let unitPrecision = 4;
+
 const toFixed = (number, precision) => {
   const multiplier = Math.pow(10, precision + 1);
   const wholeNumber = Math.floor(number * multiplier);
@@ -21,10 +17,10 @@ const toFixed = (number, precision) => {
 };
 
 // Dedault decimal px transformer.
-let decimalPixelTransformer = (rpx) => parseFloat(rpx) * getRpx() + 'px';
+let decimalPixelTransformer = (rpx, $1) => $1 ? parseFloat(rpx) * getRpx() + 'px' : rpx;
 
 // Default decimal vw transformer.
-const decimalVWTransformer = (rpx) => toFixed(parseFloat(rpx) / (getViewportWidth() / 100), unitPrecision) + 'vw';
+const decimalVWTransformer = (rpx, $1) => $1 ? toFixed(parseFloat(rpx) / (getViewportWidth() / 100), unitPrecision) + 'vw' : rpx;
 
 // Default 1 rpx to 1 px
 if (getRpx() === undefined) {
@@ -34,6 +30,19 @@ if (getRpx() === undefined) {
 // Viewport width, default to 750.
 if (getViewportWidth() === undefined) {
   setViewportWidth(750);
+}
+
+class CustomMap {
+  __store = {}
+  set(key, value) {
+    this.__store[`${key}_${typeof key}`] = value;
+  }
+  get(key) {
+    return this.__store[`${key}_${typeof key}`];
+  }
+  has(key) {
+    return Object.prototype.hasOwnProperty.call(this.__store, `${key}_${typeof key}`);
+  }
 }
 
 /**
@@ -68,19 +77,19 @@ export function calcRpx(str) {
 }
 
 export function getRpx() {
-  return global[GLOBAL_RPX_COEFFICIENT];
+  return __rpx_coefficient__;
 }
 
 export function setRpx(rpx) {
-  global[GLOBAL_RPX_COEFFICIENT] = rpx;
+  __rpx_coefficient__ = rpx;
 }
 
 export function getViewportWidth() {
-  return global[GLOBAL_VIEWPORT_WIDTH];
+  return __viewport_width__;
 }
 
 export function setViewportWidth(viewport) {
-  global[GLOBAL_VIEWPORT_WIDTH] = viewport;
+  __viewport_width__ = viewport;
 }
 
 /**
@@ -92,7 +101,31 @@ export function setDecimalPixelTransformer(transformer) {
   decimalPixelTransformer = transformer;
 }
 
-const cache = Object.create(null);
+/**
+ * Set unit precision.
+ * @param n {Number} Unit precision, default to 4.
+ */
+export function setUnitPrecision(n) {
+  unitPrecision = n;
+}
+
+/**
+ * Create a cached version of a pure function.
+ * Use the first params as cache key.
+ */
+export function cached(fn) {
+  const cache = new CustomMap();
+  return function cachedFn(...args) {
+    const key = args[0];
+    if (!cache.has(key)) cache.set(key, fn(...args));
+    return cache.get(key);
+  };
+}
+
+export function setTargetPlatform(platform) {
+  targetPlatform = platform;
+}
+
 /**
  * Convert rpx.
  * @param value
@@ -100,17 +133,9 @@ const cache = Object.create(null);
  * @param platform
  * @return {String} Transformed value.
  */
-export function convertUnit(value, prop, platform) {
-  let cacheKey = `${prop}-${value}`;
-  const hit = cache[cacheKey];
+export const convertUnit = cached((value, prop, platform) => {
   if (platform) {
-    cacheKey += `-${platform}`;
-    targetPlatform = platform;
+    setTargetPlatform(platform);
   }
-  if (hit) {
-    return hit;
-  } else {
-    value = value + '';
-    return cache[cacheKey] = isRpx(value) ? calcRpx(value) : value;
-  }
-}
+  return isRpx(value) ? calcRpx(value) : value;
+});

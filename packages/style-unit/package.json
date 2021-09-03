@@ -1,9 +1,10 @@
 {
   "name": "style-unit",
-  "version": "3.0.0",
+  "version": "3.0.3",
   "description": "style-unit",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "files": [
     "lib"
   ],
@@ -16,6 +17,7 @@
   },
   "homepage": "https://github.com/alibaba/rax#readme",
   "dependencies": {
-    "universal-env": "^2.0.0"
+    "universal-env": "^3.0.0",
+    "@babel/runtime": "^7.14.6"
   }
 }

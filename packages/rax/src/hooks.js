@@ -63,7 +63,7 @@ export function useState(initialState) {
 
       if (!is(newState, eagerState)) {
         // Current instance is in render update phase.
-        // After this one render finish, will containue run.
+        // After this one render finish, will continue run.
         hook[2] = newState;
         if (getCurrentInstance() === currentInstance) {
           // Marked as is scheduled that could finish hooks.

@@ -7,6 +7,9 @@ module.exports = function(api) {
       '@babel/preset-flow',
       ['@babel/preset-env', {
         'loose': true,
+        'targets': {
+          'esmodules': true
+        }
       }],
       ['@babel/preset-react', {
         'pragma': 'createElement'
@@ -14,9 +17,19 @@ module.exports = function(api) {
     ],
     'plugins': [
       '@babel/plugin-proposal-export-default-from',
-      ['@babel/plugin-proposal-class-properties', { 'loose': false }],
+      [
+        '@babel/plugin-proposal-class-properties',
+        {
+          loose: true
+        }
+      ],
       'babel-plugin-transform-jsx-stylesheet',
-      ['@babel/plugin-proposal-decorators', { 'legacy': true }],
+      [
+        '@babel/plugin-proposal-decorators',
+        {
+          decoratorsBeforeExport: true
+        }
+      ],
       '@babel/plugin-syntax-dynamic-import',
     ],
     'ignore': [

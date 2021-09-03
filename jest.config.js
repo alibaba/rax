@@ -1,7 +1,7 @@
 // jest.config.js
 
 // Note: If you are using babel version 7 you have to install babel-jest with
-// yarn add --dev babel-jest 'babel-core@^7.0.0-bridge' @babel/core
+// yarn add --dev babel-jest @babel/core
 
 module.exports = {
   'collectCoverage': true,
@@ -10,7 +10,7 @@ module.exports = {
     './scripts/jest/setupEnvironment.js',
     'jest-localstorage-mock'
   ],
-  'setupTestFrameworkScriptFile': './scripts/jest/setupTests.js',
+  'setupFilesAfterEnv': ['./scripts/jest/setupTests.js'],
   'moduleNameMapper': {
     // https://jestjs.io/docs/en/webpack#handling-static-assets
     // For CSS Modules

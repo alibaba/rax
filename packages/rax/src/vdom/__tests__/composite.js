@@ -697,21 +697,21 @@ describe('CompositeComponent', function() {
         super(props);
         this.state = { hasError: false };
       }
-    
+
       static getDerivedStateFromError(error) {
         return { hasError: true };
       }
-    
+
       componentDidCatch(error, errorInfo) {
         // log
       }
-    
+
       render() {
         if (this.state.hasError) {
           return <h1>Something went wrong.</h1>;
         }
-    
-        return this.props.children; 
+
+        return this.props.children;
       }
     }
 
@@ -735,17 +735,17 @@ describe('CompositeComponent', function() {
         super(props);
         this.state = { hasError: false };
       }
-    
+
       static getDerivedStateFromError(error) {
         return { hasError: true };
       }
-    
+
       render() {
         if (this.state.hasError) {
           return <h1>Something went wrong.</h1>;
         }
-    
-        return this.props.children; 
+
+        return this.props.children;
       }
     }
 
@@ -760,6 +760,46 @@ describe('CompositeComponent', function() {
 
     jest.runAllTimers();
     expect(container.childNodes[0].childNodes[0].data).toBe('Something went wrong.');
+  });
+
+  it('should catch the exact error with getDerivedStateFromError.', () => {
+    let caughtError;
+    let exampleError = new Error('Example error message');
+    let container = createNodeElement('div');
+
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+      }
+
+      static getDerivedStateFromError(error) {
+        caughtError = error;
+        return { hasError: true, error };
+      }
+
+      render() {
+        if (this.state.hasError) {
+          return <h1>{this.state.error.message}</h1>;
+        }
+
+        return this.props.children;
+      }
+    }
+
+    function BrokenRender(props) {
+      throw exampleError;
+    }
+
+    render(
+      <ErrorBoundary>
+        <BrokenRender />
+      </ErrorBoundary>, container);
+
+    jest.runAllTimers();
+
+    expect(caughtError).toBe(exampleError);
+    expect(container.childNodes[0].childNodes[0].data).toBe('Example error message');
   });
 
   it('should render correct when prevRenderedComponent did not generate nodes', () => {

@@ -110,7 +110,6 @@ export default class ReactiveComponent extends Component {
   }
 
   __update() {
-    this[INTERNAL].__isPendingForceUpdate = true;
     this.setState(EMPTY_OBJECT);
   }
 

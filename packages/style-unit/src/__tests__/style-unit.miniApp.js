@@ -1,4 +1,4 @@
-import { convertUnit, getViewportWidth, setViewportWidth } from '..';
+import { convertUnit } from '..';
 
 jest.mock('universal-env', () => {
   return {
@@ -10,8 +10,8 @@ jest.mock('universal-env', () => {
 
 describe('Mini-App style-unit', () => {
   describe('convertUnit', () => {
-    it('should recognize number', () => {
-      expect(convertUnit(500, 'width')).toEqual('500');
+    it('should not recognize number', () => {
+      expect(convertUnit(500, 'width')).toEqual(500);
     });
 
     it('should recognize number string', () => {
@@ -36,7 +36,7 @@ describe('Mini-App style-unit', () => {
 
     it('should recognize 0', () => {
       expect(convertUnit('0', 'width')).toEqual('0');
-      expect(convertUnit(0, 'width')).toEqual('0');
+      expect(convertUnit(0, 'width')).toEqual(0);
     });
 
     it('should recognize transform', () => {

@@ -1,6 +1,6 @@
 {
   "name": "mobx-rax",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Official Rax bindings for mobx.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -20,7 +20,8 @@
     "rax": "^1.0.0",
     "rax-children": "^1.0.0",
     "rax-find-dom-node": "^1.0.0",
-    "react-lifecycles-compat": "^3.0.4"
+    "react-lifecycles-compat": "^3.0.4",
+    "@babel/runtime": "^7.14.6"
   },
   "peerDependencies": {
     "mobx": "^4.0.0 || ^5.0.0",

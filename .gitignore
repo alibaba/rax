@@ -11,3 +11,5 @@ build/
 coverage/
 node_modules/
 examples/test
+.eslintcache
+*.lock

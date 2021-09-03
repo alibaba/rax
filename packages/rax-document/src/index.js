@@ -3,11 +3,15 @@ import { createElement } from 'rax';
 function Root(props, context) {
   const { __initialHtml } = context;
 
-  if (__initialHtml) {
-    return <div id="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />;
+  // comment node for ssr parse root node position
+  if (process.env.__IS_SERVER__) {
+    return [
+      { __html: '<!--__BEFORE_ROOT__-->' },
+      <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />,
+      { __html: '<!--__AFTER_ROOT__-->' }
+    ];
   }
-
-  return <div id="root" />;
+  return <div id="root" key="root" dangerouslySetInnerHTML={{ __html: __initialHtml || '' }} />;
 }
 
 function Manifest(props, context) {
@@ -49,9 +53,10 @@ function Style(props, context) {
 function Script(props, context) {
   const { __scripts = [] } = context;
 
-  // props such as crossorigin can be passed to script tag
+  // props such as type can be passed to script tag
+  // script default crossorigin value is anonymous
   return __scripts.map(
-    (src, index) => <script {...props} src={src} key={`script_${index}`}>
+    (src, index) => <script crossorigin="anonymous" {...props} src={src} key={`script_${index}`}>
       {/* self-closing script element will not work in HTML */}
     </script>
   );

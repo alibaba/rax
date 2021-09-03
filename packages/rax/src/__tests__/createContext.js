@@ -7,7 +7,7 @@ import render from '../render';
 import ServerDriver from 'driver-server';
 import createContext from '../createContext';
 import createRef from '../createRef';
-import {useState} from '../hooks';
+import { useState } from '../hooks';
 
 describe('createContext', () => {
   function createNodeElement(tagName) {
