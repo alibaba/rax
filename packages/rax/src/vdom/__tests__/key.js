@@ -158,6 +158,7 @@ describe('Key', function() {
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('3');
   });
 
+  // fixed issue https://github.com/alibaba/rax/issues/2209
   it('Should not warn when element is ""', () => {
     let container = createNodeElement('container');
     class App extends Component {
