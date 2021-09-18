@@ -157,4 +157,33 @@ describe('Key', function() {
     expect(container.childNodes[0].childNodes[0].childNodes[0].data).toBe('2');
     expect(container.childNodes[0].childNodes[1].childNodes[0].data).toBe('3');
   });
+
+  it('Should not warn when element is ""', () => {
+    let container = createNodeElement('container');
+    class App extends Component {
+      render() {
+        return (
+          <div>
+            {
+              [
+                { id: 0, prefix: '', suffix: '' },
+                { id: 1, prefix: '', suffix: '' }
+              ].map((item) => {
+                return (
+                  <div key={item.id}>
+                    {item.prefix}
+                    {item.suffix}
+                  </div>
+                );
+              })
+            }
+          </div>
+        );
+      }
+    }
+
+    expect(() => {
+      render(<App />, container);
+    }).toWarnDev([], {withoutStack: true});
+  });
 });
