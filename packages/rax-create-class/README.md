@@ -1,1 +1,0 @@
-# rax-create-class
