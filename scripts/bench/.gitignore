@@ -1,7 +1,0 @@
-node_modules
-dist
-prefs
-errors
-results
-
-frameworks/*/package-lock.json
