@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-Rax is a progressive React framework for building universal applications.
+Rax is a progressive framework for building universal applications.
 
 <p align="center">
   <a href="https://github.com/alibaba/rax/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/rax.svg"></a>
