@@ -10,7 +10,9 @@ import {
 } from 'universal-env';
 
 let currentDriver;
-if (isWeex) {
+if (typeof ace !== 'undefined') {
+  currentDriver = require('./harmony').default;
+} else if (isWeex) {
   currentDriver = require('./weex').default;
 } else if (isWeb) {
   currentDriver = require('./web').default;
