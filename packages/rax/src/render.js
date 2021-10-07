@@ -1,6 +1,10 @@
 import injectRenderOptions from './vdom/injectRenderOptions';
 import Instance from './vdom/instance';
 import { isFunction, EMPTY_OBJECT } from './types';
+import inject from './vdom/inject';
+
+// Inject init options to host
+inject();
 
 function render(element, container, options, callback) {
   // Compatible with `render(element, container, callback)`
