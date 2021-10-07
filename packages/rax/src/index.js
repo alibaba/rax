@@ -14,12 +14,16 @@ import Instance from './vdom/instance';
 import Element from './vdom/element';
 import flattenChildren from './vdom/flattenChildren';
 import DevtoolsHook from './devtools/index';
+import inject from './vdom/inject';
+
+// Inject init options to host
+inject();
 
 export const shared = {
   Host,
   Instance,
   Element,
-  flattenChildren
+  flattenChildren,
 };
 
 if (process.env.NODE_ENV !== 'production') {

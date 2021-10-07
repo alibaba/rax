@@ -1,4 +1,4 @@
-import inject from './vdom/inject';
+import injectRenderOptions from './vdom/injectRenderOptions';
 import Instance from './vdom/instance';
 import { isFunction, EMPTY_OBJECT } from './types';
 
@@ -11,7 +11,7 @@ function render(element, container, options, callback) {
 
   options = options || EMPTY_OBJECT;
   // Init inject
-  inject(options);
+  injectRenderOptions(options);
 
   let rootComponent = Instance.mount(element, container, options);
   let componentInstance = rootComponent.__getPublicInstance();

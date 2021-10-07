@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### 1.2.3
+
+- chore: move the configuration not related to rendering to inject, others move to `injectRenderOptions`
+
 ### 1.2.2
 
 - fix: `lib/compat` bundle error path

@@ -1,5 +1,4 @@
-import createElement from '../../createElement';
-import Component from '../../vdom/component';
+import { createElement, Component } from 'rax';
 import renderer from '../renderer';
 
 const STATUS = {

@@ -1,9 +1,10 @@
 {
   "name": "rax-test-renderer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Rax renderer for snapshot testing.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alibaba/rax.git"
@@ -12,6 +13,9 @@
     "url": "https://github.com/alibaba/rax/issues"
   },
   "homepage": "https://github.com/alibaba/rax#readme",
+  "dependencies": {
+    "driver-server": "^1.0.0"
+  },
   "peerDependencies": {
     "rax": "^1.0.0"
   }
