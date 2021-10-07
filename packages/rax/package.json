@@ -15,9 +15,11 @@
   "engines": {
     "npm": ">=3.0.0"
   },
+  "devDependencies": {
+    "driver-server": "^1.0.0"
+  },
   "dependencies": {
     "@babel/runtime": "^7.2.0",
-    "driver-server": "^1.0.0",
     "prop-types": "^15.7.2",
     "rax-children": "^1.0.0",
     "rax-clone-element": "^1.0.0",
