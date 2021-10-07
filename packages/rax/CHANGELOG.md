@@ -2,7 +2,7 @@
 
 ### 1.2.3
 
-- chore: move the configuration not related to rendering to inject, others move to `injectRenderOptions`
+- chore: move the configuration not related to rendering to `inject` method, others move to `injectRenderOptions` method
 
 ### 1.2.2
 
