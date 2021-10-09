@@ -1,6 +1,6 @@
 {
   "name": "rax",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A universal React-compatible render engine.",
   "license": "BSD-3-Clause",
   "main": "index.js",
