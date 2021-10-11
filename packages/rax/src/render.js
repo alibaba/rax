@@ -3,7 +3,7 @@ import Instance from './vdom/instance';
 import { isFunction, EMPTY_OBJECT } from './types';
 import inject from './vdom/inject';
 
-// Inject init options to host
+// Inject init options to host, avoid circle deps between class component file and ./vdom/host
 inject();
 
 function render(element, container, options, callback) {
