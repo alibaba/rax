@@ -2,7 +2,8 @@ import { isString } from '../types';
 import { warning } from '../error';
 
 export default function getElementKeyName(children, element, index) {
-  const elementKey = element && element.key;
+  // `element && element.key` will cause elementKey receive "" when element is ""
+  const elementKey = element ? element.key : void 0;
   const defaultName = '.' + index.toString(36); // Inner child name default format fallback
 
   // Key should must be string type
