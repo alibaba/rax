@@ -37,10 +37,17 @@ function Data(props, context) {
   const { __initialData } = context;
 
   if (__initialData) {
-    return <script data-from="server" dangerouslySetInnerHTML={{__html: 'window.__INITIAL_DATA__=' + __initialData}} />;
+    return <script data-from="server" dangerouslySetInnerHTML={{__html: 'window.__INITIAL_DATA__=' + stripXSS(__initialData)}} />;
   }
 
   return null;
+}
+
+function stripXSS(string) {
+  return string
+    .replace(/</g, '\\u003C')
+    .replace(/>/g, '\\u003E')
+    .replace(/\//g, '\\u002F');
 }
 
 // Named by role rather than implementationm, so component name are `Style` rather than `Styles`.
