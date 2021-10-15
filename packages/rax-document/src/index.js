@@ -44,10 +44,12 @@ function Data(props, context) {
 }
 
 function stripXSS(string) {
-  return string
-    .replace(/</g, '\\u003C')
-    .replace(/>/g, '\\u003E')
-    .replace(/\//g, '\\u002F');
+  const escapedChars = {
+    '<': '\\u003C',
+    '>': '\\u003E',
+    '/': '\\u002F',
+  };
+  return string.replace(/[<>\/]/g, char => escapedChars[char]);
 }
 
 // Named by role rather than implementationm, so component name are `Style` rather than `Styles`.
