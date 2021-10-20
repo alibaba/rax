@@ -19,7 +19,7 @@ export const shared = {
   Host,
   Instance,
   Element,
-  flattenChildren
+  flattenChildren,
 };
 
 if (process.env.NODE_ENV !== 'production') {
