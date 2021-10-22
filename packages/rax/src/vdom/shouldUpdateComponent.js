@@ -1,10 +1,10 @@
-import {isArray, isString, isNumber, isObject, isNull} from '../types';
+import {isArray, isString, isNumber, isObject, isFalsy} from '../types';
 
 function shouldUpdateComponent(prevElement, nextElement) {
-  let prevEmpty = isNull(prevElement);
-  let nextEmpty = isNull(nextElement);
-  if (prevEmpty || nextEmpty) {
-    return prevEmpty === nextEmpty;
+  let prevFalsy = isFalsy(prevElement);
+  let nextFalsy = isFalsy(nextElement);
+  if (prevFalsy || nextFalsy) {
+    return prevFalsy === nextFalsy;
   }
 
   if (isArray(prevElement) && isArray(nextElement)) {

@@ -26,5 +26,9 @@ export function isNumber(string) {
   return typeof string === 'number';
 }
 
+export function isFalsy(val) {
+  return !Boolean(val);
+}
+
 export const NOOP = () => {};
 export const EMPTY_OBJECT = {};
