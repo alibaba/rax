@@ -111,4 +111,28 @@ describe('EmptyComponent', function() {
 
     expect(emptyNode1).toBe(emptyNode2);
   });
+
+  it('empty node is created by falsy element should be replaced normally', () => {
+    class Foo extends PureComponent {
+      state = {
+        alwaysShowUndefined: false
+      };
+      render() {
+        return (
+          this.state.alwaysShowUndefined ? undefined : <label key="hello" text="hello" />
+        );
+      }
+    }
+    const el = createNodeElement('div');
+    let component = render(<Foo />, el);
+    jest.runAllTimers();
+    expect(el.childNodes.length).toBe(3);
+    const originEmptyNode = el.childNodes[1];
+
+    component.setState({alwaysShowNULL: false});
+    jest.runAllTimers();
+    const emptyNode1 = el.childNodes[1];
+    expect(el.childNodes.length).toBe(3);
+    expect(originEmptyNode).not.toBe(emptyNode1);
+  });
 });
