@@ -1,16 +1,17 @@
-import { convertUnit } from 'style-unit';
+import { convertUnit, setTargetPlatform } from 'style-unit';
 
+/**
+ *  Server driver
+ **/
 const ID = 'id';
 const STYLE = 'style';
 const CHILDREN = 'children';
-const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
 
-const ELEMENT_NODE = 1;
-const TEXT_NODE = 3;
-const COMMENT_NODE = 8;
+const TEXT = 'text';
+const EMPTY = '';
 
-let nodeId = 1;
+setTargetPlatform('harmony');
 
 const Driver = {
   // Internal state
@@ -21,86 +22,115 @@ const Driver = {
   },
 
   createBody() {
-    return {
-      nodeType: ELEMENT_NODE,
-      tagName: 'BODY',
-      attributes: {},
-      style: {},
-      eventListeners: {},
-      childNodes: [],
-      parentNode: null
-    };
+    return document.body;
   },
 
   createComment(content) {
-    return {
-      nodeType: COMMENT_NODE,
-      data: content,
-      parentNode: null
-    };
+    return document.createComment(content);
   },
 
   createEmpty() {
-    return this.createComment(' empty ');
+    return this.createComment(EMPTY);
   },
 
   createText(text) {
-    return {
-      nodeType: TEXT_NODE,
-      data: text,
-      parentNode: null
-    };
+    // Use comment node type mock text node
+    const node = this.createComment(EMPTY);
+    node.value = text;
+    return node;
   },
 
   updateText(node, text) {
-    node.data = text;
+    node.value = text;
+    this.updateTextValue(node);
+  },
+
+  updateTextValue(node) {
+    const children = node.__rendered ? node.children : node.__children;
+    const value = children.map(function(child) {
+      // Comment node type
+      return child.nodeType === 8 ? child.value : EMPTY;
+    }).join(EMPTY);
+
+    node.setAttr('value', value);
   },
 
   createElement(type, props) {
-    let node = {
-      nodeId: nodeId++,
-      nodeType: ELEMENT_NODE,
-      tagName: type,
-      attributes: props,
-      style: props.style || {},
-      eventListeners: {},
-      childNodes: [],
-      parentNode: null
-    };
+    const node = document.createElement(type, {
+      style: props.style,
+    });
+
+    this.setNativeProps(node, props, true);
+
+    // Mark not rendered into document, this will be removed when harmony supports append into parent which isn't rendered
+    node.__rendered = false;
+    node.__children = [];
 
     return node;
   },
 
   appendChild(node, parent) {
-    parent.childNodes.push(node);
-    node.parentNode = parent; // eslint-disable-next-line no-undef
-    let tagName = node.tagName;
-    if (node.tagName === 'span' || !node.tagName) {
-      tagName = 'text';
+    // For compat harmony not support append into parent which isn't rendered
+    if (parent.__rendered) {
+      this.aceAppendChild(node, parent);
+      node.__children.forEach((child) => {
+        this.aceAppendChild(child, node);
+      });
+    } else {
+      parent.__children.push(node);
     }
-    // eslint-disable-next-line no-undef
-    ace.domAddElement(parent.nodeId || '_root', node.nodeId, tagName, node.attributes, node.style, node.eventListeners, !parent.nodeId, parent.childNodes.length - 1, 0);
+
+    if (parent.type === TEXT) {
+      this.updateTextValue(parent);
+    }
+  },
+
+  aceAppendChild(node, parent) {
+    if (!node.__rendered) {
+      parent.appendChild(node);
+      node.__rendered = true;
+    }
   },
 
   removeChild(node, parent) {
     parent = parent || node.parentNode;
-    let id = node.attributes && node.attributes[ID];
+    let id = node.attr && node.attr[ID];
     if (id != null) {
       this.nodeMaps[id] = null;
     }
-    if (node.parentNode) {
-      let idx = node.parentNode.childNodes.indexOf(node);
-      node.parentNode.childNodes.splice(idx, 1);
-      node.parentNode = null;
+
+    if (parent.__rendered) {
+      parent.removeChild(node);
+      parent.__children = parent.children;
+    } else {
+      const childIndex = findIndex(parent.__children, node);
+      parent.__children = [...parent.__children.slice(0, childIndex), ...parent.__children.slice(childIndex + 1)];
+    }
+
+    if (parent.type === TEXT) {
+      this.updateTextValue(parent);
     }
   },
 
   replaceChild(newChild, oldChild, parent) {
     parent = parent || oldChild.parentNode;
-    let previousSibling = this.previousSibling(oldChild);
-    let nextSibling = this.nextSibling(oldChild);
 
-    this.removeChild(oldChild, parent);
+    let previousSibling;
+    let nextSibling;
+
+    if (parent.__rendered) {
+      previousSibling = oldChild.previousSibling;
+      nextSibling = oldChild.nextSibling;
+      this.removeChild(oldChild, parent);
+      parent.__children = parent.children;
+    } else {
+      const index = findIndex(parent.__children, oldChild);
+      previousSibling = parent.__children[index - 1];
+      nextSibling = parent.__children[index + 1];
+      // Remove the item
+      parent.__children.splice(index, 1);
+    }
+
     if (previousSibling) {
       this.insertAfter(newChild, previousSibling, parent);
     } else if (nextSibling) {
@@ -112,46 +142,31 @@ const Driver = {
 
   insertAfter(node, after, parent) {
     parent = parent || after.parentNode;
-    let nodeIdx = parent.childNodes.indexOf(node);
-    if (nodeIdx !== -1) {
-      parent.childNodes.splice(nodeIdx, 1);
-    }
-
-    let idx = parent.childNodes.indexOf(after);
-
-    if (idx === parent.childNodes.length - 1) {
-      parent.childNodes.push(node);
+    if (parent.__rendered) {
+      parent.insertAfter(node, after);
+      parent.__children = parent.children;
     } else {
-      parent.childNodes.splice(idx + 1, 0, node);
+      const afterChildIndex = findIndex(parent.__children, after);
+      parent.__children.splice(afterChildIndex + 1, 0, node);
     }
-    node.parentNode = parent;
+
+    if (parent.type === TEXT) {
+      this.updateTextValue(parent);
+    }
   },
 
   insertBefore(node, before, parent) {
     parent = parent || before.parentNode;
-    let nodeIdx = parent.childNodes.indexOf(node);
-    if (nodeIdx !== -1) {
-      parent.childNodes.splice(nodeIdx, 1);
+    if (parent.__rendered) {
+      parent.insertBefore(node, before);
+      parent.__children = parent.children;
+    } else {
+      const beforeChildIndex = findIndex(parent.__children, before);
+      parent.__children.splice(beforeChildIndex, 0, node);
     }
 
-    let idx = parent.childNodes.indexOf(before);
-    parent.childNodes.splice(idx, 0, node);
-    node.parentNode = parent;
-  },
-
-  nextSibling(node) {
-    let parentNode = node.parentNode;
-    if (parentNode) {
-      let idx = parentNode.childNodes.indexOf(node);
-      return parentNode.childNodes[idx + 1];
-    }
-  },
-
-  previousSibling(node) {
-    let parentNode = node.parentNode;
-    if (parentNode) {
-      let idx = parentNode.childNodes.indexOf(node);
-      return parentNode.childNodes[idx - 1];
+    if (parent.type === TEXT) {
+      this.updateTextValue(parent);
     }
   },
 
@@ -164,50 +179,25 @@ const Driver = {
   },
 
   removeAttribute(node, propKey, propValue) {
-    if (propKey === 'className') {
-      propKey = 'class';
-    }
-
-    if (propKey == ID) {
+    if (propKey === ID) {
       this.nodeMaps[propValue] = null;
     }
-
-    if (node.tagName === 'INPUT' &&
-       ( propKey == 'checked' && (node.attributes.type === 'checkbox' || node.attributes.type === 'radio')
-       || propKey == 'value')) {
-      node.attributes[propKey] = null;
-    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-      node.__html = null;
-    } else {
-      node.attributes[propKey] = null;
-    }
+    return node.setAttr(propKey, undefined, false);
   },
 
   setAttribute(node, propKey, propValue) {
-    if (propKey === 'className') {
-      propKey = 'class';
-    }
-
-    if (propKey == ID) {
+    if (propKey === ID) {
       this.nodeMaps[propValue] = node;
     }
-
-    if (node.tagName === 'INPUT' &&
-       ( propKey == 'checked' && (node.attributes.type === 'checkbox' || node.attributes.type === 'radio')
-       || propKey == 'value')) {
-      node.attributes[propKey] = propValue;
-    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
-      node.__html = propValue.__html;
-    } else if (propValue != null) {
-      node.attributes[propKey] = propValue;
-    }
+    return node.setAttr(propKey, propValue);
   },
 
   setStyle(node, style) {
     for (let prop in style) {
       // Translate `rpx` to weex `px`
-      node.style[prop] = convertUnit(style[prop], prop);
+      style[prop] = convertUnit(style[prop], prop);
     }
+    node.setStyles(style);
   },
 
   setNativeProps(node, props, shouldIgnoreStyleProp) {
@@ -233,5 +223,18 @@ const Driver = {
     }
   }
 };
+
+function findIndex(children, target) {
+  let childIndex = -1;
+  children.some((child, index) => {
+    if (child === target) {
+      childIndex = index;
+      return true;
+    }
+    return false;
+  });
+  return childIndex;
+}
+
 
 export default Driver;
