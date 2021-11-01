@@ -7,6 +7,7 @@ const ID = 'id';
 const STYLE = 'style';
 const CHILDREN = 'children';
 const EVENT_PREFIX_REGEXP = /^on[A-Z]/;
+const REF = 'ref';
 
 const TEXT = 'text';
 const EMPTY = '';
@@ -46,8 +47,7 @@ const Driver = {
   },
 
   updateTextValue(node) {
-    const children = node.__rendered ? node.children : node.__children;
-    const value = children.map(function(child) {
+    const value = node.__children.map(function(child) {
       // Comment node type
       return child.nodeType === 8 ? child.value : EMPTY;
     }).join(EMPTY);
@@ -171,11 +171,11 @@ const Driver = {
   },
 
   addEventListener(node, eventName, eventHandler) {
-    node.eventListeners[eventName] = eventHandler;
+    node.addEvent(eventName, eventHandler);
   },
 
   removeEventListener(node, eventName, eventHandler) {
-    delete node.eventListeners[eventName];
+    node.removeEvent(eventName, eventHandler);
   },
 
   removeAttribute(node, propKey, propValue) {
@@ -189,6 +189,8 @@ const Driver = {
     if (propKey === ID) {
       this.nodeMaps[propValue] = node;
     }
+    // ref is harmony node internal key
+    if (propKey === REF) return;
     return node.setAttr(propKey, propValue);
   },
 
