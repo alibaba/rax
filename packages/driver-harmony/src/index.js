@@ -26,8 +26,11 @@ const Driver = {
     return document.body;
   },
 
-  createComment(content) {
-    return document.createComment(content);
+  createComment() {
+    // Use block element as comment node, because harmony not support append comment node
+    const node = this.createElement('block');
+    node.__type = 'comment';
+    return node;
   },
 
   createEmpty() {
@@ -43,13 +46,13 @@ const Driver = {
 
   updateText(node, text) {
     node.value = text;
-    this.updateTextValue(node);
+    this.updateTextValue(node.parentNode);
   },
 
   updateTextValue(node) {
     const value = node.__children.map(function(child) {
       // Comment node type
-      return child.nodeType === 8 ? child.value : EMPTY;
+      return child.__type === 'comment' ? child.value : EMPTY;
     }).join(EMPTY);
 
     node.setAttr('value', value);
@@ -72,17 +75,22 @@ const Driver = {
   appendChild(node, parent) {
     // For compat harmony not support append into parent which isn't rendered
     if (parent.__rendered) {
-      this.aceAppendChild(node, parent);
-      node.__children.forEach((child) => {
-        this.aceAppendChild(child, node);
-      });
+      this.aceAppendChildren(node, parent);
     } else {
+      // Collect child node
       parent.__children.push(node);
     }
 
     if (parent.type === TEXT) {
       this.updateTextValue(parent);
     }
+  },
+
+  aceAppendChildren(node, parent) {
+    this.aceAppendChild(node, parent);
+    node.__children.forEach((child) => {
+      this.aceAppendChildren(child, node);
+    });
   },
 
   aceAppendChild(node, parent) {
