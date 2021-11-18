@@ -24,6 +24,7 @@ body:
         - Rax Hooks
         - Uni API
         - Fusion Mobile
+        - Others
         - I don't know
     validations:
       required: true
