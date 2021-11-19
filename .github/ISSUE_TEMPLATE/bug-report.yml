@@ -34,7 +34,7 @@ body:
       label: Minimal code and steps to reproduce the bug
       description: |
         To help fixing the bug sooner, you should provide the minimal code and steps necessary to reproduce the bug.
-        Even better, you can share us a CodeSandbox link.
+        Even better, you can share us a CodeSandbox link. [Create a new codesandbox](https://codesandbox.io/s/rax-quick-start-smqdc?file=/build.json&resolutionWidth=375&resolutionHeight=812).
         If it's not possible to reproduce the bug with simple code, a GitHub repository link is also ok.
       placeholder: |
         ```js
