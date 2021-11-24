@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.0.4
+
+- Fix: add esmodule result
+
 ## v3.0.3
 
 - Chore: add `@babel/runtime` as dependency
