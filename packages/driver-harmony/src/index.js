@@ -60,7 +60,7 @@ const Driver = {
 
   createElement(type, props) {
     const node = document.createElement(type, {
-      style: props.style,
+      style: props && props.style,
     });
 
     this.setNativeProps(node, props, true);
