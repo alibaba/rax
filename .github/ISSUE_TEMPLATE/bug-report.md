@@ -10,6 +10,10 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+**Demo**
+
+[CodeSandbox link](https://codesandbox.io/s/rax-quick-start-smqdc?file=/build.json&resolutionWidth=375&resolutionHeight=812)
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
