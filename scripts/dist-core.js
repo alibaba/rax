@@ -178,12 +178,12 @@ buildCorePackages({
 // Build rax compat react version to rax/lib/compat/index.js
 // It needs external ../../index, which won't bundle rax into lib/compat/index.js
 // If bundle rax into lib/compat/index.js, it will exist multiple version rax in the project with rax and react are used together
-build({
-  packageName: 'rax',
-  name: 'Rax',
-  entry: 'src/compat/index.js',
-  outputPath: './packages/rax/lib/compat/index.js',
-  format: CJS,
-  external: ['../../index', 'rax-children', 'rax-is-valid-element', 'rax-create-factory', 'rax-clone-element'],
-  replaceValues: { 'process.env.RAX_VERSION': raxVersion },
-});
+// build({
+//   packageName: 'rax',
+//   name: 'Rax',
+//   entry: 'src/compat/index.js',
+//   outputPath: './packages/rax/lib/compat/index.js',
+//   format: CJS,
+//   external: ['../../index', 'rax-children', 'rax-is-valid-element', 'rax-create-factory', 'rax-clone-element'],
+//   replaceValues: { 'process.env.RAX_VERSION': raxVersion },
+// });

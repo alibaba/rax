@@ -1,13 +1,16 @@
 import Host from './host';
 import {isString, isNumber, isArray, isNull, isPlainObject} from '../types';
 import { throwMinifiedWarn, throwError } from '../error';
+import { SUSPENSE } from '../constant';
 
 export default function instantiateComponent(element) {
   let instance;
 
   if (isPlainObject(element) && element !== null && element.type) {
     // Special case string values
-    if (isString(element.type)) {
+    if (element.type === SUSPENSE) {
+      instance = new Host.__Suspense(element);
+    } else if (isString(element.type)) {
       instance = new Host.__Native(element);
     } else {
       instance = new Host.__Composite(element);

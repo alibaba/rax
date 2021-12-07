@@ -23,6 +23,22 @@ export default function performInSandbox(fn, instance, callback) {
  * @param {*} error
  */
 export function handleError(instance, error) {
+  const value = error;
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof value.then === 'function'
+  ) {
+    const suspenseBoundary = getNearestParent(instance, parent => {
+      return parent.type === Symbol.for('suspense');
+    });
+
+    if (suspenseBoundary) {
+      suspenseBoundary.__handleError(error);
+      return;
+    }
+  }
+
   let boundary = getNearestParent(instance, parent => {
     return parent.componentDidCatch || parent.constructor && parent.constructor.getDerivedStateFromError;
   });

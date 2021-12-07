@@ -26,7 +26,7 @@ const JS_FILES_PATTERN = '**/*.js';
 const IGNORE_PATTERN = '**/{__tests__,__mocks__}/**';
 
 // Don't need compile packages
-const IGNORE_COMPILE_PACKAGES = ['rax'];
+const IGNORE_COMPILE_PACKAGES = [''];
 
 const args = parseArgs(process.argv);
 const customPackages = args.packages;

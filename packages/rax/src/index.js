@@ -9,6 +9,10 @@ export render from './render';
 export Component, { PureComponent } from './vdom/component';
 export version from './version';
 
+import { SUSPENSE } from './constant';
+
+export const Suspense = SUSPENSE;
+
 import Host from './vdom/host';
 import Instance from './vdom/instance';
 import Element from './vdom/element';

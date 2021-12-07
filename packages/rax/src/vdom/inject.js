@@ -6,6 +6,7 @@ import CompositeComponent from './composite';
 import FragmentComponent from './fragment';
 import reconciler from '../devtools/reconciler';
 import { throwError, throwMinifiedError } from '../error';
+import SuspenseComponent from './suspense';
 
 export default function inject({ driver, measurer }) {
   // Inject component class
@@ -14,6 +15,7 @@ export default function inject({ driver, measurer }) {
   Host.__Text = TextComponent;
   Host.__Fragment = FragmentComponent;
   Host.__Composite = CompositeComponent;
+  Host.__Suspense = SuspenseComponent;
 
   // Inject render driver
   if (!(Host.driver = driver || Host.driver)) {
