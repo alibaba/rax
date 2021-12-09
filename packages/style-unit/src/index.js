@@ -65,7 +65,7 @@ export function calcRpx(str) {
     // In Web convert rpx to 'vw', same as driver-dom and driver-universal
     // '375rpx' => '50vw'
     return str.replace(RPX_REG, decimalVWTransformer);
-  } else if (targetPlatform === 'weex') {
+  } else if (targetPlatform === 'weex' || targetPlatform === 'harmony') {
     // In Weex convert rpx to 'px'
     // '375rpx' => 375 * px
     return str.replace(RPX_REG, decimalPixelTransformer);

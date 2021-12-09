@@ -174,6 +174,10 @@ buildCorePackages({
   packageName: 'driver-weex',
   name: 'DriverKraken'
 });
+buildCorePackages({
+  packageName: 'driver-harmony',
+  name: 'DriverHarmony'
+});
 
 // Build rax compat react version to rax/lib/compat/index.js
 // It needs external ../../index, which won't bundle rax into lib/compat/index.js
