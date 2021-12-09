@@ -50,7 +50,7 @@ const Driver = {
   },
 
   updateTextValue(node) {
-    const value = node.__children.map(function(child) {
+    const value = node.children.map(function(child) {
       // Comment node type
       return child.__type === 'comment' ? child.value : EMPTY;
     }).join(EMPTY);
@@ -59,27 +59,26 @@ const Driver = {
   },
 
   createElement(type, props) {
+    props = props || {};
+    const style = {};
+    const originStyle = props.style;
+    if (originStyle) {
+      for (let prop in originStyle) {
+        style[prop] = convertUnit(originStyle[prop], prop);
+      }
+    }
+
     const node = document.createElement(type, {
-      style: props && props.style,
+      style,
     });
 
     this.setNativeProps(node, props, true);
-
-    // Mark not rendered into document, this will be removed when harmony supports append into parent which isn't rendered
-    node.__rendered = false;
-    node.__children = [];
 
     return node;
   },
 
   appendChild(node, parent) {
-    // For compat harmony not support append into parent which isn't rendered
-    if (parent.__rendered) {
-      this.aceAppendChildren(node, parent);
-    } else {
-      // Collect child node
-      parent.__children.push(node);
-    }
+    parent.appendChild(node);
 
     if (parent.type === TEXT) {
       this.updateTextValue(parent);
@@ -88,16 +87,6 @@ const Driver = {
 
   aceAppendChildren(node, parent) {
     this.aceAppendChild(node, parent);
-    node.__children.forEach((child) => {
-      this.aceAppendChildren(child, node);
-    });
-  },
-
-  aceAppendChild(node, parent) {
-    if (!node.__rendered) {
-      parent.appendChild(node);
-      node.__rendered = true;
-    }
   },
 
   removeChild(node, parent) {
@@ -107,13 +96,7 @@ const Driver = {
       this.nodeMaps[id] = null;
     }
 
-    if (parent.__rendered) {
-      parent.removeChild(node);
-      parent.__children = parent.children;
-    } else {
-      const childIndex = findIndex(parent.__children, node);
-      parent.__children = [...parent.__children.slice(0, childIndex), ...parent.__children.slice(childIndex + 1)];
-    }
+    parent.removeChild(node);
 
     if (parent.type === TEXT) {
       this.updateTextValue(parent);
@@ -126,18 +109,9 @@ const Driver = {
     let previousSibling;
     let nextSibling;
 
-    if (parent.__rendered) {
-      previousSibling = oldChild.previousSibling;
-      nextSibling = oldChild.nextSibling;
-      this.removeChild(oldChild, parent);
-      parent.__children = parent.children;
-    } else {
-      const index = findIndex(parent.__children, oldChild);
-      previousSibling = parent.__children[index - 1];
-      nextSibling = parent.__children[index + 1];
-      // Remove the item
-      parent.__children.splice(index, 1);
-    }
+    previousSibling = oldChild.previousSibling;
+    nextSibling = oldChild.nextSibling;
+    this.removeChild(oldChild, parent);
 
     if (previousSibling) {
       this.insertAfter(newChild, previousSibling, parent);
@@ -150,13 +124,8 @@ const Driver = {
 
   insertAfter(node, after, parent) {
     parent = parent || after.parentNode;
-    if (parent.__rendered) {
-      parent.insertAfter(node, after);
-      parent.__children = parent.children;
-    } else {
-      const afterChildIndex = findIndex(parent.__children, after);
-      parent.__children.splice(afterChildIndex + 1, 0, node);
-    }
+    parent.insertAfter(node, after);
+
 
     if (parent.type === TEXT) {
       this.updateTextValue(parent);
@@ -165,13 +134,7 @@ const Driver = {
 
   insertBefore(node, before, parent) {
     parent = parent || before.parentNode;
-    if (parent.__rendered) {
-      parent.insertBefore(node, before);
-      parent.__children = parent.children;
-    } else {
-      const beforeChildIndex = findIndex(parent.__children, before);
-      parent.__children.splice(beforeChildIndex, 0, node);
-    }
+    parent.insertBefore(node, before);
 
     if (parent.type === TEXT) {
       this.updateTextValue(parent);
@@ -233,18 +196,5 @@ const Driver = {
     }
   }
 };
-
-function findIndex(children, target) {
-  let childIndex = -1;
-  children.some((child, index) => {
-    if (child === target) {
-      childIndex = index;
-      return true;
-    }
-    return false;
-  });
-  return childIndex;
-}
-
 
 export default Driver;
