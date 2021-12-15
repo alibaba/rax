@@ -5,10 +5,15 @@ import { SUSPENSE } from '../constant';
 
 export default function instantiateComponent(element) {
   let instance;
+  if (element && element.$$typeof === Symbol.for('react.lazy')) {
+    debugger;
+    const payload = element._payload;
+    const init = element._init;
+    element = init(payload);
+  }
 
   if (isPlainObject(element) && element !== null && element.type) {
-    // Special case string values
-    if (element.type === SUSPENSE) {
+    if (element.type === SUSPENSE) { // Special case string values
       instance = new Host.__Suspense(element);
     } else if (isString(element.type)) {
       instance = new Host.__Native(element);
@@ -18,6 +23,7 @@ export default function instantiateComponent(element) {
   } else if (isString(element) || isNumber(element)) {
     instance = new Host.__Text(String(element));
   } else if (isArray(element)) {
+    debugger;
     instance = new Host.__Fragment(element);
   } else {
     if (!(element === undefined || isNull(element) || element === false || element === true)) {

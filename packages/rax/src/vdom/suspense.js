@@ -2,6 +2,8 @@ import Host from './host';
 import BaseComponent from './base';
 import instantiateComponent from './instantiateComponent';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import updater from './updater';
+import performInSandbox from './performInSandbox';
 
 /**
  * Suspense Component
@@ -14,73 +16,115 @@ class SuspenseComponent extends BaseComponent {
     const publicProps = currentElement.props;
     const type = currentElement.type;
 
-    const { fallback, children } = publicProps;
-
     const instance = {
       __handleError: this.__handleError
     };
 
-    instance[INTERNAL] = this;
-    this[INSTANCE] = instance;
-
+    // These should be set up in the constructor, but as a convenience for
+    // simpler class abstractions, we set them up after the fact.
     instance._parent = parent;
     instance.type = type;
     instance.props = publicProps;
     instance.context = context;
     instance.nativeNodeMounter = nativeNodeMounter;
 
-    this[RENDERED_COMPONENT] = instantiateComponent(children);
-    this[RENDERED_COMPONENT].__mountComponent(
-      this._parent,
-      instance,
-      context,
-      nativeNodeMounter
-    );
+    // Inject the updater into instance
+    instance.updater = updater;
+    instance[INTERNAL] = this;
+    this[INSTANCE] = instance;
+    instance.__updateComponent = this.__updateComponent;
+
+    const { children } = publicProps;
+
+    performInSandbox(() => {
+      this[RENDERED_COMPONENT] = instantiateComponent(children);
+      this[RENDERED_COMPONENT].__mountComponent(
+        parent,
+        instance,
+        context,
+        nativeNodeMounter
+      );
+    }, instance);
   }
 
-  __handleError(value) {
+  __handleError(instance, value) {
     const wakeable = value;
-    const { fallback, children } = this.props;
+    const { fallback, children } = instance.props;
 
     let showFallback = false;
-    if (!this.didSuspend && fallback) {
+    if (!instance.didSuspend && fallback) {
       showFallback = true;
     }
 
     wakeable.then((value) => {
-      const current = this[RENDERED_COMPONENT];
+      const current = instance[INTERNAL][RENDERED_COMPONENT];
       let fallbackComponent;
 
-      if (this.didSuspend) {
-        fallbackComponent = this[RENDERED_COMPONENT];
+      if (
+        instance.didSuspend
+        && !instance.destroy
+      ) {
+        fallbackComponent = instance[INTERNAL][RENDERED_COMPONENT];
       }
 
-      this[RENDERED_COMPONENT] = instantiateComponent(children);
-      this[RENDERED_COMPONENT].__mountComponent(
-        this._parent,
-        this,
-        this.context,
-        this.nativeNodeMounter
-      );
+      performInSandbox(() => {
+        if (!instance.initial) {
+          instance[INTERNAL][RENDERED_COMPONENT] = instantiateComponent(children);
+          instance.initial = true;
+          debugger;
+          instance[INTERNAL][RENDERED_COMPONENT].__mountComponent(
+            instance._parent,
+            instance,
+            instance.context,
+            instance.nativeNodeMounter
+          );
+        // try {
+        //   instance[INTERNAL][RENDERED_COMPONENT] = instantiateComponent(children);
+        //   instance.initial = true;
+        //   debugger;
+        //   instance[INTERNAL][RENDERED_COMPONENT].__mountComponent(
+        //     instance._parent,
+        //     instance,
+        //     instance.context,
+        //     instance.nativeNodeMounter
+        //   );
+        // } catch (error) {
+        //   if (error.then) {
+        //     instance.__handleError(instance, error);
+        //     return;
+        //   } else throw error;
+          // }
+        } else {
+          instance[INTERNAL].__updateComponent(current, children, instance.context, instance.context, true);
+        }
 
-      if (fallbackComponent) {
-        fallbackComponent.unmountComponent();
-        this.showFallback = false;
-      }
+        if (fallbackComponent) {
+          fallbackComponent.unmountComponent();
+          instance.destroy = true;
+          instance.showFallback = false;
+        }
+      }, instance);
     });
 
     if (showFallback) {
-      this[RENDERED_COMPONENT] = instantiateComponent(fallback);
-      this[RENDERED_COMPONENT].__mountComponent(
-        this._parent,
-        this,
-        this.context,
-        this.nativeNodeMounter
+      instance[INTERNAL][RENDERED_COMPONENT] = instantiateComponent(fallback);
+      instance[INTERNAL][RENDERED_COMPONENT].__mountComponent(
+        instance._parent,
+        instance,
+        instance.context,
+        instance.nativeNodeMounter
       );
-      this.showFallback = true;
-      this.didSuspend = true;
+      instance.showFallback = true;
+      instance.didSuspend = true;
     } else {
       // update children
+    }
+  }
+
+  __getNativeNode() {
+    let renderedComponent = this[RENDERED_COMPONENT];
+    if (renderedComponent) {
+      return renderedComponent.__getNativeNode();
     }
   }
 
@@ -88,17 +132,48 @@ class SuspenseComponent extends BaseComponent {
     prevElement,
     nextElement,
     prevUnmaskedContext,
-    nextUnmaskedContext
+    nextUnmaskedContext,
+    internal
   ) {
-    let prevRenderedComponent = this[RENDERED_COMPONENT];
-    let prevRenderedElement = prevRenderedComponent.__currentElement;
+    performInSandbox(() => {
+      let prevRenderedComponent = this[RENDERED_COMPONENT];
+      let prevRenderedElement = prevRenderedComponent.__currentElement;
 
-    prevRenderedComponent.__updateComponent(
-      prevElement,
-      nextElement,
-      prevUnmaskedContext,
-      nextUnmaskedContext
-    );
+      // this.__currentElement = nextElement;
+
+      this.__currentElement = nextElement;
+      this._context = nextUnmaskedContext;
+      const instance = this._instance;
+
+      const nextProps = nextElement.props;
+
+      instance.props = nextProps;
+      instance.context = nextUnmaskedContext;
+
+      let element = internal ? nextElement : nextElement.props.children;
+      // let element = nextElement;
+
+      if (element && element.$$typeof === Symbol.for('react.lazy')) {
+        debugger;
+        // try {
+        const payload = element._payload;
+        const init = element._init;
+        element = init(payload);
+        // } catch (e) {
+        //   debugger;
+        //   this.__handleError(this._instance, e);
+        // }
+      }
+
+      let nextRenderedElement = element;
+
+      prevRenderedComponent.__updateComponent(
+        prevRenderedElement,
+        nextRenderedElement,
+        prevUnmaskedContext,
+        nextUnmaskedContext
+      );
+    }, this._instance);
   }
 }
 
