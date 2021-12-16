@@ -4,6 +4,7 @@ import instantiateComponent from './instantiateComponent';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import updater from './updater';
 import performInSandbox from './performInSandbox';
+import toArray from '../toArray';
 
 /**
  * Suspense Component
@@ -59,6 +60,10 @@ class SuspenseComponent extends BaseComponent {
     const showFallback = fallback && !instance.didSuspend ? true : false;
     const internal = instance[INTERNAL];
 
+    console.log('suspense handleError');
+    console.log('suspense', instance.props.title);
+
+
     wakeable.then((value) => {
       const current = internal[RENDERED_COMPONENT];
       let fallbackComponent;
@@ -69,33 +74,95 @@ class SuspenseComponent extends BaseComponent {
 
       performInSandbox(() => {
         if (!instance.initial) {
+          let lastNativeNode = null;
+          let prevNativeNode = fallbackComponent.__getNativeNode();
+
+          console.log('suspense wakeable');
+          console.log('suspense', instance.props.title);
+
           internal[RENDERED_COMPONENT] = instantiateComponent(children);
           instance.initial = true;
           internal[RENDERED_COMPONENT].__mountComponent(
             instance.__parent,
             instance,
             instance.context,
-            instance.nativeNodeMounter
+            (newNativeNode, parent) => {
+              const driver = Host.driver;
+
+              prevNativeNode = toArray(prevNativeNode);
+              newNativeNode = toArray(newNativeNode);
+
+              // If the new length large then prev
+              for (let i = 0; i < newNativeNode.length; i++) {
+                let nativeNode = newNativeNode[i];
+                if (prevNativeNode[i]) {
+                  driver.replaceChild(nativeNode, prevNativeNode[i]);
+                } else if (lastNativeNode) {
+                  driver.insertAfter(nativeNode, lastNativeNode);
+                } else {
+                  driver.appendChild(nativeNode, parent);
+                }
+                lastNativeNode = nativeNode;
+              }
+
+              // If the new length less then prev
+              for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
+                driver.removeChild(prevNativeNode[i]);
+              }
+            }
           );
+
+          fallbackComponent.unmountComponent(true);
+          instance.destroy = true;
         } else {
           instance.updater.forceUpdate(instance);
           // instance[INTERNAL].__updateComponent(current, children, instance.context, instance.context);
         }
 
-        if (fallbackComponent) {
-          fallbackComponent.unmountComponent();
-          instance.destroy = true;
-        }
+        // if (fallbackComponent) {
+        //   fallbackComponent.unmountComponent();
+        //   instance.destroy = true;
+        // }
       }, instance);
     });
 
     if (showFallback) {
+      let lastNativeNode = null;
+      let prevRenderedComponent = this[RENDERED_COMPONENT];
+      let prevRenderedElement = prevRenderedComponent ? prevRenderedComponent.__currentElement : null;
+      let prevNativeNode = prevRenderedElement ? prevRenderedComponent.__getNativeNode() : null;
+
+      const nodeMounter = (newNativeNode, parent) => {
+        const driver = Host.driver;
+
+        prevNativeNode = toArray(prevNativeNode);
+        newNativeNode = toArray(newNativeNode);
+
+        // If the new length large then prev
+        for (let i = 0; i < newNativeNode.length; i++) {
+          let nativeNode = newNativeNode[i];
+          if (prevNativeNode[i]) {
+            driver.replaceChild(nativeNode, prevNativeNode[i]);
+          } else if (lastNativeNode) {
+            driver.insertAfter(nativeNode, lastNativeNode);
+          } else {
+            driver.appendChild(nativeNode, parent);
+          }
+          lastNativeNode = nativeNode;
+        }
+
+        // If the new length less then prev
+        for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
+          driver.removeChild(prevNativeNode[i]);
+        }
+      };
+
       internal[RENDERED_COMPONENT] = instantiateComponent(fallback);
       internal[RENDERED_COMPONENT].__mountComponent(
         instance.__parent,
         instance,
         instance.context,
-        instance.nativeNodeMounter
+        prevRenderedElement ? nodeMounter : instance.nativeNodeMounter
       );
       instance.didSuspend = true;
     }
