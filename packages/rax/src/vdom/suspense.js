@@ -14,110 +14,90 @@ class SuspenseComponent extends BaseComponent {
 
     const currentElement = this.__currentElement;
     const publicProps = currentElement.props;
-    const type = currentElement.type;
 
-    const instance = {
-      __handleError: this.__handleError
-    };
+    let instance = this[INSTANCE] = {};
+    instance[INTERNAL] = this;
 
     // These should be set up in the constructor, but as a convenience for
     // simpler class abstractions, we set them up after the fact.
-    instance._parent = parent;
-    instance.type = type;
     instance.props = publicProps;
     instance.context = context;
-    instance.nativeNodeMounter = nativeNodeMounter;
 
     // Inject the updater into instance
     instance.updater = updater;
-    instance[INTERNAL] = this;
-    this[INSTANCE] = instance;
-    instance.__updateComponent = this.__updateComponent;
+    instance.nativeNodeMounter = nativeNodeMounter;
+    instance.type = currentElement.type;
+    instance.__handleError = this.__handleError;
+    instance.__parent = parent;
 
     const { children } = publicProps;
+    const element = children;
 
     performInSandbox(() => {
-      this[RENDERED_COMPONENT] = instantiateComponent(children);
+      this[RENDERED_COMPONENT] = instantiateComponent(element);
       this[RENDERED_COMPONENT].__mountComponent(
         parent,
-        instance,
+        this[INSTANCE],
         context,
         nativeNodeMounter
       );
-    }, instance);
+    }, instance, (error) => {
+      this.__handleError(instance, error);
+    });
+
+    return instance;
   }
 
   __handleError(instance, value) {
+    if (!value.then) {
+      throw value;
+    }
+
     const wakeable = value;
     const { fallback, children } = instance.props;
 
-    let showFallback = false;
-    if (!instance.didSuspend && fallback) {
-      showFallback = true;
-    }
+    const showFallback = fallback && !instance.didSuspend ? true : false;
+    const internal = instance[INTERNAL];
 
     wakeable.then((value) => {
-      const current = instance[INTERNAL][RENDERED_COMPONENT];
+      const current = internal[RENDERED_COMPONENT];
       let fallbackComponent;
 
-      if (
-        instance.didSuspend
-        && !instance.destroy
-      ) {
-        fallbackComponent = instance[INTERNAL][RENDERED_COMPONENT];
+      if (instance.didSuspend && !instance.destroy) {
+        fallbackComponent = internal[RENDERED_COMPONENT];
       }
 
       performInSandbox(() => {
         if (!instance.initial) {
-          instance[INTERNAL][RENDERED_COMPONENT] = instantiateComponent(children);
+          internal[RENDERED_COMPONENT] = instantiateComponent(children);
           instance.initial = true;
-          debugger;
-          instance[INTERNAL][RENDERED_COMPONENT].__mountComponent(
-            instance._parent,
+          internal[RENDERED_COMPONENT].__mountComponent(
+            instance.__parent,
             instance,
             instance.context,
             instance.nativeNodeMounter
           );
-        // try {
-        //   instance[INTERNAL][RENDERED_COMPONENT] = instantiateComponent(children);
-        //   instance.initial = true;
-        //   debugger;
-        //   instance[INTERNAL][RENDERED_COMPONENT].__mountComponent(
-        //     instance._parent,
-        //     instance,
-        //     instance.context,
-        //     instance.nativeNodeMounter
-        //   );
-        // } catch (error) {
-        //   if (error.then) {
-        //     instance.__handleError(instance, error);
-        //     return;
-        //   } else throw error;
-          // }
         } else {
-          instance[INTERNAL].__updateComponent(current, children, instance.context, instance.context, true);
+          instance.updater.forceUpdate(instance);
+          // instance[INTERNAL].__updateComponent(current, children, instance.context, instance.context);
         }
 
         if (fallbackComponent) {
           fallbackComponent.unmountComponent();
           instance.destroy = true;
-          instance.showFallback = false;
         }
       }, instance);
     });
 
     if (showFallback) {
-      instance[INTERNAL][RENDERED_COMPONENT] = instantiateComponent(fallback);
-      instance[INTERNAL][RENDERED_COMPONENT].__mountComponent(
-        instance._parent,
+      internal[RENDERED_COMPONENT] = instantiateComponent(fallback);
+      internal[RENDERED_COMPONENT].__mountComponent(
+        instance.__parent,
         instance,
         instance.context,
         instance.nativeNodeMounter
       );
-      instance.showFallback = true;
       instance.didSuspend = true;
-    } else {
-      // update children
     }
   }
 
@@ -133,39 +113,32 @@ class SuspenseComponent extends BaseComponent {
     nextElement,
     prevUnmaskedContext,
     nextUnmaskedContext,
-    internal
   ) {
+    let instance = this[INSTANCE];
+
+    // Maybe update component that has already been unmounted or failed mount.
+    if (!instance) {
+      return;
+    }
+
     performInSandbox(() => {
       let prevRenderedComponent = this[RENDERED_COMPONENT];
       let prevRenderedElement = prevRenderedComponent.__currentElement;
 
-      // this.__currentElement = nextElement;
-
+      // Replace with next
       this.__currentElement = nextElement;
       this._context = nextUnmaskedContext;
-      const instance = this._instance;
-
-      const nextProps = nextElement.props;
-
-      instance.props = nextProps;
+      instance.props = nextElement.props;
       instance.context = nextUnmaskedContext;
 
-      let element = internal ? nextElement : nextElement.props.children;
-      // let element = nextElement;
+      const { children } = nextElement.props || {};
+      let nextRenderedElement = children;
 
-      if (element && element.$$typeof === Symbol.for('react.lazy')) {
-        debugger;
-        // try {
-        const payload = element._payload;
-        const init = element._init;
-        element = init(payload);
-        // } catch (e) {
-        //   debugger;
-        //   this.__handleError(this._instance, e);
-        // }
+      if (children && children.$$typeof === Symbol.for('react.lazy')) {
+        const payload = children._payload;
+        const init = children._init;
+        nextRenderedElement = init(payload);
       }
-
-      let nextRenderedElement = element;
 
       prevRenderedComponent.__updateComponent(
         prevRenderedElement,
@@ -173,7 +146,9 @@ class SuspenseComponent extends BaseComponent {
         prevUnmaskedContext,
         nextUnmaskedContext
       );
-    }, this._instance);
+    }, instance, (error) => {
+      this.__handleError(instance, error);
+    });
   }
 }
 

@@ -6,7 +6,6 @@ import { SUSPENSE } from '../constant';
 export default function instantiateComponent(element) {
   let instance;
   if (element && element.$$typeof === Symbol.for('react.lazy')) {
-    debugger;
     const payload = element._payload;
     const init = element._init;
     element = init(payload);
@@ -23,7 +22,6 @@ export default function instantiateComponent(element) {
   } else if (isString(element) || isNumber(element)) {
     instance = new Host.__Text(String(element));
   } else if (isArray(element)) {
-    debugger;
     instance = new Host.__Fragment(element);
   } else {
     if (!(element === undefined || isNull(element) || element === false || element === true)) {
