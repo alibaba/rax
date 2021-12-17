@@ -19,26 +19,22 @@ class SuspenseComponent extends BaseComponent {
     let instance = this[INSTANCE] = {};
     instance[INTERNAL] = this;
 
-    // These should be set up in the constructor, but as a convenience for
-    // simpler class abstractions, we set them up after the fact.
     instance.props = publicProps;
     instance.context = context;
-
-    // Inject the updater into instance
     instance.updater = updater;
     instance.nativeNodeMounter = nativeNodeMounter;
     instance.type = currentElement.type;
+
     instance.__handleError = this.__handleError;
     instance.__parent = parent;
 
-    const { children } = publicProps;
-    const element = children;
+    const renderedElement = publicProps.children;
 
     performInSandbox(() => {
-      this[RENDERED_COMPONENT] = instantiateComponent(element);
+      this[RENDERED_COMPONENT] = instantiateComponent(renderedElement);
       this[RENDERED_COMPONENT].__mountComponent(
         parent,
-        this[INSTANCE],
+        instance,
         context,
         nativeNodeMounter
       );
