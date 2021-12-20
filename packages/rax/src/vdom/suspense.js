@@ -22,15 +22,12 @@ class SuspenseComponent extends BaseComponent {
     instance.context = context;
     instance.updater = updater;
     instance.type = currentElement.type;
+    instance.nativeNodeMounter = nativeNodeMounter;
 
     instance.__handleError = this.__handleError;
-    instance.__parent = parent;
-
-    this.__nativeNodeMounter = nativeNodeMounter;
-
-    const renderedElement = publicProps.children;
 
     performInSandbox(() => {
+      const renderedElement = publicProps.children;
       const renderedComponent = instantiateComponent(renderedElement);
       renderedComponent.__mountComponent(
         parent,
@@ -40,7 +37,8 @@ class SuspenseComponent extends BaseComponent {
       );
 
       if (this.__showFallback) {
-        // component render error will be catch by sandbox，so need to unmount the broken component here.
+        // component render error will be catch by sandbox
+        // so need to unmount the broken component here.
         renderedComponent.unmountComponent(true);
       } else {
         this[RENDERED_COMPONENT] = renderedComponent;
@@ -52,15 +50,15 @@ class SuspenseComponent extends BaseComponent {
     return instance;
   }
 
-  __handleError(instance, value) {
-    if (!value.then) {
-      throw value;
+  __handleError(instance, error) {
+    if (!error.then) {
+      throw error;
     }
 
     const { fallback, children } = instance.props;
     const internal = instance[INTERNAL];
 
-    const wakeable = value;
+    const wakeable = error;
     wakeable.then(() => {
       performInSandbox(() => {
         if (!instance.didSuspend) {
@@ -73,7 +71,7 @@ class SuspenseComponent extends BaseComponent {
           instance.updater.forceUpdate(instance);
         }
       }, instance, (error) => {
-        this.__handleError(instance, error);
+        instance.__handleError(instance, error);
       });
     });
 
