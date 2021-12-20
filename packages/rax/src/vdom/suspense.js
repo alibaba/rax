@@ -4,6 +4,7 @@ import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import updater from './updater';
 import performInSandbox from './performInSandbox';
 import getNewNativeNodeMounter from './getNewNativeNodeMounter';
+import shouldUpdateComponent from './shouldUpdateComponent';
 
 /**
  * Suspense Component
@@ -36,9 +37,9 @@ class SuspenseComponent extends BaseComponent {
         nativeNodeMounter
       );
 
-      if (this.__showFallback) {
-        // component render error will be catch by sandbox
-        // so need to unmount the broken component here.
+      if (this.__didCapture) {
+        // Unmount the broken component.
+        // Component render error will be caught by sandbox.
         renderedComponent.unmountComponent(true);
       } else {
         this[RENDERED_COMPONENT] = renderedComponent;
@@ -61,23 +62,23 @@ class SuspenseComponent extends BaseComponent {
     const wakeable = error;
     wakeable.then(() => {
       performInSandbox(() => {
-        if (!instance.didSuspend) {
+        if (!instance.__didMount) {
           const prevRenderedComponent = internal[RENDERED_COMPONENT];
           internal.__mountRenderedComponent(children);
           prevRenderedComponent.unmountComponent(true);
 
-          instance.didSuspend = true;
+          instance.__didMount = true;
         } else {
           instance.updater.forceUpdate(instance);
         }
-      }, instance, (error) => {
-        instance.__handleError(instance, error);
+      }, instance, (e) => {
+        instance.__handleError(instance, e);
       });
     });
 
-    if (!instance.didSuspend) {
+    if (!internal.__didCapture && !instance.__didMount) {
       internal.__mountRenderedComponent(fallback);
-      internal.__showFallback = true;
+      internal.__didCapture = true;
     }
   }
 
@@ -127,6 +128,7 @@ class SuspenseComponent extends BaseComponent {
       // Replace with next
       this.__currentElement = nextElement;
       this._context = nextUnmaskedContext;
+
       instance.props = nextElement.props;
       instance.context = nextUnmaskedContext;
 
@@ -139,12 +141,17 @@ class SuspenseComponent extends BaseComponent {
         nextRenderedElement = init(payload);
       }
 
-      prevRenderedComponent.__updateComponent(
-        prevRenderedElement,
-        nextRenderedElement,
-        prevUnmaskedContext,
-        nextUnmaskedContext
-      );
+      if (shouldUpdateComponent(prevRenderedElement, nextRenderedElement)) {
+        prevRenderedComponent.__updateComponent(
+          prevRenderedElement,
+          nextRenderedElement,
+          prevUnmaskedContext,
+          nextUnmaskedContext
+        );
+      } else {
+        prevRenderedComponent.unmountComponent(true);
+        this.__mountRenderedComponent(nextRenderedElement);
+      }
     }, instance, (error) => {
       this.__handleError(instance, error);
     });
