@@ -1,10 +1,9 @@
-import Host from './host';
 import BaseComponent from './base';
 import instantiateComponent from './instantiateComponent';
 import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
 import updater from './updater';
 import performInSandbox from './performInSandbox';
-import toArray from '../toArray';
+import getNewNativeNodeMounter from './getNewNativeNodeMounter';
 
 /**
  * Suspense Component
@@ -22,22 +21,30 @@ class SuspenseComponent extends BaseComponent {
     instance.props = publicProps;
     instance.context = context;
     instance.updater = updater;
-    instance.nativeNodeMounter = nativeNodeMounter;
     instance.type = currentElement.type;
 
     instance.__handleError = this.__handleError;
     instance.__parent = parent;
 
+    this.__nativeNodeMounter = nativeNodeMounter;
+
     const renderedElement = publicProps.children;
 
     performInSandbox(() => {
-      this[RENDERED_COMPONENT] = instantiateComponent(renderedElement);
-      this[RENDERED_COMPONENT].__mountComponent(
+      const renderedComponent = instantiateComponent(renderedElement);
+      renderedComponent.__mountComponent(
         parent,
         instance,
         context,
         nativeNodeMounter
       );
+
+      if (this.__showFallback) {
+        // component render error will be catch by sandbox，so need to unmount the broken component here.
+        renderedComponent.unmountComponent(true);
+      } else {
+        this[RENDERED_COMPONENT] = renderedComponent;
+      }
     }, instance, (error) => {
       this.__handleError(instance, error);
     });
@@ -50,118 +57,49 @@ class SuspenseComponent extends BaseComponent {
       throw value;
     }
 
-    const wakeable = value;
     const { fallback, children } = instance.props;
-
-    const showFallback = fallback && !instance.didSuspend ? true : false;
     const internal = instance[INTERNAL];
 
-    console.log('suspense handleError');
-    console.log('suspense', instance.props.title);
-
-
-    wakeable.then((value) => {
-      const current = internal[RENDERED_COMPONENT];
-      let fallbackComponent;
-
-      if (instance.didSuspend && !instance.destroy) {
-        fallbackComponent = internal[RENDERED_COMPONENT];
-      }
-
+    const wakeable = value;
+    wakeable.then(() => {
       performInSandbox(() => {
-        if (!instance.initial) {
-          let lastNativeNode = null;
-          let prevNativeNode = fallbackComponent.__getNativeNode();
+        if (!instance.didSuspend) {
+          const prevRenderedComponent = internal[RENDERED_COMPONENT];
+          internal.__mountRenderedComponent(children);
+          prevRenderedComponent.unmountComponent(true);
 
-          console.log('suspense wakeable');
-          console.log('suspense', instance.props.title);
-
-          internal[RENDERED_COMPONENT] = instantiateComponent(children);
-          instance.initial = true;
-          internal[RENDERED_COMPONENT].__mountComponent(
-            instance.__parent,
-            instance,
-            instance.context,
-            (newNativeNode, parent) => {
-              const driver = Host.driver;
-
-              prevNativeNode = toArray(prevNativeNode);
-              newNativeNode = toArray(newNativeNode);
-
-              // If the new length large then prev
-              for (let i = 0; i < newNativeNode.length; i++) {
-                let nativeNode = newNativeNode[i];
-                if (prevNativeNode[i]) {
-                  driver.replaceChild(nativeNode, prevNativeNode[i]);
-                } else if (lastNativeNode) {
-                  driver.insertAfter(nativeNode, lastNativeNode);
-                } else {
-                  driver.appendChild(nativeNode, parent);
-                }
-                lastNativeNode = nativeNode;
-              }
-
-              // If the new length less then prev
-              for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
-                driver.removeChild(prevNativeNode[i]);
-              }
-            }
-          );
-
-          fallbackComponent.unmountComponent(true);
-          instance.destroy = true;
+          instance.didSuspend = true;
         } else {
           instance.updater.forceUpdate(instance);
-          // instance[INTERNAL].__updateComponent(current, children, instance.context, instance.context);
         }
-
-        // if (fallbackComponent) {
-        //   fallbackComponent.unmountComponent();
-        //   instance.destroy = true;
-        // }
-      }, instance);
+      }, instance, (error) => {
+        this.__handleError(instance, error);
+      });
     });
 
-    if (showFallback) {
-      let lastNativeNode = null;
-      let prevRenderedComponent = this[RENDERED_COMPONENT];
-      let prevRenderedElement = prevRenderedComponent ? prevRenderedComponent.__currentElement : null;
-      let prevNativeNode = prevRenderedElement ? prevRenderedComponent.__getNativeNode() : null;
-
-      const nodeMounter = (newNativeNode, parent) => {
-        const driver = Host.driver;
-
-        prevNativeNode = toArray(prevNativeNode);
-        newNativeNode = toArray(newNativeNode);
-
-        // If the new length large then prev
-        for (let i = 0; i < newNativeNode.length; i++) {
-          let nativeNode = newNativeNode[i];
-          if (prevNativeNode[i]) {
-            driver.replaceChild(nativeNode, prevNativeNode[i]);
-          } else if (lastNativeNode) {
-            driver.insertAfter(nativeNode, lastNativeNode);
-          } else {
-            driver.appendChild(nativeNode, parent);
-          }
-          lastNativeNode = nativeNode;
-        }
-
-        // If the new length less then prev
-        for (let i = newNativeNode.length; i < prevNativeNode.length; i++) {
-          driver.removeChild(prevNativeNode[i]);
-        }
-      };
-
-      internal[RENDERED_COMPONENT] = instantiateComponent(fallback);
-      internal[RENDERED_COMPONENT].__mountComponent(
-        instance.__parent,
-        instance,
-        instance.context,
-        prevRenderedElement ? nodeMounter : instance.nativeNodeMounter
-      );
-      instance.didSuspend = true;
+    if (!instance.didSuspend) {
+      internal.__mountRenderedComponent(fallback);
+      internal.__showFallback = true;
     }
+  }
+
+  __mountRenderedComponent(component) {
+    const prevRenderedComponent = this[RENDERED_COMPONENT];
+
+    let nativeNodeMounter = this[INSTANCE].nativeNodeMounter;
+
+    if (prevRenderedComponent && prevRenderedComponent.__currentElement) {
+      const prevNativeNode = prevRenderedComponent.__getNativeNode();
+      nativeNodeMounter = getNewNativeNodeMounter(prevNativeNode);
+    }
+
+    this[RENDERED_COMPONENT] = instantiateComponent(component);
+    this[RENDERED_COMPONENT].__mountComponent(
+      this._parent,
+      this[INSTANCE],
+      this._context,
+      nativeNodeMounter
+    );
   }
 
   __getNativeNode() {

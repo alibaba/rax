@@ -29,11 +29,6 @@ export function handleError(instance, error) {
     typeof value === 'object' &&
     typeof value.then === 'function'
   ) {
-    if (instance.type === Symbol.for('suspense')) {
-      instance.__handleError(instance, error);
-      return;
-    }
-
     const suspenseBoundary = getNearestParent(instance, parent => {
       return parent.type === Symbol.for('suspense');
     });
