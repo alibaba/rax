@@ -6,6 +6,7 @@ import { SUSPENSE, LAZY_TYPE } from '../constant';
 export default function instantiateComponent(element) {
   let instance;
 
+  // Lazy element (eg. server component)
   if (element && element.$$typeof === LAZY_TYPE) {
     const payload = element._payload;
     const init = element._init;
@@ -13,10 +14,13 @@ export default function instantiateComponent(element) {
   }
 
   if (isPlainObject(element) && element !== null && element.type) {
+    // Lazy component
     if (element.type.$$typeof === LAZY_TYPE) {
       const payload = element.type._payload;
       const init = element.type._init;
-      element.type = init(payload);
+      const type = init(payload);
+
+      element.type = type;
       instance = instantiateComponent(element);
     } else if (element.type === SUSPENSE) { // Special case string values
       instance = new Host.__Suspense(element);
