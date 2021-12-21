@@ -1,6 +1,6 @@
 import BaseComponent from './base';
 import instantiateComponent from './instantiateComponent';
-import { INSTANCE, INTERNAL, RENDERED_COMPONENT } from '../constant';
+import { INSTANCE, INTERNAL, RENDERED_COMPONENT, LAZY_TYPE } from '../constant';
 import updater from './updater';
 import performInSandbox from './performInSandbox';
 import getNewNativeNodeMounter from './getNewNativeNodeMounter';
@@ -135,7 +135,7 @@ class SuspenseComponent extends BaseComponent {
       const { children } = nextElement.props || {};
       let nextRenderedElement = children;
 
-      if (children && children.$$typeof === Symbol.for('react.lazy')) {
+      if (children && children.$$typeof === LAZY_TYPE) {
         const payload = children._payload;
         const init = children._init;
         nextRenderedElement = init(payload);

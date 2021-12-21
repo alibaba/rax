@@ -1,18 +1,24 @@
 import Host from './host';
 import {isString, isNumber, isArray, isNull, isPlainObject} from '../types';
 import { throwMinifiedWarn, throwError } from '../error';
-import { SUSPENSE } from '../constant';
+import { SUSPENSE, LAZY_TYPE } from '../constant';
 
 export default function instantiateComponent(element) {
   let instance;
-  if (element && element.$$typeof === Symbol.for('react.lazy')) {
+
+  if (element && element.$$typeof === LAZY_TYPE) {
     const payload = element._payload;
     const init = element._init;
     element = init(payload);
   }
 
   if (isPlainObject(element) && element !== null && element.type) {
-    if (element.type === SUSPENSE) { // Special case string values
+    if (element.type.$$typeof === LAZY_TYPE) {
+      const payload = element.type._payload;
+      const init = element.type._init;
+      element.type = init(payload);
+      instance = instantiateComponent(element);
+    } else if (element.type === SUSPENSE) { // Special case string values
       instance = new Host.__Suspense(element);
     } else if (isString(element.type)) {
       instance = new Host.__Native(element);
