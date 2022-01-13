@@ -9,7 +9,6 @@
     ".": {
       "web": "./es/web.js",
       "weex": "./es/weex.js",
-      "kraken": "./es/web.js",
       "miniapp": "./es/miniapp.js",
       "wechat-miniprogram": "./es/miniapp.js",
       "bytedance-microapp": "./es/miniapp.js",
