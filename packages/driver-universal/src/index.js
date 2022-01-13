@@ -1,7 +1,6 @@
 import {
   isWeex,
   isWeb,
-  isKraken,
   isMiniApp,
   isWeChatMiniProgram,
   isByteDanceMicroApp,
