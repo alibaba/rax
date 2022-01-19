@@ -3,6 +3,7 @@
 ### v2.3.0
 
 - Add `getDriver` method which makes the driver use param document instead of global document
+
 ### v2.2.2
 
 - Fix hydrate style with webkit prefix in iOS 10
