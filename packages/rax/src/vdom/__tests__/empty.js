@@ -126,13 +126,16 @@ describe('EmptyComponent', function() {
     const el = createNodeElement('div');
     let component = render(<Foo />, el);
     jest.runAllTimers();
-    expect(el.childNodes.length).toBe(3);
-    const originEmptyNode = el.childNodes[1];
+    expect(el.childNodes.length).toBe(1);
+    const originEmptyNode = el.childNodes[0];
 
-    component.setState({alwaysShowNULL: false});
+    component.setState({
+      alwaysShowUndefined: true
+    });
+
     jest.runAllTimers();
-    const emptyNode1 = el.childNodes[1];
-    expect(el.childNodes.length).toBe(3);
+    const emptyNode1 = el.childNodes[0];
+    expect(el.childNodes.length).toBe(1);
     expect(originEmptyNode).not.toBe(emptyNode1);
   });
 });
