@@ -58,9 +58,5 @@ export {
    * Set unit precision.
    * @param n {Number} Unit precision, default to 4.
    */
-  setUnitPrecision,
-  /**
-   * Get driver with document passed
-   */
-  getDriver
+  setUnitPrecision
 };
