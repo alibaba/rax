@@ -1,7 +1,6 @@
 import {
   isWeex,
   isWeb,
-  isKraken,
   isMiniApp,
   isWeChatMiniProgram,
   isByteDanceMicroApp,
@@ -14,8 +13,6 @@ if (isWeex) {
   currentDriver = require('./weex').default;
 } else if (isWeb) {
   currentDriver = require('./web').default;
-} else if (isKraken) {
-  currentDriver = require('./kraken').default;
 } else if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp || isBaiduSmartProgram || isKuaiShouMiniProgram) {
   currentDriver = require('./miniapp').default;
 }
