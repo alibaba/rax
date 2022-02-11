@@ -1,6 +1,6 @@
 {
   "name": "driver-universal",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "Driver for Universal App.",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -9,7 +9,6 @@
     ".": {
       "web": "./es/web.js",
       "weex": "./es/weex.js",
-      "kraken": "./es/kraken.js",
       "miniapp": "./es/miniapp.js",
       "wechat-miniprogram": "./es/miniapp.js",
       "bytedance-microapp": "./es/miniapp.js",
@@ -33,7 +32,6 @@
   },
   "dependencies": {
     "driver-dom": "^2.0.5",
-    "driver-kraken": "^0.2.0",
     "driver-miniapp": "^0.1.0",
     "driver-weex": "^2.0.0",
     "universal-env": "^3.0.0"

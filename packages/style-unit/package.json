@@ -1,12 +1,14 @@
 {
   "name": "style-unit",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "style-unit",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
-    "lib"
+    "lib",
+    "es",
+    "!__tests__"
   ],
   "repository": {
     "type": "git",

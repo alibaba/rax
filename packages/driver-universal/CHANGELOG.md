@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.4.0
+
+- Chore: remove kraken driver, using web instead.
+
 ## v3.3.1
 
 - Chore: remove `Object.assign`
