@@ -84,4 +84,58 @@ describe('EmptyComponent', function() {
     expect(el.childNodes.length).toBe(3);
     expect(originEmptyNode).not.toBe(emptyNode1);
   });
+
+  it('empty node is created by falsy element should not be rebuilt', () => {
+    class Foo extends PureComponent {
+      state = {
+        alwaysShowUndefined: false
+      };
+      render() {
+        return (
+          this.state.alwaysShowUndefined ? undefined : undefined
+        );
+      }
+    }
+    const el = createNodeElement('div');
+    let component = render(<Foo />, el);
+    jest.runAllTimers();
+
+    component.setState({alwaysShowUndefined: !component.state.alwaysShowUndefined});
+    jest.runAllTimers();
+    const emptyNode1 = el.childNodes[0];
+
+    component.setState({alwaysShowUndefined: !component.state.alwaysShowUndefined});
+    jest.runAllTimers();
+    const emptyNode2 = el.childNodes[0];
+
+
+    expect(emptyNode1).toBe(emptyNode2);
+  });
+
+  it('empty node is created by falsy element should be replaced normally', () => {
+    class Foo extends PureComponent {
+      state = {
+        alwaysShowUndefined: false
+      };
+      render() {
+        return (
+          this.state.alwaysShowUndefined ? undefined : <label key="hello" text="hello" />
+        );
+      }
+    }
+    const el = createNodeElement('div');
+    let component = render(<Foo />, el);
+    jest.runAllTimers();
+    expect(el.childNodes.length).toBe(1);
+    const originEmptyNode = el.childNodes[0];
+
+    component.setState({
+      alwaysShowUndefined: true
+    });
+
+    jest.runAllTimers();
+    const emptyNode1 = el.childNodes[0];
+    expect(el.childNodes.length).toBe(1);
+    expect(originEmptyNode).not.toBe(emptyNode1);
+  });
 });
