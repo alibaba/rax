@@ -1,5 +1,9 @@
 ## Changelog
 
+###
+
+- Fix linearGradient hydrate error
+
 ### v2.2.2
 
 - Fix hydrate style with webkit prefix in iOS 10

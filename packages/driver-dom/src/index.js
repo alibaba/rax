@@ -177,7 +177,8 @@ export function createElement(type, props, component, __shouldConvertUnitlessToR
     hydrationChild = findHydrationChild(parent);
 
     if (hydrationChild) {
-      if (type === hydrationChild.nodeName.toLowerCase()) {
+      // type such as linearGradient should be compare with toLowerCase
+      if (type.toLowerCase() === hydrationChild.nodeName.toLowerCase()) {
         for (let attributes = hydrationChild.attributes, i = attributes.length; i--;) {
           const attribute = attributes[i];
           const attributeName = attribute.name;

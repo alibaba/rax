@@ -79,9 +79,10 @@ function getNodeName(node) {
   const name = node.tagName.toLowerCase();
   const id = node.id ? '#' + node.id : '';
   const classStr = node.className || '';
-  const classList = classStr.split(' ').map((className) => {
+  // className can also be an instance of SVGAnimatedString if the element is an SVGElement
+  const classList = typeof classStr === 'string' ? classStr.split(' ').map((className) => {
     return className ? '.' + className : '';
-  });
+  }) : [];
 
   return `<${name}${id}${classList.join('')}>`;
 }
