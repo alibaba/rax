@@ -167,10 +167,6 @@ buildCorePackages({
   name: 'DriverDom'
 });
 buildCorePackages({
-  packageName: 'driver-kraken',
-  name: 'DriverKraken'
-});
-buildCorePackages({
   packageName: 'driver-weex',
   name: 'DriverKraken'
 });

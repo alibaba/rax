@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.5.0
+
+- Chore: use `import` instead of `require` in entry file
+
 ## v3.4.0
 
 - Chore: remove kraken driver, using web instead.

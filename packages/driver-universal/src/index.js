@@ -8,13 +8,17 @@ import {
   isKuaiShouMiniProgram
 } from 'universal-env';
 
+import driverWeex from './weex';
+import driverWeb from './web';
+import driverMiniApp from './miniapp';
+
 let currentDriver;
 if (isWeex) {
-  currentDriver = require('./weex').default;
+  currentDriver = driverWeex;
 } else if (isWeb) {
-  currentDriver = require('./web').default;
+  currentDriver = driverWeb;
 } else if (isMiniApp || isWeChatMiniProgram || isByteDanceMicroApp || isBaiduSmartProgram || isKuaiShouMiniProgram) {
-  currentDriver = require('./miniapp').default;
+  currentDriver = driverMiniApp;
 }
 
 export default currentDriver;
