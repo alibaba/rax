@@ -1,4 +1,4 @@
-import * as RaxCore from '../../index';
+import * as RaxCore from 'rax'; // eslint-disable-line
 import Children from 'rax-children';
 import isValidElement from 'rax-is-valid-element';
 import createFactory from 'rax-create-factory';
@@ -12,7 +12,7 @@ Rax.createFactory = createFactory;
 Rax.cloneElement = cloneElement;
 Rax.Component.prototype.isReactComponent = {};
 
-export * from '../../index';
+export * from 'rax'; // eslint-disable-line
 export {
   Children,
   isValidElement,
