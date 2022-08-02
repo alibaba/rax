@@ -1,11 +1,11 @@
-import { isWeb, isWeex } from 'universal-env';
+import { isWeb, isWeex, isNode } from 'universal-env';
 
 const RPX_REG = /"[^"]+"|'[^']+'|url\([^\)]+\)|(\d*\.?\d+)rpx/g;
 let __rpx_coefficient__;
 let __viewport_width__;
 
 // convertUnit method targetPlatform
-let targetPlatform = isWeb ? 'web' : isWeex ? 'weex' : '';
+let targetPlatform = isWeb ? 'web' : isWeex ? 'weex' : isNode ? 'node' : '';
 
 // Init toFixed method
 let unitPrecision = 4;
@@ -61,12 +61,13 @@ export function isRpx(str) {
  * @returns {String}
  */
 export function calcRpx(str) {
-  if (targetPlatform === 'web') {
-    // In Web convert rpx to 'vw', same as driver-dom and driver-universal
+  if (targetPlatform === 'web' || targetPlatform === 'node') {
+    // In Web convert rpx to 'vw', same as driver-dom and driver-universal.
+    // In Node is same as web for SSR.
     // '375rpx' => '50vw'
     return str.replace(RPX_REG, decimalVWTransformer);
   } else if (targetPlatform === 'weex') {
-    // In Weex convert rpx to 'px'
+    // In Weex convert rpx to 'px'.
     // '375rpx' => 375 * px
     return str.replace(RPX_REG, decimalPixelTransformer);
   } else {
