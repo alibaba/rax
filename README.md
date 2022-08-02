@@ -17,11 +17,11 @@ Rax is a progressive framework for building universal applications.
 
 ---
 
-💌 **Write Once, Run Anywhere:** write one codebase, run with `Web`, [`Weex`](https://weex.apache.org/), [`Node.js`](https://nodejs.org/), `Alibaba MiniApp`, `WeChat MiniProgram` and could work with more container that implements [driver specification](https://github.com/alibaba/rax/wiki/Driver-Specification).
+💌 **Write Once, Run Anywhere:** write one codebase, run with `Web`, [`Weex`](https://weex.apache.org/), [`Node.js`](https://nodejs.org/), `Alibaba MiniApp`, and `WeChat MiniProgram`. Rax can be used with additional containers that implement it's [driver specification](https://github.com/alibaba/rax/wiki/Driver-Specification).
 
-⏱ **Fast:** use better performance and tinier size(📦~6KB) alternative to [React](http://reactjs.org/) with the same API.
+⏱ **Fast:** better performance and a tiny size(📦~6KB) when compared to [React](http://reactjs.org/) using the same API.
 
-📤 **Easy:** quick start with zero configuration, all features like `Progressive Web App (PWA)`, `Server-Side Rendering (SSR)` and `Function as a service (FaaS)` can be used out of the box.
+📤 **Easy:** quick start with zero configuration, all features like `Progressive Web App (PWA)`, `Server-Side Rendering (SSR)`, and `Function as a service (FaaS)` can be used out of the box.
 
 ### Quick Start 🥢🍚
 
@@ -52,7 +52,7 @@ You need to install the [AppWorks Pack](https://marketplace.visualstudio.com/ite
 
 You can inspect and modify the state of your Rax components at runtime using the
 [Rax Developer Tools](https://github.com/raxjs/rax-devtools) browser extension,
-and extension not works in `production` mode.
+however the extension will not work in `production` mode.
 
 1. Install the Chrome [Rax Developer Tools](https://chrome.google.com/webstore/detail/rax-developer-tools/anpeoinhjjligmgoiepbnigjhmijblff) extension
 2. Reload and go to the 'Rax' tab in the browser's development tools
