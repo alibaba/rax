@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.0.5
+
+- Fix: fix transform rpx error in node env.
+
 ## v3.0.4
 
 - Fix: add esmodule result
