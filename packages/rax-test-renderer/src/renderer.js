@@ -1,26 +1,25 @@
-import inject from '../vdom/inject';
-import Instance from '../vdom/instance';
+import { shared } from 'rax';
 import ServerDriver from 'driver-server';
 import Serializer from './serializer';
-import {INSTANCE} from '../constant';
 
-// Init
-inject({
-  driver: ServerDriver
-});
+const { Instance, Host } = shared;
+
+// For inject Host init options
+Host.driver = ServerDriver;
 
 export default {
   create(element) {
     let container = ServerDriver.createBody();
-    let rootComponent = Instance.mount(element, container, {});
-    let renderedComponent = rootComponent.__getRenderedComponent();
+    let rootInstance = Instance.mount(element, container, {});
+    // The field corresponding to node and instance is _r, which you can see in rax/src/vdom/instance
+    let renderedComponent = rootInstance.__getRenderedComponent();
 
     renderedComponent.toJSON = () => {
       return new Serializer(container).toJSON();
     };
 
     renderedComponent.getInstance = () => {
-      return renderedComponent[INSTANCE];
+      return renderedComponent._instance;
     };
 
     renderedComponent.update = (element) => {
