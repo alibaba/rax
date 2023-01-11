@@ -1,6 +1,6 @@
 {
   "name": "rax-get-element-by-id",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rax getElementById",
   "license": "BSD-3-Clause",
   "main": "lib/index.js",
@@ -16,7 +16,7 @@
     "npm": ">=3.0.0"
   },
   "dependencies": {
-    "universal-env": "^1.0.0",
+    "universal-env": "^3.0.0",
     "rax": "^1.0.0"
   }
 }
