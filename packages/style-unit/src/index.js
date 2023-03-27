@@ -143,7 +143,7 @@ const _convertUnit = cached((value, prop, platform) => {
 
 const REG_BASE64 = /data:image\/(png|jpg|jpeg|gif|svg|webp|bmp|dpg);base64,/;
 function isBase64(str) {
-  // Maximal base64 string start with `url('data:image/jpeg;base64,` with contains 30 characters.
+  // Maximal base64 string start with `url('data:image/jpeg;base64,` which contains 30 characters.
   return typeof str === 'string' && REG_BASE64.test(str.substring(0, 30));
 }
 
