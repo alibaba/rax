@@ -48,6 +48,11 @@ describe('Web style-unit', () => {
       expect(convertUnit('375rpx 20px 375rpx', 'margin')).toEqual('100vw 20px 100vw');
       expect(convertUnit('translateX(375rpx) translateY(375rpx)', 'transform')).toEqual('translateX(100vw) translateY(100vw)');
     });
+
+    it('should not convert base64', () => {
+      const base64String = 'url(\'data:image/png;base64,iVBORw30rpx...)';
+      expect(convertUnit(base64String, 'backgroundImage')).toEqual(base64String);
+    });
   });
 
   describe('exported API', () => {

@@ -1,5 +1,9 @@
 ## Changelog
 
+## v3.0.6
+
+- Fix: maximum call caused by large base64.
+
 ## v3.0.5
 
 - Fix: fix transform rpx error in node env.
