@@ -127,13 +127,6 @@ export function setTargetPlatform(platform) {
   targetPlatform = platform;
 }
 
-/**
- * Convert rpx.
- * @param value
- * @param prop
- * @param platform
- * @return {String} Transformed value.
- */
 const _convertUnit = cached((value, prop, platform) => {
   if (platform) {
     setTargetPlatform(platform);
@@ -147,6 +140,13 @@ function isBase64(str) {
   return typeof str === 'string' && REG_BASE64.test(str.substring(0, 30));
 }
 
+/**
+ * Convert rpx.
+ * @param value
+ * @param prop
+ * @param platform
+ * @return {String} Transformed value.
+ */
 export const convertUnit = (value, prop, platform) => {
   // Do not to convert base64 value which may cause maximum error.
   return isBase64(value) ? value : _convertUnit(value, prop, platform);
