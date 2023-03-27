@@ -150,4 +150,4 @@ function isBase64(str) {
 export const convertUnit = (value, prop, platform) => {
   // Do not to convert base64 value which may cause maximum error.
   return isBase64(value) ? value : _convertUnit(value, prop, platform);
-}
+};
